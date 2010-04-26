@@ -1,0 +1,112 @@
+ 
+[13:35:03] Alfredo Morresi: ottimo, allora manda pure!
+[13:35:26] JackSMS - Dario: l'idea di base è questa: tenere i dati dell'utente sul server e renderli accessibili da tutte le versioni
+[13:35:39] JackSMS - Dario: quindi con le api nuove puoi aggiungere contatti / servizi e recuperarli
+[13:35:44] JackSMS - Dario: inviare sms ed IM
+[13:35:51] Alfredo Morresi: e tutto resta sincronizzato sul server, giusto?
+[13:35:55] JackSMS - Dario: sì
+[13:36:12] JackSMS - Dario: così l'utente inserisce i dati una volta per tutte.
+[13:36:25] JackSMS - Dario: dammi una tua mail
+[13:36:35] Alfredo Morresi: info@rainbowbreeze.it
+[13:37:33] JackSMS - Dario: ok, controlla
+[13:37:38] JackSMS - Dario: e scusa il font dell'indice
+[13:37:43] JackSMS - Dario: maledetto google documents
+[13:38:34] Alfredo Morresi: eheh, sto contorllando...
+[13:38:55] JackSMS - Dario: ci sono comandi implementati che ancora non ho scritto
+[13:39:17] Alfredo Morresi: senti, x il google doc, invitami su alfredo.morresi@gmail.com per piacere...
+[13:39:20] Alfredo Morresi: grazie ;)
+[13:39:24] JackSMS - Dario: y
+[13:40:12] JackSMS - Dario: fatto
+[13:41:47] Alfredo Morresi: visto
+[13:41:51] Alfredo Morresi: ok, ci sono...
+[13:43:27] JackSMS - Dario: hai una shell o curl ?
+[13:43:52] JackSMS - Dario: è molto meglio fare qualche prova, capisci subito
+[13:44:54] Alfredo Morresi: no no, i concetti sono chiari...
+[13:45:00] JackSMS - Dario: :D
+[13:45:03] JackSMS - Dario: grazie a dio
+[13:45:07] Alfredo Morresi: :)
+[13:45:27] JackSMS - Dario: c'è anche il comando per inviare i messaggi
+[13:45:33] JackSMS - Dario: te lo descrivo qui ?
+[13:45:41] Alfredo Morresi: fai pure, come preferisci...
+[13:46:04] JackSMS - Dario: vabbè dai, lo scrivo li
+[13:46:12] JackSMS - Dario: intanto prova a smanettare un po
+[13:46:20] JackSMS - Dario: per esempio
+[13:46:24] JackSMS - Dario: curl http://q.jacksms.it/guest/guest/getAbook?xml                                                                        <?xml version="1.0" encoding="UTF-8"?>
+<JackSMS>
+        <m0 name="Test" number="3471234567" />
+        <m1 name="ciao" number="+39.347.1234567" />
+        <m2 name="ciao" number="+39.347.1234567" />
+        <m3 name="ciao" number="+39.347.1234567" />
+        <m4 name="ciao" number="+39.347.1234567" />
+        <m5 name="ciao" number="+39.347.1234567" />
+        <m6 name="ciao" number="+39.347.1234567" />
+</JackSMS>
+[13:47:27] Alfredo Morresi: chiaro anche questo... quindi solo nome e numero.. per l'address book
+[13:48:14] JackSMS - Dario: sì
+[13:48:40] JackSMS - Dario: oppure
+[13:48:42] JackSMS - Dario: curl http://q.jacksms.it/guest/guest/getAbookFull?csv
+abook   15644   Test    3471234567      0
+abook   53446   ciao    +39.347.1234567 1
+abook   53447   ciao    +39.347.1234567 1
+abook   53448   ciao    +39.347.1234567 1
+abook   53449   ciao    +39.347.1234567 1
+abook   53450   ciao    +39.347.1234567 1
+abook   53451   ciao    +39.347.1234567 1
+[13:48:59] JackSMS - Dario: che restituisce anche id del contatto e id del servizio associato
+[13:51:10] Alfredo Morresi: ok...
+[13:51:56] JackSMS - Dario: c'è da smanettarci un po :D
+[13:52:05] Alfredo Morresi: si infatti...
+[13:52:16] JackSMS - Dario: ma alla fine sono abbastanza semplici
+[13:52:20] Alfredo Morresi: cmq l'ideale sarebbe avere quel doc condiviso con tutte queste cose che mi stai scrivendo
+[13:52:28] JackSMS - Dario: si certo
+[13:52:32] Alfredo Morresi: o per lo meno, un'unsieme minimo di funzionalita'
+[13:52:32] JackSMS - Dario: ci sono degli esempi formali
+[13:52:36] JackSMS - Dario: sisi
+[13:52:38] Alfredo Morresi: che permettano all'utente di usare il programma
+[13:52:46] Alfredo Morresi: poi le altre cose, mano a mano, si aggiungeranno
+[13:53:47] Alfredo Morresi: quindi -> autenticazione, invio sms, gestione dei servizi
+[13:53:52] JackSMS - Dario: esatto
+[13:53:52] JackSMS - Dario: :D
+[13:53:53] JackSMS - Dario: allor
+[13:54:01] JackSMS - Dario: scrivo il documentino per l'invio
+[13:54:12] JackSMS - Dario: (l'autenticazione è implicita nelle chiamate alle API)
+[13:56:32] Alfredo Morresi: si, via username oppure session id
+[13:56:41] Alfredo Morresi: poi ci sarebbe da scrivere anche un minimo di gestione degli errori
+[13:56:47] JackSMS - Dario: c'è
+[13:56:52] JackSMS - Dario: ma non l'ho ancora scritta
+[13:56:53] Alfredo Morresi: cosi' uno puo' sapere se e dove sbaglia a fare le chiamate,,,
+[13:57:02] Alfredo Morresi: ah ok...
+[13:57:14] JackSMS - Dario: curl http://q.jacksms.it/bli/blo/getAbookFull?xml
+<?xml version="1.0" encoding="UTF-8"?>
+<JackSMS>
+        <error>1</error>
+</JackSMS>
+[13:57:38] Alfredo Morresi: ok, che significa 1? :D
+[13:57:47] JackSMS - Dario: sp
+[13:58:18] JackSMS - Dario: curl http://q.jacksms.it/bli/blo/getErrors?xml
+<?xml version="1.0" encoding="UTF-8"?>
+<JackSMS>
+        <e1>Dati di accesso non validi</e1>
+        <e2>Password sbagliata</e2>
+        <e3>Utente non attivo</e3>
+        <e4>Sessione non valida</e4>
+        <e5>Servizio inesistente</e5>
+        <e6>Sessione inesistente</e6>
+</JackSMS>
+[13:58:55] Alfredo Morresi: wow, ottimo!
+[14:07:16] JackSMS - Dario: aggiorna il doc
+[14:11:13] Alfredo Morresi: fatto
+[14:11:18] Alfredo Morresi: c'e' la parte di invio...
+[14:13:07] Alfredo Morresi: una domanda... l'id del servizio e' quindi uguale per tutti (tipo vodafonesms avra' id uguale per tutti gli utenti, enel anche ecc...)?
+[14:23:29] JackSMS - Dario: certo
+[14:23:34] JackSMS - Dario: vodafoneSMS = 1
+[14:23:40] JackSMS - Dario: magari ti confondi con l'account_id
+[14:23:50] JackSMS - Dario: che è l'id che identifica un servizio salvato da un utente
+[14:38:18] Alfredo Morresi: ero a pranzo, eccomi...
+[14:39:04] Alfredo Morresi: getServices
+[14:39:08] Alfredo Morresi: <service_id, nome_account, username_account, password_account, dato3_account, dato4_account>
+[14:39:17] Alfredo Morresi: getServicesFull
+[14:39:21] Alfredo Morresi: <account_id, service_id, nome_account, username_account, password_account, dato3_account, dato4_account>
+[14:39:51] Alfredo Morresi: quale tra accout_id e service_id devo considerare per l'invio di sms?
+[14:40:28] JackSMS - Dario: service_id
+[14:41:01] Alfredo Morresi: ok
