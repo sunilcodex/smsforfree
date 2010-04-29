@@ -1,4 +1,4 @@
-package it.rainbowbreeze.smsforfree.logic;
+package it.rainbowbreeze.smsforfree.services;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,11 +11,11 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
-public class AimonApiManager
-	extends BaseApiManager
+public class AimonService
+	extends BaseService
 {
 	//---------- Ctors
-	public AimonApiManager()
+	public AimonService()
 	{
 		mDictionary = new AimonDictionary();
 	}
@@ -31,11 +31,11 @@ public class AimonApiManager
 	
 	
 	//---------- Public properties
-    private static AimonApiManager mInstance;
-    public static AimonApiManager instance()
+    private static AimonService mInstance;
+    public static AimonService instance()
     {
     	if (null == mInstance)
-    		mInstance = new AimonApiManager();
+    		mInstance = new AimonService();
     	return mInstance;
     }
 

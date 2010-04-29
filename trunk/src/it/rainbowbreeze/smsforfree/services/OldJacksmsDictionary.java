@@ -1,6 +1,6 @@
-package it.rainbowbreeze.smsforfree.logic;
+package it.rainbowbreeze.smsforfree.services;
 
-public class JacksmsDictionary {
+public class OldJacksmsDictionary {
 	//---------- Ctors
 
 

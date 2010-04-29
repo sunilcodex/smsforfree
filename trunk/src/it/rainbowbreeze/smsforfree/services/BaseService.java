@@ -1,9 +1,9 @@
-package it.rainbowbreeze.smsforfree.logic;
+package it.rainbowbreeze.smsforfree.services;
 
-import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import android.text.TextUtils;
 
-public class BaseApiManager {
+public abstract class BaseService
+{
 	//---------- Ctors
 
 	//---------- Private fields

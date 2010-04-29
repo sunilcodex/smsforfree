@@ -1,4 +1,4 @@
-package it.rainbowbreeze.smsforfree.logic;
+package it.rainbowbreeze.smsforfree.services;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,13 +13,13 @@ import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.util.Base64;
 import it.rainbowbreeze.smsforfree.util.ParserUtils;
 
-public class JacksmsApiManager
-	extends BaseApiManager
+public class OldJacksmsService
+	extends BaseService
 {
 	//---------- Ctors
-	public JacksmsApiManager()
+	public OldJacksmsService()
 	{
-		mUrlDictionary = new JacksmsDictionary();
+		mUrlDictionary = new OldJacksmsDictionary();
 	}
 
 	
@@ -27,18 +27,18 @@ public class JacksmsApiManager
 	
 	//---------- Private fields
 	private final static String LOG_TAG = "JacksmsApiManager";
-	private JacksmsDictionary mUrlDictionary;
+	private OldJacksmsDictionary mUrlDictionary;
 
 	
 	
 	
 	//---------- Public methods
 
-    private static JacksmsApiManager mInstance;
-    public static JacksmsApiManager instance()
+    private static OldJacksmsService mInstance;
+    public static OldJacksmsService instance()
     {
     	if (null == mInstance)
-    		mInstance = new JacksmsApiManager();
+    		mInstance = new OldJacksmsService();
     	return mInstance;
     }
     
@@ -52,7 +52,7 @@ public class JacksmsApiManager
     	
     	try {
     		reply = client.RequestGET(mUrlDictionary.getSessionCodeUrl());
-    		String jcode = ParserUtils.getStringBetween(reply, JacksmsDictionary.PARAM_JCODE, JacksmsDictionary.PARAMS_SEPARATOR);
+    		String jcode = ParserUtils.getStringBetween(reply, OldJacksmsDictionary.PARAM_JCODE, OldJacksmsDictionary.PARAMS_SEPARATOR);
     		res.setResultAsString(jcode); 
 		} catch (ClientProtocolException e) {
 			res.setException(e);
@@ -98,17 +98,17 @@ public class JacksmsApiManager
 			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
 		
 		//login result
-		paramValue = ParserUtils.getStringBetween(reply, JacksmsDictionary.PARAM_CREDENTIALS_CORRECT, JacksmsDictionary.PARAMS_SEPARATOR);
+		paramValue = ParserUtils.getStringBetween(reply, OldJacksmsDictionary.PARAM_CREDENTIALS_CORRECT, OldJacksmsDictionary.PARAMS_SEPARATOR);
 		
-		if (JacksmsDictionary.CREDENTIALS_CORRECT.equalsIgnoreCase(paramValue))
+		if (OldJacksmsDictionary.CREDENTIALS_CORRECT.equalsIgnoreCase(paramValue))
 		{
 			//good credentials
 			GlobalBag.jacksms_logged = true;
 			res.setResultAsBoolean(new Boolean(true));
 			//set also the session code and read the sms send by the user
-			paramValue = ParserUtils.getStringBetween(reply, JacksmsDictionary.PARAM_JCODE, JacksmsDictionary.PARAMS_SEPARATOR);
+			paramValue = ParserUtils.getStringBetween(reply, OldJacksmsDictionary.PARAM_JCODE, OldJacksmsDictionary.PARAMS_SEPARATOR);
 			GlobalBag.jacksms_jcode = paramValue;
-			paramValue = ParserUtils.getStringBetween(reply, JacksmsDictionary.PARAM_SENT, JacksmsDictionary.PARAMS_SEPARATOR);
+			paramValue = ParserUtils.getStringBetween(reply, OldJacksmsDictionary.PARAM_SENT, OldJacksmsDictionary.PARAMS_SEPARATOR);
 			GlobalBag.jacksms_sentmessage = paramValue;
 		} else {
 			//wrong credentials
