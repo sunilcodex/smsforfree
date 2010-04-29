@@ -1,4 +1,4 @@
-package it.rainbowbreeze.smsforfree.logic;
+package it.rainbowbreeze.smsforfree.services;
 
 public class AimonDictionary {
 	//---------- Ctors

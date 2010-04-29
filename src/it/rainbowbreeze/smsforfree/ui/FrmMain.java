@@ -1,9 +1,9 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.logic.AimonApiManager;
-import it.rainbowbreeze.smsforfree.logic.AimonDictionary;
-import it.rainbowbreeze.smsforfree.logic.JacksmsApiManager;
+import it.rainbowbreeze.smsforfree.services.AimonDictionary;
+import it.rainbowbreeze.smsforfree.services.AimonService;
+import it.rainbowbreeze.smsforfree.services.OldJacksmsService;
 import android.app.Activity;
 import android.os.Bundle;
 
