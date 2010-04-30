@@ -1,4 +1,7 @@
- 
+lista servizi attuali:
+http://jacksms.it/home/jacksms-engine/configurazioni-attuali.html
+
+
 [13:35:03] Alfredo Morresi: ottimo, allora manda pure!
 [13:35:26] JackSMS - Dario: l'idea di base è questa: tenere i dati dell'utente sul server e renderli accessibili da tutte le versioni
 [13:35:39] JackSMS - Dario: quindi con le api nuove puoi aggiungere contatti / servizi e recuperarli
@@ -52,25 +55,7 @@ abook   53448   ciao    +39.347.1234567 1
 abook   53449   ciao    +39.347.1234567 1
 abook   53450   ciao    +39.347.1234567 1
 abook   53451   ciao    +39.347.1234567 1
-[13:48:59] JackSMS - Dario: che restituisce anche id del contatto e id del servizio associato
-[13:51:10] Alfredo Morresi: ok...
-[13:51:56] JackSMS - Dario: c'è da smanettarci un po :D
-[13:52:05] Alfredo Morresi: si infatti...
-[13:52:16] JackSMS - Dario: ma alla fine sono abbastanza semplici
-[13:52:20] Alfredo Morresi: cmq l'ideale sarebbe avere quel doc condiviso con tutte queste cose che mi stai scrivendo
-[13:52:28] JackSMS - Dario: si certo
-[13:52:32] Alfredo Morresi: o per lo meno, un'unsieme minimo di funzionalita'
-[13:52:32] JackSMS - Dario: ci sono degli esempi formali
-[13:52:36] JackSMS - Dario: sisi
-[13:52:38] Alfredo Morresi: che permettano all'utente di usare il programma
-[13:52:46] Alfredo Morresi: poi le altre cose, mano a mano, si aggiungeranno
-[13:53:47] Alfredo Morresi: quindi -> autenticazione, invio sms, gestione dei servizi
-[13:53:52] JackSMS - Dario: esatto
-[13:53:52] JackSMS - Dario: :D
-[13:53:53] JackSMS - Dario: allor
-[13:54:01] JackSMS - Dario: scrivo il documentino per l'invio
-[13:54:12] JackSMS - Dario: (l'autenticazione è implicita nelle chiamate alle API)
-[13:56:32] Alfredo Morresi: si, via username oppure session id
+
 [13:56:41] Alfredo Morresi: poi ci sarebbe da scrivere anche un minimo di gestione degli errori
 [13:56:47] JackSMS - Dario: c'è
 [13:56:52] JackSMS - Dario: ma non l'ho ancora scritta

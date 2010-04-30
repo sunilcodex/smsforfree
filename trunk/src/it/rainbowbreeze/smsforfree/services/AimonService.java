@@ -39,6 +39,16 @@ public class AimonService
     	return mInstance;
     }
 
+	@Override
+	public String getServiceName() {
+		return "Aimon";
+	}
+	
+	@Override
+	public boolean hasConfigurations() {
+		return false;
+	}
+
 
     
     
@@ -47,7 +57,7 @@ public class AimonService
     {
     	//args check
     	try {
-    		checkIfCredentialsAreEmpty(username, password);
+    		checkCredentialsValidity(username, password);
     	} catch (IllegalArgumentException e) {
     		return new ResultOperation(e);
 		}
@@ -70,7 +80,7 @@ public class AimonService
     {
     	//args check
     	try {
-    		checkIfCredentialsAreEmpty(username, password);
+    		checkCredentialsValidity(username, password);
     	} catch (IllegalArgumentException e) {
     		return new ResultOperation(e);
 		}
@@ -152,7 +162,7 @@ public class AimonService
     	WebserviceClient client = new WebserviceClient();
     	
     	try {
-    		reply = client.RequestPOST(url, data);
+    		reply = client.requestPost(url, data);
 		} catch (ClientProtocolException e) {
 			// TODO
 			e.printStackTrace();

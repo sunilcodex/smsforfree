@@ -90,9 +90,20 @@ public class WebserviceClient
 	 * @throws IOException 
 	 * @throws ClientProtocolException 
 	 */
-	public String RequestPOST(
+	public String requestPost(
 			String url,
-			HashMap<String, String> postValues
+			HashMap<String, String> parameters
+		)
+		throws ClientProtocolException, IOException
+	{
+		return requestPost(url, null, parameters);
+	}
+	
+	
+	public String requestPost(
+			String url,
+			HashMap<String, String> headers,
+			HashMap<String, String> parameters
 		)
 		throws ClientProtocolException, IOException
 	{
@@ -101,27 +112,38 @@ public class WebserviceClient
 		// another reference, but with different method, here
 		// http://www.anddev.org/doing_http_post_with_android-t492.html
 
-		//create new list of values to pass as post data
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		if (postValues != null)
-		{
-			Iterator<String> it = postValues.keySet().iterator();
-			String k, v;
-			while (it.hasNext()) {
-				k = it.next();
-				v = postValues.get(k);
-				nameValuePairs.add(new BasicNameValuePair(k, v));
-			}
-		}
-
 		//prepare the post client
 		HttpPost httpPost = new HttpPost(url);
 		httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
-		
+		//create new list of values to pass as post data
+		if (headers != null) {
+			Iterator<String> it = headers.keySet().iterator();
+			String k, v;
+			while (it.hasNext()) {
+				k = it.next();
+				v = headers.get(k);
+				httpPost.setHeader(k, v);
+			}
+		}
+
+		//create new list of values to pass as post data
+		if (parameters != null) {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+			Iterator<String> it = parameters.keySet().iterator();
+			String k, v;
+			while (it.hasNext()) {
+				k = it.next();
+				v = parameters.get(k);
+				nameValuePairs.add(new BasicNameValuePair(k, v));
+			}
+
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		}
+
 		//execute the request
 		String result;
-		httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 		// Execute HTTP Post Request
 		result = executeResponse(httpPost);

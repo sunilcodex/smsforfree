@@ -1,8 +1,33 @@
 package it.rainbowbreeze.smsforfree.services;
 
+
+/**
+ * One of the JackSMS template configured by the user
+ * 
+ * @author Alfredo "Rainbowbreeze" Morresi
+ *
+ */
 public class JacksmsUserService {
 	//---------- Ctors
 	
+	/**
+	 * 
+	 */
+	public JacksmsUserService(
+			int id,
+			int serviceId,
+			String username,
+			String password,
+			String freeField1,
+			String freeField2
+	) {
+		setId(id);
+		setServiceId(serviceId);
+		setUsername(username);
+		setPassword(password);
+		setFreeField1(freeField1);
+		setFreeField2(freeField2);
+	}
 
 
 
@@ -12,6 +37,18 @@ public class JacksmsUserService {
 
 
 	//---------- Public properties
+	private int mId;
+	public int getId()
+	{ return mId; }
+	public void setId(int value)
+	{ mId = value; }
+
+	private int mServiceId;
+	public int getServiceId()
+	{ return mServiceId; }
+	public void setServiceId(int value)
+	{ mServiceId = value; }
+
 	private String[] mParameters = new String[4];
 	public String[] getParameters()
 	{ return mParameters; }
@@ -35,12 +72,6 @@ public class JacksmsUserService {
 	{ return mParameters[3]; }
 	public void setFreeField2(String value)
 	{ mParameters[3] = value; }
-
-	private int mId;
-	public int getId()
-	{ return mId; }
-	public void setId(int value)
-	{ mId = value; }
 
 
 

@@ -30,6 +30,18 @@ public class OldJacksmsService
 	private OldJacksmsDictionary mUrlDictionary;
 
 	
+
+	@Override
+	public String getServiceName() {
+		return "old JackSMS";
+	}
+	
+	@Override
+	public boolean hasConfigurations() {
+		return false;
+	}
+	
+	
 	
 	
 	//---------- Public methods
@@ -69,7 +81,7 @@ public class OldJacksmsService
     {
     	//args check
     	try {
-    		checkIfCredentialsAreEmpty(username, password);
+    		checkCredentialsValidity(username, password);
     	} catch (IllegalArgumentException e) {
     		return new ResultOperation(e);
 		}
@@ -83,7 +95,7 @@ public class OldJacksmsService
     	data.put("p", Base64.encodeBytes(password.getBytes()));
     	String reply;
     	try {
-    		reply = client.RequestPOST(mUrlDictionary.getCheckCredentialsUrl(), data);
+    		reply = client.requestPost(mUrlDictionary.getCheckCredentialsUrl(), data);
 		} catch (ClientProtocolException e) {
 			// TODO
 			e.printStackTrace();
