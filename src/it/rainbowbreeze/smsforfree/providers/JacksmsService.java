@@ -1,4 +1,4 @@
-package it.rainbowbreeze.smsforfree.services;
+package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,9 +9,10 @@ import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
+import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 
 public class JacksmsService
-	extends BaseService
+	extends SmsProvider
 {
 	//---------- Ctors
 	public JacksmsService() {
