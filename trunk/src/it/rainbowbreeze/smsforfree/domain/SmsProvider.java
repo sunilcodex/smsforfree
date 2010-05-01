@@ -15,8 +15,14 @@ import android.text.TextUtils;
  *
  */
 public abstract class SmsProvider
+	extends SmsService
 {
 	//---------- Ctors
+	protected SmsProvider()
+	{ super(); }
+	
+	protected SmsProvider(int numberOfParameters)
+	{ super(numberOfParameters); }
 
 	
 	
@@ -24,19 +30,6 @@ public abstract class SmsProvider
 	//---------- Private fields
 
 	
-	
-	
-	//---------- Public properties
-	/** The provider id	*/
-	public abstract String getId();
-	
-	/** The provider name */
-	public abstract String getName();
-	
-	/** Has this provider sub-services? */
-	public abstract boolean hasConfigurations();
-	
-
 	
 	
 	//---------- Public fields
@@ -48,24 +41,23 @@ public abstract class SmsProvider
 	
 
 
+	//---------- Public properties
+	
+	/** Has this provider sub-services? */
+	public abstract boolean hasSubServices();
+	
+	public abstract List<SmsService> getAllSubservice();
+
+	public abstract List<SmsConfigurableService> getAllConfiguredSubservice();
+
+	public abstract SmsService getSubservice(String subserviceId);
+
+    public abstract void setSelectedSubservice(String subserviceId);
+	
+	
 	//---------- Public methods
 	
-	public abstract List<String> getServiceParametersDesc();
-
-	public abstract List<String> getServiceParameters();
-
-	public abstract void setServiceParameters(List<String> parameters);
 	
-	public abstract List<String> getAllConfigurationsName();
-
-	public abstract List<String> getConfiguredConfigurationsName();
-
-	public abstract List<String> getConfigurationParametersDesc(String configurationId);
-
-	public abstract List<String> setConfigurationParameters(String configurationId, List<String> parameters);
-
-	public abstract List<String> getConfigurationParameters(String configurationId);
-
 	
 	//---------- Private methods
 	
