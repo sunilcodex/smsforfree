@@ -1,4 +1,4 @@
-package it.rainbowbreeze.smsforfree.services;
+package it.rainbowbreeze.smsforfree.domain;
 
 import java.util.List;
 
@@ -6,31 +6,34 @@ import android.text.TextUtils;
 
 
 /**
- * Base class for sms service management
+ * Base provider for sms service
  * 
- *  Each service could have more "configurations" (for example, multi-provider service)
- * 
+ *  Each service could have more "sub-services" (for example, the service act as a
+ *  unified "proxy" for other services)
  * 
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public abstract class BaseService
+public abstract class SmsProvider
 {
+	//---------- Ctors
+
+	
+	
+	
 	//---------- Private fields
 
 	
 	
 	
 	//---------- Public properties
+	/** The provider id	*/
+	public abstract String getId();
 	
-	/**
-	 * The service name
-	 */
-	public abstract String getServiceName();
-
-	/**
-	 * Has this service configurations?
-	 */
+	/** The provider name */
+	public abstract String getName();
+	
+	/** Has this provider sub-services? */
 	public abstract boolean hasConfigurations();
 	
 

@@ -1,4 +1,4 @@
-package it.rainbowbreeze.smsforfree.services;
+package it.rainbowbreeze.smsforfree.providers;
 
 public class OldJacksmsDictionary {
 	//---------- Ctors
