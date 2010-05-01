@@ -14,8 +14,12 @@ import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.util.Base64;
 import it.rainbowbreeze.smsforfree.util.ParserUtils;
 
+/**
+ * Old Jacksms provider - don't take into account!
+ * @author rainbowbreeze
+ *
+ */
 public class OldJacksmsService
-	extends SmsProvider
 {
 	//---------- Ctors
 	public OldJacksmsService()
@@ -32,12 +36,10 @@ public class OldJacksmsService
 
 	
 
-	@Override
 	public String getServiceName() {
 		return "old JackSMS";
 	}
 	
-	@Override
 	public boolean hasConfigurations() {
 		return false;
 	}
@@ -80,12 +82,12 @@ public class OldJacksmsService
     
     public ResultOperation checkCredentials(String username, String password)
     {
-    	//args check
-    	try {
-    		checkCredentialsValidity(username, password);
-    	} catch (IllegalArgumentException e) {
-    		return new ResultOperation(e);
-		}
+//    	//args check
+//    	try {
+//    		checkCredentialsValidity(username, password);
+//    	} catch (IllegalArgumentException e) {
+//    		return new ResultOperation(e);
+//		}
     	
     	ResultOperation res = new ResultOperation();
     	WebserviceClient client = new WebserviceClient();
@@ -107,8 +109,8 @@ public class OldJacksmsService
 			return new ResultOperation(e);
 		}
     	
-		if (TextUtils.isEmpty(reply))
-			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
+//		if (TextUtils.isEmpty(reply))
+//			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
 		
 		//login result
 		paramValue = ParserUtils.getStringBetween(reply, OldJacksmsDictionary.PARAM_CREDENTIALS_CORRECT, OldJacksmsDictionary.PARAMS_SEPARATOR);

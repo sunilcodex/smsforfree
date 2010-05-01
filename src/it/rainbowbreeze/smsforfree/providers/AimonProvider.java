@@ -2,6 +2,7 @@ package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -10,46 +11,66 @@ import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
-public class AimonService
-	extends SmsProvider
+public class AimonProvider
+	extends SmsSingleProvider
 {
 	//---------- Ctors
-	public AimonService()
+	public AimonProvider()
 	{
+		this("Username", "Password");
+	}
+	
+	public AimonProvider(String usernameDesc, String passwordDesc)
+	{
+		super(PARAM_NUMBER);
+		mInstance = this;
 		mDictionary = new AimonDictionary();
+		mParametersDesc[PARAM_INDEX_USERNAME] = usernameDesc;
+		mParametersDesc[PARAM_INDEX_PASSWORD] = passwordDesc;
 	}
 
 	
 	
 	
 	//---------- Private fields
+	private final static int PARAM_NUMBER = 2;
+	private final static int PARAM_INDEX_USERNAME = 0;
+	private final static int PARAM_INDEX_PASSWORD = 1;
+
 	private AimonDictionary mDictionary;
-	public static final String ERROR_NO_REPLY_FROM_SITE = "NO_REPLY";
+	
 
 	
 	
-	
 	//---------- Public properties
-    private static AimonService mInstance;
-    public static AimonService instance()
+    private static AimonProvider mInstance;
+    public static AimonProvider instance()
     {
     	if (null == mInstance)
-    		mInstance = new AimonService();
+    		mInstance = new AimonProvider();
     	return mInstance;
     }
 
 	@Override
-	public String getServiceName() {
-		return "Aimon";
-	}
-	
-	@Override
-	public boolean hasConfigurations() {
-		return false;
-	}
+	public String getId()
+	{ return "Aimon"; }
 
+	@Override
+	public String getName()
+	{ return "Aimon"; }
+
+	@Override
+	public int getParametersNumber()
+	{ return PARAM_NUMBER; }
+
+	@Override
+	public int getMaxMessageLenght() {
+		return 160;
+	}
 
     
     
