@@ -21,29 +21,40 @@ public class AimonProvider
 	//---------- Ctors
 	public AimonProvider()
 	{
-		this("Username", "Password");
+		this("Username", "Password", "Sender", "106: Anonymous, 59: Sender, 84: Sender + report");
 	}
 	
-	public AimonProvider(String usernameDesc, String passwordDesc)
+	public AimonProvider(String usernameDesc, String passwordDesc, String senderDesc, String kindofsmsDesc)
 	{
 		super(PARAM_NUMBER);
 		mInstance = this;
 		mDictionary = new AimonDictionary();
 		mParametersDesc[PARAM_INDEX_USERNAME] = usernameDesc;
 		mParametersDesc[PARAM_INDEX_PASSWORD] = passwordDesc;
+		mParametersDesc[PARAM_INDEX_SENDER] = kindofsmsDesc;
 	}
 
 	
 	
 	
 	//---------- Private fields
-	private final static int PARAM_NUMBER = 2;
+	private final static int PARAM_NUMBER = 4;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
+	private final static int PARAM_INDEX_SENDER = 2;
+	private final static int PARAM_INDEX_ID_API = 3;
 
 	private AimonDictionary mDictionary;
 	
+	
+	
 
+	//---------- Public fields
+	public final static String ID_API_FIXED_SENDER = "106";
+	public final static String ID_API_FREE_SENDER_NO_REPORT = "59";
+	public final static String ID_API_FREE_SENDER_REPORT = "84";
+	
+	
 	
 	
 	//---------- Public properties
@@ -91,8 +102,23 @@ public class AimonProvider
     	return doRequest(mDictionary.getUrlGetCredit(), data);
     }
 
+
+    @Override
+	public ResultOperation sendMessage(String serviceId, String destination, String body) {
+		// TODO Auto-generated method stub
+		return sendSms(
+				mParametersValue[PARAM_INDEX_USERNAME],
+				mParametersValue[PARAM_INDEX_PASSWORD],
+				mParametersValue[PARAM_INDEX_SENDER],
+				destination,
+				body,
+				mParametersValue[PARAM_INDEX_ID_API]);
+	}
     
-	public ResultOperation sendSms(
+    
+    
+	//---------- Private methods
+	private ResultOperation sendSms(
     		String username,
     		String password,
     		String sender,
@@ -167,11 +193,8 @@ public class AimonProvider
     	return doRequest(mDictionary.getUrlSendSms(), data);
     }
 
-    
-    
-    
-	//---------- Private methods
-    private void appendCredential(HashMap<String, String> data, String username, String password)
+
+	private void appendCredential(HashMap<String, String> data, String username, String password)
     {
     	data.put(AimonDictionary.PARAM_USERNAME, username);
     	data.put(AimonDictionary.PARAM_PASSWORD, password);

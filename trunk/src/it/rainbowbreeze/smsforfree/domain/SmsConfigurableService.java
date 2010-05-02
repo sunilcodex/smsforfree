@@ -8,6 +8,23 @@ public class SmsConfigurableService
 		super(numberOfParameters);
 		mNumberOfParameters = numberOfParameters;
 	}
+	
+	public SmsConfigurableService(String id, String name, int maxLen, int numberOfParameters) {
+		super(numberOfParameters);
+		setId(id);
+		setName(name);
+		setMaxMessageLenght(maxLen);
+	}
+	
+	public SmsConfigurableService(String id, String templateId, String name, int maxLen, int numberOfParameters) {
+		super(numberOfParameters);
+		setId(id);
+		setTemplateId(templateId);
+		setName(name);
+		setMaxMessageLenght(maxLen);
+	}
+	
+
 
 	
 	
@@ -46,8 +63,7 @@ public class SmsConfigurableService
 	{ return mMaxMessageLenght; }
 	public void setMaxMessageLenght(int value)
 	{ mMaxMessageLenght = value; }
-	
-	
+
 
 	
 	

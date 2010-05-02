@@ -1,5 +1,6 @@
 package it.rainbowbreeze.smsforfree.providers;
 
+import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import android.text.TextUtils;
 
 /**
  * 
- * @author Alfredo "rainbowbreeze" Morresi
+ * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class JacksmsDictionary
@@ -38,9 +39,10 @@ public class JacksmsDictionary
 	private static final String SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
-
+	
 
 	//---------- Public properties
+	public static final String RESULT_OK = "Result 1";
 
 
 	//---------- Public methods
@@ -51,7 +53,7 @@ public class JacksmsDictionary
 
 	
 	public HashMap<String, String> getHeaderForSendingMessage(
-			JacksmsUserService service,
+			SmsService service,
 			String destination,
 			String message)
 	{
@@ -61,12 +63,12 @@ public class JacksmsDictionary
 		
 		//first header
 		key = "J_R";
-		value = String.valueOf(service.getServiceId()) + SEPARATOR + 
+		value = String.valueOf(service.getTemplateId()) + SEPARATOR + 
 				destination + SEPARATOR +
-				service.getUsername() + SEPARATOR +
-				service.getPassword() + SEPARATOR +
-				replaceServiceParameter(service.getFreeField1()) + SEPARATOR +
-				replaceServiceParameter(service.getFreeField2());
+				replaceServiceParameter(service.getParameterValue(0)) + SEPARATOR +
+				replaceServiceParameter(service.getParameterValue(1)) + SEPARATOR +
+				replaceServiceParameter(service.getParameterValue(2)) + SEPARATOR +
+				replaceServiceParameter(service.getParameterValue(3));
 		headers.put(key, value);
 		
 		

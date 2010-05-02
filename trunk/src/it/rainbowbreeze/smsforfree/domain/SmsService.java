@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
+
 public abstract class SmsService
 {
 	//---------- Ctors
@@ -32,6 +34,14 @@ public abstract class SmsService
 	/** Max length of sms message */
 	public abstract int getMaxMessageLenght();
 	
+	/** Referring template */
+	protected String mTemplateId;
+	public String getTemplateId()
+	{ return mTemplateId; }
+	public void setTemplateId(String value)
+	{ mTemplateId = value; }
+	
+	
 	/** Description of service parameters */ 
 	protected String[] mParametersDesc;
 	public String[] getParametersDesc()
@@ -57,6 +67,7 @@ public abstract class SmsService
 	
 	//---------- Public methods
 	
+	
 	@Override
 	public boolean equals(Object aThat) {
 	    //check for self-comparison
@@ -75,6 +86,12 @@ public abstract class SmsService
 	    SmsService that = (SmsService)aThat;
 
 	    return getId().equals(that.getId());
+	}
+	
+	@Override
+	public String toString() {
+		//used by Spinner adapter
+		return getName();
 	}
 
 	

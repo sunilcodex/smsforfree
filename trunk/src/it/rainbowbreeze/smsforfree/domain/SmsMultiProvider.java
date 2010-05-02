@@ -29,24 +29,24 @@ public abstract class SmsMultiProvider
 	public boolean hasSubServices()
 	{ return true; }
 
-    protected List<SmsService> mAllSubservice;
+    protected List<SmsService> mTemplateSubservices;
     @Override
-	public List<SmsService> getAllSubservice()
-	{ return mAllSubservice; }
+	public List<SmsService> getTemplateSubservices()
+	{ return mTemplateSubservices; }
 	
+    protected List<SmsService> mConfiguredSubservice;
     @Override
-	public SmsService getSubservice(String subserviceId) {
+    public List<SmsService> getConfiguredSubservices()
+    { return mConfiguredSubservice; }
+    
+    @Override
+	public SmsService getConfiguredSubservice(String subserviceId){
 		if (TextUtils.isEmpty(subserviceId)) return null;
-		for (SmsService service : mAllSubservice){
+		for (SmsService service : mConfiguredSubservice){
 			if (subserviceId.equals(service.getId())) return service;
 		}
 		return null;
 	}
-    
-    protected List<SmsConfigurableService> mConfiguredSubservice;
-    @Override
-    public List<SmsConfigurableService> getAllConfiguredSubservice()
-    { return mConfiguredSubservice; }
     
     protected SmsService mSelectedService;
     public SmsService getSelectedSubservice()
@@ -56,7 +56,7 @@ public abstract class SmsMultiProvider
     public void setSelectedSubservice(String subserviceId) {
 		mSelectedService = null;
 		if (TextUtils.isEmpty(subserviceId)) return;
-		for (SmsService service : mAllSubservice){
+		for (SmsService service : mConfiguredSubservice){
 			if (subserviceId.equals(service.getId())){
 				mSelectedService = service;
 				return;
