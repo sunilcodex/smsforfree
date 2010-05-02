@@ -2,4 +2,36 @@
 <resources>
     <string name="hello">Hello World, FrmMain!</string>
     <string name="app_name">SmsForFree</string>
+    
+    <string name="common_username">Username</string>
+    <string name="common_password">Password</string>
+    <string name="common_sender">Sender</string>
+    <string name="common_aimon_idapi">106: Anonymous, 59: Sender, 84: Sender + report</string>
+    <string name="common_btnYes">Yes</string>
+    <string name="common_btnNo">No</string>
+    <string name="common_msg_genericError">Generic error: </string>
+    
+
+    <!-- ActSendSms -->
+    <string name="actsendsms_txtDestination">Destionation number</string>
+    <string name="actsendsms_txtBody">Message</string>
+    <string name="actsendsms_btnSend">Send</string>
+    <string name="actsendsms_lblService">Choose service</string>
+    <string name="actsendsms_dlgPickNumber">Choose service</string>
+    <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
+    <string name="actsendsms_msg_noProvider">Choose a provider...</string>
+    <string name="actsendsms_msg_noSubservice">Choose a service of the provider...</string>
+    <string name="actsendsms_msg_noDestination">Enter a phone number as destination...</string>
+    <string name="actsendsms_msg_wrongDestination">Enter a valid phone number as destination...</string>
+    <string name="actsendsms_msg_noMessage">Enter a message...</string>
+    <string name="actsendsms_msg_messageTooLong">Message is too long...</string>
+    <string name="actsendsms_msg_errorSendingMessage">Error sending message:</string>
+    <string name="actsendsms_msg_sendOk">Message sent.</string>
+    <string name="actsendsms_phoneType_home">Home</string>
+    <string name="actsendsms_phoneType_mobile">Mob</string>
+    <string name="actsendsms_phoneType_work">Work</string>
+    <string name="actsendsms_phoneType_workfax">Work fax</string>
+    <string name="actsendsms_phoneType_homefax">Home fax</string>
+    <string name="actsendsms_phoneType_other">Other</string>
+    
 </resources>

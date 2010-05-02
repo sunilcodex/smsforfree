@@ -1,6 +1,6 @@
 package it.rainbowbreeze.smsforfree.common;
 
-public class Def {
+public class GlobalDef {
 	/** keys for application preferences */
 	public static final String SharedPreferencesKeys = "SmsForFreePrefs"; 
 }

@@ -1,6 +1,6 @@
 package it.rainbowbreeze.smsforfree.data;
 
-import it.rainbowbreeze.smsforfree.common.Def;
+import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
@@ -65,6 +65,6 @@ public class JacksmsPreferencesDao
 	@Override
 	protected String getPreferencesKey() {
 		// TODO Auto-generated method stub
-		return Def.SharedPreferencesKeys;
+		return GlobalDef.SharedPreferencesKeys;
 	}
 }

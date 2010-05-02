@@ -1,5 +1,6 @@
 package it.rainbowbreeze.smsforfree.providers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
+import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -67,109 +69,98 @@ public class JacksmsProvider
 
 
 
+
 	
 
 
 	//---------- Public methods
-//	public void loadSubServices()
-//	{
-//		//TODO
-//		mAllSubservice = new ArrayList<SmsSubService>();
-//		
-//		SmsSubService service;
-//		service = new SmsSubService(61, "Aimon", "1.4", 112, 112);
-//		mAllSubservice.put(service.getId(), service);
-//		service = new JacksmsTemplateService(62, "Aimon-Free", "1.2", 160, 612);
-//		mTemplateServices.put(service.getId(), service);
-//	}
-//	
-//	
-//	public void loadUserService()
-//	{
-//		JacksmsUserService service;
-//		service = new JacksmsUserService(1, 62, "XXXX", "XXXX", "XXXX", "");
-//		mUserServices.put(service.getServiceId(), service);
-//	}
-//	
-//	
-//	public void loadCredentials()
-//	{
-//		//TODO
-//		mJacksmsUsername = "guest";
-//		mJacksmsPassword = "guest";
-//	}
-//
-//
-//    
-//	public void saveCredentials(String newUsername, String newValue)
-//	{
-//		//TODO
-//		mJacksmsUsername = newUsername;
-//		mJacksmsPassword = newValue;
-//	}
-//
-//
-//    
-//    public ResultOperation sendSms(
-//    		int serviceId,
-//    		String destination,
-//    		String message)
-//    {
-//    	//args check
-////    	try {
-////    		checkIfCredentialsAreEmpty(username, password);
-////    	} catch (IllegalArgumentException e) {
-////    		return new ResultOperation(e);
-////		}
-//    	
-//    	JacksmsUserService service = mUserServices.get(serviceId);
-//    	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
-//    	doRequest(mDictionary.getUrlForSendingMessage(mJacksmsUsername, mJacksmsPassword), headers);
-//    	return null;
-//    }
-//
-//
-//
-//
-//	//---------- Private methods
-//    
-//    
-//    private ResultOperation doRequest(String url, HashMap<String, String> headers)
-//    {
-//    	String reply = "";
-//    	WebserviceClient client = new WebserviceClient();
-//    	
-//    	try {
-//    		reply = client.requestPost(url, headers, null);
-//		} catch (ClientProtocolException e) {
-//			// TODO
-//			e.printStackTrace();
-//			return new ResultOperation(e);
-//		} catch (IOException e) {
-//			// TODO
-//			e.printStackTrace();
-//			return new ResultOperation(e);
-//		}
-//    	
-//    	//empty reply
-//    	if (TextUtils.isEmpty(reply)) {
-//			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
-//		}
-//		
-//    	ResultOperation res = new ResultOperation();
-//		//exams the result
-//		if (reply.startsWith(AimonDictionary.RESULT_OK))
-//			//ok
-//			res.setResultAsString(reply);
-//		else {
-//			//some sort of error
-//			res.setException(new Exception(reply));
-//		}
-//		return res;    	
-//    }
+	public ResultOperation loadAllServices()
+	{
+		ResultOperation res = new ResultOperation();
+
+		//TODO
+		mTemplateSubservices = new ArrayList<SmsService>();
+		
+		SmsConfigurableService service;
+		service = new SmsConfigurableService("62", "Aimon-Free", 112, 2);
+		mTemplateSubservices.add(service);
+		service = new SmsConfigurableService("61", "Aimon", 612, 2);
+		mTemplateSubservices.add(service);
+		
+		return res; 
+	}
+	
+	
+	public ResultOperation loadConfiguredServices()
+	{
+		ResultOperation res = new ResultOperation();
+
+		//TODO
+		mConfiguredSubservice = new ArrayList<SmsService>();
+
+		
+		return res; 
+	}
+	
+	@Override
+    public ResultOperation sendMessage(
+    		String serviceId,
+    		String destination,
+    		String message)
+    {
+    	String jackSmsUsername = mParametersValue[PARAM_INDEX_USERNAME];
+    	String jackSmsPassword = mParametersValue[PARAM_INDEX_PASSWORD];
+    	//args check
+    	try {
+    		checkCredentialsValidity(jackSmsUsername, jackSmsPassword);
+    	} catch (IllegalArgumentException e) {
+    		return new ResultOperation(e);
+		}
+    	
+    	SmsService service = getConfiguredSubservice(serviceId);
+    	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
+    	return doRequest(mDictionary.getUrlForSendingMessage(jackSmsUsername, jackSmsPassword), headers);
+    }
 
 
 
+
+	//---------- Private methods
+    
+    
+    private ResultOperation doRequest(String url, HashMap<String, String> headers)
+    {
+    	String reply = "";
+    	WebserviceClient client = new WebserviceClient();
+    	
+    	try {
+    		reply = client.requestPost(url, headers, null);
+		} catch (ClientProtocolException e) {
+			// TODO
+			e.printStackTrace();
+			return new ResultOperation(e);
+		} catch (IOException e) {
+			// TODO
+			e.printStackTrace();
+			return new ResultOperation(e);
+		}
+    	
+    	//empty reply
+    	if (TextUtils.isEmpty(reply)) {
+			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
+		}
+		
+    	ResultOperation res = new ResultOperation();
+		//exams the result
+		if (reply.startsWith(JacksmsDictionary.RESULT_OK))
+			//ok
+			res.setResultAsString(reply);
+		else {
+			//some sort of error
+			res.setException(new Exception(reply));
+		}
+		return res;    	
+    }
 
 
 }

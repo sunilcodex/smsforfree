@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
+
 import java.util.List;
 
 import android.text.TextUtils;
@@ -46,16 +48,23 @@ public abstract class SmsProvider
 	/** Has this provider sub-services? */
 	public abstract boolean hasSubServices();
 	
-	public abstract List<SmsService> getAllSubservice();
+	public abstract List<SmsService> getTemplateSubservices();
 
-	public abstract List<SmsConfigurableService> getAllConfiguredSubservice();
+	public abstract List<SmsService> getConfiguredSubservices();
 
-	public abstract SmsService getSubservice(String subserviceId);
+	public abstract SmsService getConfiguredSubservice(String subserviceId);
 
     public abstract void setSelectedSubservice(String subserviceId);
 	
 	
 	//---------- Public methods
+	/**
+	 * Send the message
+	 * 
+	 * @param destination
+	 * @param body
+	 */
+	public abstract ResultOperation sendMessage(String serviceId, String destination, String body);
 	
 	
 	
