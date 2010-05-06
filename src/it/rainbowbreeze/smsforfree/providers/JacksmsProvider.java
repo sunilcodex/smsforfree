@@ -97,7 +97,17 @@ public class JacksmsProvider
 
 		//TODO
 		mConfiguredSubservice = new ArrayList<SmsService>();
-
+		SmsConfigurableService service;
+		service = new SmsConfigurableService("1", "62", "Aimon-Free", 112, 4);
+		service.setParameterValue(0, "rainbowbreeze");
+		service.setParameterValue(1, "7941m0n");
+		service.setParameterValue(2, "3927686894");
+		mConfiguredSubservice.add(service);
+		service = new SmsConfigurableService("2", "61", "Aimon", 612, 4);
+		service.setParameterValue(0, "rainbowbreeze");
+		service.setParameterValue(1, "7941m0n");
+		service.setParameterValue(2, "3927686894");
+		mConfiguredSubservice.add(service);
 		
 		return res; 
 	}

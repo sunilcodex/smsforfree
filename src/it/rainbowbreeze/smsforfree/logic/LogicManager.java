@@ -37,7 +37,19 @@ public class LogicManager {
 		
 		//initialize provider list
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
-
+		AimonProvider aimonProv = new AimonProvider(usernameDesc, passwordDesc, senderDesc, aimonIdApiDesc);
+		aimonProv.setParameterValue(0, "rainbowbreeze@aimon.it");
+		aimonProv.setParameterValue(1, "7941m0n");
+		aimonProv.setParameterValue(2, "+393927686894");
+		aimonProv.setParameterValue(3, "59");
+		GlobalBag.providerList.add(aimonProv);
+		
+		JacksmsProvider jackProv = new JacksmsProvider(usernameDesc, passwordDesc);
+		jackProv.setParameterValue(0, "rainbowbreeze");
+		jackProv.setParameterValue(1, "79j4cksms");
+		jackProv.loadAllServices();
+		jackProv.loadConfiguredServices();
+		GlobalBag.providerList.add(jackProv);
 
 		return res;
 	}

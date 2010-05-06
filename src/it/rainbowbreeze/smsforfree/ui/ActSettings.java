@@ -9,7 +9,9 @@ import android.app.ListActivity;
  * @author rainbowbreeze
  *
  */
-public class ActSettings extends ListActivity {
+public class ActSettings
+	extends ListActivity
+{
 	//---------- Ctors
 
 	//---------- Private fields

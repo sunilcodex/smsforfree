@@ -65,6 +65,6 @@ public class JacksmsPreferencesDao
 	@Override
 	protected String getPreferencesKey() {
 		// TODO Auto-generated method stub
-		return GlobalDef.SharedPreferencesKeys;
+		return GlobalDef.AppPreferencesKeys;
 	}
 }
