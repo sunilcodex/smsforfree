@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -43,6 +45,12 @@ public class ActSendSms
 	
 	private static final int DIALOG_PHONES = 10;
 
+	//---------- Private fields
+	private final static int OPTIONMENU_EXIT = 1;
+	private final static int OPTIONMENU_SETTINGS = 2;
+	private final static int OPTIONMENU_ABOUT = 3;
+
+	
 	private Spinner mSpiProviders;
 	private Spinner mSpiSubservices;
 
@@ -79,7 +87,7 @@ public class ActSendSms
         }
         
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
-        mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiSubServices);
+        mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
         mTxtDestination = (EditText) findViewById(R.id.actsendsms_txtDestination);
         mTxtMessage = (EditText) findViewById(R.id.actsendsms_txtMessage);
         mLblMessageLength = (TextView) findViewById(R.id.actsendsms_lblMessageLength);
@@ -99,6 +107,40 @@ public class ActSendSms
         //load default configuration
         //TODO
     }
+    
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    
+		menu.add(0, OPTIONMENU_SETTINGS, 0, R.string.actsendsms_menuSettings)
+			.setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(0, OPTIONMENU_ABOUT, 2, R.string.actsendsms_menuAbout);
+		menu.add(0, OPTIONMENU_EXIT, 3, R.string.actsendsms_menuExit)
+			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		
+		return true;    	
+    }
+    
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case OPTIONMENU_EXIT:
+			finish();
+			break;
+			
+		case OPTIONMENU_SETTINGS:
+			ActivityHelper.openSettingsMain(this);
+			break;
+			
+		case OPTIONMENU_ABOUT:
+//			ActivityHelper.openAbout(this);
+			break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+   }
     
     
     @Override

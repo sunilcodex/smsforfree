@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<ScrollView
+		style="@style/common_scrollActivityArea"
+	>
+		<LinearLayout
+			style="@style/common_layoutActivityAreaScrollable"
+		>
+		
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter00"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter00"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter01"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter01"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter02"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter02"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter03"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter03"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter04"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter04"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter05"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter05"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter06"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter06"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter07"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter07"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter08"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter08"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblParameter09"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtParameter09"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+			
+			<Button
+				android:id="@+id/actsettingssmsservice_btnConfigsubservices"
+				style="@style/actsettingssmsservice_btnConfigSubservices"
+				android:text="@string/actsettingssmsservice_btnConfigureSubservices"
+			/>
+				
+		</LinearLayout>
+	</ScrollView>
+
+</merge>

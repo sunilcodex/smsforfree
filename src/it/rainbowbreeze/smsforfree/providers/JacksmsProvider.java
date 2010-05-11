@@ -9,6 +9,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.text.TextUtils;
 
+import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
@@ -38,6 +39,9 @@ public class JacksmsProvider
 	
 
 	//---------- Private fields
+	/** SerialID */
+	private static final long serialVersionUID = -3506638204316903447L;
+
 	private final static int PARAM_NUMBER = 2;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
@@ -171,6 +175,16 @@ public class JacksmsProvider
 		}
 		return res;    	
     }
+
+	@Override
+	protected String getParametersFileName() {
+		return GlobalDef.JacksmsParametersFileName;
+	}
+
+	@Override
+	protected String getSubservicesFileName() {
+		return GlobalDef.JacksmsSubservicesFileName;
+	}
 
 
 }
