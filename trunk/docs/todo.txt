@@ -1,3 +1,10 @@
+<<<<<<< .mine
+
+Lista servizi da consultare 
+http://j.jacksms.it/?action=UPDATE
+
+=======
 http://test.jacksms.it/chi-siamo.html
 
  
+>>>>>>> .r10

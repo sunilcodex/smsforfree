@@ -6,23 +6,23 @@
 >
 
 	<TextView
-		android:id="@+id/actsendsms_lblService"
+		android:id="@+id/actsendsms_lblProvider"
 		style="@style/common_TextView"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
-		android:text="@string/actsendsms_lblService"
+		android:text="@string/actsendsms_lblProvider"
 	/>
 
 	<Spinner
 		android:id="@+id/actsendsms_spiProviders"
 		style="@style/common_Spinner"
 		android:layout_alignParentLeft="true"
-		android:layout_below="@id/actsendsms_lblService"
-		android:prompt="@string/actsendsms_lblService"
+		android:layout_below="@id/actsendsms_lblProvider"
+		android:prompt="@string/actsendsms_lblProvider"
 	/>			
 
 	<Spinner
-		android:id="@+id/actsendsms_spiSubServices"
+		android:id="@+id/actsendsms_spiServices"
 		style="@style/common_Spinner"
 		android:layout_toRightOf="@id/actsendsms_spiProviders"
 		android:layout_alignTop="@id/actsendsms_spiProviders"

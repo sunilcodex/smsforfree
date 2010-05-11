@@ -4,6 +4,7 @@ import java.util.Map;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
+import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -28,6 +29,9 @@ public class ActivityHelper {
 	public final static int REQUESTCODE_NONE = 0;
 	public final static int REQUESTCODE_PICKCONTACT = 3;
 	
+	public final static String INTENTKEY_SMSSERVICE = "SmsService";
+	public final static String INTENTKEY_SMSPROVIDER = "SmsProvider";
+
 	
 	
 
@@ -36,9 +40,38 @@ public class ActivityHelper {
 	/**
 	 * Open Settings activity
 	 */
-	public static void openSettings(Activity callerActivity)
+	public static void openSettingsMain(Activity callerActivity)
 	{
-		openActivity(callerActivity, ActSettings.class, null, false, REQUESTCODE_NONE);
+		openActivity(callerActivity, ActSettingsMain.class, null, false, REQUESTCODE_NONE);
+	}
+	
+	/**
+	 * Open Sms settings activity
+	 */
+	public static void openSettingsSmsService(Activity callerActivity, String providerId, String serviceId)
+	{
+        Intent intent = new Intent(callerActivity, ActSettingsSmsService.class);
+		intent.putExtra(INTENTKEY_SMSPROVIDER, providerId);
+		intent.putExtra(INTENTKEY_SMSSERVICE, serviceId);
+		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
+	}
+	
+	/**
+	 * Open provider subservice configuration activity
+	 */
+	public static void openProviderSubServicesList(Activity callerActivity, String providerId)
+	{
+        Intent intent = new Intent(callerActivity, ActProviderSubServicesList.class);
+		intent.putExtra(INTENTKEY_SMSPROVIDER, providerId);
+		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
+	}
+	
+	/**
+	 * Open Provider list activity
+	 */
+	public static void openProvidersList(Activity callerActivity)
+	{
+		openActivity(callerActivity, ActProvidersList.class, null, false, REQUESTCODE_NONE);
 	}
 	
 	/**
@@ -276,7 +309,7 @@ public class ActivityHelper {
     		int requestCode
     		)
     {
-        Intent i = new Intent(callerActivity, cls);
+        Intent i = new Intent(callerActivity.getBaseContext(), cls);
         
         //put the data in the intent
         if (null != extraData)

@@ -8,6 +8,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.text.TextUtils;
 
+import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -38,6 +39,9 @@ public class AimonProvider
 	
 	
 	//---------- Private fields
+	/**  */
+	private static final long serialVersionUID = 686582273593946008L;
+
 	private final static int PARAM_NUMBER = 4;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
@@ -234,5 +238,15 @@ public class AimonProvider
 		}
 		return res;    	
     }
+
+	@Override
+	protected String getParametersFileName() {
+		return GlobalDef.AimonParametersFileName;
+	}
+
+	@Override
+	protected String getSubservicesFileName() {
+		return GlobalDef.AimonSubservicesFileName;
+	}
 
 }

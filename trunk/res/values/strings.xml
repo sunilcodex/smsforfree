@@ -9,15 +9,21 @@
     <string name="common_aimon_idapi">106: Anonymous, 59: Sender, 84: Sender + report</string>
     <string name="common_btnYes">Yes</string>
     <string name="common_btnNo">No</string>
+    <string name="common_mnuCancel">Cancel</string>
     <string name="common_msg_genericError">Generic error: </string>
+    <string name="common_msg_cannotsavepreferences">Sorry, cannot save data: </string>
     
 
     <!-- ActSendSms -->
+    <string name="actsendsms_title">SmsForFree - Send SMS</string>
     <string name="actsendsms_txtDestination">Destionation number</string>
     <string name="actsendsms_txtBody">Message</string>
     <string name="actsendsms_btnSend">Send</string>
-    <string name="actsendsms_lblService">Choose service</string>
+    <string name="actsendsms_lblProvider">Choose provider</string>
     <string name="actsendsms_dlgPickNumber">Choose service</string>
+    <string name="actsendsms_menuSettings">Settings</string>
+    <string name="actsendsms_menuAbout">About</string>
+    <string name="actsendsms_menuExit">Exit</string>
     <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
     <string name="actsendsms_msg_noProvider">Choose a provider...</string>
     <string name="actsendsms_msg_noSubservice">Choose a service of the provider...</string>
@@ -33,5 +39,41 @@
     <string name="actsendsms_phoneType_workfax">Work fax</string>
     <string name="actsendsms_phoneType_homefax">Home fax</string>
     <string name="actsendsms_phoneType_other">Other</string>
+
+
     
+
+    <!-- ActSettingsMain -->
+    <string name="actsettingsmain_title">SmsForFree - Settings</string>
+    <string name="actsettingsmain_lblApplicationCategory">Application</string>
+    <string name="actsettingsmain_lblProvidersCategory">Providers</string>
+    <string name="actsettingsmain_chkResetDataAfterSend">Reset data after send</string>
+    <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
+    <string name="actsettingsmain_chkInsertSmsIntoPim">Reset data after sending</string>
+    <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Clear destination and message after sending sms</string>
+    <string name="actsettingsmain_lblProvidersList">Providers settings</string>
+    <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
+
+
+
+
+    <!-- ActSettingsSmsService -->
+    <string name="actsettingssmsservice_title">SmsForFree - Provider/Service Settings</string>
+    <string name="actsettingssmsservice_titleEdit">SmsForFree - Settings for %s</string>
+    <string name="actsettingssmsservice_btnConfigureSubservices">Configure services</string>
+
+
+
+
+    <!-- ActProvidersList -->
+    <string name="actproviderslist_title">SmsForFree - Providers list</string>
+
+
+
+
+    <!-- ActProviderSubServicesList -->
+    <string name="actprovidersubserviceslist_title">Provider services list</string>
+    <string name="actprovidersubserviceslist_titleEdit">%s services list</string>
+
+
 </resources>

@@ -1,8 +1,10 @@
 package it.rainbowbreeze.smsforfree.domain;
 
-import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import java.io.Serializable;
+
 
 public abstract class SmsService
+	implements Serializable, Comparable<SmsService>
 {
 	//---------- Ctors
 	protected SmsService()
@@ -17,6 +19,9 @@ public abstract class SmsService
 	
 	
 	//---------- Private fields
+	/**  */
+	private static final long serialVersionUID = 6187275381427546836L;
+	
 	
 	
 	
@@ -92,6 +97,14 @@ public abstract class SmsService
 	public String toString() {
 		//used by Spinner adapter
 		return getName();
+	}
+
+	@Override
+	public int compareTo(SmsService another) {
+		if (null != another)
+			return this.getName().compareTo(another.getName());
+		else
+			return 1;
 	}
 
 	

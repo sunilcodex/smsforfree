@@ -4,6 +4,7 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 
 import java.util.List;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 
@@ -68,7 +69,36 @@ public abstract class SmsProvider
 	
 	
 	
+	public ResultOperation savePreferences(Context context){
+		//TODO
+		return null;
+	}
+
+	public ResultOperation loadPreferences(Context context){
+		//TODO
+		return null;
+	}
+	
+	
+	public ResultOperation saveSubservicesList(Context context){
+		//TODO
+		return null;
+	}
+
+	public ResultOperation loadSubservicesList(Context context){
+		//TODO
+		return null;
+	}
+	
+	
+	
 	//---------- Private methods
+	
+	/** file name where save provider parameters */
+	protected abstract String getParametersFileName();
+	
+	/** file name where save provider subservices */
+	protected abstract String getSubservicesFileName();
 	
 	/**
 	 * Checks if username and password are not empty
