@@ -78,6 +78,7 @@ public class ActSendSms
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actsendsms);
+        setTitle(R.string.actsendsms_title_full);
         
 
         //only when the activity is created for the first time
@@ -296,7 +297,7 @@ public class ActSendSms
 	}
     
 	private void bindSubservicesSpinner(SmsProvider provider) {
-		List<SmsService> subservices = provider.getConfiguredSubservices();
+		List<SmsService> subservices = provider.getAllConfiguredSubservices();
 		ArrayAdapter<SmsService> adapter = new ArrayAdapter<SmsService>(this,
 				android.R.layout.simple_spinner_item, subservices);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

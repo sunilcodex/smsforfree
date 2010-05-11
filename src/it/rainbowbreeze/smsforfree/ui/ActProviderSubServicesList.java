@@ -51,7 +51,7 @@ public class ActProviderSubServicesList
 		Bundle extras = intent.getExtras();
 		//checks if intent 
 		if(extras != null) {
-			String id = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICE);
+			String id = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
 			mProviderToEdit = (SmsProvider) GlobalUtils.findProviderInList(GlobalBag.providerList, id);
 		} else {
 			mProviderToEdit = null;

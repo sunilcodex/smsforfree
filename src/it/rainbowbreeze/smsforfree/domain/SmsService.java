@@ -99,7 +99,6 @@ public abstract class SmsService
 		return getName();
 	}
 
-	@Override
 	public int compareTo(SmsService another) {
 		if (null != another)
 			return this.getName().compareTo(another.getName());

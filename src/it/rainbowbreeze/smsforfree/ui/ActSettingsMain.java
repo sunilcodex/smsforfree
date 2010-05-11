@@ -40,7 +40,6 @@ public class ActSettingsMain extends PreferenceActivity {
 		
 		customPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			
-			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				ActivityHelper.openProvidersList(ActSettingsMain.this);
 //				ActivityHelper.openSettingsSmsService(ActSettingsMain.this, JacksmsProvider.instance().getName());

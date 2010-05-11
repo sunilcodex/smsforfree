@@ -14,7 +14,7 @@
 		/>
 	</PreferenceCategory>
 	
-	<PreferenceCategory android:title="actsettingsmain_lblProvidersCategory">
+	<PreferenceCategory android:title="@string/actsettingsmain_lblProvidersCategory">
 		<Preference
 			android:key="actsettingsmain_providersPref"
 			android:title="@string/actsettingsmain_lblProvidersList"

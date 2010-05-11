@@ -6,7 +6,7 @@
     <string name="common_username">Username</string>
     <string name="common_password">Password</string>
     <string name="common_sender">Sender</string>
-    <string name="common_aimon_idapi">106: Anonymous, 59: Sender, 84: Sender + report</string>
+    <string name="common_aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
     <string name="common_btnYes">Yes</string>
     <string name="common_btnNo">No</string>
     <string name="common_mnuCancel">Cancel</string>
@@ -15,7 +15,8 @@
     
 
     <!-- ActSendSms -->
-    <string name="actsendsms_title">SmsForFree - Send SMS</string>
+    <string name="actsendsms_title">SmsForFree</string>
+    <string name="actsendsms_title_full">SmsForFree - Send SMS</string>
     <string name="actsendsms_txtDestination">Destionation number</string>
     <string name="actsendsms_txtBody">Message</string>
     <string name="actsendsms_btnSend">Send</string>
@@ -49,8 +50,8 @@
     <string name="actsettingsmain_lblProvidersCategory">Providers</string>
     <string name="actsettingsmain_chkResetDataAfterSend">Reset data after send</string>
     <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
-    <string name="actsettingsmain_chkInsertSmsIntoPim">Reset data after sending</string>
-    <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Clear destination and message after sending sms</string>
+    <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
+    <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
     <string name="actsettingsmain_lblProvidersList">Providers settings</string>
     <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
 

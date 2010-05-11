@@ -11,6 +11,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,6 +27,9 @@ public class ActSettingsSmsService
 {
 	//---------- Private fields
 	private SmsService mServiceToEdit;
+	private SmsService mTemplateService;
+	private SmsProvider mProvider;
+	private boolean mIsEditingAProvider;
 	private Button mBtnConfigureSubservices;
 	
 	
@@ -51,7 +55,6 @@ public class ActSettingsSmsService
 	}
 	
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
-		@Override
 		public void onClick(View v) {
 			//open the subservice configuration activity
 			ActivityHelper.openProviderSubServicesList(ActSettingsSmsService.this, mServiceToEdit.getId());
@@ -84,7 +87,7 @@ public class ActSettingsSmsService
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_titleEdit),
-        		mServiceToEdit.getName()));
+        		mTemplateService.getName()));
 
         //update texts visibility and values
 		for (int i = 0; i < 10; i++){
@@ -134,9 +137,9 @@ public class ActSettingsSmsService
 				break;
 			}
         	
-        	if (i < mServiceToEdit.getParametersNumber()) {
-        		lblDesc.setText(mServiceToEdit.getParameterDesc(i));
-        		txtValue.setText(mServiceToEdit.getParameterValue(i));
+        	if (i < mTemplateService.getParametersNumber()) {
+        		lblDesc.setText(mTemplateService.getParameterDesc(i));
+        		txtValue.setText(mTemplateService.getParameterValue(i));
         	} else {
         		lblDesc.setVisibility(View.GONE);
         		txtValue.setVisibility(View.GONE);
@@ -144,9 +147,9 @@ public class ActSettingsSmsService
         }
 		
 		//display or not the button
-		if (mServiceToEdit instanceof SmsProvider) {
-			SmsProvider provider = (SmsProvider) mServiceToEdit;
-			if (provider.hasSubServices()) {
+		//if (mTemplateService instanceof SmsProvider) {
+		if (mIsEditingAProvider) {
+			if (mProvider.hasSubServices()) {
 				mBtnConfigureSubservices.setVisibility(View.VISIBLE);
 			} else {
 				mBtnConfigureSubservices.setVisibility(View.GONE);
@@ -170,8 +173,23 @@ public class ActSettingsSmsService
 		Bundle extras = intent.getExtras();
 		//checks if intent 
 		if(extras != null) {
-			String id = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICE);
-			mServiceToEdit = GlobalUtils.findProviderInList(GlobalBag.providerList, id);
+			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
+			mProvider = GlobalUtils.findProviderInList(GlobalBag.providerList, providerId);
+			String subserviceId = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
+			if (TextUtils.isEmpty(subserviceId)) {
+				//edit a provider preferences
+				mIsEditingAProvider = true;
+				//template and service to edit are always the same provider
+				mTemplateService = mProvider;
+				mServiceToEdit = mProvider;
+			} else {
+				//edit a subservice preferences
+				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
+				mIsEditingAProvider = false;
+				mTemplateService = GlobalUtils.findTemplateInList(mProvider, templateId);
+				mServiceToEdit = GlobalUtils.findSubserviceInList(mProvider, subserviceId);
+			}
+
 		} else {
 			mServiceToEdit = null;
 		}
