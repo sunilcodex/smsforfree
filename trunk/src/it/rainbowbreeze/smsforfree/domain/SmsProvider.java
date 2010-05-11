@@ -49,10 +49,10 @@ public abstract class SmsProvider
 	/** Has this provider sub-services? */
 	public abstract boolean hasSubServices();
 	
-	public abstract List<SmsService> getTemplateSubservices();
+	public abstract List<SmsService> getAllTemplateSubservices();
+	public abstract SmsService getTemplateSubservice(String templateId);
 
-	public abstract List<SmsService> getConfiguredSubservices();
-
+	public abstract List<SmsService> getAllConfiguredSubservices();
 	public abstract SmsService getConfiguredSubservice(String subserviceId);
 
     public abstract void setSelectedSubservice(String subserviceId);

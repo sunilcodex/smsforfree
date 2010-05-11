@@ -78,6 +78,7 @@
 	</style>
 	<style name="actsettingssmsservice_btnConfigSubservices" parent="@style/common_btnAction">
 		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_marginTop">10dp</item>
 	</style>
 
 

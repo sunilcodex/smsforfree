@@ -22,7 +22,7 @@ public class AimonProvider
 	//---------- Ctors
 	public AimonProvider()
 	{
-		this("Username", "Password", "Sender", "106: Anonymous, 59: Sender, 84: Sender + report");
+		this("Username", "Password", "Sender", "Id API (106:anonymous, 59:sender, 84:sender+report)");
 	}
 	
 	public AimonProvider(String usernameDesc, String passwordDesc, String senderDesc, String kindofsmsDesc)
@@ -32,7 +32,8 @@ public class AimonProvider
 		mDictionary = new AimonDictionary();
 		mParametersDesc[PARAM_INDEX_USERNAME] = usernameDesc;
 		mParametersDesc[PARAM_INDEX_PASSWORD] = passwordDesc;
-		mParametersDesc[PARAM_INDEX_SENDER] = kindofsmsDesc;
+		mParametersDesc[PARAM_INDEX_SENDER] = senderDesc;
+		mParametersDesc[PARAM_INDEX_ID_API] = kindofsmsDesc;
 	}
 
 	

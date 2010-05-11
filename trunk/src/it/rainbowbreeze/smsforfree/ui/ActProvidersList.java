@@ -37,9 +37,10 @@ public class ActProvidersList
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		SmsProvider provider = GlobalBag.providerList.get(position);
 		
+		ActivityHelper.openSettingsSmsService(this, provider.getName());
 		//open provider configuration activity
-		ActivityHelper.showInfo(this, "Lista pos: " + position + " - " + provider.getName());
-		super.onListItemClick(l, v, position, id);
+//		ActivityHelper.showInfo(this, "Lista pos: " + position + " - " + provider.getName());
+//		super.onListItemClick(l, v, position, id);
 	}
 
 	//---------- Public methods

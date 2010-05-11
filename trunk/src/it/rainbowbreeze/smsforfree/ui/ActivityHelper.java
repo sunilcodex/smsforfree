@@ -2,6 +2,8 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import java.util.Map;
 
+import dalvik.system.TemporaryDirectory;
+
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -29,8 +31,9 @@ public class ActivityHelper {
 	public final static int REQUESTCODE_NONE = 0;
 	public final static int REQUESTCODE_PICKCONTACT = 3;
 	
-	public final static String INTENTKEY_SMSSERVICE = "SmsService";
-	public final static String INTENTKEY_SMSPROVIDER = "SmsProvider";
+	public final static String INTENTKEY_SMSSERVICEID = "SmsService";
+	public final static String INTENTKEY_SMSPROVIDERID = "SmsProvider";
+	public final static String INTENTKEY_SMSTEMPLATEID = "SmsTemplate";
 
 	
 	
@@ -46,14 +49,24 @@ public class ActivityHelper {
 	}
 	
 	/**
-	 * Open Sms settings activity
+	 * Open Sms settings activity for editing a subservice preferences
 	 */
-	public static void openSettingsSmsService(Activity callerActivity, String providerId, String serviceId)
+	public static void openSettingsSmsService(Activity callerActivity, String providerId, String templateId, String serviceId)
 	{
         Intent intent = new Intent(callerActivity, ActSettingsSmsService.class);
-		intent.putExtra(INTENTKEY_SMSPROVIDER, providerId);
-		intent.putExtra(INTENTKEY_SMSSERVICE, serviceId);
+		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
+		intent.putExtra(INTENTKEY_SMSTEMPLATEID, templateId);
+		intent.putExtra(INTENTKEY_SMSSERVICEID, serviceId);
 		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
+	}
+	
+	/**
+	 * Open Sms settings activity for editing a provider preferences
+	 */
+	public static void openSettingsSmsService(Activity callerActivity, String providerId)
+	{
+		//putting null into templateId and subserviceId, the ActSettingsSmsService knows what entity edit
+		openSettingsSmsService(callerActivity, providerId, null, null);
 	}
 	
 	/**
@@ -62,7 +75,7 @@ public class ActivityHelper {
 	public static void openProviderSubServicesList(Activity callerActivity, String providerId)
 	{
         Intent intent = new Intent(callerActivity, ActProviderSubServicesList.class);
-		intent.putExtra(INTENTKEY_SMSPROVIDER, providerId);
+		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
 	}
 	

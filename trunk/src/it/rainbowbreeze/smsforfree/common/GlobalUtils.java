@@ -17,14 +17,30 @@ public class GlobalUtils {
 	//---------- Events
 
 	//---------- Public methods
-	public static SmsService findProviderInList(List<SmsProvider> list, String id)
+	public static SmsProvider findProviderInList(List<SmsProvider> list, String id)
 	{
 		if (TextUtils.isEmpty(id)) return null;
 		
-		for(SmsService service : list) {
-			if (id.equals(service.getId())) return service;
+		for(SmsProvider provider : list) {
+			if (id.equals(provider.getId())) return provider;
 		}
 		return null;
+	}
+	
+	public static SmsService findSubserviceInList(SmsProvider provider, String subserviceId)
+	{
+		if (TextUtils.isEmpty(subserviceId)) return null;
+		if (null == provider) return null;
+
+		return provider.getConfiguredSubservice(subserviceId);
+	}
+
+	public static SmsService findTemplateInList(SmsProvider provider, String templateId)
+	{
+		if (TextUtils.isEmpty(templateId)) return null;
+		if (null == provider) return null;
+
+		return provider.getTemplateSubservice(templateId);
 	}
 
 	//---------- Private methods

@@ -4,7 +4,6 @@
 package it.rainbowbreeze.smsforfree.logic;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 import android.content.Context;
@@ -39,12 +38,14 @@ public class LogicManager {
 		
 		//initialize provider list
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
-		GlobalBag.providerList.add(aimonProv);
-
 		JacksmsProvider jackProv = new JacksmsProvider(usernameDesc, passwordDesc);
 		jackProv.loadAllServices();
 		jackProv.loadConfiguredServices();
 		GlobalBag.providerList.add(jackProv);
+		AimonProvider aimonProv = new AimonProvider(usernameDesc, passwordDesc, senderDesc, aimonIdApiDesc);
+		GlobalBag.providerList.add(aimonProv);
+		
+		Collections.sort(GlobalBag.providerList);
 
 		return res;
 	}
