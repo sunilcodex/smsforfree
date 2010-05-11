@@ -3,7 +3,7 @@
  */
 package it.rainbowbreeze.smsforfree.data;
 
-import android.app.Activity;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 
 /**
@@ -21,8 +21,8 @@ public abstract class BasePreferencesDao
 	/**
 	 * Load the preferences
 	 */
-	public void load(Activity a) {
-	    settings = a.getSharedPreferences(getPreferencesKey(), 0);
+	public void load(ContextWrapper context) {
+	    settings = context.getSharedPreferences(getPreferencesKey(), 0);
 	    editor = settings.edit();
 	}
 
@@ -37,14 +37,14 @@ public abstract class BasePreferencesDao
 	/**
 	 * Backup preferences
 	 */
-    public void backup(Activity a)
+    public void backup(ContextWrapper context)
     {
         //load normal preferences, if needed
         if (null == settings)
-        	load(a);
+        	load(context);
 
         //backup settings into backup shared preferences
-        SharedPreferences settingsBackup = a.getSharedPreferences(getPreferencesKey() + BACKUP_SUFFIX, 0);
+        SharedPreferences settingsBackup = context.getSharedPreferences(getPreferencesKey() + BACKUP_SUFFIX, 0);
         SharedPreferences.Editor editorBackup = settingsBackup.edit();
         backupProperties(editorBackup);
     	editorBackup.commit();
@@ -53,16 +53,16 @@ public abstract class BasePreferencesDao
     
     /**
      * Restore a previously backup data
-     * @param a
+     * @param context
      */
-    public void restore(Activity a)
+    public void restore(ContextWrapper context)
     {
         //if settings is null, no backup was made at the settings
         if (null == settings)
         	return;
     	
         //load backup preferences
-    	SharedPreferences settingsBackup = a.getSharedPreferences(getPreferencesKey() + BACKUP_SUFFIX, 0);
+    	SharedPreferences settingsBackup = context.getSharedPreferences(getPreferencesKey() + BACKUP_SUFFIX, 0);
     	restoreProperties(settingsBackup);
         //backup settings into backup shared preferences
 		save();
