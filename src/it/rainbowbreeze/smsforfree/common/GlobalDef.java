@@ -20,5 +20,5 @@ public class GlobalDef {
 	public static final String AimonParametersFileName = "aimon_parameters.xml"; 
 
 	/** keys for providers preferences */
-	public static final String AimonSubservicesFileName = "aimon_subservices.xml"; 
+	public static final String AimonSubservicesFileName = "aimon_subservices.xml";
 }

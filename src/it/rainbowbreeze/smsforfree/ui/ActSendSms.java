@@ -4,8 +4,10 @@ import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
+import it.rainbowbreeze.smsforfree.data.ProviderPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -136,7 +138,16 @@ public class ActSendSms
 			break;
 			
 		case OPTIONMENU_ABOUT:
+			//TODO
 //			ActivityHelper.openAbout(this);
+			ProviderPreferencesDao dao = new ProviderPreferencesDao();
+			ResultOperation res = dao.saveProvidersPreferences(
+					GlobalUtils.findProviderInList(GlobalBag.providerList, "Aimon"), "");
+			if (res.HasErrors())
+				mTxtMessage.setText(res.getException().toString());
+			else
+				mTxtMessage.setText(res.getResultAsString());
+				
 			break;
 		}
 		
