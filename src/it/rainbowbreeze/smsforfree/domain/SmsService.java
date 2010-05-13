@@ -1,10 +1,8 @@
 package it.rainbowbreeze.smsforfree.domain;
 
-import java.io.Serializable;
-
 
 public abstract class SmsService
-	implements Serializable, Comparable<SmsService>
+	implements Comparable<SmsService>
 {
 	//---------- Ctors
 	protected SmsService()
@@ -19,8 +17,6 @@ public abstract class SmsService
 	
 	
 	//---------- Private fields
-	/**  */
-	private static final long serialVersionUID = 6187275381427546836L;
 	
 	
 	

@@ -29,7 +29,7 @@ import android.util.Xml;
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class ProviderPreferencesDao
+public class ProviderDao
 	extends BasePreferencesDao
 {
 	//---------- Ctors
@@ -212,7 +212,6 @@ public class ProviderPreferencesDao
 		
 		XmlPullParser parser = Xml.newPullParser();
 		
-
 		try {
 			parser.setInput(in, null);
 			int eventType = parser.getEventType();

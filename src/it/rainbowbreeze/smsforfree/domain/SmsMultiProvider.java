@@ -1,18 +1,19 @@
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
+
 import java.util.List;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 public abstract class SmsMultiProvider
 	extends SmsProvider
 {
 	//---------- Ctors
-	protected SmsMultiProvider()
-	{ super(); };
-	
-	protected SmsMultiProvider(int numberOfParameters) {
-		super(numberOfParameters);
+	protected SmsMultiProvider(ProviderDao dao, int numberOfParameters) {
+		super(dao, numberOfParameters);
 	}
 
 	
@@ -75,6 +76,21 @@ public abstract class SmsMultiProvider
 
 	
 	//---------- Public methods
+	public ResultOperation loadTemplates(Context context){
+		return null;
+	}
+
+	public ResultOperation saveTemplates(Context context){
+		return null;
+	}
+
+	public ResultOperation loadSubservices(Context context) {
+		return null;
+	}
+
+	public ResultOperation saveSubservices(Context context) {
+		return null;
+	}
 
 	
 	

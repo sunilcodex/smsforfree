@@ -1,7 +1,13 @@
 package it.rainbowbreeze.smsforfree.domain;
 
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
@@ -21,17 +27,17 @@ public abstract class SmsProvider
 	extends SmsService
 {
 	//---------- Ctors
-	protected SmsProvider()
-	{ super(); }
-	
-	protected SmsProvider(int numberOfParameters)
-	{ super(numberOfParameters); }
+	protected SmsProvider(ProviderDao dao, int numberOfParameters)
+	{
+		super(numberOfParameters);
+		mDao = dao;
+	}
 
 	
 	
 	
 	//---------- Private fields
-
+	ProviderDao mDao;
 	
 	
 	
@@ -68,35 +74,96 @@ public abstract class SmsProvider
 	public abstract ResultOperation sendMessage(String serviceId, String destination, String body);
 	
 	
+	public ResultOperation loadParameters(Context context){
+		ResultOperation res;
+		FileInputStream fis = null;
+		
+		res = new ResultOperation();
+		
+		//checks if file exists
+		File file = context.getFileStreamPath(getParametersFileName());
+		if (!file.exists()) {
+			//no parameters for the provide
+			res.setResultAsBoolean(false);
+			return res;
+		}
+		
+		try {
+			fis = context.openFileInput(getParametersFileName());
+			res = mDao.loadProvidersParameters(fis, this);
+		} catch (FileNotFoundException e) {
+			res.setException(e);
+		} finally {
+			if (null != fis) {
+				try {
+					fis.close();
+					fis = null;
+				} catch (IOException e) {
+					res.setException(e);
+				}
+			}
+		}
+		if (res.HasErrors()) return res;
+		
+		//checks for errors
+		if (res.HasErrors()) return res;
+		
+		//all went good, no errors to return
+		res.setResultAsBoolean(true);
+		return res;
+	}
 	
-	public ResultOperation savePreferences(Context context){
-		//TODO
-		return null;
+	public ResultOperation saveParameters(Context context){
+		String xmlRepresentation;
+		
+		ResultOperation res = mDao.saveProvidersParameters(this);
+		
+		if (res.HasErrors()) return res;
+		xmlRepresentation = res.getResultAsString();
+		FileOutputStream fos = null;
+		try {
+			fos = context.openFileOutput(getParametersFileName(), Context.MODE_PRIVATE);
+			fos.write(xmlRepresentation.getBytes());
+		} catch (FileNotFoundException e) {
+			res.setException(e);
+		} catch (IOException e) {
+			res.setException(e);
+		} finally {
+			if (null != fos)
+				try {
+					fos.close();
+					fos = null;
+				} catch (IOException e) {
+					res.setException(e);
+				}
+		}
+		//checks for errors
+		if (res.HasErrors()) return res;
+		
+		//all went good, no errors to return
+		res.setResultAsBoolean(true);
+		return res;
 	}
 
-	public ResultOperation loadPreferences(Context context){
-		//TODO
-		return null;
-	}
-	
-	
-	public ResultOperation saveSubservicesList(Context context){
-		//TODO
-		return null;
-	}
+	public abstract ResultOperation saveTemplates(Context context);
 
-	public ResultOperation loadSubservicesList(Context context){
-		//TODO
-		return null;
-	}
+	public abstract ResultOperation loadTemplates(Context context);
 	
+	public abstract ResultOperation saveSubservices(Context context);
+
+	public abstract ResultOperation loadSubservices(Context context);
 	
+
+
 	
 	//---------- Private methods
 	
 	/** file name where save provider parameters */
 	protected abstract String getParametersFileName();
 	
+	/** file name where save subservices templates */
+	protected abstract String getTemplatesFileName();
+
 	/** file name where save provider subservices */
 	protected abstract String getSubservicesFileName();
 	

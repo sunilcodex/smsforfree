@@ -7,7 +7,7 @@ import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
-import it.rainbowbreeze.smsforfree.data.ProviderPreferencesDao;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -140,7 +140,7 @@ public class ActSendSms
 		case OPTIONMENU_ABOUT:
 			//TODO
 //			ActivityHelper.openAbout(this);
-			ProviderPreferencesDao dao = new ProviderPreferencesDao();
+			ProviderDao dao = new ProviderDao();
 			ResultOperation res = dao.saveProvidersParameters(
 					GlobalUtils.findProviderInList(GlobalBag.providerList, "Aimon"));
 			if (res.HasErrors())

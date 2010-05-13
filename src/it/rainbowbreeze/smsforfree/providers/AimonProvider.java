@@ -2,7 +2,6 @@ package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -10,9 +9,8 @@ import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
-import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
@@ -20,15 +18,14 @@ public class AimonProvider
 	extends SmsSingleProvider
 {
 	//---------- Ctors
-	public AimonProvider()
+	public AimonProvider(ProviderDao dao)
 	{
-		this("Username", "Password", "Sender", "Id API (106:anonymous, 59:sender, 84:sender+report)");
+		this(dao, "Username", "Password", "Sender", "Id API (106:anonymous, 59:sender, 84:sender+report)");
 	}
 	
-	public AimonProvider(String usernameDesc, String passwordDesc, String senderDesc, String kindofsmsDesc)
+	public AimonProvider(ProviderDao dao, String usernameDesc, String passwordDesc, String senderDesc, String kindofsmsDesc)
 	{
-		super(PARAM_NUMBER);
-		mInstance = this;
+		super(dao, PARAM_NUMBER);
 		mDictionary = new AimonDictionary();
 		mParametersDesc[PARAM_INDEX_USERNAME] = usernameDesc;
 		mParametersDesc[PARAM_INDEX_PASSWORD] = passwordDesc;
@@ -40,9 +37,6 @@ public class AimonProvider
 	
 	
 	//---------- Private fields
-	/**  */
-	private static final long serialVersionUID = 686582273593946008L;
-
 	private final static int PARAM_NUMBER = 4;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
@@ -63,14 +57,6 @@ public class AimonProvider
 	
 	
 	//---------- Public properties
-    private static AimonProvider mInstance;
-    public static AimonProvider instance()
-    {
-    	if (null == mInstance)
-    		mInstance = new AimonProvider();
-    	return mInstance;
-    }
-
 	@Override
 	public String getId()
 	{ return "Aimon"; }
@@ -241,13 +227,15 @@ public class AimonProvider
     }
 
 	@Override
-	protected String getParametersFileName() {
-		return GlobalDef.AimonParametersFileName;
-	}
+	protected String getParametersFileName()
+	{ return GlobalDef.AimonParametersFileName; }
 
 	@Override
-	protected String getSubservicesFileName() {
-		return GlobalDef.AimonSubservicesFileName;
-	}
+	protected String getTemplatesFileName()
+	{ return null; }
 
+	@Override
+	protected String getSubservicesFileName()
+	{ return null; }
+	
 }
