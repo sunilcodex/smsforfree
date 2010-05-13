@@ -10,7 +10,8 @@
     <string name="common_btnYes">Yes</string>
     <string name="common_btnNo">No</string>
     <string name="common_mnuCancel">Cancel</string>
-    <string name="common_msg_genericError">Generic error: </string>
+    <string name="common_msg_genericError">Generic error: %s</string>
+    <string name="common_msg_noErrorToReport">No error to report :(</string>
     <string name="common_msg_cannotsavepreferences">Sorry, cannot save data: </string>
     
 

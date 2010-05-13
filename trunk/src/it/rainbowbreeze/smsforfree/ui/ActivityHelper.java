@@ -5,6 +5,7 @@ import java.util.Map;
 import dalvik.system.TemporaryDirectory;
 
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.app.Activity;
@@ -99,31 +100,47 @@ public class ActivityHelper {
 	
 	/**
 	 * Notify an error to the user 
-	 * @param callerActivity
+	 * @param context
 	 * @param errorMessage
 	 */
-	public static void reportError(Activity callerActivity, String errorMessage)
+	public static void reportError(Context context, String errorMessage)
 	{
-		Toast.makeText(callerActivity, errorMessage, Toast.LENGTH_LONG).show();
+		Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
 	}
-	public static void reportError(Activity callerActivity, int errorMessageId)
+	public static void reportError(Context context, int errorMessageId)
 	{
-		reportError(callerActivity, callerActivity.getString(errorMessageId));
+		reportError(context, context.getString(errorMessageId));
+	}
+	public static void reportError(Context context, ResultOperation res)
+	{
+		if (null != res) {
+			reportError(context,
+					String.format(
+							context.getString(R.string.common_msg_genericError),
+							res.getException().getMessage()));
+			//print stack trace
+			res.getException().printStackTrace();
+		} else {
+			reportError(context,
+					String.format(
+							context.getString(R.string.common_msg_genericError),
+							context.getString(R.string.common_msg_noErrorToReport)));
+		}
 	}
 	
 
 	/**
 	 * Notify an info message to the user
-	 * @param callerActivity
+	 * @param context
 	 * @param infoMessage
 	 */
-	public static void showInfo(Activity callerActivity, String infoMessage)
+	public static void showInfo(Context context, String infoMessage)
 	{
-		Toast.makeText(callerActivity, infoMessage, Toast.LENGTH_LONG).show();
+		Toast.makeText(context, infoMessage, Toast.LENGTH_LONG).show();
 	}
-	public static void showInfo(Activity callerActivity, int infoMessageId)
+	public static void showInfo(Context context, int infoMessageId)
 	{
-		showInfo(callerActivity, callerActivity.getString(infoMessageId));
+		showInfo(context, context.getString(infoMessageId));
 	} 
 
 	

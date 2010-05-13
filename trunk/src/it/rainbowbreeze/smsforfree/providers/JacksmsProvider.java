@@ -3,33 +3,32 @@ package it.rainbowbreeze.smsforfree.providers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 
 public class JacksmsProvider
 	extends SmsMultiProvider
 {
 	//---------- Ctors
-	public JacksmsProvider()
+	public JacksmsProvider(ProviderDao dao)
 	{
-		this("Username", "Password");
+		this(dao, "Username", "Password");
 	}
 	
-	public JacksmsProvider(String usernameDesc, String passwordDesc)
+	public JacksmsProvider(ProviderDao dao, String usernameDesc, String passwordDesc)
 	{
-		super(PARAM_NUMBER);
-		mInstance = this;
+		super(dao, PARAM_NUMBER);
 		mDictionary = new JacksmsDictionary();
 		mParametersDesc[PARAM_INDEX_USERNAME] = usernameDesc;
 		mParametersDesc[PARAM_INDEX_PASSWORD] = passwordDesc;
@@ -39,9 +38,6 @@ public class JacksmsProvider
 	
 
 	//---------- Private fields
-	/** SerialID */
-	private static final long serialVersionUID = -3506638204316903447L;
-
 	private final static int PARAM_NUMBER = 2;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
@@ -51,14 +47,6 @@ public class JacksmsProvider
 
 
 	//---------- Public properties
-    private static JacksmsProvider mInstance;
-    public static JacksmsProvider instance()
-    {
-    	if (null == mInstance)
-    		mInstance = new JacksmsProvider();
-    	return mInstance;
-    }
-
 	@Override
 	public String getId()
 	{ return "JackSMS"; }
@@ -78,7 +66,8 @@ public class JacksmsProvider
 
 
 	//---------- Public methods
-	public ResultOperation loadAllServices()
+	@Override
+	public ResultOperation loadTemplates(Context context)
 	{
 		ResultOperation res = new ResultOperation();
 
@@ -95,7 +84,8 @@ public class JacksmsProvider
 	}
 	
 	
-	public ResultOperation loadConfiguredServices()
+	@Override
+	public ResultOperation loadSubservices(Context context)
 	{
 		ResultOperation res = new ResultOperation();
 
@@ -104,13 +94,13 @@ public class JacksmsProvider
 		SmsConfigurableService service;
 		service = new SmsConfigurableService("1", "62", "Aimon-Free", 112, 4);
 		service.setParameterValue(0, "rainbowbreeze");
-		service.setParameterValue(1, "7941m0n");
-		service.setParameterValue(2, "3927686894");
+		service.setParameterValue(1, "XXXXXX");
+		service.setParameterValue(2, "3921234567");
 		mConfiguredSubservice.add(service);
 		service = new SmsConfigurableService("2", "61", "Aimon", 612, 4);
 		service.setParameterValue(0, "rainbowbreeze");
-		service.setParameterValue(1, "7941m0n");
-		service.setParameterValue(2, "3927686894");
+		service.setParameterValue(1, "XXXXXX");
+		service.setParameterValue(2, "3921234567");
 		mConfiguredSubservice.add(service);
 		
 		return res; 
@@ -177,14 +167,15 @@ public class JacksmsProvider
     }
 
 	@Override
-	protected String getParametersFileName() {
-		return GlobalDef.JacksmsParametersFileName;
-	}
+	protected String getParametersFileName()
+	{ return GlobalDef.JacksmsParametersFileName; }
 
 	@Override
-	protected String getSubservicesFileName() {
-		return GlobalDef.JacksmsSubservicesFileName;
-	}
+	protected String getTemplatesFileName()
+	{ return GlobalDef.JacksmsmTemplatesFileName; }
 
+	@Override
+	protected String getSubservicesFileName()
+	{ return GlobalDef.JacksmsSubservicesFileName; }
 
 }

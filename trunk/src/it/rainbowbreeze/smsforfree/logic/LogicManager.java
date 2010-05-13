@@ -11,6 +11,7 @@ import android.content.Context;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
@@ -37,12 +38,15 @@ public class LogicManager {
 		String aimonIdApiDesc = context.getString(R.string.common_aimon_idapi);
 		
 		//initialize provider list
+		ProviderDao dao = new ProviderDao();
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
-		JacksmsProvider jackProv = new JacksmsProvider(usernameDesc, passwordDesc);
-		jackProv.loadAllServices();
-		jackProv.loadConfiguredServices();
+		JacksmsProvider jackProv = new JacksmsProvider(dao, usernameDesc, passwordDesc);
+		jackProv.loadParameters(context);
+		jackProv.loadTemplates(context);
+		jackProv.loadSubservices(context);
 		GlobalBag.providerList.add(jackProv);
-		AimonProvider aimonProv = new AimonProvider(usernameDesc, passwordDesc, senderDesc, aimonIdApiDesc);
+		AimonProvider aimonProv = new AimonProvider(dao, usernameDesc, passwordDesc, senderDesc, aimonIdApiDesc);
+		aimonProv.loadParameters(context);
 		GlobalBag.providerList.add(aimonProv);
 		
 		Collections.sort(GlobalBag.providerList);

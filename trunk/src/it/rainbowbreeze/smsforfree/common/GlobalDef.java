@@ -10,17 +10,17 @@ public class GlobalDef {
 	/** Application version, for internal use */
 	public static final String AppVersion = "01.00.00";
 
-	/** keys for providers preferences */
+	/** file name for providers preferences */
 	public static final String JacksmsParametersFileName = "jacksms_parameters.xml"; 
-
-	/** keys for providers preferences */
+	/** file name for providers templates list */
+	public static final String JacksmsmTemplatesFileName = "jascksms_templates.xml";
+	/** file name for providers subservices list */
 	public static final String JacksmsSubservicesFileName = "jacksms_subservices.xml"; 
 
-	/** keys for providers preferences */
+	/** file name for providers preferences */
 	public static final String AimonParametersFileName = "aimon_parameters.xml"; 
 
-	/** keys for providers preferences */
-	public static final String AimonSubservicesFileName = "aimon_subservices.xml";
-	
+	/** Id for a new service */
 	public static final String NewSubServiceId = "-1";
+
 }
