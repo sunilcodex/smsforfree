@@ -33,6 +33,8 @@ public abstract class SmsMultiProvider
     @Override
 	public List<SmsService> getAllTemplateSubservices()
 	{ return mTemplateSubservices; }
+	public void setAllTemplateSubservices(List<SmsService> value)
+	{ mTemplateSubservices = value; }
     @Override
     public SmsService getTemplateSubservice(String templateId)
     { return findServiceInList(mTemplateSubservices, templateId); }
@@ -41,6 +43,8 @@ public abstract class SmsMultiProvider
     @Override
     public List<SmsService> getAllConfiguredSubservices()
     { return mConfiguredSubservice; }
+    public void setAllConfiguredSubservices(List<SmsService> value)
+    { mConfiguredSubservice = value; }
     @Override
 	public SmsService getConfiguredSubservice(String subserviceId)
     { return findServiceInList(mConfiguredSubservice, subserviceId); }
