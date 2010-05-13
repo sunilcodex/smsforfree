@@ -5,6 +5,7 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.data.BasePreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -26,7 +27,7 @@ public class ActSettingsSmsService
 	extends ActBaseDataEntry
 {
 	//---------- Private fields
-	private SmsService mServiceToEdit;
+	private SmsService mEditedService;
 	private SmsService mTemplateService;
 	private SmsProvider mProvider;
 	private boolean mIsEditingAProvider;
@@ -57,7 +58,7 @@ public class ActSettingsSmsService
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
 			//open the subservice configuration activity
-			ActivityHelper.openProviderSubServicesList(ActSettingsSmsService.this, mServiceToEdit.getId());
+			ActivityHelper.openProviderSubServicesList(ActSettingsSmsService.this, mEditedService.getId());
 		}
 	};
 
@@ -71,19 +72,19 @@ public class ActSettingsSmsService
 	
 	//---------- Private methods
 	@Override
-	protected void backupStorageData() {
-		// TODO Auto-generated method stub
-		
+	protected void backupData() {
+		//TODO
+		//no way to backup data now
 	}
 
 	@Override
-	protected BasePreferencesDao getPreferencesDao() {
-		// TODO Auto-generated method stub
-		return null;
+	protected void restoreData() {
+		//TODO
+		//no way to restore data now
 	}
 
 	@Override
-	protected void loadDataIntoControls() {
+	protected void loadData() {
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_titleEdit),
@@ -139,7 +140,7 @@ public class ActSettingsSmsService
         	
         	if (i < mTemplateService.getParametersNumber()) {
         		lblDesc.setText(mTemplateService.getParameterDesc(i));
-        		txtValue.setText(mTemplateService.getParameterValue(i));
+        		txtValue.setText(mEditedService.getParameterValue(i));
         	} else {
         		lblDesc.setVisibility(View.GONE);
         		txtValue.setVisibility(View.GONE);
@@ -158,20 +159,14 @@ public class ActSettingsSmsService
 	}
 
 	@Override
-	protected void restoreStorageData() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void saveDataInsideControls() {
+	protected void saveData() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	private void getDataFromIntent(Intent intent) {
 		Bundle extras = intent.getExtras();
-		//checks if intent 
+		//checks if current editing is for a provider or a subservice
 		if(extras != null) {
 			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
 			mProvider = GlobalUtils.findProviderInList(GlobalBag.providerList, providerId);
@@ -181,17 +176,18 @@ public class ActSettingsSmsService
 				mIsEditingAProvider = true;
 				//template and service to edit are always the same provider
 				mTemplateService = mProvider;
-				mServiceToEdit = mProvider;
+				mEditedService = mProvider;
+			} else if (GlobalDef.NewSubServiceId.equals(subserviceId) {
 			} else {
 				//edit a subservice preferences
 				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
 				mIsEditingAProvider = false;
 				mTemplateService = GlobalUtils.findTemplateInList(mProvider, templateId);
-				mServiceToEdit = GlobalUtils.findSubserviceInList(mProvider, subserviceId);
+				mEditedService = GlobalUtils.findSubserviceInList(mProvider, subserviceId);
 			}
 
 		} else {
-			mServiceToEdit = null;
+			mEditedService = null;
 		}
 	}
 
