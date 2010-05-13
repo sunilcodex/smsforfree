@@ -141,8 +141,8 @@ public class ActSendSms
 			//TODO
 //			ActivityHelper.openAbout(this);
 			ProviderPreferencesDao dao = new ProviderPreferencesDao();
-			ResultOperation res = dao.saveProvidersPreferences(
-					GlobalUtils.findProviderInList(GlobalBag.providerList, "Aimon"), "");
+			ResultOperation res = dao.saveProvidersParameters(
+					GlobalUtils.findProviderInList(GlobalBag.providerList, "Aimon"));
 			if (res.HasErrors())
 				mTxtMessage.setText(res.getException().toString());
 			else
