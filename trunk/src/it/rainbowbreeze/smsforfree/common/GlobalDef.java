@@ -21,4 +21,6 @@ public class GlobalDef {
 
 	/** keys for providers preferences */
 	public static final String AimonSubservicesFileName = "aimon_subservices.xml";
+	
+	public static final String NewSubServiceId = "-1";
 }

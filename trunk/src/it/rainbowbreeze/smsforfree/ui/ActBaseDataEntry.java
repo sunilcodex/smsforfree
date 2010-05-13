@@ -108,11 +108,8 @@ public abstract class ActBaseDataEntry
     	
     	if (!booCancelEdit)
     	{
-	    	//save the message
-    		saveDataInsideControls();
-	    	if (!getPreferencesDao().save()) {
-	    		Toast.makeText(this, R.string.common_msg_cannotsavepreferences, Toast.LENGTH_LONG).show();
-	    	}
+	    	//save the content of the activity
+    		saveData();
     	}
     };
     
@@ -127,7 +124,7 @@ public abstract class ActBaseDataEntry
     	//this method occurs also in the calling activity when the caller activity returns
     	if (!returnedFromStartedActivity)
 			//restore data
-			loadDataIntoControls();
+			loadData();
     	else
 			returnedFromStartedActivity = false;
 
@@ -163,32 +160,26 @@ public abstract class ActBaseDataEntry
 	//---------- Private methods
     
 	/**
-	 * Save values of the controls into the storage
+	 * Save values of the controls into the storage. Should manage saving errors
 	 */
-	protected abstract void saveDataInsideControls();
+	protected abstract void saveData();
 	
 	/**
 	 * Load data from the storage and put it into the controls
 	 */
-	protected abstract void loadDataIntoControls();
+	protected abstract void loadData();
 	
 	/**
 	 * Implements a way to backup values of the storage
 	 * (called before the edit start)
 	 */
-	protected abstract void backupStorageData();
+	protected abstract void backupData();
 	
 	/**
 	 * Implements a way to restore values of the storage
 	 * (called when the user select the "cancel edit" action)
 	 */
-	protected abstract void restoreStorageData();
-	
-	
-	/**
-	 * Return a BasePreferncesDao implementation where preferences are stored
-	 */
-	protected abstract BasePreferencesDao getPreferencesDao();
+	protected abstract void restoreData();
 	
 	
     /**
@@ -201,7 +192,7 @@ public abstract class ActBaseDataEntry
     		return;
 
     	//backup the message value
-    	backupStorageData();
+    	backupData();
         //edit mode
         booCancelEdit = false;
 
@@ -215,7 +206,7 @@ public abstract class ActBaseDataEntry
 	 */
 	protected void cancelEdit()
     {
-		restoreStorageData();
+		restoreData();
     	booCancelEdit = true;
     	finish();
     }
