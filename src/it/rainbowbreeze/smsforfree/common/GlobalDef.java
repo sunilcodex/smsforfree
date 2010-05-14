@@ -20,7 +20,5 @@ public class GlobalDef {
 	/** file name for providers preferences */
 	public static final String AimonParametersFileName = "aimon_parameters.xml"; 
 
-	/** Id for a new service */
-	public static final String NewSubServiceId = "-1";
 
 }

@@ -2,12 +2,9 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import java.util.Map;
 
-import dalvik.system.TemporaryDirectory;
-
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
-import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

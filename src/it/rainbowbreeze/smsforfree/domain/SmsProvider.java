@@ -47,6 +47,8 @@ public abstract class SmsProvider
 	public static final String ERROR_CREDENTIALS_NOT_VALID = "CREDENTIALS_INVALID";
 	public static final String ERROR_NO_REPLY_FROM_SITE = "NO_REPLY";
 	
+	/** Id for a new service */
+	public static final String NEWSUBSERVICEID = "-1";
 	
 
 
@@ -55,11 +57,11 @@ public abstract class SmsProvider
 	/** Has this provider sub-services? */
 	public abstract boolean hasSubServices();
 	
-	public abstract List<SmsService> getAllTemplateSubservices();
-	public abstract SmsService getTemplateSubservice(String templateId);
+	public abstract List<SmsService> getAllTemplate();
+	public abstract SmsService getTemplate(String templateId);
 
-	public abstract List<SmsService> getAllConfiguredSubservices();
-	public abstract SmsService getConfiguredSubservice(String subserviceId);
+	public abstract List<SmsService> getAllSubservices();
+	public abstract SmsService getSubservice(String subserviceId);
 
     public abstract void setSelectedSubservice(String subserviceId);
 	
@@ -153,6 +155,7 @@ public abstract class SmsProvider
 
 	public abstract ResultOperation loadSubservices(Context context);
 	
+	public abstract SmsService newSubserviceFromTemplate(String templateId);
 
 
 	

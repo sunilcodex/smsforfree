@@ -4,7 +4,6 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;

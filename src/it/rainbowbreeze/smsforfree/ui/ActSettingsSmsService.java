@@ -5,11 +5,8 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.data.BasePreferencesDao;
-import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Intent;
@@ -218,7 +215,7 @@ public class ActSettingsSmsService
 			//update provider data
 			res = mProvider.saveParameters(this);
 		} else if (mIsNewService) {
-			mProvider.getAllConfiguredSubservices().add(mEditedService);
+			mProvider.getAllSubservices().add(mEditedService);
 			//save new subservice
 			res = mProvider.saveSubservices(this);
 		} else {
@@ -243,12 +240,13 @@ public class ActSettingsSmsService
 				//template and service to edit are always the same provider
 				mTemplateService = mProvider;
 				mEditedService = mProvider;
-			} else if (GlobalDef.NewSubServiceId.equals(subserviceId)) {
+			} else if (SmsProvider.NEWSUBSERVICEID.equals(subserviceId)) {
 				mIsEditingAProvider = false;
 				mIsNewService = true;
 				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
 				mTemplateService = GlobalUtils.findTemplateInList(mProvider, templateId);
-				mEditedService = new SmsConfigurableService(mTemplateService.getParametersNumber());
+				//create new service
+				mEditedService = mProvider.newSubserviceFromTemplate(templateId);
 			} else {
 				//edit a subservice preferences
 				mIsEditingAProvider = false;

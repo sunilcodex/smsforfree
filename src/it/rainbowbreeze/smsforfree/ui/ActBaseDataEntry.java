@@ -4,7 +4,6 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.data.BasePreferencesDao;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
 
 /**
  * A basic data editing activity, with backup and restore of

@@ -32,22 +32,22 @@ public abstract class SmsMultiProvider
 
     protected List<SmsService> mTemplateSubservices;
     @Override
-	public List<SmsService> getAllTemplateSubservices()
+	public List<SmsService> getAllTemplate()
 	{ return mTemplateSubservices; }
 	public void setAllTemplateSubservices(List<SmsService> value)
 	{ mTemplateSubservices = value; }
     @Override
-    public SmsService getTemplateSubservice(String templateId)
+    public SmsService getTemplate(String templateId)
     { return findServiceInList(mTemplateSubservices, templateId); }
 	
     protected List<SmsService> mConfiguredSubservice;
     @Override
-    public List<SmsService> getAllConfiguredSubservices()
+    public List<SmsService> getAllSubservices()
     { return mConfiguredSubservice; }
     public void setAllConfiguredSubservices(List<SmsService> value)
     { mConfiguredSubservice = value; }
     @Override
-	public SmsService getConfiguredSubservice(String subserviceId)
+	public SmsService getSubservice(String subserviceId)
     { return findServiceInList(mConfiguredSubservice, subserviceId); }
     
     protected SmsService mSelectedService;
@@ -91,6 +91,23 @@ public abstract class SmsMultiProvider
 	public ResultOperation saveSubservices(Context context) {
 		return null;
 	}
+	
+	public SmsService newSubserviceFromTemplate(String templateId) {
+		//find the template
+		SmsService template = getTemplate(templateId);
+		if (null == template) return null;
+		
+		//create new services and config it
+		SmsConfigurableService subservice = new SmsConfigurableService(template.getParametersNumber());
+		subservice.setId(NEWSUBSERVICEID);
+		subservice.setName(template.getName());
+		subservice.setTemplateId(templateId);
+		for(int i = 0; i < template.getParametersNumber(); i++)
+			subservice.setParameterDesc(i, template.getParameterDesc(i));
+		
+		return subservice;
+	}
+	
 
 	
 	
