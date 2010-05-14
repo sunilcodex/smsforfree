@@ -92,7 +92,7 @@ public abstract class SmsProvider
 		
 		try {
 			fis = context.openFileInput(getParametersFileName());
-			res = mDao.loadProvidersParameters(fis, this);
+			res = mDao.loadProviderParameters(fis, this);
 		} catch (FileNotFoundException e) {
 			res.setException(e);
 		} finally {
@@ -116,34 +116,7 @@ public abstract class SmsProvider
 	}
 	
 	public ResultOperation saveParameters(Context context){
-		String xmlRepresentation;
-		
-		ResultOperation res = mDao.saveProvidersParameters(this);
-		
-		if (res.HasErrors()) return res;
-		xmlRepresentation = res.getResultAsString();
-		FileOutputStream fos = null;
-		try {
-			fos = context.openFileOutput(getParametersFileName(), Context.MODE_PRIVATE);
-			fos.write(xmlRepresentation.getBytes());
-		} catch (FileNotFoundException e) {
-			res.setException(e);
-		} catch (IOException e) {
-			res.setException(e);
-		} finally {
-			if (null != fos)
-				try {
-					fos.close();
-					fos = null;
-				} catch (IOException e) {
-					res.setException(e);
-				}
-		}
-		//checks for errors
-		if (res.HasErrors()) return res;
-		
-		//all went good, no errors to return
-		res.setResultAsBoolean(true);
+		ResultOperation res = mDao.saveProviderParameters(context, getParametersFileName(), this);
 		return res;
 	}
 

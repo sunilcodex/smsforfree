@@ -81,7 +81,8 @@ public abstract class SmsMultiProvider
 	}
 
 	public ResultOperation saveTemplates(Context context){
-		return null;
+		ResultOperation res = mDao.saveProviderParameters(context, getParametersFileName(), this);
+		return res;
 	}
 
 	public ResultOperation loadSubservices(Context context) {
