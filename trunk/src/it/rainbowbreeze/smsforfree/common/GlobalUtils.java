@@ -32,7 +32,7 @@ public class GlobalUtils {
 		if (TextUtils.isEmpty(subserviceId)) return null;
 		if (null == provider) return null;
 
-		return provider.getConfiguredSubservice(subserviceId);
+		return provider.getSubservice(subserviceId);
 	}
 
 	public static SmsService findTemplateInList(SmsProvider provider, String templateId)
@@ -40,7 +40,7 @@ public class GlobalUtils {
 		if (TextUtils.isEmpty(templateId)) return null;
 		if (null == provider) return null;
 
-		return provider.getTemplateSubservice(templateId);
+		return provider.getTemplate(templateId);
 	}
 
 	//---------- Private methods

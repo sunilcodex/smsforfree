@@ -3,11 +3,9 @@
  */
 package it.rainbowbreeze.smsforfree.data;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,23 +114,27 @@ public class ProviderDao
 		StringWriter writer = new StringWriter();
 		
 		try {
-			serializer.setOutput(writer);
-			serializer.startDocument("UTF-8", true);
-			serializer.startTag("", XMLNODE_PROVIDER);
-
-			serializer.startTag("", XMLNODE_PARAMETERSARRAY);
-			for(int i = 0; i < provider.getParametersNumber(); i++) {
-				serializer.startTag("", XMLNODE_PARAMETER);
-					serializer.startTag("", XMLNODE_PARAMETERVALUE);
-					serializer.text(parseString(provider.getParameterValue(i)));
-					serializer.endTag("", XMLNODE_PARAMETERVALUE);
-				serializer.endTag("", XMLNODE_PARAMETER);
-			}
-			serializer.endTag("", XMLNODE_PARAMETERSARRAY);
-
-			serializer.endTag("", XMLNODE_PROVIDER);
-			
-			serializer.endDocument();
+			writeServiceData(serializer, provider, XMLNODE_PROVIDER);
+//			serializer.setOutput(writer);
+//			serializer.startDocument("UTF-8", true);
+//			serializer.startTag("", XMLNODE_PROVIDER);
+//
+//			serializer.startTag("", XMLNODE_PARAMETERSARRAY);
+//			for(int i = 0; i < provider.getParametersNumber(); i++) {
+//				serializer.startTag("", XMLNODE_PARAMETER);
+//					serializer.startTag("", XMLNODE_PARAMETERDESC);
+//					serializer.text(parseString(provider.getParameterDesc(i)));
+//					serializer.endTag("", XMLNODE_PARAMETERDESC);
+//					serializer.startTag("", XMLNODE_PARAMETERVALUE);
+//					serializer.text(parseString(provider.getParameterValue(i)));
+//					serializer.endTag("", XMLNODE_PARAMETERVALUE);
+//				serializer.endTag("", XMLNODE_PARAMETER);
+//			}
+//			serializer.endTag("", XMLNODE_PARAMETERSARRAY);
+//
+//			serializer.endTag("", XMLNODE_PROVIDER);
+//			
+//			serializer.endDocument();
 		} catch (Exception e) {
 			res.setException(e);
 			return res;
@@ -156,8 +158,8 @@ public class ProviderDao
 
 			//write template data
 			serializer.startTag("", XMLNODE_TEMPLATESARRAY);
-			if (null != provider.getAllTemplateSubservices()) {
-				for(SmsService template : provider.getAllTemplateSubservices()) {
+			if (null != provider.getAllTemplate()) {
+				for(SmsService template : provider.getAllTemplate()) {
 					writeServiceData(serializer, template, XMLNODE_TEMPLATE);
 				}
 			}
@@ -187,8 +189,8 @@ public class ProviderDao
 
 			//write subservices data
 			serializer.startTag("", XMLNODE_SUBSERVICESARRAY);
-			if (null != provider.getAllConfiguredSubservices()) {
-				for(SmsService subservice : provider.getAllConfiguredSubservices()) {
+			if (null != provider.getAllSubservices()) {
+				for(SmsService subservice : provider.getAllSubservices()) {
 					writeServiceData(serializer, subservice, XMLNODE_SUBSERVICE);
 				}
 			}
@@ -241,13 +243,9 @@ public class ProviderDao
 			}
 		} catch (IOException e) {
 			res.setException(e);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return res;
 		} catch (XmlPullParserException e) {
 			res.setException(e);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return res;
 		}
 		
@@ -267,13 +265,9 @@ public class ProviderDao
 			provider.setAllTemplateSubservices(templates);
 		} catch (IOException e) {
 			res.setException(e);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return res;
 		} catch (XmlPullParserException e) {
 			res.setException(e);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return res;
 		}
 		
@@ -293,13 +287,9 @@ public class ProviderDao
 			provider.setAllConfiguredSubservices(subservices);
 		} catch (IOException e) {
 			res.setException(e);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return res;
 		} catch (XmlPullParserException e) {
 			res.setException(e);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return res;
 		}
 		
@@ -397,19 +387,6 @@ public class ProviderDao
 			serializer.endTag("", XMLNODE_PARAMETER);
 		}
 		serializer.endTag("", XMLNODE_PARAMETERSARRAY);
-	}
-	
-	
-	private void writeIdName(XmlSerializer serializer, SmsService service)
-		throws IllegalArgumentException, IllegalStateException, IOException
-	{
-		serializer.startTag("", XMLNODE_ID);
-		serializer.text(service.getId());
-		serializer.endTag("", XMLNODE_ID);
-		
-		serializer.startTag("", XMLNODE_NAME);
-		serializer.text(service.getName());
-		serializer.endTag("", XMLNODE_NAME);
 	}
 	
 	

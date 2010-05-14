@@ -121,7 +121,7 @@ public class JacksmsProvider
     		return new ResultOperation(e);
 		}
     	
-    	SmsService service = getConfiguredSubservice(serviceId);
+    	SmsService service = getSubservice(serviceId);
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
     	return doRequest(mDictionary.getUrlForSendingMessage(jackSmsUsername, jackSmsPassword), headers);
     }

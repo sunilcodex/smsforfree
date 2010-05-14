@@ -308,7 +308,7 @@ public class ActSendSms
 	}
     
 	private void bindSubservicesSpinner(SmsProvider provider) {
-		List<SmsService> subservices = provider.getAllConfiguredSubservices();
+		List<SmsService> subservices = provider.getAllSubservices();
 		ArrayAdapter<SmsService> adapter = new ArrayAdapter<SmsService>(this,
 				android.R.layout.simple_spinner_item, subservices);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
