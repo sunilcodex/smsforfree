@@ -4,10 +4,8 @@ import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
-import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
-import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -140,13 +138,13 @@ public class ActSendSms
 		case OPTIONMENU_ABOUT:
 			//TODO
 //			ActivityHelper.openAbout(this);
-			ProviderDao dao = new ProviderDao();
-			ResultOperation res = dao.saveProvidersParameters(
-					GlobalUtils.findProviderInList(GlobalBag.providerList, "Aimon"));
-			if (res.HasErrors())
-				mTxtMessage.setText(res.getException().toString());
-			else
-				mTxtMessage.setText(res.getResultAsString());
+//			ProviderDao dao = new ProviderDao();
+//			ResultOperation res = dao.saveProviderParameters(this, filename, provider)(
+//					GlobalUtils.findProviderInList(GlobalBag.providerList, "Aimon"));
+//			if (res.HasErrors())
+//				mTxtMessage.setText(res.getException().toString());
+//			else
+//				mTxtMessage.setText(res.getResultAsString());
 				
 			break;
 		}

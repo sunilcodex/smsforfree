@@ -1,25 +1,16 @@
-/**
- * 
- */
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-/**
- * A basic data editing activity, with backup and restore of
- * preferences and other goodies
- *
- * @author Alfredo "Rainbowbreeze" Morresi
- */
-public abstract class ActBaseDataEntry
-	extends Activity
+public abstract class ActBasePreferenceEntry
+	extends PreferenceActivity
 {
 	//---------- Ctors
 

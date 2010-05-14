@@ -3,6 +3,8 @@
  */
 package it.rainbowbreeze.smsforfree.data;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -18,6 +20,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.text.TextUtils;
@@ -28,7 +31,6 @@ import android.util.Xml;
  *
  */
 public class ProviderDao
-	extends BasePreferencesDao
 {
 	//---------- Ctors
 
@@ -58,156 +60,80 @@ public class ProviderDao
 	
 	
 	//---------- Public methods
-//	public ResultOperation saveProvidersPreferences(SmsProvider provider, String providerFileName)
-//	{
-//		ResultOperation res = new ResultOperation();
-//
-//		XmlSerializer serializer = Xml.newSerializer();
-//		StringWriter writer = new StringWriter();
-//		
-//		try {
-//			serializer.setOutput(writer);
-//			serializer.startDocument("UTF-8", true);
-//			serializer.startTag("", XMLNODE_PROVIDER);
-//
-//			//write service data
-//			writeServiceData(serializer, provider);
-//			
-//			//write template data
-//			serializer.startTag("", XMLNODE_TEMPLATESARRAY);
-//			if (null != provider.getAllTemplateSubservices()) {
-//				for(SmsService template : provider.getAllTemplateSubservices()) {
-//					writeServiceData(serializer, template, XMLNODE_TEMPLATE);
-//				}
-//			}
-//			serializer.endTag("", XMLNODE_TEMPLATESARRAY);
-//				 
-//			//write subservices data
-//			serializer.startTag("", XMLNODE_SUBSERVICESARRAY);
-//			if (null != provider.getAllConfiguredSubservices()) {
-//				for(SmsService subservice : provider.getAllConfiguredSubservices()) {
-//					writeServiceData(serializer, subservice, XMLNODE_SUBSERVICE);
-//				}
-//			}
-//			serializer.endTag("", XMLNODE_SUBSERVICESARRAY);
-//
-//			serializer.endTag("", XMLNODE_PROVIDER);
-//			
-//			serializer.endDocument();
-//		} catch (Exception e) {
-//			res.setException(e);
-//			return res;
-//		}
-//		
-//		//save xml to file
-//
-//		res.setResultAsString(writer.toString());
-//		return res;
-//	}
 
+
+	/**
+	 * Persist a provider parameters into a file in xml format
+	 * 
+	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
+	 */
+	public ResultOperation saveProviderParameters(Context context, String filename, SmsProvider provider)
+	{
+		ResultOperation res = new ResultOperation();
+		
+		try {
+			String xmlExport = serializeProviderParameters(provider);
+			persistFile(context, filename, xmlExport);
+		} catch (Exception e) {
+			res.setException(e);
+		}
+		
+		if (!res.HasErrors())
+			//all went good, no errors to return
+			res.setResultAsBoolean(true);
+		return res;
+	}
 	
-	public ResultOperation saveProvidersParameters(SmsProvider provider)
+	/**
+	 * Persist a provider templates into a file in xml format
+	 * 
+	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
+	 */
+	public ResultOperation saveProviderTemplates(Context context, String filename, SmsProvider provider)
 	{
 		ResultOperation res = new ResultOperation();
 
-		XmlSerializer serializer = Xml.newSerializer();
-		StringWriter writer = new StringWriter();
-		
 		try {
-			writeServiceData(serializer, provider, XMLNODE_PROVIDER);
-//			serializer.setOutput(writer);
-//			serializer.startDocument("UTF-8", true);
-//			serializer.startTag("", XMLNODE_PROVIDER);
-//
-//			serializer.startTag("", XMLNODE_PARAMETERSARRAY);
-//			for(int i = 0; i < provider.getParametersNumber(); i++) {
-//				serializer.startTag("", XMLNODE_PARAMETER);
-//					serializer.startTag("", XMLNODE_PARAMETERDESC);
-//					serializer.text(parseString(provider.getParameterDesc(i)));
-//					serializer.endTag("", XMLNODE_PARAMETERDESC);
-//					serializer.startTag("", XMLNODE_PARAMETERVALUE);
-//					serializer.text(parseString(provider.getParameterValue(i)));
-//					serializer.endTag("", XMLNODE_PARAMETERVALUE);
-//				serializer.endTag("", XMLNODE_PARAMETER);
-//			}
-//			serializer.endTag("", XMLNODE_PARAMETERSARRAY);
-//
-//			serializer.endTag("", XMLNODE_PROVIDER);
-//			
-//			serializer.endDocument();
-		} catch (Exception e) {
-			res.setException(e);
-			return res;
-		}
-
-		res.setResultAsString(writer.toString());
-		return res;
-	}
-
-	
-	public ResultOperation saveProvidersTemplates(SmsProvider provider)
-	{
-		ResultOperation res = new ResultOperation();
-
-		XmlSerializer serializer = Xml.newSerializer();
-		StringWriter writer = new StringWriter();
-		
-		try {
-			serializer.setOutput(writer);
-			serializer.startDocument("UTF-8", true);
-
-			//write template data
-			serializer.startTag("", XMLNODE_TEMPLATESARRAY);
-			if (null != provider.getAllTemplate()) {
-				for(SmsService template : provider.getAllTemplate()) {
-					writeServiceData(serializer, template, XMLNODE_TEMPLATE);
-				}
-			}
-			serializer.endTag("", XMLNODE_TEMPLATESARRAY);
-			
-			serializer.endDocument();
+			String xmlExport = serializeProviderTemplates(provider);
+			persistFile(context, filename, xmlExport);
 		} catch (Exception e) {
 			res.setException(e);
 			return res;
 		}
 		
-		res.setResultAsString(writer.toString());
+		if (!res.HasErrors())
+			//all went good, no errors to return
+			res.setResultAsBoolean(true);
 		return res;
 	}
 
 
-	public ResultOperation saveProvidersSubservices(SmsProvider provider)
+	/**
+	 * Persist a provider subservices into a file in xml format
+	 * 
+	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
+	 */
+	public ResultOperation saveProviderSubservices(Context context, String filename, SmsProvider provider)
 	{
 		ResultOperation res = new ResultOperation();
 
-		XmlSerializer serializer = Xml.newSerializer();
-		StringWriter writer = new StringWriter();
-		
-		try {
-			serializer.setOutput(writer);
-			serializer.startDocument("UTF-8", true);
 
-			//write subservices data
-			serializer.startTag("", XMLNODE_SUBSERVICESARRAY);
-			if (null != provider.getAllSubservices()) {
-				for(SmsService subservice : provider.getAllSubservices()) {
-					writeServiceData(serializer, subservice, XMLNODE_SUBSERVICE);
-				}
-			}
-			serializer.endTag("", XMLNODE_SUBSERVICESARRAY);
-			
-			serializer.endDocument();
+		try {
+			String xmlExport = serializeProviderSubservices(provider);
+			persistFile(context, filename, xmlExport);
 		} catch (Exception e) {
 			res.setException(e);
 			return res;
 		}
 		
-		res.setResultAsString(writer.toString());
+		if (!res.HasErrors())
+			//all went good, no errors to return
+			res.setResultAsBoolean(true);
 		return res;
 	}
 
 
-	public ResultOperation loadProvidersParameters(InputStream in, SmsProvider provider)
+	public ResultOperation loadProviderParameters(InputStream in, SmsProvider provider)
 	{
 		int parametersIndex = -1;
 		ResultOperation res = new ResultOperation();
@@ -297,37 +223,87 @@ public class ProviderDao
 		return res;
 	}
 	
+	
+	
 
 	//---------- Private methods
 
-	/* (non-Javadoc)
-	 * @see it.rainbowbreeze.smsforfree.data.BasePreferencesDao#backupProperties(android.content.SharedPreferences.Editor)
+	/**
+	 * Creates an xml representation of provide's parameters
+	 * 
+	 * @param provider
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 * @throws IOException
 	 */
-	@Override
-	protected void backupProperties(Editor editorBackup) {
-		// TODO Auto-generated method stub
-
+	private String serializeProviderParameters(SmsProvider provider)
+		throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		XmlSerializer serializer = Xml.newSerializer();
+		StringWriter writer = new StringWriter();
+		
+		serializer.setOutput(writer);
+		serializer.startDocument("UTF-8", true);
+		writeServiceData(serializer, provider, XMLNODE_PROVIDER);
+		serializer.endDocument();
+		
+		return writer.toString();
 	}
+	
+	private String serializeProviderTemplates(SmsProvider provider)
+		throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		XmlSerializer serializer = Xml.newSerializer();
+		StringWriter writer = new StringWriter();
+		
+		//open document
+		serializer.setOutput(writer);
+		serializer.startDocument("UTF-8", true);
 
-	/* (non-Javadoc)
-	 * @see it.rainbowbreeze.smsforfree.data.BasePreferencesDao#getPreferencesKey()
-	 */
-	@Override
-	protected String getPreferencesKey() {
-		// TODO Auto-generated method stub
-		return null;
+		//write template data
+		serializer.startTag("", XMLNODE_TEMPLATESARRAY);
+		if (null != provider.getAllTemplate()) {
+			for(SmsService template : provider.getAllTemplate()) {
+				writeServiceData(serializer, template, XMLNODE_TEMPLATE);
+			}
+		}
+		
+		//close document
+		serializer.endTag("", XMLNODE_TEMPLATESARRAY);
+		serializer.endDocument();
+		
+		return writer.toString();
 	}
+	
+	private String serializeProviderSubservices(SmsProvider provider)
+		throws IllegalArgumentException, IllegalStateException, IOException
+	{
+		XmlSerializer serializer = Xml.newSerializer();
+		StringWriter writer = new StringWriter();
+		
+		serializer.setOutput(writer);
+		serializer.startDocument("UTF-8", true);
 
-	/* (non-Javadoc)
-	 * @see it.rainbowbreeze.smsforfree.data.BasePreferencesDao#restoreProperties(android.content.SharedPreferences)
-	 */
-	@Override
-	protected void restoreProperties(SharedPreferences settingsBackup) {
-		// TODO Auto-generated method stub
-
+		//write subservices data
+		serializer.startTag("", XMLNODE_SUBSERVICESARRAY);
+		if (null != provider.getAllSubservices()) {
+			for(SmsService subservice : provider.getAllSubservices()) {
+				writeServiceData(serializer, subservice, XMLNODE_SUBSERVICE);
+			}
+		}
+		
+		//close document
+		serializer.endTag("", XMLNODE_SUBSERVICESARRAY);
+		serializer.endDocument();
+		
+		return writer.toString();
 	}
+	
 
 	/**
+	 * Serialize the SmsProvider data into an XML object
+	 * 
 	 * @param service
 	 * @param serializer
 	 * @throws IOException
@@ -339,21 +315,7 @@ public class ProviderDao
 	{
 		serializer.startTag("", openingTag);
 		serializer.attribute("", XMLATTRIBUTE_PARAMETERSNUMBER, String.valueOf(service.getParametersNumber()));
-		//service data
-		writeServiceData(serializer, service);
-		serializer.endTag("", openingTag);
-	}
-	
-	/**
-	 * @param service
-	 * @param serializer
-	 * @throws IOException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalStateException
-	 */
-	private void writeServiceData(XmlSerializer serializer, SmsService service)
-		throws IOException, IllegalArgumentException, IllegalStateException
-	{
+
 		//service data
 		serializer.startTag("", XMLNODE_ID);
 		serializer.text(service.getId());
@@ -387,6 +349,8 @@ public class ProviderDao
 			serializer.endTag("", XMLNODE_PARAMETER);
 		}
 		serializer.endTag("", XMLNODE_PARAMETERSARRAY);
+		
+		serializer.endTag("", openingTag);
 	}
 	
 	
@@ -452,4 +416,24 @@ public class ProviderDao
 		return TextUtils.isEmpty(input) ? "" : input;
 		
 	}
+
+	/**
+	 * Persist a string into a file
+	 * 
+	 * @param context
+	 * @param filename
+	 * @param content
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void persistFile(Context context, String filename, String content)
+		throws FileNotFoundException, IOException
+	{
+		FileOutputStream fos = null;
+		fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
+		fos.write(content.getBytes());
+		fos.close();
+		fos = null;
+	}
+
 }

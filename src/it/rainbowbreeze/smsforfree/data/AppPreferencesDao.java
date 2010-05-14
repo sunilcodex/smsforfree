@@ -38,7 +38,7 @@ public class AppPreferencesDao	extends BasePreferencesDao
     public boolean getInsertMessageIntoPim()
     { return settings.getBoolean(PROP_INSERT_MESSAGE_INTO_PIM, false); }
     public void setInsertMessageIntoPim(boolean newValue)
-    { editor.putBoolean(PROP_AUTO_CLEAR_MESSAGE, newValue); }
+    { editor.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, newValue); }
     
     public boolean getUseLastProvider()
     { return settings.getBoolean(PROP_USE_LAST_PROVIDER, false); }
