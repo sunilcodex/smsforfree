@@ -23,6 +23,9 @@ public abstract class SmsService
 	
 	//---------- Public properties
 	
+	/** Id for a new service */
+	public static final String NEWSERVICEID = "-1";
+
 	/** The id of the service */
 	public abstract String getId();
 	

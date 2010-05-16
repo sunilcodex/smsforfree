@@ -10,14 +10,14 @@ public class SmsConfigurableService
 	}
 	
 	public SmsConfigurableService(String id, String name, int maxLen, int numberOfParameters) {
-		super(numberOfParameters);
+		this(numberOfParameters);
 		setId(id);
 		setName(name);
 		setMaxMessageLenght(maxLen);
 	}
 	
 	public SmsConfigurableService(String id, String templateId, String name, int maxLen, int numberOfParameters) {
-		super(numberOfParameters);
+		this(numberOfParameters);
 		setId(id);
 		setTemplateId(templateId);
 		setName(name);

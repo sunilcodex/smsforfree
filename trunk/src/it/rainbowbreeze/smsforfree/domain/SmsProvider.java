@@ -3,11 +3,6 @@ package it.rainbowbreeze.smsforfree.domain;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
@@ -47,11 +42,9 @@ public abstract class SmsProvider
 	public static final String ERROR_CREDENTIALS_NOT_VALID = "CREDENTIALS_INVALID";
 	public static final String ERROR_NO_REPLY_FROM_SITE = "NO_REPLY";
 	
-	/** Id for a new service */
-	public static final String NEWSUBSERVICEID = "-1";
+
+
 	
-
-
 	//---------- Public properties
 	
 	/** Has this provider sub-services? */
@@ -77,47 +70,11 @@ public abstract class SmsProvider
 	
 	
 	public ResultOperation loadParameters(Context context){
-		ResultOperation res;
-		FileInputStream fis = null;
-		
-		res = new ResultOperation();
-		
-		//checks if file exists
-		File file = context.getFileStreamPath(getParametersFileName());
-		if (!file.exists()) {
-			//no parameters for the provide
-			res.setResultAsBoolean(false);
-			return res;
-		}
-		
-		try {
-			fis = context.openFileInput(getParametersFileName());
-			res = mDao.loadProviderParameters(fis, this);
-		} catch (FileNotFoundException e) {
-			res.setException(e);
-		} finally {
-			if (null != fis) {
-				try {
-					fis.close();
-					fis = null;
-				} catch (IOException e) {
-					res.setException(e);
-				}
-			}
-		}
-		if (res.HasErrors()) return res;
-		
-		//checks for errors
-		if (res.HasErrors()) return res;
-		
-		//all went good, no errors to return
-		res.setResultAsBoolean(true);
-		return res;
+		return mDao.loadProviderParameters(context, getParametersFileName(), this);
 	}
 	
 	public ResultOperation saveParameters(Context context){
-		ResultOperation res = mDao.saveProviderParameters(context, getParametersFileName(), this);
-		return res;
+		return mDao.saveProviderParameters(context, getParametersFileName(), this);
 	}
 
 	public abstract ResultOperation saveTemplates(Context context);

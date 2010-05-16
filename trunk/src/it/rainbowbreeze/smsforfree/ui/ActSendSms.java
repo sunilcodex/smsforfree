@@ -1,6 +1,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
@@ -10,6 +11,7 @@ import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
+import it.rainbowbreeze.smsforfree.logic.SendMessageTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -261,11 +263,22 @@ public class ActSendSms
 				return;
 			}
 			
+			
 			//send message
-			ResultOperation res = mSelectedProvider.sendMessage(
-					mSelectedServiceId,
+			SendMessageTask task = new SendMessageTask(ActSendSms.this, mSelectedProvider, mSelectedServiceId);
+			task.execute(
 					mTxtDestination.getText().toString(),
 					mTxtMessage.getText().toString());
+			ResultOperation res = null;
+			try {
+				res = task.get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			if (res.HasErrors())
 				ActivityHelper.showInfo(ActSendSms.this,

@@ -41,6 +41,7 @@ public class LogicManager {
 		ProviderDao dao = new ProviderDao();
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
 		JacksmsProvider jackProv = new JacksmsProvider(dao, usernameDesc, passwordDesc);
+		//TODO check errors
 		jackProv.loadParameters(context);
 		jackProv.loadTemplates(context);
 		jackProv.loadSubservices(context);

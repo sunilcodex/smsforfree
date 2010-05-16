@@ -3,10 +3,13 @@
  */
 package it.rainbowbreeze.smsforfree.ui;
 
+import java.util.Collections;
+
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Intent;
@@ -32,6 +35,10 @@ public class ActSettingsSmsService
 	private boolean mIsEditingAProvider;
 	private boolean mIsNewService;
 	private Button mBtnConfigureSubservices;
+	private TextView mLblServiceName;
+	private TextView mTxtServiceName;
+	private TextView mLblServiceInfo;
+	private TextView mTxtServiceInfo;
 
 	private final static int MAXFIELDS = 10;
 	
@@ -42,33 +49,45 @@ public class ActSettingsSmsService
 	
 	//---------- Events
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
-		
         setContentView(R.layout.actsettingssmsservice);
+        getDataFromIntent(getIntent());
+        
+        if (null == mProvider) return;
         
         mBtnConfigureSubservices = (Button) findViewById(R.id.actsettingssmsservice_btnConfigsubservices);
         mBtnConfigureSubservices.setOnClickListener(mBtnConfigureSubservicesClickListener);
-        
-        //TODO: check 
-        //get data from intent
-        getDataFromIntent(getIntent());
+        mLblServiceName = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceName);
+        mTxtServiceName = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceName);
+        mLblServiceInfo = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceInfo);
+        mTxtServiceInfo = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceInfo);
         
 		//display or not the button
-		//if (mTemplateService instanceof SmsProvider) {
 		if (mIsEditingAProvider) {
+			mLblServiceName.setVisibility(View.GONE);
+			mTxtServiceName.setVisibility(View.GONE);
+			mLblServiceInfo.setVisibility(View.GONE);
+			mTxtServiceInfo.setVisibility(View.GONE);
 			if (mProvider.hasSubServices()) {
 				mBtnConfigureSubservices.setVisibility(View.VISIBLE);
 			} else {
 				mBtnConfigureSubservices.setVisibility(View.GONE);
 			}
+		} else {
+			mLblServiceName.setVisibility(View.VISIBLE);
+			mTxtServiceName.setVisibility(View.VISIBLE);
+			mLblServiceInfo.setVisibility(View.GONE);
+			mTxtServiceInfo.setVisibility(View.GONE);
+			mBtnConfigureSubservices.setVisibility(View.GONE);
 		}
 	}
 	
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
 			//open the subservice configuration activity
-			ActivityHelper.openProviderSubServicesList(ActSettingsSmsService.this, mEditedService.getId());
+			ActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
 		}
 	};
 
@@ -100,6 +119,10 @@ public class ActSettingsSmsService
         		getString(R.string.actsettingssmsservice_titleEdit),
         		mTemplateService.getName()));
 
+        //set the name, if the object edited is a subservice
+		if (!mIsEditingAProvider)
+			mTxtServiceName.setText(mEditedService.getName());
+		
         //update texts visibility and values
 		for (int i = 0; i < MAXFIELDS; i++){
         	TextView lblDesc = null;
@@ -165,8 +188,11 @@ public class ActSettingsSmsService
 
 	@Override
 	protected void saveData() {
+		//read object name, if object edited is a subservice
+		if (!mIsEditingAProvider)
+			((SmsConfigurableService)mEditedService).setName(mTxtServiceName.getText().toString());
+			
 		for (int i = 0; i < MAXFIELDS; i++){
-        	TextView lblDesc = null;
         	EditText txtValue = null;
         	
         	//get value views
@@ -240,11 +266,11 @@ public class ActSettingsSmsService
 				//template and service to edit are always the same provider
 				mTemplateService = mProvider;
 				mEditedService = mProvider;
-			} else if (SmsProvider.NEWSUBSERVICEID.equals(subserviceId)) {
+			} else if (SmsService.NEWSERVICEID.equals(subserviceId)) {
 				mIsEditingAProvider = false;
 				mIsNewService = true;
 				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
-				mTemplateService = GlobalUtils.findTemplateInList(mProvider, templateId);
+				mTemplateService = mProvider.getTemplate(templateId);
 				//create new service
 				mEditedService = mProvider.newSubserviceFromTemplate(templateId);
 			} else {
@@ -252,8 +278,8 @@ public class ActSettingsSmsService
 				mIsEditingAProvider = false;
 				mIsNewService = false;
 				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
-				mTemplateService = GlobalUtils.findTemplateInList(mProvider, templateId);
-				mEditedService = GlobalUtils.findSubserviceInList(mProvider, subserviceId);
+				mTemplateService = mProvider.getTemplate(templateId);
+				mEditedService = mProvider.getSubservice(subserviceId);
 			}
 
 		} else {

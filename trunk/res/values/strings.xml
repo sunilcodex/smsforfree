@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, FrmMain!</string>
-    <string name="app_name">SmsForFree</string>
-    
+    <!-- Common -->
+    <string name="common_appname">SmsForFree</string>
     <string name="common_username">Username</string>
     <string name="common_password">Password</string>
     <string name="common_sender">Sender</string>
@@ -10,10 +9,14 @@
     <string name="common_btnYes">Yes</string>
     <string name="common_btnNo">No</string>
     <string name="common_mnuCancel">Cancel</string>
+    <string name="common_msg_sendingMessage">Sending message...</string>
     <string name="common_msg_genericError">Generic error: %s</string>
     <string name="common_msg_noErrorToReport">No error to report :(</string>
     <string name="common_msg_cannotsavepreferences">Sorry, cannot save data: </string>
+    <string name="common_msg_errorWrongDestinationOrBody">Missing destination or body parameters</string>
     
+
+
 
     <!-- ActSendSms -->
     <string name="actsendsms_title">SmsForFree</string>
@@ -68,14 +71,24 @@
 
 
     <!-- ActProvidersList -->
-    <string name="actproviderslist_title">SmsForFree - Providers list</string>
+    <string name="actproviderslist_title">SmsForFree - Providers</string>
 
 
 
 
-    <!-- ActProviderSubServicesList -->
-    <string name="actprovidersubserviceslist_title">Provider services list</string>
-    <string name="actprovidersubserviceslist_titleEdit">%s services list</string>
+    <!-- ActTemplatesList -->
+    <string name="acttemplateslist_title">SmsForFree - Choose a template</string>
+
+
+
+
+    <!-- ActSubservicesList -->
+    <string name="actsubserviceslist_title">Provider services list</string>
+    <string name="actsubserviceslist_titleEdit">%s services list</string>
+    <string name="actsubserviceslist_mnuHeaderTitle">Choose action</string>
+    <string name="actsubserviceslist_mnuDeleteService">Delete</string>
+    <string name="actsubserviceslist_mnuAddService">Add</string>
+    <string name="actsubserviceslist_mnuEditService">Edit</string>
 
 
 </resources>
