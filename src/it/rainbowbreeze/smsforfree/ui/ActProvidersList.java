@@ -21,13 +21,19 @@ public class ActProvidersList
 {
 	//---------- Private fields
 
+	
+	
+	
 	//---------- Public properties
 
+	
+	
+	
 	//---------- Events
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.actproviderslist);
+		setContentView(R.layout.acttemplateslist);
 
 		setListAdapter(new ArrayAdapter<SmsProvider>(this, 
 	              android.R.layout.simple_list_item_1, GlobalBag.providerList));
@@ -37,14 +43,17 @@ public class ActProvidersList
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		SmsProvider provider = GlobalBag.providerList.get(position);
 		
-		ActivityHelper.openSettingsSmsService(this, provider.getName());
-		//open provider configuration activity
-//		ActivityHelper.showInfo(this, "Lista pos: " + position + " - " + provider.getName());
-//		super.onListItemClick(l, v, position, id);
+		ActivityHelper.openSettingsSmsService(this, provider.getId());
 	}
 
+	
+	
+	
 	//---------- Public methods
 
+	
+	
+	
 	//---------- Private methods
 
 }

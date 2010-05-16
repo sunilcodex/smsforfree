@@ -28,10 +28,12 @@ public class ActivityHelper {
 	//---------- Public properties
 	public final static int REQUESTCODE_NONE = 0;
 	public final static int REQUESTCODE_PICKCONTACT = 3;
+	public final static int REQUESTCODE_PICKTEMPLATE = 4;
 	
 	public final static String INTENTKEY_SMSSERVICEID = "SmsService";
 	public final static String INTENTKEY_SMSPROVIDERID = "SmsProvider";
 	public final static String INTENTKEY_SMSTEMPLATEID = "SmsTemplate";
+	public final static String INTENTKEY_PICKTEMPLATE = "PickTemplate";
 
 	
 	
@@ -40,6 +42,8 @@ public class ActivityHelper {
 	
 	/**
 	 * Open Settings activity
+	 * 
+	 * @param callerActivity caller activity
 	 */
 	public static void openSettingsMain(Activity callerActivity)
 	{
@@ -48,6 +52,13 @@ public class ActivityHelper {
 	
 	/**
 	 * Open Sms settings activity for editing a subservice preferences
+	 * 
+	 * @param callerActivity caller activity
+	 * @param providerId the id of the provider that own the subservice
+	 * @param templateId the id of the template on which the service is
+	 *                   based
+	 * @param serviceId the id of the subservice to edit.
+	 *                  SmsService.NEWSERVICEID when adding a new service
 	 */
 	public static void openSettingsSmsService(Activity callerActivity, String providerId, String templateId, String serviceId)
 	{
@@ -60,6 +71,9 @@ public class ActivityHelper {
 	
 	/**
 	 * Open Sms settings activity for editing a provider preferences
+	 * 
+	 * @param callerActivity caller activity
+	 * @param providerId the id of the provider to edit
 	 */
 	public static void openSettingsSmsService(Activity callerActivity, String providerId)
 	{
@@ -68,21 +82,30 @@ public class ActivityHelper {
 	}
 	
 	/**
-	 * Open provider subservice configuration activity
-	 */
-	public static void openProviderSubServicesList(Activity callerActivity, String providerId)
-	{
-        Intent intent = new Intent(callerActivity, ActProviderSubServicesList.class);
-		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
-		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
-	}
-	
-	/**
-	 * Open Provider list activity
+	 * Open provider list activity
 	 */
 	public static void openProvidersList(Activity callerActivity)
 	{
 		openActivity(callerActivity, ActProvidersList.class, null, false, REQUESTCODE_NONE);
+	}
+	
+	/**
+	 * Open provider's templates list activity
+	 */
+	public static void openTemplatesList(Activity callerActivity, String providerId)
+	{
+        Intent intent = new Intent(callerActivity, ActTemplatesList.class);
+		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
+		openActivity(intent, callerActivity, true, REQUESTCODE_PICKTEMPLATE);
+	}
+	/**
+	 * Open provider subservice configuration activity
+	 */
+	public static void openSubservicesList(Activity callerActivity, String providerId)
+	{
+        Intent intent = new Intent(callerActivity, ActSubservicesList.class);
+		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
+		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
 	}
 	
 	/**

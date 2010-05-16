@@ -91,5 +91,23 @@
 	</style>
 
 
+	
+	
+	<!-- ActTemplatesList -->
+	<style name="acttemplateslist_lstTemplates">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+
+	
+	
+	<!-- ActSubServicesList -->
+	<style name="actsubserviceslist_lstSubservices">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+
 
 </resources>

@@ -2,6 +2,7 @@ package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.apache.http.client.ClientProtocolException;
@@ -72,39 +73,39 @@ public class JacksmsProvider
 		ResultOperation res = new ResultOperation();
 
 		//TODO
-		mTemplateSubservices = new ArrayList<SmsService>();
+		mTemplates = new ArrayList<SmsService>();
 		
 		SmsConfigurableService service;
-		service = new SmsConfigurableService("62", "Aimon-Free", 112, 2);
-		mTemplateSubservices.add(service);
-		service = new SmsConfigurableService("61", "Aimon", 612, 2);
-		mTemplateSubservices.add(service);
+		service = new SmsConfigurableService("62", "Aimon-Free", 112, 3);
+		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
+		service.setParameterDesc(1, "Password di accesso");
+		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
+		mTemplates.add(service);
+		service = new SmsConfigurableService("61", "Aimon", 612, 3);
+		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
+		service.setParameterDesc(1, "Password di accesso");
+		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
+		mTemplates.add(service);
+		service = new SmsConfigurableService("29", "VoipStunt", 160, 3);
+		service.setParameterDesc(0, "Username di accesso su voipstunt.com");
+		service.setParameterDesc(1, "Password di accesso su voipstunt.com");
+		service.setParameterDesc(2, "Numero verificato che verra' visualizzato come mittente");
+		mTemplates.add(service);
+		service = new SmsConfigurableService("1", "Vodafone-SMS", 360, 3);
+		service.setParameterDesc(0, "Username di accesso a www.190.it");
+		service.setParameterDesc(1, "Password di accesso a www.190.it");
+		service.setParameterDesc(2, "Inserisci il numero di telefono della sim con cui vuoi inviare tramite questo account.");
+		mTemplates.add(service);
+		service = new SmsConfigurableService("33", "Enel", 110, 2);
+		service.setParameterDesc(0, "Username");
+		service.setParameterDesc(1, "Password");
+		mTemplates.add(service);
 		
-		return res; 
-	}
-	
-	
-	@Override
-	public ResultOperation loadSubservices(Context context)
-	{
-		ResultOperation res = new ResultOperation();
+		Collections.sort(mTemplates);
 
-		//TODO
-		mConfiguredSubservice = new ArrayList<SmsService>();
-		SmsConfigurableService service;
-		service = new SmsConfigurableService("1", "62", "Aimon-Free", 112, 4);
-		service.setParameterValue(0, "rainbowbreeze");
-		service.setParameterValue(1, "XXXXXX");
-		service.setParameterValue(2, "3921234567");
-		mConfiguredSubservice.add(service);
-		service = new SmsConfigurableService("2", "61", "Aimon", 612, 4);
-		service.setParameterValue(0, "rainbowbreeze");
-		service.setParameterValue(1, "XXXXXX");
-		service.setParameterValue(2, "3921234567");
-		mConfiguredSubservice.add(service);
-		
 		return res; 
 	}
+
 	
 	@Override
     public ResultOperation sendMessage(

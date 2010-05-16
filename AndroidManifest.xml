@@ -7,7 +7,7 @@
 >
     <application
     	android:icon="@drawable/icon"
-    	android:label="@string/app_name"
+    	android:label="@string/common_appname"
    	>
         <activity
         	android:name=".ui.ActSendSms"
@@ -35,8 +35,13 @@
        	/>
        	
         <activity
-        	android:name=".ui.ActProviderSubServicesList"
-        	android:label="@string/actprovidersubserviceslist_title"
+        	android:name=".ui.ActTemplatesList"
+        	android:label="@string/acttemplateslist_title"
+       	/>
+       	
+        <activity
+        	android:name=".ui.ActSubservicesList"
+        	android:label="@string/actsubserviceslist_title"
        	/>
        	
     </application>

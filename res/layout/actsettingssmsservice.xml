@@ -9,6 +9,15 @@
 		>
 		
 			<TextView
+				android:id="@+id/actsettingssmsservice_lblServiceName"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtServiceName"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+				
+			<TextView
 				android:id="@+id/actsettingssmsservice_lblParameter00"
 				style="@style/actsettingssmsservice_lblParameterDesc"
 			/>
@@ -95,6 +104,15 @@
 			/>
 			<EditText
 				android:id="@+id/actsettingssmsservice_txtParameter09"
+				style="@style/actsettingssmsservice_txtParameterValue"
+			/>
+			
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblServiceInfo"
+				style="@style/actsettingssmsservice_lblParameterDesc"
+			/>
+			<EditText
+				android:id="@+id/actsettingssmsservice_txtServiceInfo"
 				style="@style/actsettingssmsservice_txtParameterValue"
 			/>
 			

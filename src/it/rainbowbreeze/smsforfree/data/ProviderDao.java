@@ -3,6 +3,8 @@
  */
 package it.rainbowbreeze.smsforfree.data;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,8 +23,6 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.text.TextUtils;
 import android.util.Xml;
 
@@ -51,7 +51,10 @@ public class ProviderDao
 	private final static String XMLNODE_PARAMETERVALUE = "Value";
 	private final static String XMLATTRIBUTE_PARAMETERSNUMBER = "ParametersNumber";
 	
-
+	private final static int PROVIDERDATA_PARAMETERS = 1;
+	private final static int PROVIDERDATA_TEMPLATES = 2;
+	private final static int PROVIDERDATA_SUBSERVICES = 3;
+	
 	
 	
 	//---------- Public properties
@@ -69,21 +72,9 @@ public class ProviderDao
 	 */
 	public ResultOperation saveProviderParameters(Context context, String filename, SmsProvider provider)
 	{
-		ResultOperation res = new ResultOperation();
-		
-		try {
-			String xmlExport = serializeProviderParameters(provider);
-			persistFile(context, filename, xmlExport);
-		} catch (Exception e) {
-			res.setException(e);
-		}
-		
-		if (!res.HasErrors())
-			//all went good, no errors to return
-			res.setResultAsBoolean(true);
-		return res;
+		return saveProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
 	}
-	
+
 	/**
 	 * Persist a provider templates into a file in xml format
 	 * 
@@ -91,22 +82,8 @@ public class ProviderDao
 	 */
 	public ResultOperation saveProviderTemplates(Context context, String filename, SmsProvider provider)
 	{
-		ResultOperation res = new ResultOperation();
-
-		try {
-			String xmlExport = serializeProviderTemplates(provider);
-			persistFile(context, filename, xmlExport);
-		} catch (Exception e) {
-			res.setException(e);
-			return res;
-		}
-		
-		if (!res.HasErrors())
-			//all went good, no errors to return
-			res.setResultAsBoolean(true);
-		return res;
+		return saveProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
 	}
-
 
 	/**
 	 * Persist a provider subservices into a file in xml format
@@ -115,15 +92,93 @@ public class ProviderDao
 	 */
 	public ResultOperation saveProviderSubservices(Context context, String filename, SmsProvider provider)
 	{
+		return saveProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
+	}
+
+
+	/**
+	 * Loads provider parameters from an xml file
+	 * 
+	 * Could throws FileNotFoundException, IOException, XmlPullParserException
+	 */
+	public ResultOperation loadProviderParameters(Context context, String filename, SmsProvider provider)
+	{
+		return loadProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
+	}
+
+	/**
+	 * Loads provider templates from an xml file
+	 * 
+	 * Could throws FileNotFoundException, IOException, XmlPullParserException
+	 */
+	public ResultOperation loadProviderTemplates(Context context, String filename, SmsProvider provider)
+	{
+		return loadProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
+	}
+
+	/**
+	 * Loads provider configured subservices from an xml file
+	 * 
+	 * Could throws FileNotFoundException, IOException, XmlPullParserException
+	 */
+	public ResultOperation loadProviderSubservices(Context context, String filename, SmsProvider provider)
+	{
+		return loadProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
+	}
+
+	
+	
+
+	//---------- Private methods
+
+	/**
+	 * Persist provider data into an xml file
+	 * 
+	 * @param context
+	 * @param filename
+	 * @param provider provider to save
+	 * @param dataToSave part of the provider to save
+	 * @return
+	 */
+	private ResultOperation saveProviderData(
+			Context context,
+			String filename,
+			SmsProvider provider,
+			int dataToSave)
+	{
 		ResultOperation res = new ResultOperation();
-
-
+		
+		FileOutputStream fos = null;
 		try {
-			String xmlExport = serializeProviderSubservices(provider);
-			persistFile(context, filename, xmlExport);
+			String xmlExport = null;
+			switch (dataToSave) {
+			case PROVIDERDATA_PARAMETERS:
+				xmlExport = serializeProviderParameters(provider);
+				break;
+			case PROVIDERDATA_TEMPLATES:
+				xmlExport = serializeProviderTemplates(provider);
+				break;
+			case PROVIDERDATA_SUBSERVICES:
+				xmlExport = serializeProviderSubservices(provider);
+				break;
+			}
+
+			//save file
+			fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
+			fos.write(xmlExport.getBytes());
+
 		} catch (Exception e) {
 			res.setException(e);
-			return res;
+			
+		} finally {
+			if (null != fos) {
+				try {
+					fos.close();
+					fos = null;
+				} catch (IOException e) {
+					res.setException(e);
+				}
+			}
 		}
 		
 		if (!res.HasErrors())
@@ -131,103 +186,7 @@ public class ProviderDao
 			res.setResultAsBoolean(true);
 		return res;
 	}
-
-
-	public ResultOperation loadProviderParameters(InputStream in, SmsProvider provider)
-	{
-		int parametersIndex = -1;
-		ResultOperation res = new ResultOperation();
-		
-		XmlPullParser parser = Xml.newPullParser();
-		
-		try {
-			parser.setInput(in, null);
-			int eventType = parser.getEventType();
-			
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				String name = null;
-				switch (eventType) {
-				case XmlPullParser.START_DOCUMENT:
-					break;
-					
-				case XmlPullParser.START_TAG:
-					name = parser.getName();
-					
-					if (name.equalsIgnoreCase(XMLNODE_PARAMETER)) {
-						parametersIndex++;
-					} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERVALUE)) {
-						provider.setParameterValue(parametersIndex, parser.nextText());
-					}
-					break;
-					
-				case XmlPullParser.END_TAG:
-					break;
-				
-				}
-				
-				eventType = parser.next();
-			}
-		} catch (IOException e) {
-			res.setException(e);
-			return res;
-		} catch (XmlPullParserException e) {
-			res.setException(e);
-			return res;
-		}
-		
-		res.setResultAsBoolean(true);
-		return res;
-	}
 	
-	
-	public ResultOperation loadProvidersTemplates(InputStream in, SmsMultiProvider provider)
-	{
-		ResultOperation res = new ResultOperation();
-		XmlPullParser parser = Xml.newPullParser();
-
-		try {
-			parser.setInput(in, null);
-			List<SmsService> templates = loadServiceData(parser, XMLNODE_TEMPLATE);
-			provider.setAllTemplateSubservices(templates);
-		} catch (IOException e) {
-			res.setException(e);
-			return res;
-		} catch (XmlPullParserException e) {
-			res.setException(e);
-			return res;
-		}
-		
-		res.setResultAsBoolean(true);
-		return res;
-	}
-	
-
-	public ResultOperation loadProvidersSubservices(InputStream in, SmsMultiProvider provider)
-	{
-		ResultOperation res = new ResultOperation();
-		XmlPullParser parser = Xml.newPullParser();
-
-		try {
-			parser.setInput(in, null);
-			List<SmsService> subservices = loadServiceData(parser, XMLNODE_SUBSERVICE);
-			provider.setAllConfiguredSubservices(subservices);
-		} catch (IOException e) {
-			res.setException(e);
-			return res;
-		} catch (XmlPullParserException e) {
-			res.setException(e);
-			return res;
-		}
-		
-		res.setResultAsBoolean(true);
-		return res;
-	}
-	
-	
-	
-
-	//---------- Private methods
-
 	/**
 	 * Creates an xml representation of provide's parameters
 	 * 
@@ -245,12 +204,22 @@ public class ProviderDao
 		
 		serializer.setOutput(writer);
 		serializer.startDocument("UTF-8", true);
-		writeServiceData(serializer, provider, XMLNODE_PROVIDER);
+		serializeServiceData(serializer, provider, XMLNODE_PROVIDER);
 		serializer.endDocument();
 		
 		return writer.toString();
 	}
 	
+	
+	/**
+	 * Creates an xml representation of provide's templates
+	 * 
+	 * @param provider
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
 	private String serializeProviderTemplates(SmsProvider provider)
 		throws IllegalArgumentException, IllegalStateException, IOException
 	{
@@ -265,7 +234,7 @@ public class ProviderDao
 		serializer.startTag("", XMLNODE_TEMPLATESARRAY);
 		if (null != provider.getAllTemplate()) {
 			for(SmsService template : provider.getAllTemplate()) {
-				writeServiceData(serializer, template, XMLNODE_TEMPLATE);
+				serializeServiceData(serializer, template, XMLNODE_TEMPLATE);
 			}
 		}
 		
@@ -275,7 +244,17 @@ public class ProviderDao
 		
 		return writer.toString();
 	}
+
 	
+	/**
+	 * Creates an xml representation of provide's subservices
+	 * 
+	 * @param provider
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
 	private String serializeProviderSubservices(SmsProvider provider)
 		throws IllegalArgumentException, IllegalStateException, IOException
 	{
@@ -289,7 +268,7 @@ public class ProviderDao
 		serializer.startTag("", XMLNODE_SUBSERVICESARRAY);
 		if (null != provider.getAllSubservices()) {
 			for(SmsService subservice : provider.getAllSubservices()) {
-				writeServiceData(serializer, subservice, XMLNODE_SUBSERVICE);
+				serializeServiceData(serializer, subservice, XMLNODE_SUBSERVICE);
 			}
 		}
 		
@@ -302,7 +281,7 @@ public class ProviderDao
 	
 
 	/**
-	 * Serialize the SmsProvider data into an XML object
+	 * Serialize SmsService data into an XML object
 	 * 
 	 * @param service
 	 * @param serializer
@@ -310,7 +289,7 @@ public class ProviderDao
 	 * @throws IllegalArgumentException
 	 * @throws IllegalStateException
 	 */
-	private void writeServiceData(XmlSerializer serializer, SmsService service, String openingTag)
+	private void serializeServiceData(XmlSerializer serializer, SmsService service, String openingTag)
 			throws IOException, IllegalArgumentException, IllegalStateException
 	{
 		serializer.startTag("", openingTag);
@@ -354,10 +333,146 @@ public class ProviderDao
 	}
 	
 	
-	private List<SmsService> loadServiceData(XmlPullParser parser, String xmlNode_openingTag)
+	private String parseString(String input) {
+		return TextUtils.isEmpty(input) ? "" : input;
+		
+	}
+
+	
+	/**
+	 * Loads provider data from xml files.
+	 * Throws FileNotFoundException, XmlPullParserException, IOException
+	 * 
+	 * @param context
+	 * @param fileName
+	 * @param provider
+	 * @param datatosave
+	 * @return
+	 */
+	private ResultOperation loadProviderData(
+			Context context,
+			String fileName,
+			SmsProvider provider,
+			int dataToLoad)
+	{
+		ResultOperation res = new ResultOperation();;
+		FileInputStream fis = null;
+
+		//checks if file exists
+		File file = context.getFileStreamPath(fileName);
+		if (!file.exists()) {
+			//if file doesn't exist, no problem, reset data
+			res.setResultAsBoolean(true);
+			return res;
+		}
+		
+		try {
+			fis = context.openFileInput(fileName);
+			switch (dataToLoad) {
+			case PROVIDERDATA_PARAMETERS:
+				deserializeProviderParameters(fis, provider);
+				break;
+			case PROVIDERDATA_TEMPLATES:
+				deserializeProvidersTemplates(fis, (SmsMultiProvider) provider);
+				break;
+			case PROVIDERDATA_SUBSERVICES:
+				deserializeProvidersSubservices(fis, (SmsMultiProvider) provider);
+				break;
+			}
+		} catch (FileNotFoundException e) {
+			res.setException(e);
+		} catch (XmlPullParserException e) {
+			res.setException(e);
+		} catch (IOException e) {
+			res.setException(e);
+		} finally {
+			if (null != fis) {
+				try {
+					fis.close();
+					fis = null;
+				} catch (IOException e) {
+					res.setException(e);
+				}
+			}
+		}
+
+		//checks for errors
+		if (res.HasErrors()) return res;
+		
+		//all went good, no errors to return
+		res.setResultAsBoolean(true);
+		return res;
+	}
+
+	/**
+	 * Deserializes provider parameters from xml input
+	 */
+	private void deserializeProviderParameters(InputStream in, SmsProvider provider)
 		throws XmlPullParserException, IOException
 	{
+		int parametersIndex = -1;
+		XmlPullParser parser = Xml.newPullParser();
 
+		parser.setInput(in, null);
+		int eventType = parser.getEventType();
+		
+		while (eventType != XmlPullParser.END_DOCUMENT) {
+			String name = null;
+			switch (eventType) {
+			case XmlPullParser.START_DOCUMENT:
+				break;
+				
+			case XmlPullParser.START_TAG:
+				name = parser.getName();
+				
+				if (name.equalsIgnoreCase(XMLNODE_PARAMETER)) {
+					parametersIndex++;
+				} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERVALUE)) {
+					provider.setParameterValue(parametersIndex, parser.nextText());
+				}
+				break;
+				
+			case XmlPullParser.END_TAG:
+				break;
+			
+			}
+			
+			eventType = parser.next();
+		}
+	}
+
+	/**
+	 * Deserializes provider templates from xml input
+	 */
+	private void deserializeProvidersTemplates(InputStream in, SmsMultiProvider provider)
+		throws XmlPullParserException, IOException
+	{
+		XmlPullParser parser = Xml.newPullParser();
+		parser.setInput(in, null);
+		List<SmsService> templates = deserializeServiceData(parser, XMLNODE_TEMPLATE);
+		provider.setAllTemplateSubservices(templates);
+	}
+	
+	
+	/**
+	 * Deserializes provider configured subservices from xml input
+	 */
+	private void deserializeProvidersSubservices(InputStream in, SmsMultiProvider provider)
+		throws XmlPullParserException, IOException
+	{
+		XmlPullParser parser = Xml.newPullParser();
+		parser.setInput(in, null);
+		List<SmsService> subservices = deserializeServiceData(parser, XMLNODE_SUBSERVICE);
+		provider.setAllConfiguredSubservices(subservices);
+	}
+
+	
+	/**
+	 * Deserializes a SmsService from xml input
+	 */
+	private List<SmsService> deserializeServiceData(XmlPullParser parser, String xmlNode_openingTag)
+	throws XmlPullParserException, IOException
+	{
 		List<SmsService> services = new ArrayList<SmsService>();
 		SmsConfigurableService service = null;
 		int eventType = parser.getEventType();
@@ -410,30 +525,4 @@ public class ProviderDao
 		}
 		return services;
 	}
-	
-
-	private String parseString(String input) {
-		return TextUtils.isEmpty(input) ? "" : input;
-		
-	}
-
-	/**
-	 * Persist a string into a file
-	 * 
-	 * @param context
-	 * @param filename
-	 * @param content
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private void persistFile(Context context, String filename, String content)
-		throws FileNotFoundException, IOException
-	{
-		FileOutputStream fos = null;
-		fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
-		fos.write(content.getBytes());
-		fos.close();
-		fos = null;
-	}
-
 }
