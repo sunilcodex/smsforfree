@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/common_layoutBackground"
+>
+	<LinearLayout
+		style="@style/actcompactsmessage_LinearLayout"
+		android:layout_alignParentTop="true"
+	>
+	</LinearLayout>
+
+</RelativeLayout>

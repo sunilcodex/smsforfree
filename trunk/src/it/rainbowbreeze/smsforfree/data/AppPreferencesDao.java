@@ -11,6 +11,7 @@ public class AppPreferencesDao	extends BasePreferencesDao
     private static final String PROP_INSERT_MESSAGE_INTO_PIM = "insertmessageintopim";
     private static final String PROP_USE_LAST_PROVIDER = "uselastprovider";
     private static final String PROP_PREFERRED_PROVIDER = "preferredprovider";
+    private static final String PROP_SIGNATURE = "signature";
 
     
     
@@ -31,24 +32,29 @@ public class AppPreferencesDao	extends BasePreferencesDao
 	//---------- Public Methods
 
     public boolean getAutoClearMessage()
-    { return settings.getBoolean(PROP_AUTO_CLEAR_MESSAGE, false); }
+    { return mSettings.getBoolean(PROP_AUTO_CLEAR_MESSAGE, false); }
     public void setAutoClearMessage(boolean newValue)
-    { editor.putBoolean(PROP_AUTO_CLEAR_MESSAGE, newValue); }
+    { mEditor.putBoolean(PROP_AUTO_CLEAR_MESSAGE, newValue); }
     
     public boolean getInsertMessageIntoPim()
-    { return settings.getBoolean(PROP_INSERT_MESSAGE_INTO_PIM, false); }
+    { return mSettings.getBoolean(PROP_INSERT_MESSAGE_INTO_PIM, false); }
     public void setInsertMessageIntoPim(boolean newValue)
-    { editor.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, newValue); }
+    { mEditor.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, newValue); }
     
     public boolean getUseLastProvider()
-    { return settings.getBoolean(PROP_USE_LAST_PROVIDER, false); }
+    { return mSettings.getBoolean(PROP_USE_LAST_PROVIDER, false); }
     public void setUseLastProvider(boolean newValue)
-    { editor.putBoolean(PROP_USE_LAST_PROVIDER, newValue); }
+    { mEditor.putBoolean(PROP_USE_LAST_PROVIDER, newValue); }
     
     public String getPreferredProvider()
-    { return settings.getString(PROP_PREFERRED_PROVIDER, ""); }
+    { return mSettings.getString(PROP_PREFERRED_PROVIDER, ""); }
     public void setPreferredProvider(String newValue)
-    { editor.putString(PROP_PREFERRED_PROVIDER, newValue); }
+    { mEditor.putString(PROP_PREFERRED_PROVIDER, newValue); }
+
+    public String getSignature()
+    { return mSettings.getString(PROP_SIGNATURE, ""); }
+    public void setSignature(String newValue)
+    { mEditor.putString(PROP_SIGNATURE, newValue); }
 
     
     

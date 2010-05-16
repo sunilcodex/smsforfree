@@ -4,9 +4,11 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 
@@ -19,7 +21,8 @@ public class ActSettingsMain
 {
 	//---------- Private fields
 	private CheckBoxPreference mChkResetData;
-	private CheckBoxPreference mChkInserIntoPim;
+//	private CheckBoxPreference mChkInserIntoPim;
+	private EditTextPreference mTxtSignature;
 
 	
 	
@@ -37,22 +40,33 @@ public class ActSettingsMain
 		addPreferencesFromResource(R.layout.actsettingsmain);
 		
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
-		mChkInserIntoPim = (CheckBoxPreference) findPreference("actsettingsmain_chkInsertSmsIntoPim");
+		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
+//		mChkInserIntoPim = (CheckBoxPreference) findPreference("actsettingsmain_chkInsertSmsIntoPim");
 		
 		//Get the custom preference
 		Preference customPref = (Preference) findPreference("actsettingsmain_providersPref");
-		
-		customPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			
-			public boolean onPreferenceClick(Preference preference) {
-				ActivityHelper.openProvidersList(ActSettingsMain.this);
-//				ActivityHelper.openSettingsSmsService(ActSettingsMain.this, JacksmsProvider.instance().getName());
-				return true;
-			}
-		});
+		customPref.setOnPreferenceClickListener(providersPrefsClickListener);
 	}
 
-	
+
+	/**
+	 * Called when providers preferences button is pressed
+	 */
+	private OnPreferenceClickListener providersPrefsClickListener = new OnPreferenceClickListener() {
+		@Override
+		public boolean onPreferenceClick(Preference preference) {
+			//checks if only on provider is configured
+			
+			if (1 == GlobalBag.providerList.size()) {
+				//open directly the setting for the only provider present
+				ActivityHelper.openSettingsSmsService(ActSettingsMain.this, GlobalBag.providerList.get(0).getId());
+			} else {
+				//open providers list
+				ActivityHelper.openProvidersList(ActSettingsMain.this);
+			}
+			return true;
+		}
+	};
 	
 	
 	//---------- Public methods
@@ -64,13 +78,15 @@ public class ActSettingsMain
 	@Override
 	protected void loadData() {
 		mChkResetData.setChecked(AppPreferencesDao.instance().getAutoClearMessage());
-		mChkInserIntoPim.setChecked(AppPreferencesDao.instance().getInsertMessageIntoPim());
+//		mChkInserIntoPim.setChecked(AppPreferencesDao.instance().getInsertMessageIntoPim());
+		mTxtSignature.setText(AppPreferencesDao.instance().getSignature());
 	}
 
 	@Override
 	protected void saveData() {
 		AppPreferencesDao.instance().setAutoClearMessage(mChkResetData.isChecked());
-		AppPreferencesDao.instance().setInsertMessageIntoPim(mChkInserIntoPim.isChecked());
+//		AppPreferencesDao.instance().setInsertMessageIntoPim(mChkInserIntoPim.isChecked());
+		AppPreferencesDao.instance().setSignature(mTxtSignature.getText());
 		AppPreferencesDao.instance().save();
 	}
 

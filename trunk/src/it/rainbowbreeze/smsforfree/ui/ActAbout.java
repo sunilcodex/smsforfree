@@ -1,17 +1,8 @@
-/**
- * 
- */
 package it.rainbowbreeze.smsforfree.ui;
 
-import android.app.ListActivity;
+import android.app.Activity;
 
-/**
- * @author rainbowbreeze
- *
- */
-public class ActSettings
-	extends ListActivity
-{
+public class ActAbout extends Activity {
 	//---------- Ctors
 
 	//---------- Private fields

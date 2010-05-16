@@ -29,11 +29,13 @@ public class ActivityHelper {
 	public final static int REQUESTCODE_NONE = 0;
 	public final static int REQUESTCODE_PICKCONTACT = 3;
 	public final static int REQUESTCODE_PICKTEMPLATE = 4;
+	public final static int REQUESTCODE_COMPACTMESSAGE = 5;
 	
 	public final static String INTENTKEY_SMSSERVICEID = "SmsService";
 	public final static String INTENTKEY_SMSPROVIDERID = "SmsProvider";
 	public final static String INTENTKEY_SMSTEMPLATEID = "SmsTemplate";
 	public final static String INTENTKEY_PICKTEMPLATE = "PickTemplate";
+	public final static String INTENTKEY_MESSAGE = "Message";
 
 	
 	
@@ -89,6 +91,26 @@ public class ActivityHelper {
 		openActivity(callerActivity, ActProvidersList.class, null, false, REQUESTCODE_NONE);
 	}
 	
+	/**
+	 * Open about activity
+	 */
+	public static void openAbout(Activity callerActivity)
+	{
+		openActivity(callerActivity, ActAbout.class, null, false, REQUESTCODE_NONE);
+	}
+	
+	/**
+	 * Open compact message activity
+	 * @param callerActivity
+	 * @param message the message to compact
+	 */
+	public static void openCompactMessage(Activity callerActivity, String message)
+	{
+        Intent intent = new Intent(callerActivity, ActCompactMessage.class);
+		intent.putExtra(INTENTKEY_MESSAGE, message);
+		openActivity(intent, callerActivity, true, REQUESTCODE_COMPACTMESSAGE);
+	}
+
 	/**
 	 * Open provider's templates list activity
 	 */

@@ -13,8 +13,8 @@ import android.content.SharedPreferences;
  */
 public abstract class BasePreferencesDao
 {
-	protected SharedPreferences settings;
-	protected SharedPreferences.Editor editor;
+	protected SharedPreferences mSettings;
+	protected SharedPreferences.Editor mEditor;
 	
 	protected final static String BACKUP_SUFFIX = "_backup";
 
@@ -22,15 +22,15 @@ public abstract class BasePreferencesDao
 	 * Load the preferences
 	 */
 	public void load(ContextWrapper context) {
-	    settings = context.getSharedPreferences(getPreferencesKey(), 0);
-	    editor = settings.edit();
+	    mSettings = context.getSharedPreferences(getPreferencesKey(), 0);
+	    mEditor = mSettings.edit();
 	}
 
 	/**
 	 * Store the preferences
 	 */
 	public boolean save() {
-	    return editor.commit();
+	    return mEditor.commit();
 	}
 
 
@@ -40,7 +40,7 @@ public abstract class BasePreferencesDao
     public void backup(ContextWrapper context)
     {
         //load normal preferences, if needed
-        if (null == settings)
+        if (null == mSettings)
         	load(context);
 
         //backup settings into backup shared preferences
@@ -58,7 +58,7 @@ public abstract class BasePreferencesDao
     public void restore(ContextWrapper context)
     {
         //if settings is null, no backup was made at the settings
-        if (null == settings)
+        if (null == mSettings)
         	return;
     	
         //load backup preferences

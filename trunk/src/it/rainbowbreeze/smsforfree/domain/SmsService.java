@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.domain;
 
+import android.text.TextUtils;
+
 
 public abstract class SmsService
 	implements Comparable<SmsService>
@@ -9,8 +11,13 @@ public abstract class SmsService
 	{}
 	
 	protected SmsService(int numberOfParameters) {
-		mParametersDesc = new String[numberOfParameters];
-		mParametersValue = new String[numberOfParameters];
+		if (numberOfParameters < 1) {
+			mParametersDesc = null;
+			mParametersValue = null;
+		} else {
+			mParametersDesc = new String[numberOfParameters];
+			mParametersValue = new String[numberOfParameters];
+		}
 	}
 
 	
@@ -64,13 +71,36 @@ public abstract class SmsService
 	public void setParameterValue(int index, String value)
 	{ setArrayItem(mParametersValue, index, value); }
 	
+	/** Visual attributes of service parameters */ 
+	protected String [] mParametersAttributes;
+	public String[] getParametersAttributes()
+	{ return mParametersValue; }
+	public String getParameterAttributes(int index)
+	{ return getArrayItem(mParametersAttributes, index); }
+	public void setParameterAttributes(int index, String value)
+	{ setArrayItem(mParametersAttributes, index, value); }
+	
 	
 
-	
-	
-	
+		
 	//---------- Public methods
-	
+
+	/**
+	 * Returns if service has parameter configured
+	 */
+	public boolean hasParametersConfigured()
+	{
+		if (getParametersNumber() == 0)
+			return true;
+
+		if (null == mParametersValue)
+			return false;
+		
+		for(String value : mParametersValue)
+			if (!TextUtils.isEmpty(value)) return true;
+		
+		return false;
+	}
 	
 	@Override
 	public boolean equals(Object aThat) {
