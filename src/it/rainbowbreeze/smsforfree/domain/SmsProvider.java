@@ -42,6 +42,8 @@ public abstract class SmsProvider
 	public static final String ERROR_CREDENTIALS_NOT_VALID = "CREDENTIALS_INVALID";
 	public static final String ERROR_NO_REPLY_FROM_SITE = "NO_REPLY";
 	
+	public static final String CAPTCHAREQUEST = "captcharequest";
+	
 
 
 	
@@ -87,7 +89,8 @@ public abstract class SmsProvider
 	
 	public abstract SmsService newSubserviceFromTemplate(String templateId);
 
-
+	public abstract boolean hasServiceParametersConfigured(String serviceId);
+	
 	
 	//---------- Private methods
 	

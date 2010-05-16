@@ -6,11 +6,12 @@ package it.rainbowbreeze.smsforfree.logic;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import android.content.Context;
+import android.content.ContextWrapper;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
@@ -28,7 +29,7 @@ public class LogicManager {
 	//---------- Public properties
 
 	//---------- Public methods
-	public static ResultOperation executeBeginTask(Context context)
+	public static ResultOperation executeBeginTask(ContextWrapper context)
 	{
 		ResultOperation res = new ResultOperation();
 		
@@ -52,6 +53,9 @@ public class LogicManager {
 		
 		Collections.sort(GlobalBag.providerList);
 
+		//load configurations
+		AppPreferencesDao.instance().load(context);
+		
 		return res;
 	}
 	

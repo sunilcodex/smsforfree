@@ -7,10 +7,16 @@
 			android:title="@string/actsettingsmain_chkResetDataAfterSend"
 			android:summary="@string/actsettingsmain_chkResetDataAfterSendSummary"
 		/>
-		<CheckBoxPreference
-			android:key="actsettingsmain_chkInsertSmsIntoPim"
-			android:title="@string/actsettingsmain_chkInsertSmsIntoPim"
-			android:summary="@string/actsettingsmain_chkInsertSmsIntoPimSummary"
+<!--		<CheckBoxPreference-->
+<!--			android:key="actsettingsmain_chkInsertSmsIntoPim"-->
+<!--			android:title="@string/actsettingsmain_chkInsertSmsIntoPim"-->
+<!--			android:summary="@string/actsettingsmain_chkInsertSmsIntoPimSummary"-->
+<!--		/>-->
+		<EditTextPreference
+			android:key="actsettingsmain_txtSignature"
+			android:title="@string/actsettingsmain_txtSignature"
+			android:summary="@string/actsettingsmain_txtSignatureSummary"
+		/>
 		/>
 	</PreferenceCategory>
 	

@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -17,6 +18,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -50,7 +52,9 @@ public class ActSendSms
 	//---------- Private fields
 	private final static int OPTIONMENU_EXIT = 1;
 	private final static int OPTIONMENU_SETTINGS = 2;
-	private final static int OPTIONMENU_ABOUT = 3;
+	private final static int OPTIONMENU_SIGNATURE = 3;
+	private final static int OPTIONMENU_ABOUT = 4;
+	private final static int OPTIONMENU_COMPRESS = 5;
 
 	
 	private Spinner mSpiProviders;
@@ -116,10 +120,13 @@ public class ActSendSms
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
     
-		menu.add(0, OPTIONMENU_SETTINGS, 0, R.string.actsendsms_menuSettings)
+    	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
+			.setIcon(android.R.drawable.ic_menu_edit);
+    	menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
+    	menu.add(0, OPTIONMENU_SETTINGS, 2, R.string.actsendsms_mnuSettings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, OPTIONMENU_ABOUT, 2, R.string.actsendsms_menuAbout);
-		menu.add(0, OPTIONMENU_EXIT, 3, R.string.actsendsms_menuExit)
+		menu.add(0, OPTIONMENU_ABOUT, 3, R.string.actsendsms_mnuAbout);
+		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
 			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		
 		return true;    	
@@ -138,24 +145,25 @@ public class ActSendSms
 			break;
 			
 		case OPTIONMENU_ABOUT:
-			//TODO
-//			ActivityHelper.openAbout(this);
-//			ProviderDao dao = new ProviderDao();
-//			ResultOperation res = dao.saveProviderParameters(this, filename, provider)(
-//					GlobalUtils.findProviderInList(GlobalBag.providerList, "Aimon"));
-//			if (res.HasErrors())
-//				mTxtMessage.setText(res.getException().toString());
-//			else
-//				mTxtMessage.setText(res.getResultAsString());
-				
+			ActivityHelper.openAbout(this);
+			break;
+
+		case OPTIONMENU_SIGNATURE:
+			addSignature();
+			break;
+
+		case OPTIONMENU_COMPRESS:
+			if (mTxtMessage.length() <= 0)
+				ActivityHelper.showInfo(this, R.string.actsendsms_msg_noMessage);
+			else
+				ActivityHelper.openCompactMessage(this, mTxtMessage.getText().toString());
 			break;
 		}
-		
 		return super.onOptionsItemSelected(item);
-   }
+	}
     
-    
-    @Override
+
+	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
     	
@@ -170,6 +178,12 @@ public class ActSendSms
     		case (ActivityHelper.REQUESTCODE_PICKCONTACT):  
 				Uri contactData = data.getData();
     			assignContactPhone(contactData);
+    		break;  
+    		
+    		case (ActivityHelper.REQUESTCODE_COMPACTMESSAGE):  
+				String message = data.getStringExtra(ActivityHelper.INTENTKEY_MESSAGE);
+    			if (!TextUtils.isEmpty(message))
+    				mTxtMessage.setText(message);
     		break;  
     	}  
 	}
@@ -227,65 +241,7 @@ public class ActSendSms
 	
 	private OnClickListener mBtnSendClickListener = new OnClickListener() {
 		public void onClick(View v) {
-			//check provider
-			if (null == mSelectedProvider) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noProvider);
-				return;
-			}
-			
-			//check services
-			if (TextUtils.isEmpty(mSelectedServiceId)) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noSubservice);
-				return;
-			}
-			
-			//check destination number
-			if (TextUtils.isEmpty(mTxtDestination.getText())) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noDestination);
-				return;
-			}
-			
-//			//check destination format
-//			if (!TextUtils.isDigitsOnly(mTxtDestination.getText())) {
-//				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_wrongDestination);
-//				return;
-//			}
-			
-			//check body
-			if (TextUtils.isEmpty(mTxtMessage.getText())) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noMessage);
-				return;
-			}
-			
-			//check message length
-			if (mTxtDestination.length() > mSelectedProvider.getMaxMessageLenght()) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
-				return;
-			}
-			
-			
-			//send message
-			SendMessageTask task = new SendMessageTask(ActSendSms.this, mSelectedProvider, mSelectedServiceId);
-			task.execute(
-					mTxtDestination.getText().toString(),
-					mTxtMessage.getText().toString());
-			ResultOperation res = null;
-			try {
-				res = task.get();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			if (res.HasErrors())
-				ActivityHelper.showInfo(ActSendSms.this,
-						getString(R.string.actsendsms_msg_errorSendingMessage) + "\n" + res.getException().getMessage());
-			else
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_sendOk + "\n" + res.getResultAsString());
-			
+			sendMessage();
 		}
 	};
 	
@@ -320,6 +276,12 @@ public class ActSendSms
     
 	private void bindSubservicesSpinner(SmsProvider provider) {
 		List<SmsService> subservices = provider.getAllSubservices();
+
+		//display a message when subservices are not configured
+		if (null == subservices || subservices.size() <= 0)
+			ActivityHelper.showInfo(this, String.format(
+					getString(R.string.actsendsms_msg_subservicesNotPresent), mSelectedProvider.getName()));
+		
 		ArrayAdapter<SmsService> adapter = new ArrayAdapter<SmsService>(this,
 				android.R.layout.simple_spinner_item, subservices);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -365,7 +327,14 @@ public class ActSendSms
 		if (null != mSelectedProvider)
 			maxLength = mSelectedProvider.getMaxMessageLenght();
 
-		mLblMessageLength.setText(mTxtMessage.getText().length() + "/" + maxLength);
+		//set length text
+		mLblMessageLength.setText(mTxtMessage.length() + "/" + maxLength);
+		//set text color
+		boolean tooLong = mTxtMessage.length() > maxLength;
+		if (tooLong)
+			mLblMessageLength.setTextColor(Color.RED);
+		else
+			mLblMessageLength.setTextColor(Color.GRAY);
 	}
 	
 	/**
@@ -449,5 +418,113 @@ public class ActSendSms
 			return getString(R.string.actsendsms_phoneType_homefax);
 		else
 			return getString(R.string.actsendsms_phoneType_other);
-	}	
+	}
+	
+	/**
+	 * Add signature to current message
+	 */
+	private void addSignature() {
+		String signature = AppPreferencesDao.instance().getSignature();
+		String message = mTxtMessage.getText().toString();
+
+		//check if the signature was already added
+		if (!message.endsWith(signature))
+			mTxtMessage.append(signature);
+	}
+
+	/**
+	 * Send message
+	 */
+	private void sendMessage()
+	{
+		//check provider
+		if (null == mSelectedProvider) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noProviderSelected);
+			return;
+		}
+		
+		//check provider parameters
+		if (!mSelectedProvider.hasParametersConfigured()) {
+			ActivityHelper.showInfo(ActSendSms.this, String.format(
+					getString(R.string.actsendsms_msg_providerNotConfigured), mSelectedProvider.getName()));
+			return;
+		}
+		
+		//check services
+		if (TextUtils.isEmpty(mSelectedServiceId)) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noSubserviceSelected);
+			return;
+		}
+		
+		//check service parameters
+		if (!mSelectedProvider.hasServiceParametersConfigured(mSelectedServiceId)) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_subserviceNotConfigured);
+			return;
+		}
+		
+		//check destination number
+		if (TextUtils.isEmpty(mTxtDestination.getText())) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noDestination);
+			return;
+		}
+		
+//		//check destination format
+//		if (!TextUtils.isDigitsOnly(mTxtDestination.getText())) {
+//			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_wrongDestination);
+//			return;
+//		}
+		
+		//check body
+		if (TextUtils.isEmpty(mTxtMessage.getText())) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noMessage);
+			return;
+		}
+		
+		//check message length
+		if (mTxtMessage.length() > mSelectedProvider.getMaxMessageLenght()) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
+			return;
+		}
+		
+		
+		//send message
+		SendMessageTask task = new SendMessageTask(ActSendSms.this, mSelectedProvider, mSelectedServiceId);
+		task.execute(
+				mTxtDestination.getText().toString(),
+				mTxtMessage.getText().toString());
+		ResultOperation res = null;
+		try {
+			res = task.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (res.HasErrors()) {
+			ActivityHelper.showInfo(ActSendSms.this,
+					getString(R.string.actsendsms_msg_errorSendingMessage) + "\n" + res.getException().getMessage());
+			return;
+		}
+		
+		//check if capctha screen is needed
+		if (SmsProvider.CAPTCHAREQUEST.equalsIgnoreCase(res.getResultAsString())){
+			//launch capcha request
+			//TODO
+			ActivityHelper.showInfo(ActSendSms.this, "CAPTCHA REQUEST");
+			return;
+		}
+			
+
+		ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_sendOk + "\n" + res.getResultAsString());
+		
+		//check if the text should be deleted
+		if (AppPreferencesDao.instance().getAutoClearMessage()) {
+			mTxtDestination.setText("");
+			mTxtMessage.setText("");
+		}
+	}
+	
 }

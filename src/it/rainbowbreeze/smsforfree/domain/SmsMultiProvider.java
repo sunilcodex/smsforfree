@@ -106,6 +106,7 @@ public abstract class SmsMultiProvider
 		//create new services and config it
 		SmsConfigurableService subservice = new SmsConfigurableService(template.getParametersNumber());
 		subservice.setId(NEWSERVICEID);
+		subservice.setMaxMessageLenght(template.getMaxMessageLenght());
 		subservice.setName(template.getName());
 		subservice.setTemplateId(templateId);
 		for(int i = 0; i < template.getParametersNumber(); i++)
@@ -114,10 +115,17 @@ public abstract class SmsMultiProvider
 		return subservice;
 	}
 	
+	@Override
+	public boolean hasServiceParametersConfigured(String serviceId)
+	{
+		SmsService subservice = findServiceInList(getAllSubservices(), serviceId);
+		if (null == subservice) return false;
+		return subservice.hasParametersConfigured();
+	}
+	
+	
 
-	
-	
-	
+
 	//---------- Private methods
 	protected SmsService findServiceInList(List<SmsService> list, String serviceId) {
 		if (TextUtils.isEmpty(serviceId)) return null;

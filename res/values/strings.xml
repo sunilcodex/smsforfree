@@ -26,18 +26,23 @@
     <string name="actsendsms_btnSend">Send</string>
     <string name="actsendsms_lblProvider">Choose provider</string>
     <string name="actsendsms_dlgPickNumber">Choose service</string>
-    <string name="actsendsms_menuSettings">Settings</string>
-    <string name="actsendsms_menuAbout">About</string>
+    <string name="actsendsms_mnuSignature">Add signature</string>
+    <string name="actsendsms_mnuCompress">Compress Text</string>
+    <string name="actsendsms_mnuSettings">Settings</string>
+    <string name="actsendsms_mnuAbout">About</string>
     <string name="actsendsms_menuExit">Exit</string>
     <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
-    <string name="actsendsms_msg_noProvider">Choose a provider...</string>
-    <string name="actsendsms_msg_noSubservice">Choose a service of the provider...</string>
+    <string name="actsendsms_msg_noProviderSelected">Choose a provider...</string>
+    <string name="actsendsms_msg_noSubserviceSelected">Choose a service of the provider...</string>
     <string name="actsendsms_msg_noDestination">Enter a phone number as destination...</string>
     <string name="actsendsms_msg_wrongDestination">Enter a valid phone number as destination...</string>
     <string name="actsendsms_msg_noMessage">Enter a message...</string>
     <string name="actsendsms_msg_messageTooLong">Message is too long...</string>
     <string name="actsendsms_msg_errorSendingMessage">Error sending message:</string>
     <string name="actsendsms_msg_sendOk">Message sent.</string>
+    <string name="actsendsms_msg_providerNotConfigured">%s provider not configured, configure it in the Settings...</string>
+    <string name="actsendsms_msg_subserviceNotConfigured">Service not configured, configure it in the Settings...</string>
+    <string name="actsendsms_msg_subservicesNotPresent">No services for %s provider. Add them in the Settings...</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>
@@ -45,8 +50,8 @@
     <string name="actsendsms_phoneType_homefax">Home fax</string>
     <string name="actsendsms_phoneType_other">Other</string>
 
-
     
+
 
     <!-- ActSettingsMain -->
     <string name="actsettingsmain_title">SmsForFree - Settings</string>
@@ -58,6 +63,8 @@
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
     <string name="actsettingsmain_lblProvidersList">Providers settings</string>
     <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
+    <string name="actsettingsmain_txtSignature">Signature</string>
+    <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
 
 
 
@@ -89,6 +96,18 @@
     <string name="actsubserviceslist_mnuDeleteService">Delete</string>
     <string name="actsubserviceslist_mnuAddService">Add</string>
     <string name="actsubserviceslist_mnuEditService">Edit</string>
+
+
+
+
+    <!-- ActAbout -->
+    <string name="actabout_title">SmsForFree - About</string>
+
+
+
+
+    <!-- ActCompactMessage -->
+    <string name="actcompactmessage_title">SmsForFree - Compact message</string>
 
 
 </resources>

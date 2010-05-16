@@ -26,32 +26,32 @@ public abstract class SmsSingleProvider
 	
 	//---------- Public properties
 	@Override
-	public List<SmsService> getAllTemplate() {
-		return null;
-	}
+	public List<SmsService> getAllTemplate()
+	{ return null; }
+	
 	@Override
-	public SmsService getTemplate(String templateId) {
-		return null;
-	}
+	public SmsService getTemplate(String templateId)
+	{ return null; }
 
 	@Override
-	public List<SmsService> getAllSubservices() {
-		return null;
-	}
+	public List<SmsService> getAllSubservices()
+	{ return null; }
 
 	@Override
-	public SmsService getSubservice(String subserviceId) {
-		return null;
-	}
+	public SmsService getSubservice(String subserviceId)
+	{ return null; }
 
 	@Override
-	public boolean hasSubServices() {
-		return false;
-	}
+	public boolean hasSubServices() 
+	{ return false; }
 	
 	@Override
 	public void setSelectedSubservice(String subserviceId)
 	{ }
+	
+	@Override
+	public boolean hasServiceParametersConfigured(String serviceId)
+	{ return false; }	
 
 	
 	
