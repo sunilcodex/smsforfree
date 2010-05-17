@@ -53,7 +53,6 @@ public class ActSettingsMain
 	 * Called when providers preferences button is pressed
 	 */
 	private OnPreferenceClickListener providersPrefsClickListener = new OnPreferenceClickListener() {
-		@Override
 		public boolean onPreferenceClick(Preference preference) {
 			//checks if only on provider is configured
 			
@@ -91,13 +90,15 @@ public class ActSettingsMain
 	}
 
 	@Override
-	protected void backupData() {
-		AppPreferencesDao.instance().backup(this);
+	protected void getDataFromTemporaryStore(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	protected void restoreData() {
-		AppPreferencesDao.instance().restore(this);
+	protected void putDataIntoTemporaryStore(Bundle outState) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
