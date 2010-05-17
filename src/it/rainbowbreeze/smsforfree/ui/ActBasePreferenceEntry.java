@@ -1,29 +1,30 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 
+/**
+ * To save any dynamic instance state before the activity
+ * is put in background, call onSaveInstanceState(Bundle). To
+ * restore these data, use the Bundle parameter of onCreate
+ * 
+ * http://developer.android.com/reference/android/app/Activity.html#ProcessLifecycle
+ * 
+ * @author Alfredo "Rainbowbreeze" Morresi
+ */
 public abstract class ActBasePreferenceEntry
 	extends PreferenceActivity
 {
-	//---------- Ctors
-
-	
-	
-	
 	//---------- Private fields
-	protected boolean booCancelEdit;
-
 	protected final static int OPTIONMENU_CANCEL = 1000;
 	
-	/** True when the onResume event is called after a child activity return */
-	protected boolean returnedFromStartedActivity;
+	/** True when the started activity returns, and reactivate this activity */
+	protected boolean mReturnedFromStartedActivity;
+	
+	protected boolean mRecreatedAfterARotation;
 
 	
 	
@@ -41,10 +42,16 @@ public abstract class ActBasePreferenceEntry
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//backup data if the activity is created
-		startEdit(savedInstanceState);
+
+		mRecreatedAfterARotation = null != savedInstanceState;
 		
-		returnedFromStartedActivity = false;
+		if(mRecreatedAfterARotation)
+			getDataFromTemporaryStore(savedInstanceState);
+
+		//onCreate is not executed if a started activity return.
+		//the only exception is when the screen rotate while
+		//the started activity is in foreground
+		mReturnedFromStartedActivity = false;
 	}
 	
 	
@@ -70,38 +77,38 @@ public abstract class ActBasePreferenceEntry
 		return super.onOptionsItemSelected(item);
 	};
 
-	
-    /**
-     * A call-back for when the user presses the "Postino" button.
-     */
-    OnClickListener mBackToMenuListener = new OnClickListener() {
-        public void onClick(View v) {
-        	//close the activity
-        }
-    };	
 
-
-    /**
-     * A call-back for when the user presses the "Save" button.
-     */
-    OnClickListener mEditSaveListener = new OnClickListener() {
-        public void onClick(View v) {
-        	//close the activity
-        }
+	/**
+	 * Called when back button is pressed, from SDK 5 and above.
+	 * SDK 4 and below don't call this method
+	 */
+    public void onBackPressed() {
+    	//save data
+    	saveData();
     };
 
 
+//    @Override
+//    protected void onPause() {
+//    	super.onPause();
+//    	
+//    	if (!booCancelEdit)
+//    	{
+//	    	//save the content of the activity
+//    		saveData();
+//    	}
+//    };
+//    
+
+    /* (non-Javadoc)
+     * @see android.app.Activity#onRestart()
+     */
     @Override
-    protected void onPause() {
-    	super.onPause();
-    	
-    	if (!booCancelEdit)
-    	{
-	    	//save the content of the activity
-    		saveData();
-    	}
-    };
-    
+    protected void onRestart() {
+    	super.onRestart();
+    	mReturnedFromStartedActivity = true;
+    	//next call onStart() and then onResume()
+    }
     
     /* (non-Javadoc)
      * @see android.app.Activity#onResume()
@@ -111,32 +118,38 @@ public abstract class ActBasePreferenceEntry
     	super.onResume();
 		
     	//this method occurs also in the calling activity when the caller activity returns
-    	if (!returnedFromStartedActivity)
+    	if (!mReturnedFromStartedActivity)
 			//restore data
 			loadData();
     	else
-			returnedFromStartedActivity = false;
+			mReturnedFromStartedActivity = false;
 
     }
     
 
-    /* (non-Javadoc)
-     * @see android.app.Activity#startActivity(android.content.Intent)
-     */
-    @Override
-    public void startActivity(Intent intent) {
-    	returnedFromStartedActivity = true;
-    	super.startActivity(intent);
-    }
+//    /* (non-Javadoc)
+//     * @see android.app.Activity#startActivity(android.content.Intent)
+//     */
+//    @Override
+//    public void startActivity(Intent intent) {
+//    	returnedFromStartedActivity = true;
+//    	super.startActivity(intent);
+//    }
     
     
-    /* (non-Javadoc)
-     * @see android.app.Activity#startActivityForResult(android.content.Intent, int)
-     */
+//    /* (non-Javadoc)
+//     * @see android.app.Activity#startActivityForResult(android.content.Intent, int)
+//     */
+//    @Override
+//    public void startActivityForResult(Intent intent, int requestCode) {
+//    	returnedFromStartedActivity = true;
+//    	super.startActivityForResult(intent, requestCode);
+//    }
+    
     @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-    	returnedFromStartedActivity = true;
-    	super.startActivityForResult(intent, requestCode);
+    protected void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    	putDataIntoTemporaryStore(outState);
     }
     
 
@@ -147,6 +160,35 @@ public abstract class ActBasePreferenceEntry
 
 
 	//---------- Private methods
+//    /**
+//     * Execute some common tasks, must be called at the end of OnCreate method
+//     */
+//    protected void startEdit(Bundle savedInstanceState)
+//    {
+//    	//if the activity is resumed, doesn't backup current data
+//    	if (null != savedInstanceState)
+//    		return;
+//
+//    	//backup the message value
+//    	backupData();
+//        //edit mode
+//        booCancelEdit = false;
+//
+//        //loadDataIntoControls();
+//        //is called by OnResume method, after the onCreate
+//    }
+    
+    
+	/**
+	 * Cancel the edit of the data and restore original values
+	 */
+	protected void cancelEdit()
+    {
+//		restoreData();
+//    	booCancelEdit = true;
+    	finish();
+    }
+
     
 	/**
 	 * Save values of the controls into the storage. Should manage saving errors
@@ -159,45 +201,14 @@ public abstract class ActBasePreferenceEntry
 	protected abstract void loadData();
 	
 	/**
-	 * Implements a way to backup values of the storage
-	 * (called before the edit start)
+	 * Implements a way to save any dynamic instance state
+	 * (called before the activity is placed in background)
 	 */
-	protected abstract void backupData();
+	protected abstract void putDataIntoTemporaryStore(Bundle outState);
 	
 	/**
 	 * Implements a way to restore values of the storage
 	 * (called when the user select the "cancel edit" action)
 	 */
-	protected abstract void restoreData();
-	
-	
-    /**
-     * Execute some common tasks, must be called at the end of OnCreate method
-     */
-    protected void startEdit(Bundle savedInstanceState)
-    {
-    	//if the activity is resumed, doesn't backup current data
-    	if (null != savedInstanceState)
-    		return;
-
-    	//backup the message value
-    	backupData();
-        //edit mode
-        booCancelEdit = false;
-
-        //loadDataIntoControls();
-        //is called by OnResume method, after the onCreate
-    }
-    
-    
-	/**
-	 * Cancel the edit of the data and restore original values
-	 */
-	protected void cancelEdit()
-    {
-		restoreData();
-    	booCancelEdit = true;
-    	finish();
-    }
-
+	protected abstract void getDataFromTemporaryStore(Bundle savedInstanceState);
 }

@@ -373,40 +373,37 @@ public class ActivityHelper {
 	 * @param mustReturn
 	 * @param requestCode
 	 */
-    private static void openActivity(
-    		Activity callerActivity,
-    		Class<?> cls,
-    		Map<String, Object> extraData,
-    		boolean mustReturn,
-    		int requestCode
-    		)
-    {
-        Intent i = new Intent(callerActivity.getBaseContext(), cls);
-        
-        //put the data in the intent
-        if (null != extraData)
-        {
-//	        for (Entry<String, Object> entry : extraData.entrySet())
-//	        {
-//	            i.putExtra(entry.getKey(), entry.getValue());
-//	        	
-//	        }
-        }
-        
-        openActivity(i, callerActivity, mustReturn, requestCode);
-    }
+	private static void openActivity(
+		Activity callerActivity,
+		Class<?> cls,
+		Map<String, Object> extraData,
+		boolean mustReturn,
+		int requestCode
+	)
+	{
+		Intent i = new Intent(callerActivity.getBaseContext(), cls);
+
+		//put the data in the intent
+		if (null != extraData) {
+//			for (Entry<String, Object> entry : extraData.entrySet()) {
+//				i.putExtra(entry.getKey(), entry.getValue());
+//			}
+		}
+
+		openActivity(i, callerActivity, mustReturn, requestCode);
+	}
     
-    private static void openActivity(
-    		Intent intent,
-    		Activity callerActivity,
-    		boolean mustReturn,
-    		int requestCode
-    		)
-    {
-    	if (mustReturn)
-    		callerActivity.startActivityForResult(intent, requestCode);
-    	else
-    		callerActivity.startActivity(intent);
-    }
+	private static void openActivity(
+		Intent intent,
+		Activity callerActivity,
+		boolean mustReturn,
+		int requestCode
+	)
+	{
+		if (mustReturn)
+			callerActivity.startActivityForResult(intent, requestCode);
+		else
+			callerActivity.startActivity(intent);
+	}
 
 }
