@@ -2,6 +2,7 @@ package it.rainbowbreeze.smsforfree.data;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 public class AppPreferencesDao	extends BasePreferencesDao
 {
@@ -12,6 +13,7 @@ public class AppPreferencesDao	extends BasePreferencesDao
     private static final String PROP_USE_LAST_PROVIDER = "uselastprovider";
     private static final String PROP_PREFERRED_PROVIDER = "preferredprovider";
     private static final String PROP_SIGNATURE = "signature";
+    private static final String PROP_APPVERSION = "appVersion";
 
     
     
@@ -56,6 +58,21 @@ public class AppPreferencesDao	extends BasePreferencesDao
     public void setSignature(String newValue)
     { mEditor.putString(PROP_SIGNATURE, newValue); }
 
+    public String getAppVersion()
+    {
+    	String appVersion = mSettings.getString(PROP_APPVERSION, "");
+    	//very first load of application
+    	if (TextUtils.isEmpty(appVersion)) {
+    		//set the app version
+    		appVersion = GlobalDef.appVersion;
+    		//and store it
+    		setAppVersion(appVersion);
+    		save();
+    	}
+    	return appVersion;
+	}
+    public void setAppVersion(String newValue)
+    { mEditor.putString(PROP_APPVERSION, newValue); }
     
     
 
@@ -91,6 +108,6 @@ public class AppPreferencesDao	extends BasePreferencesDao
 	 */
 	@Override
 	protected String getPreferencesKey() {
-		return GlobalDef.AppPreferencesKeys;
+		return GlobalDef.appPreferencesKeys;
 	}
 }
