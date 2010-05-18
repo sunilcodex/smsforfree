@@ -7,14 +7,19 @@ import it.rainbowbreeze.smsforfree.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 
 /**
- * A basic data editing activity, with backup and restore of
- * preferences and other goodies
+ * A basic data editing activity, with saving of
+ * user data only when the user press the back button.
+ * 
+ * Starting from Android 2.0 (API 5), i can use the onBackPressed
+ * method to execute code when the user press the back button.
+ * This Activity simulate the behavior also with API level < 5
+ * 
+ * http://developer.android.com/reference/android/app/Activity.html#ProcessLifecycle
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
@@ -27,12 +32,17 @@ public abstract class ActBaseDataEntry
 	
 	
 	//---------- Private fields
-	protected boolean booCancelEdit;
-
 	protected final static int OPTIONMENU_CANCEL = 1000;
 	
+	protected final static String KEY_MUSTRETURNFROMCALLEDACTIVITY = "mustReturnFromCalledActivity";
+	
 	/** True when the onResume event is called after a child activity return */
-	protected boolean returnedFromStartedActivity;
+	protected boolean mMustReturnedFromStartedActivity;
+	
+	/** True when the activity is loaded for the first time, false in all the other cases
+	 *   (for example, when screen is rotated)
+	 */
+	protected boolean mFirstStart;
 
 	
 	
@@ -50,13 +60,50 @@ public abstract class ActBaseDataEntry
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//backup data if the activity is created
-		startEdit(savedInstanceState);
+
+		if (null != savedInstanceState){
+			//reload volatile data (screen rotated etc)
+			loadVolatileData(savedInstanceState);
+			mFirstStart = false;
+		} else {
+			//first start
+			mFirstStart = true;
+			//no called activity
+			mMustReturnedFromStartedActivity = false;
+		}
 		
-		returnedFromStartedActivity = false;
+		//if a called activity return and the screen was rotate inside the
+		//called activity, a call to this method is done, and after a call to
+		//onStart will be made, where data are put inside views.
 	}
 	
+
+	/**
+	 * Called when the activity starts.
+	 * When a caller activity returns, the onRestart and the onStart methods are called
+	 * When a caller activity returns and the screen was rotated, only onStart is called.
+	 */
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		//load data inside controls if the activity is started for the first time
+		if (mFirstStart) {
+			loadDataIntoViews();
+			mFirstStart = false;
+		}
+		
+		if (mMustReturnedFromStartedActivity)
+			returnFromStartedActivity();
+		mMustReturnedFromStartedActivity = false;
+	}
 	
+
+	/**
+	 * Create option menu with the cancel button
+	 * @param menu
+	 * @return
+	 */
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		super.onCreateOptionsMenu(menu);
@@ -66,8 +113,12 @@ public abstract class ActBaseDataEntry
 		
 		return true;
 	};
-	
-	
+
+	/**
+	 * Manage the selection of cancel button in the option menu
+	 * @param item
+	 * @return
+	 */
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch (item.getItemId()) {
@@ -80,61 +131,57 @@ public abstract class ActBaseDataEntry
 	};
 
 	
-    /**
-     * A call-back for when the user presses the "Postino" button.
-     */
-    OnClickListener mBackToMenuListener = new OnClickListener() {
-        public void onClick(View v) {
-        	//close the activity
+	/**
+	 * Called when an activity must be destroyed (like when the user rotate
+	 * the screen
+	 * @param outState
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		saveVolatileData(outState);
+	}
+	
+	
+	/**
+	 * Intercept when the user press the Back button and create an event tracking
+	 * of the event
+	 * @param keyCode
+	 * @param event
+	 * @return
+	 */
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK
+//                && event.getRepeatCount() == 0) {
+            event.startTracking();
+            return true;
         }
-    };	
-
-
-    /**
-     * A call-back for when the user presses the "Save" button.
-     */
-    OnClickListener mEditSaveListener = new OnClickListener() {
-        public void onClick(View v) {
-        	//close the activity
-        }
-    };
-
-
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	
-    	if (!booCancelEdit)
-    	{
-	    	//save the content of the activity
-    		saveData();
-    	}
-    };
-    
-    
-    /* (non-Javadoc)
-     * @see android.app.Activity#onResume()
-     */
-    @Override
-    protected void onResume() {
-    	super.onResume();
-		
-    	//this method occurs also in the calling activity when the caller activity returns
-    	if (!returnedFromStartedActivity)
-			//restore data
-			loadData();
-    	else
-			returnedFromStartedActivity = false;
-
+        return super.onKeyDown(keyCode, event);
     }
-    
 
+	/**
+	 * Intercept when the user release the Back button, call the method for
+	 * saving data and close the activity
+	 * @param keyCode
+	 * @param event
+	 * @return
+	 */
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.isTracking()
+                && !event.isCanceled()) {
+            if (saveDataFromViews()) finish();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }	
+	
     /* (non-Javadoc)
      * @see android.app.Activity#startActivity(android.content.Intent)
      */
     @Override
     public void startActivity(Intent intent) {
-    	returnedFromStartedActivity = true;
+    	mMustReturnedFromStartedActivity = true;
     	super.startActivity(intent);
     }
     
@@ -144,7 +191,7 @@ public abstract class ActBaseDataEntry
      */
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-    	returnedFromStartedActivity = true;
+    	mMustReturnedFromStartedActivity = true;
     	super.startActivityForResult(intent, requestCode);
     }
     
@@ -158,55 +205,53 @@ public abstract class ActBaseDataEntry
 	//---------- Private methods
     
 	/**
-	 * Save values of the controls into the storage. Should manage saving errors
+	 * Save values modified in views of the activity. Should manage saving errors.
+	 * Called when the user press the back button
+	 * 
+	 * @return true if everything went well, otherwise false
 	 */
-	protected abstract void saveData();
+	protected abstract boolean saveDataFromViews();
 	
 	/**
-	 * Load data from the storage and put it into the controls
+	 * Load values into activity's views.
+	 * Called when activity first start, and not when return from called activity
+	 * or after a screen rotation, because if the views have an id, the system
+	 * automatically restores their values
 	 */
-	protected abstract void loadData();
+	protected abstract void loadDataIntoViews();
 	
 	/**
-	 * Implements a way to backup values of the storage
-	 * (called before the edit start)
+	 * Save volatile activity data into Bundle object. Called before the rotation of
+	 * the screen, for example. Save data that can change during the activity lifecycle
+	 * and that is not stored inside views (data inside views with id is automatically restored)
 	 */
-	protected abstract void backupData();
+	protected void saveVolatileData(Bundle outState)
+	{
+		outState.putBoolean(KEY_MUSTRETURNFROMCALLEDACTIVITY, mMustReturnedFromStartedActivity);
+	}
 	
 	/**
-	 * Implements a way to restore values of the storage
-	 * (called when the user select the "cancel edit" action)
+	 * Load volatile activity data from Bundle object. Called when an activity is
+	 * restore after a screen rotation, for example.
 	 */
-	protected abstract void restoreData();
+	protected void loadVolatileData(Bundle savedInstanceState)
+	{
+		mMustReturnedFromStartedActivity = savedInstanceState.getBoolean(KEY_MUSTRETURNFROMCALLEDACTIVITY);
+	}
 	
 	
-    /**
-     * Execute some common tasks, must be called at the end of OnCreate method
-     */
-    protected void startEdit(Bundle savedInstanceState)
-    {
-    	//if the activity is resumed, doesn't backup current data
-    	if (null != savedInstanceState)
-    		return;
-
-    	//backup the message value
-    	backupData();
-        //edit mode
-        booCancelEdit = false;
-
-        //loadDataIntoControls();
-        //is called by OnResume method, after the onCreate
-    }
-    
-    
 	/**
-	 * Cancel the edit of the data and restore original values
+	 * Called when the user select the "Cancel" button in option menu
 	 */
 	protected void cancelEdit()
     {
-		restoreData();
-    	booCancelEdit = true;
     	finish();
     }
+	
+	/**
+	 * Called when this activity calls another activiy and the called activity returns
+	 */
+	protected void returnFromStartedActivity()
+	{	}
 
 }
