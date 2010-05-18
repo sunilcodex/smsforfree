@@ -228,7 +228,7 @@ public class AimonProvider
 
 	@Override
 	protected String getParametersFileName()
-	{ return GlobalDef.AimonParametersFileName; }
+	{ return GlobalDef.aimonParametersFileName; }
 
 	@Override
 	protected String getTemplatesFileName()

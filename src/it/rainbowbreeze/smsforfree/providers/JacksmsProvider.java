@@ -169,14 +169,14 @@ public class JacksmsProvider
 
 	@Override
 	protected String getParametersFileName()
-	{ return GlobalDef.JacksmsParametersFileName; }
+	{ return GlobalDef.jacksmsParametersFileName; }
 
 	@Override
 	protected String getTemplatesFileName()
-	{ return GlobalDef.JacksmsmTemplatesFileName; }
+	{ return GlobalDef.jacksmsmTemplatesFileName; }
 
 	@Override
 	protected String getSubservicesFileName()
-	{ return GlobalDef.JacksmsSubservicesFileName; }
+	{ return GlobalDef.jacksmsSubservicesFileName; }
 
 }

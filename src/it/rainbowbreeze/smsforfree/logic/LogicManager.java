@@ -10,6 +10,7 @@ import android.content.ContextWrapper;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
@@ -38,6 +39,12 @@ public class LogicManager {
 		String senderDesc = context.getString(R.string.common_sender);
 		String aimonIdApiDesc = context.getString(R.string.common_aimon_idapi);
 		
+		//load configurations
+		AppPreferencesDao.instance().load(context);
+		
+		//check for application upgrade
+		checkForUpgrade(context);
+		
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
@@ -53,9 +60,6 @@ public class LogicManager {
 		
 		Collections.sort(GlobalBag.providerList);
 
-		//load configurations
-		AppPreferencesDao.instance().load(context);
-		
 		return res;
 	}
 	
@@ -67,6 +71,19 @@ public class LogicManager {
 		return res;
 	}
 
+	
+	
+	
 	//---------- Private methods
+
+	private static void checkForUpgrade(ContextWrapper context)
+	{
+		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
+		
+		if (GlobalDef.appVersion.equals(currentAppVersion)) {
+			//perform upgrade
+		}
+	}
+
 
 }
