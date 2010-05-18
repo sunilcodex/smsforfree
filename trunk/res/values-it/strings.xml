@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="common_appname">SmsForFree</string>
+    <string name="common_username">Nome utente</string>
+    <string name="common_password">Password</string>
+    <string name="common_sender">Mittente</string>
+    <string name="common_aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
+    <string name="common_btnYes">Si</string>
+    <string name="common_btnNo">No</string>
+    <string name="common_mnuCancel">Annulla</string>
+    <string name="common_msg_sendingMessage">Invio messaggio...</string>
+    <string name="common_msg_genericError">Errore generico: %s</string>
+    <string name="common_msg_noErrorToReport">Nessun errore conosciuto :(</string>
+    <string name="common_msg_cannotsavepreferences">Spiacente, impossible salvare i dati: </string>
+    <string name="common_msg_errorWrongDestinationOrBody">Mittente o testo del messaggio mancanti</string>
+    
+
+
+
+    <!-- ActSendSms -->
+    <string name="actsendsms_title">SmsForFree</string>
+    <string name="actsendsms_title_full">SmsForFree - Invio SMS</string>
+    <string name="actsendsms_txtDestination">Destinatario</string>
+    <string name="actsendsms_txtBody">Messaggio</string>
+    <string name="actsendsms_btnSend">Invia</string>
+    <string name="actsendsms_lblProvider">Scegli il provider</string>
+    <string name="actsendsms_dlgPickNumber">Scegli il service</string>
+    <string name="actsendsms_mnuSignature">Inserisci firma</string>
+    <string name="actsendsms_mnuCompress">Comprimi il testo</string>
+    <string name="actsendsms_mnuSettings">Impostazioni</string>
+    <string name="actsendsms_mnuAbout">Informazioni su</string>
+    <string name="actsendsms_menuExit">Uscita</string>
+    <string name="actsendsms_msg_noPhoneNumber">Nessun numero per il contatto selezionato</string>
+    <string name="actsendsms_msg_noProviderSelected">Scegli un provider...</string>
+    <string name="actsendsms_msg_noSubserviceSelected">Scegli un servizio del provider...</string>
+    <string name="actsendsms_msg_noDestination">Nessun destinatario inserito...</string>
+    <string name="actsendsms_msg_wrongDestination">Il destinatario non è valido...</string>
+    <string name="actsendsms_msg_noMessage">Inserisci un messaggio...</string>
+    <string name="actsendsms_msg_messageTooLong">Il messagio è troppo lungo...</string>
+    <string name="actsendsms_msg_errorSendingMessage">Errore nell\'invio del messaggio:</string>
+    <string name="actsendsms_msg_sendOk">Messaggio spedito.</string>
+    <string name="actsendsms_msg_providerNotConfigured">%s provider non configurato, fallo nelle Impostazioni...</string>
+    <string name="actsendsms_msg_subserviceNotConfigured">Service non configurato, fallo nelle Impostazioni...</string>
+    <string name="actsendsms_msg_subservicesNotPresent">Nessun servizio per il provider %s. Aggiungili nelle Impostazioni...</string>
+    <string name="actsendsms_phoneType_home">Casa</string>
+    <string name="actsendsms_phoneType_mobile">Mob</string>
+    <string name="actsendsms_phoneType_work">Ufficio</string>
+    <string name="actsendsms_phoneType_workfax">Fax lavoro</string>
+    <string name="actsendsms_phoneType_homefax">Fax casa</string>
+    <string name="actsendsms_phoneType_other">Altro</string>
+
+    
+
+
+    <!-- ActSettingsMain -->
+    <string name="actsettingsmain_title">SmsForFree - Impostazioni</string>
+    <string name="actsettingsmain_lblApplicationCategory">Applicazione</string>
+    <string name="actsettingsmain_lblProvidersCategory">Provider</string>
+    <string name="actsettingsmain_chkResetDataAfterSend">Cancella i dati dopo l\'invio</string>
+    <string name="actsettingsmain_chkResetDataAfterSendSummary">Cancella destinazione e messaggio dopo aver mandato l\'sms</string>
+    <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
+    <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
+    <string name="actsettingsmain_lblProvidersList">Impostazioni provider</string>
+    <string name="actsettingsmain_lblProvidersListSummary">Impostazioni specifiche di ogni provider</string>
+    <string name="actsettingsmain_txtSignature">Firma</string>
+    <string name="actsettingsmain_txtSignatureSummary">Firma da aggiungere ai messaggi</string>
+	<string name="actsettingssmsservice_lblServiceName">Nome del servizio</string>    
+
+
+
+
+    <!-- ActSettingsSmsService -->
+    <string name="actsettingssmsservice_title">SmsForFree - Impostazioni Provider/Servizio</string>
+    <string name="actsettingssmsservice_titleEdit">SmsForFree - Impostazioni per %s</string>
+    <string name="actsettingssmsservice_btnConfigureSubservices">Configurazione servizio</string>
+
+
+
+
+    <!-- ActProvidersList -->
+    <string name="actproviderslist_title">SmsForFree - Provider</string>
+
+
+
+
+    <!-- ActTemplatesList -->
+    <string name="acttemplateslist_title">SmsForFree - Scegli un template</string>
+
+
+
+
+    <!-- ActSubservicesList -->
+    <string name="actsubserviceslist_title">Lista servizi Provider</string>
+    <string name="actsubserviceslist_titleEdit">Lista servizi %s</string>
+    <string name="actsubserviceslist_mnuHeaderTitle">Scegli un\'azione</string>
+    <string name="actsubserviceslist_mnuDeleteService">Cancella</string>
+    <string name="actsubserviceslist_mnuAddService">Aggiungi</string>
+    <string name="actsubserviceslist_mnuEditService">Modifica</string>
+
+
+
+
+    <!-- ActAbout -->
+    <string name="actabout_title">SmsForFree - Informazioni</string>
+
+
+
+
+    <!-- ActCompactMessage -->
+    <string name="actcompactmessage_title">SmsForFree - Riduci messaggio</string>
+
+
+</resources>

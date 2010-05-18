@@ -26,7 +26,7 @@
     <string name="actsendsms_btnSend">Send</string>
     <string name="actsendsms_lblProvider">Choose provider</string>
     <string name="actsendsms_dlgPickNumber">Choose service</string>
-    <string name="actsendsms_mnuSignature">Add signature</string>
+    <string name="actsendsms_mnuSignature">Append signature</string>
     <string name="actsendsms_mnuCompress">Compress Text</string>
     <string name="actsendsms_mnuSettings">Settings</string>
     <string name="actsendsms_mnuAbout">About</string>
