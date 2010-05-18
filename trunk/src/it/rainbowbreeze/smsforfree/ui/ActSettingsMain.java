@@ -75,30 +75,17 @@ public class ActSettingsMain
 	
 	//---------- Private methods
 	@Override
-	protected void loadData() {
+	protected void loadDataIntoViews() {
 		mChkResetData.setChecked(AppPreferencesDao.instance().getAutoClearMessage());
 //		mChkInserIntoPim.setChecked(AppPreferencesDao.instance().getInsertMessageIntoPim());
 		mTxtSignature.setText(AppPreferencesDao.instance().getSignature());
 	}
 
 	@Override
-	protected void saveData() {
+	protected boolean saveDataFromViews() {
 		AppPreferencesDao.instance().setAutoClearMessage(mChkResetData.isChecked());
 //		AppPreferencesDao.instance().setInsertMessageIntoPim(mChkInserIntoPim.isChecked());
 		AppPreferencesDao.instance().setSignature(mTxtSignature.getText());
-		AppPreferencesDao.instance().save();
+		return AppPreferencesDao.instance().save();
 	}
-
-	@Override
-	protected void getDataFromTemporaryStore(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void putDataIntoTemporaryStore(Bundle outState) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

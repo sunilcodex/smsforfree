@@ -3,8 +3,6 @@
  */
 package it.rainbowbreeze.smsforfree.ui;
 
-import java.util.Collections;
-
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.GlobalUtils;
@@ -33,12 +31,15 @@ public class ActSettingsSmsService
 	private SmsService mTemplateService;
 	private SmsProvider mProvider;
 	private boolean mIsEditingAProvider;
-	private boolean mIsNewService;
 	private Button mBtnConfigureSubservices;
 	private TextView mLblServiceName;
 	private TextView mTxtServiceName;
 	private TextView mLblServiceInfo;
 	private TextView mTxtServiceInfo;
+	
+	//fuck java only passing parameters by value :(
+	TextView mLblDesc;
+	EditText mTxtValue;
 
 	private final static int MAXFIELDS = 10;
 	
@@ -64,26 +65,10 @@ public class ActSettingsSmsService
         mLblServiceInfo = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceInfo);
         mTxtServiceInfo = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceInfo);
         
-		//display or not the button
-		if (mIsEditingAProvider) {
-			mLblServiceName.setVisibility(View.GONE);
-			mTxtServiceName.setVisibility(View.GONE);
-			mLblServiceInfo.setVisibility(View.GONE);
-			mTxtServiceInfo.setVisibility(View.GONE);
-			if (mProvider.hasSubServices()) {
-				mBtnConfigureSubservices.setVisibility(View.VISIBLE);
-			} else {
-				mBtnConfigureSubservices.setVisibility(View.GONE);
-			}
-		} else {
-			mLblServiceName.setVisibility(View.VISIBLE);
-			mTxtServiceName.setVisibility(View.VISIBLE);
-			mLblServiceInfo.setVisibility(View.GONE);
-			mTxtServiceInfo.setVisibility(View.GONE);
-			mBtnConfigureSubservices.setVisibility(View.GONE);
-		}
+		showAndHideViews();
 	}
-	
+
+
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
 			//open the subservice configuration activity
@@ -101,137 +86,56 @@ public class ActSettingsSmsService
 	
 	//---------- Private methods
 	@Override
-	protected void backupData() {
-		//TODO
-		//no way to backup data now
-	}
-
-	@Override
-	protected void restoreData() {
-		//TODO
-		//no way to restore data now
-	}
-
-	@Override
-	protected void loadData() {
+	protected void loadDataIntoViews() {
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_titleEdit),
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice
-		if (!mIsEditingAProvider)
-			mTxtServiceName.setText(mEditedService.getName());
+		if (!mIsEditingAProvider) {
+			if (null == mEditedService)
+				//use the name of the provider for a new service
+				mTxtServiceName.setText(mTemplateService.getName());
+			else
+				//use the service name
+				mTxtServiceName.setText(mEditedService.getName());
+		}
 		
-        //update texts visibility and values
-		for (int i = 0; i < MAXFIELDS; i++){
-        	TextView lblDesc = null;
-        	EditText txtValue = null;
-        	
-        	//get description and value views
-        	switch (i) {
-			case 0:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter00);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter00);
-				break;
-			case 1:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter01);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter01);
-				break;
-			case 2:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter02);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter02);
-				break;
-			case 3:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter03);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter03);
-				break;
-			case 4:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter04);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter04);
-				break;
-			case 5:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter05);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter05);
-				break;
-			case 6:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter06);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter06);
-				break;
-			case 7:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter07);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter07);
-				break;
-			case 8:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter08);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter08);
-				break;
-			case 9:
-				lblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter09);
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter09);
-				break;
-			}
-        	
-        	//set the content of the view
-        	if (i < mTemplateService.getParametersNumber()) {
-        		lblDesc.setText(mTemplateService.getParameterDesc(i));
-        		if (!mIsNewService) {
-        			txtValue.setText(mEditedService.getParameterValue(i));
-        		}
-        	} else {
-        		lblDesc.setVisibility(View.GONE);
-        		txtValue.setVisibility(View.GONE);
-        	}
-        }
-		
+		//update data inside views, if the object edited isn't a new subservice
+		if (null != mEditedService) {
+	        //update values of parameters views
+			for (int i = 0; i < MAXFIELDS; i++){
+	        	findLabelAndEditTextViewsForParameter(i);
+	        	//set the content of the view
+	        	if (i < mEditedService.getParametersNumber()) {
+        			if (null != mTxtValue)
+        				mTxtValue.setText(mEditedService.getParameterValue(i));
+	        	}
+	        }
+		}
 	}
 
 	@Override
-	protected void saveData() {
-		//read object name, if object edited is a subservice
+	protected boolean saveDataFromViews()
+	{
+		boolean isNewService;
+		
+		isNewService = null == mEditedService;
+		
+		if (isNewService) {
+			//create new service
+			mEditedService = mProvider.newSubserviceFromTemplate(mTemplateService.getId());
+		}
+		//set object name, if object edited is a subservice
 		if (!mIsEditingAProvider)
 			((SmsConfigurableService)mEditedService).setName(mTxtServiceName.getText().toString());
-			
+
 		for (int i = 0; i < MAXFIELDS; i++){
-        	EditText txtValue = null;
-        	
-        	//get value views
-        	switch (i) {
-			case 0:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter00);
-				break;
-			case 1:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter01);
-				break;
-			case 2:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter02);
-				break;
-			case 3:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter03);
-				break;
-			case 4:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter04);
-				break;
-			case 5:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter05);
-				break;
-			case 6:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter06);
-				break;
-			case 7:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter07);
-				break;
-			case 8:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter08);
-				break;
-			case 9:
-				txtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter09);
-				break;
-			}
-        	
+			findLabelAndEditTextViewsForParameter(i);
         	//save the data inside the object
-        	if (i < mTemplateService.getParametersNumber()) {
-        		mEditedService.setParameterValue(i, txtValue.getText().toString());
+        	if (i < mEditedService.getParametersNumber()) {
+        		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
         	}
 		}
 		
@@ -240,7 +144,7 @@ public class ActSettingsSmsService
 		if (mIsEditingAProvider) {
 			//update provider data
 			res = mProvider.saveParameters(this);
-		} else if (mIsNewService) {
+		} else if (isNewService) {
 			mProvider.getAllSubservices().add(mEditedService);
 			//save new subservice
 			res = mProvider.saveSubservices(this);
@@ -248,10 +152,19 @@ public class ActSettingsSmsService
 			//update subservice
 			res = mProvider.saveSubservices(this);
 		}
-		if (null == res || res.HasErrors())
+		
+		if (null == res || res.HasErrors()) {
 			ActivityHelper.reportError(this, res);
+			return false;
+		}
+		
+    	return true;
 	}
 
+	/**
+	 * Get data from intent and configured internal fields
+	 * @param intent
+	 */
 	private void getDataFromIntent(Intent intent) {
 		Bundle extras = intent.getExtras();
 		//checks if current editing is for a provider or a subservice
@@ -262,24 +175,22 @@ public class ActSettingsSmsService
 			if (TextUtils.isEmpty(subserviceId)) {
 				//edit a provider preferences
 				mIsEditingAProvider = true;
-				mIsNewService = false;
 				//template and service to edit are always the same provider
 				mTemplateService = mProvider;
 				mEditedService = mProvider;
-			} else if (SmsService.NEWSERVICEID.equals(subserviceId)) {
-				mIsEditingAProvider = false;
-				mIsNewService = true;
-				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
-				mTemplateService = mProvider.getTemplate(templateId);
-				//create new service
-				mEditedService = mProvider.newSubserviceFromTemplate(templateId);
 			} else {
-				//edit a subservice preferences
+				//editing a subservice
 				mIsEditingAProvider = false;
-				mIsNewService = false;
 				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
 				mTemplateService = mProvider.getTemplate(templateId);
-				mEditedService = mProvider.getSubservice(subserviceId);
+				
+				if (SmsService.NEWSERVICEID.equals(subserviceId)) {
+					//edit a new subservice
+					mEditedService = null;
+				} else {
+					//edit an existing subservice preferences
+					mEditedService = mProvider.getSubservice(subserviceId);
+				}
 			}
 
 		} else {
@@ -287,4 +198,91 @@ public class ActSettingsSmsService
 		}
 	}
 
+
+	/**
+	 * Show and hide view for editing data
+	 */
+	private void showAndHideViews() {
+		//display or not the button for editing provider's subservices
+		if (mIsEditingAProvider) {
+			mLblServiceName.setVisibility(View.GONE);
+			mTxtServiceName.setVisibility(View.GONE);
+			mLblServiceInfo.setVisibility(View.GONE);
+			mTxtServiceInfo.setVisibility(View.GONE);
+			if (mProvider.hasSubServices()) {
+				mBtnConfigureSubservices.setVisibility(View.VISIBLE);
+			} else {
+				mBtnConfigureSubservices.setVisibility(View.GONE);
+			}
+		} else {
+			mLblServiceName.setVisibility(View.VISIBLE);
+			mTxtServiceName.setVisibility(View.VISIBLE);
+			mLblServiceInfo.setVisibility(View.GONE);
+			mTxtServiceInfo.setVisibility(View.GONE);
+			mBtnConfigureSubservices.setVisibility(View.GONE);
+		}
+		
+
+        //update views visibility
+		for (int i = 0; i < MAXFIELDS; i++){
+			findLabelAndEditTextViewsForParameter(i);
+        	
+        	//set the content of the view
+        	if (i >= mTemplateService.getParametersNumber()) {
+        		if (null != mLblDesc) mLblDesc.setVisibility(View.GONE);
+        		if (null != mTxtValue) mTxtValue.setVisibility(View.GONE);
+        	} else {
+        		if (null != mLblDesc) mLblDesc.setText(mTemplateService.getParameterDesc(i));
+        	}
+        }
+		
+	}
+	
+	
+	private void findLabelAndEditTextViewsForParameter(int parameterNumber)
+	{
+    	//get description and value views
+    	switch (parameterNumber) {
+		case 0:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter00);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter00);
+			break;
+		case 1:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter01);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter01);
+			break;
+		case 2:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter02);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter02);
+			break;
+		case 3:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter03);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter03);
+			break;
+		case 4:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter04);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter04);
+			break;
+		case 5:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter05);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter05);
+			break;
+		case 6:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter06);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter06);
+			break;
+		case 7:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter07);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter07);
+			break;
+		case 8:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter08);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter08);
+			break;
+		case 9:
+			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter09);
+			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter09);
+			break;
+		}
+	}
 }

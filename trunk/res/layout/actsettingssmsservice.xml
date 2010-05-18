@@ -11,6 +11,7 @@
 			<TextView
 				android:id="@+id/actsettingssmsservice_lblServiceName"
 				style="@style/actsettingssmsservice_lblParameterDesc"
+				android:text="@string/actsettingssmsservice_lblServiceName"
 			/>
 			<EditText
 				android:id="@+id/actsettingssmsservice_txtServiceName"

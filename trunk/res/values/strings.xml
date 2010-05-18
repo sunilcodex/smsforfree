@@ -65,6 +65,7 @@
     <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
     <string name="actsettingsmain_txtSignature">Signature</string>
     <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
+	<string name="actsettingssmsservice_lblServiceName">Service name</string>    
 
 
 
