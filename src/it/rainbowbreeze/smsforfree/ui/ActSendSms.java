@@ -450,17 +450,20 @@ public class ActSendSms
 			return;
 		}
 		
-		//check services
-		if (TextUtils.isEmpty(mSelectedServiceId)) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noSubserviceSelected);
-			return;
+		//check service
+		if (mSelectedProvider.hasSubServices()){
+			//checks if a subservices is selected
+			if (TextUtils.isEmpty(mSelectedServiceId)) {
+				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noSubserviceSelected);
+				return;
+			}
+			//check if service has parameters configured
+			if (!mSelectedProvider.hasServiceParametersConfigured(mSelectedServiceId)) {
+				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_subserviceNotConfigured);
+				return;
+			}
 		}
 		
-		//check service parameters
-		if (!mSelectedProvider.hasServiceParametersConfigured(mSelectedServiceId)) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_subserviceNotConfigured);
-			return;
-		}
 		
 		//check destination number
 		if (TextUtils.isEmpty(mTxtDestination.getText())) {
