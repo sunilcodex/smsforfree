@@ -4,17 +4,20 @@ import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-public class AppPreferencesDao	extends BasePreferencesDao
+public class AppPreferencesDao
+	extends BasePreferencesDao
 {
 	//---------- Private fields
 	
+    private static final String PROP_APPVERSION = "appVersion";
     private static final String PROP_AUTO_CLEAR_MESSAGE = "clearmessage";
     private static final String PROP_INSERT_MESSAGE_INTO_PIM = "insertmessageintopim";
-    private static final String PROP_USE_LAST_PROVIDER = "uselastprovider";
-    private static final String PROP_PREFERRED_PROVIDER = "preferredprovider";
     private static final String PROP_SIGNATURE = "signature";
-    private static final String PROP_APPVERSION = "appVersion";
 
+    private static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
+    private static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
+    private static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
+    private static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
     
     
 
@@ -43,16 +46,6 @@ public class AppPreferencesDao	extends BasePreferencesDao
     public void setInsertMessageIntoPim(boolean newValue)
     { mEditor.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, newValue); }
     
-    public boolean getUseLastProvider()
-    { return mSettings.getBoolean(PROP_USE_LAST_PROVIDER, false); }
-    public void setUseLastProvider(boolean newValue)
-    { mEditor.putBoolean(PROP_USE_LAST_PROVIDER, newValue); }
-    
-    public String getPreferredProvider()
-    { return mSettings.getString(PROP_PREFERRED_PROVIDER, ""); }
-    public void setPreferredProvider(String newValue)
-    { mEditor.putString(PROP_PREFERRED_PROVIDER, newValue); }
-
     public String getSignature()
     { return mSettings.getString(PROP_SIGNATURE, ""); }
     public void setSignature(String newValue)
@@ -74,6 +67,26 @@ public class AppPreferencesDao	extends BasePreferencesDao
     public void setAppVersion(String newValue)
     { mEditor.putString(PROP_APPVERSION, newValue); }
     
+    public String getLastUsedProviderId()
+    { return mSettings.getString(PROP_LASTUSED_PROVIDERID, ""); }
+    public void setLastUsedProviderId(String newValue)
+    { mEditor.putString(PROP_LASTUSED_PROVIDERID, newValue); }
+    
+    public String getLastUsedSubserviceId()
+    { return mSettings.getString(PROP_LASTUSED_SUBSERVICEID, ""); }
+    public void setLastUsedSubserviceId(String newValue)
+    { mEditor.putString(PROP_LASTUSED_SUBSERVICEID, newValue); }
+    
+    public String getLastUsedDestination()
+    { return mSettings.getString(PROP_LASTUSED_DESTINATION, ""); }
+    public void setLastUsedDestination(String newValue)
+    { mEditor.putString(PROP_LASTUSED_DESTINATION, newValue); }
+    
+    public String getLastUsedMessage()
+    { return mSettings.getString(PROP_LASTUSED_MESSAGE, ""); }
+    public void setLastUsedMessage(String newValue)
+    { mEditor.putString(PROP_LASTUSED_MESSAGE, newValue); }
+    
     
 
     //---------- Protected Methods
@@ -86,8 +99,10 @@ public class AppPreferencesDao	extends BasePreferencesDao
 	{
     	editorBackup.putBoolean(PROP_AUTO_CLEAR_MESSAGE, getAutoClearMessage());
     	editorBackup.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, getInsertMessageIntoPim());
-    	editorBackup.putString(PROP_PREFERRED_PROVIDER, getPreferredProvider());
-    	editorBackup.putBoolean(PROP_USE_LAST_PROVIDER, getUseLastProvider());
+    	editorBackup.putString(PROP_LASTUSED_PROVIDERID, getLastUsedProviderId());
+    	editorBackup.putString(PROP_LASTUSED_SUBSERVICEID, getLastUsedSubserviceId());
+    	editorBackup.putString(PROP_LASTUSED_DESTINATION, getLastUsedDestination());
+    	editorBackup.putString(PROP_LASTUSED_MESSAGE, getLastUsedMessage());
 	}
 
 	/* (non-Javadoc)
@@ -98,8 +113,10 @@ public class AppPreferencesDao	extends BasePreferencesDao
 	{
     	setAutoClearMessage(settingsBackup.getBoolean(PROP_AUTO_CLEAR_MESSAGE, false));
     	setInsertMessageIntoPim(settingsBackup.getBoolean(PROP_INSERT_MESSAGE_INTO_PIM, false));
-    	setPreferredProvider(settingsBackup.getString(PROP_PREFERRED_PROVIDER, ""));
-    	setUseLastProvider(settingsBackup.getBoolean(PROP_USE_LAST_PROVIDER, false));
+    	setLastUsedProviderId(settingsBackup.getString(PROP_LASTUSED_PROVIDERID, ""));
+    	setLastUsedSubserviceId(settingsBackup.getString(PROP_LASTUSED_SUBSERVICEID, ""));
+    	setLastUsedDestination(settingsBackup.getString(PROP_LASTUSED_DESTINATION, ""));
+    	setLastUsedMessage(settingsBackup.getString(PROP_LASTUSED_MESSAGE, ""));
 	}
     
 	

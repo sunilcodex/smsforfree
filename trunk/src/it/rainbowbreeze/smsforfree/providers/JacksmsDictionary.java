@@ -42,7 +42,8 @@ public class JacksmsDictionary
 	
 
 	//---------- Public properties
-	public static final String RESULT_OK = "Result 1";
+	public static final String RESULT_OK = "1";
+	public static final String RESULT_ERROR = "0";
 
 
 	//---------- Public methods
@@ -78,6 +79,24 @@ public class JacksmsDictionary
 		headers.put(key, value);
 		
 		return headers;
+	}
+	
+	
+	/**
+	 * Extracts the message text from provider's reply
+	 * @param reply
+	 * @return
+	 */
+	public String getTextPartFromReply(String reply)
+	{
+		if (TextUtils.isEmpty(reply)) return "";
+		
+		String[] lines = reply.split(SEPARATOR);
+		if (lines.length > 2)
+			//message is in the second item
+			return lines[1];
+		else
+			return "";
 	}
 
 

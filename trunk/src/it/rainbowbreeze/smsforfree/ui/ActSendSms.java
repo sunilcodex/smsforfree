@@ -112,7 +112,13 @@ public class ActSendSms
         bindProvidersSpinner();
 
         //load default configuration
-        //TODO
+        if (null == savedInstanceState) {
+        	//TODO
+        	//combobox values
+        	//mSpiProviders.setSelection(position);
+        	mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
+        	mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
+        }
     }
     
     
@@ -122,12 +128,12 @@ public class ActSendSms
     
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
-    	menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
+    	//menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
     	menu.add(0, OPTIONMENU_SETTINGS, 2, R.string.actsendsms_mnuSettings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(0, OPTIONMENU_ABOUT, 3, R.string.actsendsms_mnuAbout);
-		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
-			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+//		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
+//			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		
 		return true;    	
     }
@@ -206,6 +212,21 @@ public class ActSendSms
     	}
     	
     	return retDialog;
+    }
+    
+    @Override
+    protected void onPause() {
+    	super.onPause();
+    	//save current fields value to prefs
+    	AppPreferencesDao.instance().setLastUsedProviderId(
+				null == mSelectedProvider ? "" : mSelectedProvider.getId());
+    	AppPreferencesDao.instance().setLastUsedDestination(
+    			TextUtils.isEmpty(mSelectedServiceId) ? "" : mSelectedServiceId);
+    	AppPreferencesDao.instance().setLastUsedDestination(
+    			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
+    	AppPreferencesDao.instance().setLastUsedMessage(
+    			TextUtils.isEmpty(mTxtMessage.getText()) ? "" : mTxtMessage.getText().toString());
+    	AppPreferencesDao.instance().save();
     }
 
     
@@ -521,7 +542,7 @@ public class ActSendSms
 		}
 			
 
-		ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_sendOk + "\n" + res.getResultAsString());
+		ActivityHelper.showInfo(ActSendSms.this, getString(R.string.actsendsms_msg_sendOk) + "\n" + res.getResultAsString());
 		
 		//check if the text should be deleted
 		if (AppPreferencesDao.instance().getAutoClearMessage()) {

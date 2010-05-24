@@ -5,7 +5,6 @@ import java.util.List;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsService;
 
 public class GlobalUtils {
 	//---------- Ctors

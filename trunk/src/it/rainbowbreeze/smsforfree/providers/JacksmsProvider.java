@@ -164,12 +164,16 @@ public class JacksmsProvider
 		
     	ResultOperation res = new ResultOperation();
 		//exams the result
-		if (reply.startsWith(JacksmsDictionary.RESULT_OK))
+		if (reply.startsWith(JacksmsDictionary.RESULT_OK)) {
 			//ok
-			res.setResultAsString(reply);
-		else {
+			//break the reply
+			res.setResultAsString(mDictionary.getTextPartFromReply(reply));
+		} else if (reply.startsWith(JacksmsDictionary.RESULT_ERROR)) {
 			//some sort of error
-			res.setException(new Exception(reply));
+			res.setException(new Exception(mDictionary.getTextPartFromReply(reply)));
+		} else {
+			//captcha
+			
 		}
 		return res;    	
     }

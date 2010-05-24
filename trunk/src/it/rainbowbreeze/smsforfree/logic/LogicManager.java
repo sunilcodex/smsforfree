@@ -80,7 +80,7 @@ public class LogicManager {
 	{
 		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
 		
-		if (GlobalDef.appVersion.equals(currentAppVersion)) {
+		if (!GlobalDef.appVersion.equals(currentAppVersion)) {
 			//perform upgrade
 		}
 	}
