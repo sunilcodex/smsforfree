@@ -10,14 +10,18 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 /**
  * @author rainbowbreeze
  *
  */
 public class ActSettingsMain
-	extends ActBasePreferenceEntry
+	extends PreferenceActivity
 {
 	//---------- Private fields
 	private CheckBoxPreference mChkResetData;
@@ -46,6 +50,13 @@ public class ActSettingsMain
 		//Get the custom preference
 		Preference customPref = (Preference) findPreference("actsettingsmain_providersPref");
 		customPref.setOnPreferenceClickListener(providersPrefsClickListener);
+		
+		//set preferences value
+		mChkResetData.setChecked(AppPreferencesDao.instance().getAutoClearMessage());
+		mTxtSignature.setText(AppPreferencesDao.instance().getSignature());
+		
+		mChkResetData.setOnPreferenceChangeListener(mChkResetDataChangeListener);
+		mTxtSignature.setOnPreferenceChangeListener(mTxtSignatureChangeListener);
 	}
 
 
@@ -68,24 +79,36 @@ public class ActSettingsMain
 	};
 	
 	
+	private OnPreferenceChangeListener mTxtSignatureChangeListener = new OnPreferenceChangeListener() {
+		
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			AppPreferencesDao.instance().setSignature(newValue.toString());
+			return AppPreferencesDao.instance().save();
+		}
+	};
+	
+	
+	private OnPreferenceChangeListener mChkResetDataChangeListener = new OnPreferenceChangeListener() {
+		
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			AppPreferencesDao.instance().setAutoClearMessage(((Boolean)newValue).booleanValue());
+			return AppPreferencesDao.instance().save();
+		}
+	};
+	
+	
 	//---------- Public methods
 
 	
 	
 	
 	//---------- Private methods
-	@Override
-	protected void loadDataIntoViews() {
-		mChkResetData.setChecked(AppPreferencesDao.instance().getAutoClearMessage());
-//		mChkInserIntoPim.setChecked(AppPreferencesDao.instance().getInsertMessageIntoPim());
-		mTxtSignature.setText(AppPreferencesDao.instance().getSignature());
-	}
 
-	@Override
-	protected boolean saveDataFromViews() {
-		AppPreferencesDao.instance().setAutoClearMessage(mChkResetData.isChecked());
-//		AppPreferencesDao.instance().setInsertMessageIntoPim(mChkInserIntoPim.isChecked());
-		AppPreferencesDao.instance().setSignature(mTxtSignature.getText());
-		return AppPreferencesDao.instance().save();
-	}
+//	@Override
+//	protected boolean saveDataFromViews() {
+//		AppPreferencesDao.instance().setAutoClearMessage(mChkResetData.isChecked());
+////		AppPreferencesDao.instance().setInsertMessageIntoPim(mChkInserIntoPim.isChecked());
+//		AppPreferencesDao.instance().setSignature(mTxtSignature.getText());
+//		return AppPreferencesDao.instance().save();
+//	}
 }
