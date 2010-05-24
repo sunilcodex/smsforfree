@@ -12,7 +12,9 @@ import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -232,7 +234,13 @@ public class ActSettingsSmsService
         		if (null != mLblDesc) mLblDesc.setVisibility(View.GONE);
         		if (null != mTxtValue) mTxtValue.setVisibility(View.GONE);
         	} else {
-        		if (null != mLblDesc) mLblDesc.setText(mTemplateService.getParameterDesc(i));
+        		if (null != mLblDesc) {
+        			mLblDesc.setText(mTemplateService.getParameterDesc(i));
+        			if (mTemplateService.getParameter(i).isPassword()) {
+        				mTxtValue.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        				mTxtValue.setTransformationMethod(new PasswordTransformationMethod());
+        			}
+        		}
         	}
         }
 		

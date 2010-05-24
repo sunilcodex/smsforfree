@@ -3,6 +3,12 @@ package it.rainbowbreeze.smsforfree.domain;
 import android.text.TextUtils;
 
 
+/**
+ * Base class for service configuration.
+ *  
+ * @author Alfredo "Rainbowbreeze" Morresi
+ *
+ */
 public abstract class SmsService
 	implements Comparable<SmsService>
 {
@@ -12,11 +18,11 @@ public abstract class SmsService
 	
 	protected SmsService(int numberOfParameters) {
 		if (numberOfParameters < 1) {
-			mParametersDesc = null;
-			mParametersValue = null;
+			mParameters = null;
 		} else {
-			mParametersDesc = new String[numberOfParameters];
-			mParametersValue = new String[numberOfParameters];
+			mParameters = new SmsServiceParameter[numberOfParameters];
+			for(int i = 0; i < numberOfParameters; i++)
+				mParameters[i] = new SmsServiceParameter();
 		}
 	}
 
@@ -53,32 +59,28 @@ public abstract class SmsService
 	{ mTemplateId = value; }
 	
 	
-	/** Description of service parameters */ 
-	protected String[] mParametersDesc;
-	public String[] getParametersDesc()
-	{ return mParametersDesc; }
+	/** Description of service parameters */
+	protected SmsServiceParameter[] mParameters;
+	
 	public String getParameterDesc(int index)
-	{ return getArrayItem(mParametersDesc, index); }
+	{ return index < 0 && index >= mParameters.length ? "" : mParameters[index].getDesc();  }
 	public void setParameterDesc(int index, String value)
-	{ setArrayItem(mParametersDesc, index, value); }
+	{ if (index >= 0 && index < mParameters.length) mParameters[index].setDesc(value); }
 	
 	/** Value of service parameters */ 
-	protected String [] mParametersValue;
-	public String[] getParametersValue()
-	{ return mParametersValue; }
 	public String getParameterValue(int index)
-	{ return getArrayItem(mParametersValue, index); }
+	{ return index < 0 && index >= mParameters.length ? "" : mParameters[index].getValue(); }
 	public void setParameterValue(int index, String value)
-	{ setArrayItem(mParametersValue, index, value); }
+	{ if (index >= 0 && index < mParameters.length) mParameters[index].setValue(value); }
 	
 	/** Visual attributes of service parameters */ 
-	protected String [] mParametersAttributes;
-	public String[] getParametersAttributes()
-	{ return mParametersValue; }
-	public String getParameterAttributes(int index)
-	{ return getArrayItem(mParametersAttributes, index); }
-	public void setParameterAttributes(int index, String value)
-	{ setArrayItem(mParametersAttributes, index, value); }
+	public int getParameterFormat(int index)
+	{ return index < 0 && index >= mParameters.length ? SmsServiceParameter.FORMAT_NONE : mParameters[index].getFormat(); }
+	public void setParameterFormat(int index, int value)
+	{ if (index >= 0 && index < mParameters.length) mParameters[index].setFormat(value); }
+	
+	public SmsServiceParameter getParameter(int index)
+	{ return index < 0 && index >= mParameters.length ? null : mParameters[index]; }
 	
 	
 
@@ -93,13 +95,16 @@ public abstract class SmsService
 		if (getParametersNumber() == 0)
 			return true;
 
-		if (null == mParametersValue)
+		if (null == mParameters)
 			return false;
 		
-		for(String value : mParametersValue)
-			if (!TextUtils.isEmpty(value)) return true;
+		//check if mandatory parameters have a value
+		boolean result = true;
+		for(SmsServiceParameter param : mParameters)
+			if (!param.isOptional())
+				result &= !TextUtils.isEmpty(param.getValue());
 		
-		return false;
+		return result;
 	}
 	
 	@Override
@@ -139,11 +144,4 @@ public abstract class SmsService
 	
 	
 	//---------- Private methods
-	protected String getArrayItem(String[] array, int index){
-		return index < 0 && index >= array.length ? "" : array[index]; 
-	}
-
-	protected void setArrayItem(String[] array, int index, String value) {
-		if (index >= 0 && index < array.length) array[index] = value; 
-	}
 }
