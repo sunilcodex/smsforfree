@@ -134,9 +134,9 @@ public class ActSettingsSmsService
 			((SmsConfigurableService)mEditedService).setName(mTxtServiceName.getText().toString());
 
 		for (int i = 0; i < MAXFIELDS; i++){
-			findLabelAndEditTextViewsForParameter(i);
         	//save the data inside the object
         	if (i < mEditedService.getParametersNumber()) {
+        		findLabelAndEditTextViewsForParameter(i);
         		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
         	}
 		}

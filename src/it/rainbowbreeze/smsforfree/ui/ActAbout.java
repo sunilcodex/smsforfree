@@ -2,7 +2,9 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import android.app.Activity;
 
-public class ActAbout extends Activity {
+public class ActAbout
+	extends Activity
+{
 	//---------- Ctors
 
 	//---------- Private fields
