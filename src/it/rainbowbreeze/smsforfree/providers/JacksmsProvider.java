@@ -17,6 +17,7 @@ import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 
 public class JacksmsProvider
 	extends SmsMultiProvider
@@ -31,8 +32,9 @@ public class JacksmsProvider
 	{
 		super(dao, PARAM_NUMBER);
 		mDictionary = new JacksmsDictionary();
-		mParametersDesc[PARAM_INDEX_USERNAME] = usernameDesc;
-		mParametersDesc[PARAM_INDEX_PASSWORD] = passwordDesc;
+		setParameterDesc(PARAM_INDEX_USERNAME, usernameDesc);
+		setParameterDesc(PARAM_INDEX_PASSWORD, passwordDesc);
+		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 	}
 	
 	
@@ -79,26 +81,31 @@ public class JacksmsProvider
 		service = new SmsConfigurableService("62", "Aimon-Free", 112, 3);
 		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
 		service.setParameterDesc(1, "Password di accesso");
+		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
 		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
 		mTemplates.add(service);
 		service = new SmsConfigurableService("61", "Aimon", 612, 3);
 		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
 		service.setParameterDesc(1, "Password di accesso");
+		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
 		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
 		mTemplates.add(service);
 		service = new SmsConfigurableService("29", "VoipStunt", 160, 3);
 		service.setParameterDesc(0, "Username di accesso su voipstunt.com");
 		service.setParameterDesc(1, "Password di accesso su voipstunt.com");
+		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
 		service.setParameterDesc(2, "Numero verificato che verra' visualizzato come mittente");
 		mTemplates.add(service);
 		service = new SmsConfigurableService("1", "Vodafone-SMS", 360, 3);
 		service.setParameterDesc(0, "Username di accesso a www.190.it");
 		service.setParameterDesc(1, "Password di accesso a www.190.it");
+		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
 		service.setParameterDesc(2, "Inserisci il numero di telefono della sim con cui vuoi inviare tramite questo account.");
 		mTemplates.add(service);
 		service = new SmsConfigurableService("33", "Enel", 110, 2);
 		service.setParameterDesc(0, "Username");
 		service.setParameterDesc(1, "Password");
+		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
 		mTemplates.add(service);
 		
 		Collections.sort(mTemplates);
@@ -113,8 +120,8 @@ public class JacksmsProvider
     		String destination,
     		String message)
     {
-    	String jackSmsUsername = mParametersValue[PARAM_INDEX_USERNAME];
-    	String jackSmsPassword = mParametersValue[PARAM_INDEX_PASSWORD];
+    	String jackSmsUsername = getParameterValue(PARAM_INDEX_USERNAME);
+    	String jackSmsPassword = getParameterValue(PARAM_INDEX_PASSWORD);
     	//args check
     	try {
     		checkCredentialsValidity(jackSmsUsername, jackSmsPassword);

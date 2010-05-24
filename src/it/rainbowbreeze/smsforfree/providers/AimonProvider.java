@@ -11,6 +11,7 @@ import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
@@ -27,10 +28,11 @@ public class AimonProvider
 	{
 		super(dao, PARAM_NUMBER);
 		mDictionary = new AimonDictionary();
-		mParametersDesc[PARAM_INDEX_USERNAME] = usernameDesc;
-		mParametersDesc[PARAM_INDEX_PASSWORD] = passwordDesc;
-		mParametersDesc[PARAM_INDEX_SENDER] = senderDesc;
-		mParametersDesc[PARAM_INDEX_ID_API] = kindofsmsDesc;
+		setParameterDesc(PARAM_INDEX_USERNAME, usernameDesc);
+		setParameterDesc(PARAM_INDEX_PASSWORD, passwordDesc);
+		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
+		setParameterDesc(PARAM_INDEX_SENDER, senderDesc);
+		setParameterDesc(PARAM_INDEX_ID_API, kindofsmsDesc);
 	}
 
 	
@@ -96,14 +98,13 @@ public class AimonProvider
 
     @Override
 	public ResultOperation sendMessage(String serviceId, String destination, String body) {
-		// TODO Auto-generated method stub
 		return sendSms(
-				mParametersValue[PARAM_INDEX_USERNAME],
-				mParametersValue[PARAM_INDEX_PASSWORD],
-				mParametersValue[PARAM_INDEX_SENDER],
+				getParameterValue(PARAM_INDEX_USERNAME),
+				getParameterValue(PARAM_INDEX_PASSWORD),
+				getParameterValue(PARAM_INDEX_SENDER),
 				destination,
 				body,
-				mParametersValue[PARAM_INDEX_ID_API]);
+				getParameterValue(PARAM_INDEX_ID_API));
 	}
     
     
