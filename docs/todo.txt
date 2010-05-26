@@ -1,10 +1,15 @@
-<<<<<<< .mine
+CONTROLLARE
+-come funziona la rotazione dello schermo qnd sto mandando un messaggio
+
+
+IMPLEMENTAZIONI
+-comandi del singolo servizio per vedere credito residuo, autenticazione ecc
+-autoupdate dei servizi jacksms
+
 
 Lista servizi da consultare 
 http://j.jacksms.it/?action=UPDATE
 
-=======
 http://test.jacksms.it/chi-siamo.html
 
- 
->>>>>>> .r10
+

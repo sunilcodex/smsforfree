@@ -1,5 +1,6 @@
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import android.text.TextUtils;
 
 
@@ -58,9 +59,12 @@ public abstract class SmsService
 	public void setTemplateId(String value)
 	{ mTemplateId = value; }
 	
-	
+
 	/** Description of service parameters */
 	protected SmsServiceParameter[] mParameters;
+	
+	public SmsServiceParameter getParameter(int index)
+	{ return index >= 0 && index < mParameters.length ? mParameters[index] : null; }
 	
 	public String getParameterDesc(int index)
 	{ return index >= 0 && index < mParameters.length ? mParameters[index].getDesc() : "";  }
@@ -78,9 +82,6 @@ public abstract class SmsService
 	{ return index >= 0 && index < mParameters.length ? mParameters[index].getFormat(): SmsServiceParameter.FORMAT_NONE ; }
 	public void setParameterFormat(int index, int value)
 	{ if (index >= 0 && index < mParameters.length) mParameters[index].setFormat(value); }
-	
-	public SmsServiceParameter getParameter(int index)
-	{ return index >= 0 && index < mParameters.length ? mParameters[index] : null; }
 	
 	
 
@@ -106,6 +107,21 @@ public abstract class SmsService
 		
 		return result;
 	}
+
+	
+	/** The service is able to verify credentials */
+	public abstract boolean canVerifyCredentials();
+	
+	
+	/**
+	 * Verify if the credentials of the service are correct. Generally, service credentials
+	 * are stored inside service parameters
+	 * 
+	 * @return A ResultOperation with true if credentials are correct, otherwise false
+	 */
+	public abstract ResultOperation verifyCredentials();
+
+	
 	
 	@Override
 	public boolean equals(Object aThat) {

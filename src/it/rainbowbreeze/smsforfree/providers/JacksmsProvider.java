@@ -70,6 +70,19 @@ public class JacksmsProvider
 
 	//---------- Public methods
 	@Override
+	public boolean canVerifyCredentials() {
+		return false;
+	}
+	
+	
+	@Override
+	public ResultOperation verifyCredentials() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	@Override
 	public ResultOperation loadTemplates(Context context)
 	{
 		ResultOperation res = new ResultOperation();

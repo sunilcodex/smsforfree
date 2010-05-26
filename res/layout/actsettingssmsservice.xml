@@ -118,8 +118,14 @@
 			/>
 			
 			<Button
+				android:id="@+id/actsettingssmsservice_btnVerifyCredentials"
+				style="@style/actsettingssmsservice_btnCommon"
+				android:text="@string/actsettingssmsservice_btnVerifyCredentials"
+			/>
+			
+			<Button
 				android:id="@+id/actsettingssmsservice_btnConfigsubservices"
-				style="@style/actsettingssmsservice_btnConfigSubservices"
+				style="@style/actsettingssmsservice_btnCommon"
 				android:text="@string/actsettingssmsservice_btnConfigureSubservices"
 			/>
 				

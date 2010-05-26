@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
+
 public class SmsConfigurableService
 	extends SmsService
 {
@@ -69,6 +71,13 @@ public class SmsConfigurableService
 	
 	
 	//---------- Public methods
+	@Override
+	public boolean canVerifyCredentials()
+	{ return false; }
+	
+	@Override
+	public ResultOperation verifyCredentials()
+	{ return null; }
 
 	
 	

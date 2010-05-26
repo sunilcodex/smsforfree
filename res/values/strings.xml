@@ -73,6 +73,7 @@
     <!-- ActSettingsSmsService -->
     <string name="actsettingssmsservice_title">SmsForFree - Provider/Service Settings</string>
     <string name="actsettingssmsservice_titleEdit">SmsForFree - Settings for %s</string>
+    <string name="actsettingssmsservice_btnVerifyCredentials">Verify credentials</string>
     <string name="actsettingssmsservice_btnConfigureSubservices">Configure services</string>
 
 

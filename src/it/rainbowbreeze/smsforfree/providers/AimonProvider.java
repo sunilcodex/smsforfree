@@ -79,6 +79,25 @@ public class AimonProvider
     
     
     //---------- Public methods
+	@Override
+	public boolean canVerifyCredentials() {
+		return true;
+	}
+	
+	
+	@Override
+	public ResultOperation verifyCredentials() {
+		ResultOperation res;
+		
+		res = verifyCredit(getParameterValue(PARAM_INDEX_USERNAME),
+				getParameterValue(PARAM_INDEX_PASSWORD));
+		
+		//TODO
+		//check if credits is ok
+		return res;
+	}
+	
+	
     public ResultOperation verifyCredit(String username, String password)
     {
     	//args check
@@ -110,6 +129,9 @@ public class AimonProvider
     
     
 	//---------- Private methods
+    /**
+     * Send an sms
+     */
 	private ResultOperation sendSms(
     		String username,
     		String password,
