@@ -89,32 +89,19 @@ public class AimonProvider
 	public ResultOperation verifyCredentials() {
 		ResultOperation res;
 		
+		//if i can obtain number of credits from aimon, username e password are correct
 		res = verifyCredit(getParameterValue(PARAM_INDEX_USERNAME),
 				getParameterValue(PARAM_INDEX_PASSWORD));
 		
-		//TODO
-		//check if credits is ok
-		return res;
+		//routes to caller method some error
+		if (res.HasErrors())
+			return res;
+		
+		String reply = res.getResultAsString();
+		return new ResultOperation(!reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)); 
 	}
 	
 	
-    public ResultOperation verifyCredit(String username, String password)
-    {
-    	//args check
-    	try {
-    		checkCredentialsValidity(username, password);
-    	} catch (IllegalArgumentException e) {
-    		return new ResultOperation(e);
-		}
-    	
-    	HashMap<String, String> data = new HashMap<String, String>();
-    	appendCredential(data, username, password);
-    	
-    	//verify the credit
-    	return doRequest(mDictionary.getUrlGetCredit(), data);
-    }
-
-
     @Override
 	public ResultOperation sendMessage(String serviceId, String destination, String body) {
 		return sendSms(
@@ -141,11 +128,8 @@ public class AimonProvider
     		String idApi)
     {
     	//args check
-    	try {
-    		checkCredentialsValidity(username, password);
-    	} catch (IllegalArgumentException e) {
-    		return new ResultOperation(e);
-		}
+    	if (!checkCredentialsValidity(username, password))
+    		return getExceptionForInvalidCredentials();
     	
     	String okSender;
     	String okDestination;
@@ -204,17 +188,63 @@ public class AimonProvider
     	data.put(AimonDictionary.PARAM_ID_API, idApi);
     	
     	//sends the sms
-    	return doRequest(mDictionary.getUrlSendSms(), data);
+    	ResultOperation res = doRequest(mDictionary.getUrlSendSms(), data);
+    	
+    	//check results
+    	if (res.HasErrors()) return res;
+    	
+		//exams the result
+		if (res.getResultAsString().startsWith(AimonDictionary.RESULT_SENDSMS_OK))
+			//ok
+			return res;
+		else {
+			//some sort of error
+			res.setException(new Exception(res.getResultAsString()));
+		}
+		return res;    	
+    	
     }
 
 
+	/**
+	 * Verifies how much credits the user has
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+    private ResultOperation verifyCredit(String username, String password)
+    {
+    	//args check
+    	if (!checkCredentialsValidity(username, password))
+    		return getExceptionForInvalidCredentials();
+    	
+    	HashMap<String, String> data = new HashMap<String, String>();
+    	appendCredential(data, username, password);
+    	
+    	//verify the credit
+    	return doRequest(mDictionary.getUrlGetCredit(), data);
+    }
+
+
+    /**
+     * Append username and password on headers map
+     * @param data
+     * @param username
+     * @param password
+     */
 	private void appendCredential(HashMap<String, String> data, String username, String password)
     {
     	data.put(AimonDictionary.PARAM_USERNAME, username);
     	data.put(AimonDictionary.PARAM_PASSWORD, password);
     }
     
-    
+
+	/**
+	 * Execute the http request
+	 * @param url
+	 * @param data
+	 * @return
+	 */
     private ResultOperation doRequest(String url, HashMap<String, String> data)
     {
     	String reply = "";
@@ -236,17 +266,9 @@ public class AimonProvider
     	if (TextUtils.isEmpty(reply)) {
 			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
 		}
-		
-    	ResultOperation res = new ResultOperation();
-		//exams the result
-		if (reply.startsWith(AimonDictionary.RESULT_OK))
-			//ok
-			res.setResultAsString(reply);
-		else {
-			//some sort of error
-			res.setException(new Exception(reply));
-		}
-		return res;    	
+
+    	//return the reply
+    	return new ResultOperation(reply);
     }
 
 	@Override
