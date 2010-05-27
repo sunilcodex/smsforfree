@@ -34,6 +34,7 @@ public class ActSettingsSmsService
 	private SmsProvider mProvider;
 	private boolean mIsEditingAProvider;
 	private Button mBtnConfigureSubservices;
+	private Button mBtnVerifyCredentials;
 	private TextView mLblServiceName;
 	private TextView mTxtServiceName;
 	private TextView mLblServiceInfo;
@@ -62,6 +63,8 @@ public class ActSettingsSmsService
         
         mBtnConfigureSubservices = (Button) findViewById(R.id.actsettingssmsservice_btnConfigsubservices);
         mBtnConfigureSubservices.setOnClickListener(mBtnConfigureSubservicesClickListener);
+        mBtnVerifyCredentials = (Button) findViewById(R.id.actsettingssmsservice_btnVerifyCredentials);
+        mBtnVerifyCredentials.setOnClickListener(mBtnVerifyCredentialsClickListener);
         mLblServiceName = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceName);
         mTxtServiceName = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceName);
         mLblServiceInfo = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceInfo);
@@ -75,6 +78,24 @@ public class ActSettingsSmsService
 		public void onClick(View v) {
 			//open the subservice configuration activity
 			ActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
+		}
+	};
+
+
+	private OnClickListener mBtnVerifyCredentialsClickListener = new OnClickListener() {
+		public void onClick(View v) {
+			//open the subservice configuration activity
+			if (mEditedService != null && mEditedService.canVerifyCredentials()) {
+				ResultOperation res = mEditedService.verifyCredentials();
+				if (res.HasErrors()) {
+					ActivityHelper.reportError(ActSettingsSmsService.this, res);
+				} else {
+					if (res.getResultAsBoolean())
+						ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_vadilCredentials);
+					else
+						ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_invadilCredentials);
+				}
+			}
 		}
 	};
 
@@ -216,12 +237,18 @@ public class ActSettingsSmsService
 			} else {
 				mBtnConfigureSubservices.setVisibility(View.GONE);
 			}
+			if (mProvider.canVerifyCredentials()) {
+				mBtnVerifyCredentials.setVisibility(View.VISIBLE);
+			} else {
+				mBtnVerifyCredentials.setVisibility(View.GONE);
+			}
 		} else {
 			mLblServiceName.setVisibility(View.VISIBLE);
 			mTxtServiceName.setVisibility(View.VISIBLE);
 			mLblServiceInfo.setVisibility(View.GONE);
 			mTxtServiceInfo.setVisibility(View.GONE);
 			mBtnConfigureSubservices.setVisibility(View.GONE);
+			mBtnVerifyCredentials.setVisibility(View.GONE);
 		}
 		
 

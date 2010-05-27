@@ -26,14 +26,14 @@ public class AimonDictionary {
 	public static final String ID_API_MITTENTE_LIBERO = "59"; 
 	public static final String ID_API_MITTENTE_LIBERO_REPORT = "84"; 
 	
-	public static final String RESULT_OK = "+01 SMS Queued";
-	public static final String RESULT_ERROR_ACCESS_DENIED = "-3";
-	public static final String RESULT_ERROR_INTERNAL_SERVER_ERROR = "-32";
-	public static final String RESULT_ERROR_INVALID_DESTINATION = "-100";
-	public static final String RESULT_ERROR_DESTINATION_NOT_ALLOWED = "-101";
-	public static final String RESULT_ERROR_BODY_HAS_INVALID_CHARS = "-102";
-	public static final String RESULT_ERROR_NOT_ENOUGH_CREDIT = "-103";
-	public static final String RESULT_ERROR_INVALID_SENDER = "-105";
+	public static final String RESULT_SENDSMS_OK = "+01 SMS Queued";
+	public static final String RESULT_ERROR_ACCESS_DENIED = "-3-";
+	public static final String RESULT_ERROR_INTERNAL_SERVER_ERROR = "-32-";
+	public static final String RESULT_ERROR_INVALID_DESTINATION = "-100-";
+	public static final String RESULT_ERROR_DESTINATION_NOT_ALLOWED = "-101-";
+	public static final String RESULT_ERROR_BODY_HAS_INVALID_CHARS = "-102-";
+	public static final String RESULT_ERROR_NOT_ENOUGH_CREDIT = "-103-";
+	public static final String RESULT_ERROR_INVALID_SENDER = "-105-";
 
 
 	public final static int MAX_SENDER_LENGTH_ALPHANUMERIC = 11;

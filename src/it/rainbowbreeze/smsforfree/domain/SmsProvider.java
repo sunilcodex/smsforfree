@@ -37,8 +37,7 @@ public abstract class SmsProvider
 	
 	
 	//---------- Public fields
-	public static final String ERROR_NO_USERNAME = "NO_USERNAME";
-	public static final String ERROR_NO_PASSWORD = "NO_PASSWORD";
+	public static final String ERROR_NO_CREDENTIALS = "NO_CREDENTIALS";
 	public static final String ERROR_CREDENTIALS_NOT_VALID = "CREDENTIALS_INVALID";
 	public static final String ERROR_NO_REPLY_FROM_SITE = "NO_REPLY";
 	
@@ -110,13 +109,18 @@ public abstract class SmsProvider
 	 * @param username
 	 * @param password
 	 */
-	protected void checkCredentialsValidity(String username, String password)
-		throws IllegalArgumentException
+	protected boolean checkCredentialsValidity(String username, String password)
 	{
-    	if (TextUtils.isEmpty(username))
-    		 throw new IllegalArgumentException(ERROR_NO_USERNAME);
-    	if (TextUtils.isEmpty(password))
-    		throw new IllegalArgumentException(ERROR_NO_PASSWORD);
+		return !TextUtils.isEmpty(username) && !TextUtils.isEmpty(password);
 	}
+	
+	/**
+	 * Create an exception for empty username or password
+	 * @return
+	 */
+	protected ResultOperation getExceptionForInvalidCredentials()
+	{
+		return new ResultOperation(new Exception(ERROR_NO_CREDENTIALS));
+	}  
 
 }

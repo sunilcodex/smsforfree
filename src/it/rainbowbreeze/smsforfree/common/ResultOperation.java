@@ -22,6 +22,18 @@ public class ResultOperation
 		mException = ex;
 	}
 
+	public ResultOperation(boolean value)
+	{
+		this();
+		setResultAsBoolean(value);
+	}
+
+	public ResultOperation(String value)
+	{
+		this();
+		setResultAsString(value);
+	}
+
 	
 	
 	
