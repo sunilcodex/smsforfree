@@ -53,7 +53,17 @@ public abstract class SmsSingleProvider
 	public boolean hasServiceParametersConfigured(String serviceId)
 	{ return false; }	
 
+	/** No subservices, so no additional menu to show */
+	@Override
+	public boolean hasSubservicesListActivityCommands() {
+		return false;
+	}
 	
+	/** No subservices, so no additional menu to show */
+	@Override
+	public List<SmsProviderMenuCommand> getSubservicesListActivityCommandS() {
+		return null;
+	}
 	
 	
 	//---------- Public methods

@@ -34,11 +34,6 @@ public class LogicManager {
 	{
 		ResultOperation res = new ResultOperation();
 		
-		String usernameDesc = context.getString(R.string.common_username);
-		String passwordDesc = context.getString(R.string.common_password);
-		String senderDesc = context.getString(R.string.common_sender);
-		String aimonIdApiDesc = context.getString(R.string.common_aimon_idapi);
-		
 		//load configurations
 		AppPreferencesDao.instance().load(context);
 		
@@ -48,13 +43,22 @@ public class LogicManager {
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
-		JacksmsProvider jackProv = new JacksmsProvider(dao, usernameDesc, passwordDesc);
+		JacksmsProvider jackProv = new JacksmsProvider(dao,
+				context.getString(R.string.common_aimon_username),
+				context.getString(R.string.common_password));
 		//TODO check errors
 		jackProv.loadParameters(context);
 		jackProv.loadTemplates(context);
 		jackProv.loadSubservices(context);
 		GlobalBag.providerList.add(jackProv);
-		AimonProvider aimonProv = new AimonProvider(dao, usernameDesc, passwordDesc, senderDesc, aimonIdApiDesc);
+		AimonProvider aimonProv = new AimonProvider(dao,
+				context.getString(R.string.common_aimon_username),
+				context.getString(R.string.common_password),
+				context.getString(R.string.common_sender),
+				context.getString(R.string.common_aimon_idapi),
+				context.getString(R.string.common_commandCheckCredentials),
+				context.getString(R.string.common_aimon_commandCheckCredits)
+				);
 		aimonProv.loadParameters(context);
 		GlobalBag.providerList.add(aimonProv);
 		

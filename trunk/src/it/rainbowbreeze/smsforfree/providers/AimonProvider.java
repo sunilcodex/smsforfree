@@ -1,16 +1,20 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
+import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 import it.rainbowbreeze.smsforfree.util.Base64;
@@ -21,10 +25,18 @@ public class AimonProvider
 	//---------- Ctors
 	public AimonProvider(ProviderDao dao)
 	{
-		this(dao, "Username", "Password", "Sender", "Id API (106:anonymous, 59:sender, 84:sender+report)");
+		this(dao,
+				"Username", "Password", "Sender", "Id API (106:anonymous, 59:sender, 84:sender+report)",
+				"Check credentials", "Check credits");
 	}
 	
-	public AimonProvider(ProviderDao dao, String usernameDesc, String passwordDesc, String senderDesc, String kindofsmsDesc)
+	public AimonProvider(ProviderDao dao,
+			String usernameDesc,
+			String passwordDesc,
+			String senderDesc,
+			String kindofsmsDesc,
+			String optionMenuCheckCredentialDesc,
+			String optionMenuCheckCreditsDesc)
 	{
 		super(dao, PARAM_NUMBER);
 		mDictionary = new AimonDictionary();
@@ -33,6 +45,16 @@ public class AimonProvider
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setParameterDesc(PARAM_INDEX_SENDER, senderDesc);
 		setParameterDesc(PARAM_INDEX_ID_API, kindofsmsDesc);
+		
+		//initializes the command list
+		mProviderSettingsMenuCommand = new ArrayList<SmsProviderMenuCommand>();
+		SmsProviderMenuCommand command;
+		command = new SmsProviderMenuCommand(
+				COMMAND_CHECKCREDENTIALS, optionMenuCheckCredentialDesc, 1000);
+		mProviderSettingsMenuCommand.add(command);
+		command = new SmsProviderMenuCommand(
+				COMMAND_CHECKCREDITS, optionMenuCheckCreditsDesc, 1001); 
+		mProviderSettingsMenuCommand.add(command);
 	}
 
 	
@@ -45,6 +67,9 @@ public class AimonProvider
 	private final static int PARAM_INDEX_SENDER = 2;
 	private final static int PARAM_INDEX_ID_API = 3;
 
+	private final static int COMMAND_CHECKCREDENTIALS = 1000;
+	private final static int COMMAND_CHECKCREDITS = 1001;
+	
 	private AimonDictionary mDictionary;
 	
 	
@@ -75,33 +100,22 @@ public class AimonProvider
 	public int getMaxMessageLenght() {
 		return 160;
 	}
+    
+	@Override
+	public boolean hasProviderSettingsActivityCommands() {
+		return false;
+	}
 
-    
-    
+	private List<SmsProviderMenuCommand> mProviderSettingsMenuCommand;
+	@Override
+	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands() {
+		return mProviderSettingsMenuCommand;
+	}
+	
+
+	
+	
     //---------- Public methods
-	@Override
-	public boolean canVerifyCredentials() {
-		return true;
-	}
-	
-	
-	@Override
-	public ResultOperation verifyCredentials() {
-		ResultOperation res;
-		
-		//if i can obtain number of credits from aimon, username e password are correct
-		res = verifyCredit(getParameterValue(PARAM_INDEX_USERNAME),
-				getParameterValue(PARAM_INDEX_PASSWORD));
-		
-		//routes to caller method some error
-		if (res.HasErrors())
-			return res;
-		
-		String reply = res.getResultAsString();
-		return new ResultOperation(!reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)); 
-	}
-	
-	
     @Override
 	public ResultOperation sendMessage(String serviceId, String destination, String body) {
 		return sendSms(
@@ -112,9 +126,29 @@ public class AimonProvider
 				body,
 				getParameterValue(PARAM_INDEX_ID_API));
 	}
-    
-    
-    
+
+	@Override
+    public ResultOperation executeCommand(int commandId, Bundle extraData)
+	{
+		ResultOperation res;
+		
+		switch (commandId) {
+		case COMMAND_CHECKCREDENTIALS:
+			res = verifyCredentials();
+			break;
+
+		case COMMAND_CHECKCREDITS:
+			res = new ResultOperation("Not implemented");
+			break;
+
+		default:
+			res = new ResultOperation("Nothing to execute");
+		}
+
+		return res;
+	}
+
+	
 	//---------- Private methods
     /**
      * Send an sms
@@ -227,6 +261,26 @@ public class AimonProvider
 
 
     /**
+     * Verifies if username and password are correct
+     * @return
+     */
+	private ResultOperation verifyCredentials() {
+		ResultOperation res;
+		
+		//if i can obtain number of credits from aimon, username e password are correct
+		res = verifyCredit(getParameterValue(PARAM_INDEX_USERNAME),
+				getParameterValue(PARAM_INDEX_PASSWORD));
+		
+		//routes to caller method some error
+		if (res.HasErrors())
+			return res;
+		
+		String reply = res.getResultAsString();
+		return new ResultOperation(!reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)); 
+	}
+	
+	
+    /**
      * Append username and password on headers map
      * @param data
      * @param username
@@ -282,5 +336,4 @@ public class AimonProvider
 	@Override
 	protected String getSubservicesFileName()
 	{ return null; }
-	
 }

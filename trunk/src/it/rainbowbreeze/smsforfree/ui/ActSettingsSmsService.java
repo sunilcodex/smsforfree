@@ -9,12 +9,15 @@ import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -34,7 +37,6 @@ public class ActSettingsSmsService
 	private SmsProvider mProvider;
 	private boolean mIsEditingAProvider;
 	private Button mBtnConfigureSubservices;
-	private Button mBtnVerifyCredentials;
 	private TextView mLblServiceName;
 	private TextView mTxtServiceName;
 	private TextView mLblServiceInfo;
@@ -63,14 +65,44 @@ public class ActSettingsSmsService
         
         mBtnConfigureSubservices = (Button) findViewById(R.id.actsettingssmsservice_btnConfigsubservices);
         mBtnConfigureSubservices.setOnClickListener(mBtnConfigureSubservicesClickListener);
-        mBtnVerifyCredentials = (Button) findViewById(R.id.actsettingssmsservice_btnVerifyCredentials);
-        mBtnVerifyCredentials.setOnClickListener(mBtnVerifyCredentialsClickListener);
         mLblServiceName = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceName);
         mTxtServiceName = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceName);
         mLblServiceInfo = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceInfo);
         mTxtServiceInfo = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceInfo);
         
 		showAndHideViews();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		boolean canContinue = super.onCreateOptionsMenu(menu);
+		
+		if (!canContinue) return canContinue;
+		if (mIsEditingAProvider && mProvider.hasProviderSettingsActivityCommands()) {
+			for (SmsProviderMenuCommand command : mProvider.getProviderSettingsActivityCommands()) {
+				MenuItem item = menu.add(0,
+						command.getCommandId(), command.getCommandOrder(), command.getCommandDescription());
+				if (command.hasIcon()) item.setIcon(command.getCommandIcon());
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		//TODO
+		//add textview to bundle
+		ResultOperation res = mProvider.executeCommand(item.getItemId(), null);
+		if (res.HasErrors()) {
+			ActivityHelper.reportError(ActSettingsSmsService.this, res);
+		} else {
+			if (res.getResultAsBoolean())
+				ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_vadilCredentials);
+			else
+				ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_invadilCredentials);
+		}
+		
+		return true;
 	}
 
 
@@ -81,25 +113,7 @@ public class ActSettingsSmsService
 		}
 	};
 
-
-	private OnClickListener mBtnVerifyCredentialsClickListener = new OnClickListener() {
-		public void onClick(View v) {
-			//open the subservice configuration activity
-			if (mEditedService != null && mEditedService.canVerifyCredentials()) {
-				ResultOperation res = mEditedService.verifyCredentials();
-				if (res.HasErrors()) {
-					ActivityHelper.reportError(ActSettingsSmsService.this, res);
-				} else {
-					if (res.getResultAsBoolean())
-						ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_vadilCredentials);
-					else
-						ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_invadilCredentials);
-				}
-			}
-		}
-	};
-
-
+	
 
 
 	//---------- Public methods
@@ -237,18 +251,12 @@ public class ActSettingsSmsService
 			} else {
 				mBtnConfigureSubservices.setVisibility(View.GONE);
 			}
-			if (mProvider.canVerifyCredentials()) {
-				mBtnVerifyCredentials.setVisibility(View.VISIBLE);
-			} else {
-				mBtnVerifyCredentials.setVisibility(View.GONE);
-			}
 		} else {
 			mLblServiceName.setVisibility(View.VISIBLE);
 			mTxtServiceName.setVisibility(View.VISIBLE);
 			mLblServiceInfo.setVisibility(View.GONE);
 			mTxtServiceInfo.setVisibility(View.GONE);
 			mBtnConfigureSubservices.setVisibility(View.GONE);
-			mBtnVerifyCredentials.setVisibility(View.GONE);
 		}
 		
 

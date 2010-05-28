@@ -71,13 +71,6 @@ public class SmsConfigurableService
 	
 	
 	//---------- Public methods
-	@Override
-	public boolean canVerifyCredentials()
-	{ return false; }
-	
-	@Override
-	public ResultOperation verifyCredentials()
-	{ return null; }
 
 	
 	

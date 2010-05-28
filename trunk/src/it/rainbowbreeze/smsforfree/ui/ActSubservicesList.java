@@ -84,7 +84,6 @@ public class ActSubservicesList
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		// TODO Auto-generated method stub
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
 		menu.setHeaderTitle(R.string.actsubserviceslist_mnuHeaderTitle);
@@ -106,13 +105,20 @@ public class ActSubservicesList
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean res;
+		
 		switch (item.getItemId()) {
 		case OPTIONMENU_ADDSERVICE:
 			//launch the activity for selecting subservice template
 			ActivityHelper.openTemplatesList(this, mProvider.getId());
+			res = true;
+			break;
+		default:
+			res = super.onOptionsItemSelected(item);
 			break;
 		}
-		return super.onOptionsItemSelected(item);
+		
+		return res;
 	}
 	
 	@Override

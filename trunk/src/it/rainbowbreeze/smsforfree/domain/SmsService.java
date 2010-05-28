@@ -109,20 +109,6 @@ public abstract class SmsService
 	}
 
 	
-	/** The service is able to verify credentials */
-	public abstract boolean canVerifyCredentials();
-	
-	
-	/**
-	 * Verify if the credentials of the service are correct. Generally, service credentials
-	 * are stored inside service parameters
-	 * 
-	 * @return A ResultOperation with true if credentials are correct, otherwise false
-	 */
-	public abstract ResultOperation verifyCredentials();
-
-	
-	
 	@Override
 	public boolean equals(Object aThat) {
 	    //check for self-comparison
