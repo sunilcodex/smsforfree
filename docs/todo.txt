@@ -8,8 +8,18 @@ IMPLEMENTAZIONI
 
 
 Lista servizi da consultare 
-http://j.jacksms.it/?action=UPDATE
+http://q.jacksms.it/login/getProviders
+
+restituisce (XML)
+<provider id="102" name="CherrySMS-Mittente" maxlen="160" p1="prefisso" p2="numero" p3="password" p4="" desc="Acquista ed invia sms tramite CherrySMS" />
+
+oppure (CSV)
+3       Communicator    141     username        password        domain          Invia 10 SMS al giorno tramite il sito di Virgilio. Richiede un abbonamento Tin.it
+
+se passi via POST la variabile exclude=1,2,3,4 (con gli id dei servizi dai escludere separati da virgola)
+ti scarica solo quelli che non sono nella lista da escludere.
+
+
 
 http://test.jacksms.it/chi-siamo.html
-
 
