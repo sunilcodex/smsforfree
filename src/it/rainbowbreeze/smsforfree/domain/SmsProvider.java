@@ -6,6 +6,7 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 
@@ -44,7 +45,6 @@ public abstract class SmsProvider
 	public static final String CAPTCHAREQUEST = "captcharequest";
 	
 
-
 	
 	//---------- Public properties
 	
@@ -58,8 +58,29 @@ public abstract class SmsProvider
 	public abstract SmsService getSubservice(String subserviceId);
 
     public abstract void setSelectedSubservice(String subserviceId);
-	
-	
+
+	/**
+	 * Provider has additional menu to show on option menu of
+	 * ActSettingSmsService activity, when the settings in
+	 * editing are related to the provider
+	 */
+    public abstract boolean hasProviderSettingsActivityCommands();
+    
+	/**
+	 * Menu to show on option menu of ActSettingSmsService activity,
+	 * when the settings in editing are related to the provider
+	 */
+    public abstract List<SmsProviderMenuCommand> getProviderSettingsActivityCommands();
+
+	/** Provider has additional command to show on option menu of ActSubservicesList activity */
+    public abstract boolean hasSubservicesListActivityCommands();
+    
+	/** Menu to show on option menu of ActSubservicesList activity */
+    public abstract List<SmsProviderMenuCommand> getSubservicesListActivityCommandS();
+
+    
+    
+    
 	//---------- Public methods
 	/**
 	 * Send the message
@@ -89,8 +110,18 @@ public abstract class SmsProvider
 	public abstract SmsService newSubserviceFromTemplate(String templateId);
 
 	public abstract boolean hasServiceParametersConfigured(String serviceId);
-	
-	
+
+    /** Execute the menu command identified by its id
+     * 
+     * @param commandId
+     * @param extraData
+     * @return String with command result
+     */
+    public abstract ResultOperation executeCommand(int commandId, Bundle extraData);
+
+    
+    
+    
 	//---------- Private methods
 	
 	/** file name where save provider parameters */

@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
@@ -16,6 +18,7 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
+import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 
@@ -69,17 +72,6 @@ public class JacksmsProvider
 
 
 	//---------- Public methods
-	@Override
-	public boolean canVerifyCredentials() {
-		return false;
-	}
-	
-	
-	@Override
-	public ResultOperation verifyCredentials() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	
 	@Override
@@ -202,5 +194,35 @@ public class JacksmsProvider
 	@Override
 	protected String getSubservicesFileName()
 	{ return GlobalDef.jacksmsSubservicesFileName; }
+
+	@Override
+	public ResultOperation executeCommand(int commandId, Bundle extraData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SmsProviderMenuCommand> getSubservicesListActivityCommandS() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasProviderSettingsActivityCommands() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasSubservicesListActivityCommands() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
