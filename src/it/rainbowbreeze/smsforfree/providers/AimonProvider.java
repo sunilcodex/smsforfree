@@ -1,15 +1,18 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
+import java.security.spec.MGF1ParameterSpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
@@ -17,47 +20,40 @@ import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
+import it.rainbowbreeze.smsforfree.ui.ActSettingsSmsService;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 public class AimonProvider
 	extends SmsSingleProvider
 {
 	//---------- Ctors
-	public AimonProvider(ProviderDao dao)
-	{
-		this(dao,
-				"Username", "Password", "Sender", "Id API (106:anonymous, 59:sender, 84:sender+report)",
-				"Check credentials", "Check credits");
-	}
-	
-	public AimonProvider(ProviderDao dao,
-			String usernameDesc,
-			String passwordDesc,
-			String senderDesc,
-			String kindofsmsDesc,
-			String optionMenuCheckCredentialDesc,
-			String optionMenuCheckCreditsDesc)
+	public AimonProvider(ProviderDao dao, Context context)
 	{
 		super(dao, PARAM_NUMBER);
-		mDictionary = new AimonDictionary();
-		setParameterDesc(PARAM_INDEX_USERNAME, usernameDesc);
-		setParameterDesc(PARAM_INDEX_PASSWORD, passwordDesc);
+
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.aimon_username));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
-		setParameterDesc(PARAM_INDEX_SENDER, senderDesc);
-		setParameterDesc(PARAM_INDEX_ID_API, kindofsmsDesc);
+		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender));
+		setParameterDesc(PARAM_INDEX_ID_API, context.getString(R.string.aimon_commandCheckCredits));
 		
 		//initializes the command list
 		mProviderSettingsMenuCommand = new ArrayList<SmsProviderMenuCommand>();
 		SmsProviderMenuCommand command;
 		command = new SmsProviderMenuCommand(
-				COMMAND_CHECKCREDENTIALS, optionMenuCheckCredentialDesc, 1000);
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000);
 		mProviderSettingsMenuCommand.add(command);
 		command = new SmsProviderMenuCommand(
-				COMMAND_CHECKCREDITS, optionMenuCheckCreditsDesc, 1001); 
+				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 1001); 
 		mProviderSettingsMenuCommand.add(command);
+		
+		//save some messages
+		mMessages = new String[3];
+		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
+		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
+		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
 	}
-
-	
 	
 	
 	//---------- Private fields
@@ -67,10 +63,14 @@ public class AimonProvider
 	private final static int PARAM_INDEX_SENDER = 2;
 	private final static int PARAM_INDEX_ID_API = 3;
 
+	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
+	private final static int MSG_INDEX_VALID_CREDENTIALS = 1;
+	private final static int MSG_INDEX_SERVER_ERROR = 2;
+
 	private final static int COMMAND_CHECKCREDENTIALS = 1000;
 	private final static int COMMAND_CHECKCREDITS = 1001;
 	
-	private AimonDictionary mDictionary;
+	private String[] mMessages;
 	
 	
 	
@@ -131,14 +131,25 @@ public class AimonProvider
     public ResultOperation executeCommand(int commandId, Bundle extraData)
 	{
 		ResultOperation res;
-		
+		String currentUsername = null;
+		String currentPassword = null;
+
+		//controls if some parameters must be retrived from extraData
 		switch (commandId) {
 		case COMMAND_CHECKCREDENTIALS:
-			res = verifyCredentials();
+		case COMMAND_CHECKCREDITS:
+			currentUsername = extraData.getString(String.valueOf(PARAM_INDEX_USERNAME));
+			currentPassword = extraData.getString(String.valueOf(PARAM_INDEX_USERNAME));
+		}
+		
+		//execute commands
+		switch (commandId) {
+		case COMMAND_CHECKCREDENTIALS:
+			res = verifyCredentials(currentUsername, currentPassword);
 			break;
 
 		case COMMAND_CHECKCREDITS:
-			res = new ResultOperation("Not implemented");
+			res = verifyCredit(currentUsername, currentPassword);
 			break;
 
 		default:
@@ -150,9 +161,22 @@ public class AimonProvider
 
 	
 	//---------- Private methods
-    /**
-     * Send an sms
-     */
+
+	@Override
+	protected String getParametersFileName()
+	{ return GlobalDef.aimonParametersFileName; }
+
+	@Override
+	protected String getTemplatesFileName()
+	{ return null; }
+
+	@Override
+	protected String getSubservicesFileName()
+	{ return null; }
+
+	/**
+	 * Sends an sms
+	 */
 	private ResultOperation sendSms(
     		String username,
     		String password,
@@ -222,7 +246,7 @@ public class AimonProvider
     	data.put(AimonDictionary.PARAM_ID_API, idApi);
     	
     	//sends the sms
-    	ResultOperation res = doRequest(mDictionary.getUrlSendSms(), data);
+    	ResultOperation res = doRequest(AimonDictionary.URL_SEND_SMS, data);
     	
     	//check results
     	if (res.HasErrors()) return res;
@@ -252,19 +276,28 @@ public class AimonProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
     	
-    	HashMap<String, String> data = new HashMap<String, String>();
+		HashMap<String, String> data = new HashMap<String, String>();
     	appendCredential(data, username, password);
     	
-    	//verify the credit
-    	return doRequest(mDictionary.getUrlGetCredit(), data);
+    	//call the api that gets the credit
+    	ResultOperation res = doRequest(AimonDictionary.URL_GET_CREDIT, data);
+    	if (res.HasErrors()) return res;
+
+    	//analyzes reply in case of errors
+    	String errorDesc = parseReplyForErrors(res.getResultAsString());
+    	if (!TextUtils.isEmpty(errorDesc))
+    		return new ResultOperation(new Exception(errorDesc));
+    	
+    	//at this point reply can only contains the remaining credits
+		return res;
     }
 
 
     /**
      * Verifies if username and password are correct
-     * @return
+     * @return an error if the user is not authenticated, otherwise the message to show
      */
-	private ResultOperation verifyCredentials() {
+	private ResultOperation verifyCredentials(String username, String password) {
 		ResultOperation res;
 		
 		//if i can obtain number of credits from aimon, username e password are correct
@@ -274,9 +307,10 @@ public class AimonProvider
 		//routes to caller method some error
 		if (res.HasErrors())
 			return res;
-		
-		String reply = res.getResultAsString();
-		return new ResultOperation(!reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)); 
+
+		//at this point, in the reply there are the user credits, so user
+		//is authenticated
+		return new ResultOperation(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
 	}
 	
 	
@@ -307,12 +341,8 @@ public class AimonProvider
     	try {
     		reply = client.requestPost(url, data);
 		} catch (ClientProtocolException e) {
-			// TODO
-			e.printStackTrace();
 			return new ResultOperation(e);
 		} catch (IOException e) {
-			// TODO
-			e.printStackTrace();
 			return new ResultOperation(e);
 		}
     	
@@ -325,15 +355,26 @@ public class AimonProvider
     	return new ResultOperation(reply);
     }
 
-	@Override
-	protected String getParametersFileName()
-	{ return GlobalDef.aimonParametersFileName; }
+    
+	/**
+	 * Parse the webservice reply searching for know errors code
+	 * 
+	 * @return empty string if it's all ok otherwise the ResultOperation object with
+	 *   error code inside
+	 */
+	public String parseReplyForErrors(String reply)
+	{
+		String res = "";
+		
+		//access denied
+		if (reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED))
+			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 
-	@Override
-	protected String getTemplatesFileName()
-	{ return null; }
+		//server error
+		if (reply.startsWith(AimonDictionary.RESULT_ERROR_INTERNAL_SERVER_ERROR))
+			res = mMessages[MSG_INDEX_SERVER_ERROR];
 
-	@Override
-	protected String getSubservicesFileName()
-	{ return null; }
+		//return null if no errors are detected
+		return res;
+	}
 }

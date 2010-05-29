@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="jacksms_username_desc">Username</string>
+    <string name="jacksms_password_desc">Password</string>
+</resources>

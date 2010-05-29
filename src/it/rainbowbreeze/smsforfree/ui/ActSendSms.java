@@ -131,7 +131,8 @@ public class ActSendSms
     	//menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
     	menu.add(0, OPTIONMENU_SETTINGS, 2, R.string.actsendsms_mnuSettings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, OPTIONMENU_ABOUT, 3, R.string.actsendsms_mnuAbout);
+		menu.add(0, OPTIONMENU_ABOUT, 3, R.string.actsendsms_mnuAbout)
+			.setIcon(android.R.drawable.ic_menu_info_details);
 //		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
 //			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		

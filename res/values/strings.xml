@@ -2,13 +2,6 @@
 <resources>
     <!-- Common -->
     <string name="common_appname">SmsForFree</string>
-    <string name="common_username">Username</string>
-    <string name="common_password">Password</string>
-    <string name="common_sender">Sender</string>
-    <string name="common_commandCheckCredentials">Check credentials</string>
-    <string name="common_aimon_username">Username (@aimon.it)</string>
-    <string name="common_aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
-    <string name="common_aimon_commandCheckCredits">Check credits</string>
     <string name="common_btnYes">Yes</string>
     <string name="common_btnNo">No</string>
     <string name="common_mnuCancel">Cancel</string>
@@ -77,9 +70,6 @@
     <string name="actsettingssmsservice_title">SmsForFree - Provider/Service Settings</string>
     <string name="actsettingssmsservice_titleEdit">SmsForFree - Settings for %s</string>
     <string name="actsettingssmsservice_btnConfigureSubservices">Configure services</string>
-    <string name="actsettingssmsservice_msg_invadilCredentials">Invalid credentials</string>
-    <string name="actsettingssmsservice_msg_vadilCredentials">Valid credentials</string>
-
 
 
 
