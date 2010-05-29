@@ -90,16 +90,28 @@ public class ActSettingsSmsService
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		//TODO
-		//add textview to bundle
-		ResultOperation res = mProvider.executeCommand(item.getItemId(), null);
+
+		//save EditText values
+		Bundle bundle = new Bundle();
+		for (int i = 0; i < MAXFIELDS; i++) {
+        	if (i < mEditedService.getParametersNumber()) {
+        		findLabelAndEditTextViewsForParameter(i);
+        		bundle.putString(String.valueOf(i), mTxtValue.getText().toString());
+    		}else{
+        		bundle.putString(String.valueOf(i), "");
+    		}
+		}
+
+		//calls the method passing it all text values
+		ResultOperation res = mProvider.executeCommand(item.getItemId(), bundle);
+		
+		//show command results
 		if (res.HasErrors()) {
+			//show an error message
 			ActivityHelper.reportError(ActSettingsSmsService.this, res);
 		} else {
-			if (res.getResultAsBoolean())
-				ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_vadilCredentials);
-			else
-				ActivityHelper.showInfo(ActSettingsSmsService.this, R.string.actsettingssmsservice_msg_invadilCredentials);
+			//shows the output of the command
+			ActivityHelper.reportError(ActSettingsSmsService.this, res.getResultAsString());
 		}
 		
 		return true;

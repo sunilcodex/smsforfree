@@ -12,6 +12,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
@@ -26,17 +27,13 @@ public class JacksmsProvider
 	extends SmsMultiProvider
 {
 	//---------- Ctors
-	public JacksmsProvider(ProviderDao dao)
-	{
-		this(dao, "Username", "Password");
-	}
-	
-	public JacksmsProvider(ProviderDao dao, String usernameDesc, String passwordDesc)
+	public JacksmsProvider(ProviderDao dao, Context context)
 	{
 		super(dao, PARAM_NUMBER);
 		mDictionary = new JacksmsDictionary();
-		setParameterDesc(PARAM_INDEX_USERNAME, usernameDesc);
-		setParameterDesc(PARAM_INDEX_PASSWORD, passwordDesc);
+		
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 	}
 	

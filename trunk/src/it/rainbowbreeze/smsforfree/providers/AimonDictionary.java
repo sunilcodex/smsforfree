@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.providers;
 
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
+
 public class AimonDictionary {
 	//---------- Ctors
 
@@ -7,20 +9,20 @@ public class AimonDictionary {
 	
 	
 	//---------- Private fields
-	private final static String URL_BASE = "https://secure.apisms.it/";
-	private final static String URL_GET_CREDIT = URL_BASE + "http/get_credit";
-	private final static String URL_SEND_SMS = URL_BASE + "http/send_sms";
-
 	
 	
 	
 	//---------- Public fields
+	public final static String URL_BASE = "https://secure.apisms.it/";
+	public final static String URL_GET_CREDIT = URL_BASE + "http/get_credit";
+	public final static String URL_SEND_SMS = URL_BASE + "http/send_sms";
+
 	public final static String PARAM_USERNAME = "authlogin";
 	public final static String PARAM_PASSWORD = "authpasswd";
-	public static final String PARAM_SENDER = "sender";
-	public static final String PARAM_DESTINATION = "destination";
-	public static final String PARAM_BODY = "body";
-	public static final String PARAM_ID_API = "id_api";
+	public final static String PARAM_SENDER = "sender";
+	public final static String PARAM_DESTINATION = "destination";
+	public final static String PARAM_BODY = "body";
+	public final static String PARAM_ID_API = "id_api";
 	
 	public static final String ID_API_MITTENTE_FISSO = "106"; 
 	public static final String ID_API_MITTENTE_LIBERO = "59"; 
@@ -44,17 +46,11 @@ public class AimonDictionary {
 	
 	
 	//---------- Public properties
-	public String getUrlGetCredit()
-	{ return URL_GET_CREDIT; }
-
-	public String getUrlSendSms()
-	{ return URL_SEND_SMS; }
 
 	
 	
 	
 	//---------- Public methods
-
 	
 	
 	

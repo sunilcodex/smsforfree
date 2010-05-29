@@ -43,22 +43,17 @@ public class LogicManager {
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
-		JacksmsProvider jackProv = new JacksmsProvider(dao,
-				context.getString(R.string.common_aimon_username),
-				context.getString(R.string.common_password));
+		
+		//add aimon
+		JacksmsProvider jackProv = new JacksmsProvider(dao, context);
 		//TODO check errors
 		jackProv.loadParameters(context);
 		jackProv.loadTemplates(context);
 		jackProv.loadSubservices(context);
 		GlobalBag.providerList.add(jackProv);
-		AimonProvider aimonProv = new AimonProvider(dao,
-				context.getString(R.string.common_aimon_username),
-				context.getString(R.string.common_password),
-				context.getString(R.string.common_sender),
-				context.getString(R.string.common_aimon_idapi),
-				context.getString(R.string.common_commandCheckCredentials),
-				context.getString(R.string.common_aimon_commandCheckCredits)
-				);
+	
+		//add jacksms
+		AimonProvider aimonProv = new AimonProvider(dao, context);
 		aimonProv.loadParameters(context);
 		GlobalBag.providerList.add(aimonProv);
 		

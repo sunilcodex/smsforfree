@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aimon_username">Username (@aimon.it)</string>
+    <string name="aimon_password">Password</string>
+    <string name="aimon_sender">Sender</string>
+    <string name="aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
+    <string name="aimon_commandCheckCredentials">Check credentials</string>
+    <string name="aimon_commandCheckCredits">Check credits</string>
+    <string name="aimon_msg_invalidCredentials">Sorry, invalid credentials :(</string>
+    <string name="aimon_msg_validCredentials">Valid credentials</string>
+    <string name="aimon_msg_serverError">Internal server error</string>
+</resources>
