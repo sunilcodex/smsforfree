@@ -36,7 +36,7 @@ public class AimonProvider
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender));
-		setParameterDesc(PARAM_INDEX_ID_API, context.getString(R.string.aimon_commandCheckCredits));
+		setParameterDesc(PARAM_INDEX_ID_API, context.getString(R.string.aimon_idapi));
 		
 		//initializes the command list
 		mProviderSettingsMenuCommand = new ArrayList<SmsProviderMenuCommand>();
@@ -103,7 +103,7 @@ public class AimonProvider
     
 	@Override
 	public boolean hasProviderSettingsActivityCommands() {
-		return false;
+		return true;
 	}
 
 	private List<SmsProviderMenuCommand> mProviderSettingsMenuCommand;
@@ -139,7 +139,7 @@ public class AimonProvider
 		case COMMAND_CHECKCREDENTIALS:
 		case COMMAND_CHECKCREDITS:
 			currentUsername = extraData.getString(String.valueOf(PARAM_INDEX_USERNAME));
-			currentPassword = extraData.getString(String.valueOf(PARAM_INDEX_USERNAME));
+			currentPassword = extraData.getString(String.valueOf(PARAM_INDEX_PASSWORD));
 		}
 		
 		//execute commands

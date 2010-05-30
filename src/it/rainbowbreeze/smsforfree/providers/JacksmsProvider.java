@@ -175,7 +175,7 @@ public class JacksmsProvider
 			res.setException(new Exception(mDictionary.getTextPartFromReply(reply)));
 		} else {
 			//captcha
-			
+			res.setResultAsString(newValue)
 		}
 		return res;    	
     }
