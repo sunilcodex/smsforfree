@@ -23,7 +23,7 @@ public class SendMessageTask
 	private ProgressDialog mDialog;
 	private SmsProvider mProvider;
 	private String mServiceId;
-
+	
 	//---------- Public properties
 
 	//---------- Public methods

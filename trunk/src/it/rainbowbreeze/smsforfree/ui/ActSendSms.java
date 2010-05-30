@@ -54,7 +54,8 @@ public class ActSendSms
 	private final static int OPTIONMENU_SETTINGS = 2;
 	private final static int OPTIONMENU_SIGNATURE = 3;
 	private final static int OPTIONMENU_ABOUT = 4;
-	private final static int OPTIONMENU_COMPRESS = 5;
+	private final static int OPTIONMENU_RESETDATA = 5;
+	private final static int OPTIONMENU_COMPRESS = 6;
 
 	
 	private Spinner mSpiProviders;
@@ -131,7 +132,9 @@ public class ActSendSms
     	//menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
     	menu.add(0, OPTIONMENU_SETTINGS, 2, R.string.actsendsms_mnuSettings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, OPTIONMENU_ABOUT, 3, R.string.actsendsms_mnuAbout)
+		menu.add(0, OPTIONMENU_RESETDATA, 3, R.string.actsendsms_mnuResetData)
+			.setIcon(android.R.drawable.ic_menu_delete);
+		menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
 			.setIcon(android.R.drawable.ic_menu_info_details);
 //		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
 //			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
@@ -165,6 +168,11 @@ public class ActSendSms
 			else
 				ActivityHelper.openCompactMessage(this, mTxtMessage.getText().toString());
 			break;
+
+		case OPTIONMENU_RESETDATA:
+			cleanDataFields();
+			break;
+
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -514,9 +522,7 @@ public class ActSendSms
 		
 		//send message
 		SendMessageTask task = new SendMessageTask(ActSendSms.this, mSelectedProvider, mSelectedServiceId);
-		task.execute(
-				mTxtDestination.getText().toString(),
-				mTxtMessage.getText().toString());
+		task.execute(mTxtDestination.getText().toString(), mTxtMessage.getText().toString());
 		ResultOperation res = null;
 		try {
 			res = task.get();
@@ -529,27 +535,32 @@ public class ActSendSms
 		}
 		
 		if (res.HasErrors()) {
-			ActivityHelper.showInfo(ActSendSms.this,
-					getString(R.string.actsendsms_msg_errorSendingMessage) + "\n" + res.getException().getMessage());
+			ActivityHelper.showInfo(ActSendSms.this, String.format(
+					getString(R.string.actsendsms_msg_errorSendingMessage), res.getException().getMessage()));
 			return;
 		}
 		
 		//check if capctha screen is needed
-		if (SmsProvider.CAPTCHAREQUEST.equalsIgnoreCase(res.getResultAsString())){
+		if (SmsProvider.CAPTCHAREQUEST.equalsIgnoreCase(res.getResultAsString())) {
 			//launch capcha request
 			//TODO
 			ActivityHelper.showInfo(ActSendSms.this, "CAPTCHA REQUEST");
 			return;
 		}
-			
 
-		ActivityHelper.showInfo(ActSendSms.this, getString(R.string.actsendsms_msg_sendOk) + "\n" + res.getResultAsString());
+		ActivityHelper.showInfo(ActSendSms.this, String.format(
+				getString(R.string.actsendsms_msg_sendOk), res.getResultAsString()));
 		
 		//check if the text should be deleted
 		if (AppPreferencesDao.instance().getAutoClearMessage()) {
-			mTxtDestination.setText("");
-			mTxtMessage.setText("");
+			cleanDataFields();
 		}
+	}
+
+
+	private void cleanDataFields() {
+		mTxtDestination.setText("");
+		mTxtMessage.setText("");
 	}
 	
 }
