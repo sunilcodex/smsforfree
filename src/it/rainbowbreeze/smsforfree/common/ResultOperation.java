@@ -4,40 +4,58 @@
 package it.rainbowbreeze.smsforfree.common;
 
 /**
- * Class for result operation
+ * Class for result operation.
+ * Similar to http reply, where there are a return code
+ * and a reply
  *
  * @author Alfredo Morresi
  */
 public class ResultOperation
 {
 	//---------- Ctors
-	public ResultOperation()
+	private ResultOperation()
 	{
-		startOperation();
+		//executes start operations (clean internal values)
+		mException = null;
+		mResult = null;
+		mReturnCode = RETURNCODE_UNDEFINED;
 	}
 	
 	public ResultOperation(Exception ex)
 	{
 		this();
+		mReturnCode = RETURNCODE_ERROR;
 		mException = ex;
 	}
 
 	public ResultOperation(boolean value)
+	{ this(RETURNCODE_OK, value); }
+
+	public ResultOperation(int returnCode, boolean value)
 	{
 		this();
+		setReturnCode(returnCode);
 		setResultAsBoolean(value);
 	}
 
 	public ResultOperation(String value)
+	{ this(RETURNCODE_OK, value); }
+
+	public ResultOperation(int returnCode, String value)
 	{
 		this();
+		setReturnCode(returnCode);
 		setResultAsString(value);
 	}
 
 	
 	
 	
-	//---------- Private fields
+	//---------- Public fields
+	public final static int RETURNCODE_OK = 200;
+	public final static int RETURNCODE_CAPTCHA_REQUEST = 200;
+	public final static int RETURNCODE_ERROR = 400;
+	private final static int RETURNCODE_UNDEFINED = -1;
 
 
 	
@@ -58,6 +76,11 @@ public class ResultOperation
 	public void setResultAsBoolean(Boolean newValue)
 	{ mResult = newValue; }
 	
+	int mReturnCode;
+	public int getReturnCode()
+	{ return mReturnCode; }
+	public void setReturnCode(int newValue)
+	{ mReturnCode = newValue; }
 	
 	
 	protected Exception mException;
@@ -77,15 +100,6 @@ public class ResultOperation
 	public boolean HasErrors()
 	{ return null != mException; }
 	
-	
-	/**
-	 * Execute start operations (clean internal values)
-	 */
-	public void startOperation()
-	{
-		mException = null;
-		mResult = null;
-	}
 	
 	
 	

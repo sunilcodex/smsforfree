@@ -8,7 +8,6 @@ import java.util.Collections;
 
 import android.content.ContextWrapper;
 
-import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
@@ -32,7 +31,7 @@ public class LogicManager {
 	//---------- Public methods
 	public static ResultOperation executeBeginTask(ContextWrapper context)
 	{
-		ResultOperation res = new ResultOperation();
+		ResultOperation res = new ResultOperation(true);
 		
 		//load configurations
 		AppPreferencesDao.instance().load(context);
@@ -65,7 +64,7 @@ public class LogicManager {
 	
 	public static ResultOperation executeEndTast()
 	{
-		ResultOperation res = new ResultOperation();
+		ResultOperation res = new ResultOperation(true);
 
 		return res;
 	}

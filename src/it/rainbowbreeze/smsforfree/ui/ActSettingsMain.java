@@ -25,6 +25,7 @@ public class ActSettingsMain
 	private CheckBoxPreference mChkResetData;
 //	private CheckBoxPreference mChkInserIntoPim;
 	private EditTextPreference mTxtSignature;
+	private EditTextPreference mTxtPrefix;
 
 	
 	
@@ -43,18 +44,23 @@ public class ActSettingsMain
 		
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
 		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
+		mTxtPrefix = (EditTextPreference) findPreference("actsettingsmain_txtDefaultInternationalPrefix");
 //		mChkInserIntoPim = (CheckBoxPreference) findPreference("actsettingsmain_chkInsertSmsIntoPim");
 		
 		//Get the custom preference
 		Preference customPref = (Preference) findPreference("actsettingsmain_providersPref");
+		//register listener for it
 		customPref.setOnPreferenceClickListener(providersPrefsClickListener);
 		
-		//set preferences value
+		//set value of other preferences
 		mChkResetData.setChecked(AppPreferencesDao.instance().getAutoClearMessage());
 		mTxtSignature.setText(AppPreferencesDao.instance().getSignature());
+		mTxtPrefix.setText(AppPreferencesDao.instance().getDefaultInternationalPrefix());
 		
+		//register listeners
 		mChkResetData.setOnPreferenceChangeListener(mChkResetDataChangeListener);
 		mTxtSignature.setOnPreferenceChangeListener(mTxtSignatureChangeListener);
+		mTxtPrefix.setOnPreferenceChangeListener(mTxtPrefixChangeListener);
 	}
 
 
@@ -86,6 +92,15 @@ public class ActSettingsMain
 	};
 	
 	
+	private OnPreferenceChangeListener mTxtPrefixChangeListener = new OnPreferenceChangeListener() {
+		
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			AppPreferencesDao.instance().setDefaultInternationalPrefix(newValue.toString());
+			return AppPreferencesDao.instance().save();
+		}
+	};
+	
+	
 	private OnPreferenceChangeListener mChkResetDataChangeListener = new OnPreferenceChangeListener() {
 		
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -93,6 +108,8 @@ public class ActSettingsMain
 			return AppPreferencesDao.instance().save();
 		}
 	};
+
+	
 	
 	
 	//---------- Public methods
@@ -101,12 +118,4 @@ public class ActSettingsMain
 	
 	
 	//---------- Private methods
-
-//	@Override
-//	protected boolean saveDataFromViews() {
-//		AppPreferencesDao.instance().setAutoClearMessage(mChkResetData.isChecked());
-////		AppPreferencesDao.instance().setInsertMessageIntoPim(mChkInserIntoPim.isChecked());
-//		AppPreferencesDao.instance().setSignature(mTxtSignature.getText());
-//		return AppPreferencesDao.instance().save();
-//	}
 }

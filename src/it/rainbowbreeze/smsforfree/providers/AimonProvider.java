@@ -1,7 +1,6 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
-import java.security.spec.MGF1ParameterSpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +14,12 @@ import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
-import it.rainbowbreeze.smsforfree.ui.ActSettingsSmsService;
-import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 public class AimonProvider
@@ -49,10 +47,13 @@ public class AimonProvider
 		mProviderSettingsMenuCommand.add(command);
 		
 		//save some messages
-		mMessages = new String[3];
+		mMessages = new String[6];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
 		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
+		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.aimon_msg_remainingCredits);
+		mMessages[MSG_INDEX_NO_REPLY] = context.getString(R.string.aimon_msg_noReplyFromServer);
+		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.aimon_msg_messageQueued);
 	}
 	
 	
@@ -66,7 +67,10 @@ public class AimonProvider
 	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
 	private final static int MSG_INDEX_VALID_CREDENTIALS = 1;
 	private final static int MSG_INDEX_SERVER_ERROR = 2;
-
+	private final static int MSG_INDEX_REMAINING_CREDITS = 3;
+	private final static int MSG_INDEX_NO_REPLY = 4;
+	private final static int MSG_INDEX_MESSAGE_SENT = 5;
+	
 	private final static int COMMAND_CHECKCREDENTIALS = 1000;
 	private final static int COMMAND_CHECKCREDITS = 1001;
 	
@@ -201,10 +205,14 @@ public class AimonProvider
     		} else {
     			okSender = sender;
     		}
+		//sender is a phone number, add international prefix
     	} else {
         	if (TextUtils.isDigitsOnly(sender)) {
-        		//sender is a phone number, add international prefix
-        		okSender = "+39" + sender;
+        		//find prefix to use
+        		String prefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+        		if (TextUtils.isEmpty(prefix)) prefix = GlobalDef.italyInternationalPrefix;
+        		//append it to number
+        		okSender = prefix + sender;
         		//and check length
         		if (okSender.length() > AimonDictionary.MAX_SENDER_LENGTH_NUMERIC) {
         			okSender = okSender.substring(0, AimonDictionary.MAX_SENDER_LENGTH_NUMERIC);
@@ -224,10 +232,13 @@ public class AimonProvider
     	if (destination.substring(0, 1).equals("+")) {
     		okDestination = destination.substring(1);
     	} else {
-    		okDestination = "39" + destination;
+    		String prefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+    		if (TextUtils.isEmpty(prefix)) prefix = GlobalDef.italyInternationalPrefix;
+    		//removes begin + char
+    		okDestination = prefix.substring(1) + destination;
     	}
-    	
-    	//checks body length
+
+		//checks body length
     	if (body.length() > AimonDictionary.MAX_BODY_LENGTH) {
     		okBody = body.substring(0, AimonDictionary.MAX_BODY_LENGTH);
     	} else {
@@ -247,25 +258,27 @@ public class AimonProvider
     	
     	//sends the sms
     	ResultOperation res = doRequest(AimonDictionary.URL_SEND_SMS, data);
-    	
-    	//check results
+    	//checks for applications errors
     	if (res.HasErrors()) return res;
+    	//checks for aimon errors
+    	if (parseReplyForErrors(res)) return res;
     	
-		//exams the result
-		if (res.getResultAsString().startsWith(AimonDictionary.RESULT_SENDSMS_OK))
-			//ok
-			return res;
-		else {
-			//some sort of error
-			res.setException(new Exception(res.getResultAsString()));
+    	//examine it the return contains confirmation if the message was sent
+		if (res.getResultAsString().startsWith(AimonDictionary.RESULT_SENDSMS_OK)) {
+			res.setResultAsString(String.format(
+					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResultAsString()));
+			
+			//TODO
+			//at this point, i cal also read the remaining credits and append it to
+			//the message
 		}
+		
 		return res;    	
-    	
     }
 
 
 	/**
-	 * Verifies how much credits the user has
+	 * Verifies remaining credits for the user
 	 * @param username
 	 * @param password
 	 * @return
@@ -281,14 +294,15 @@ public class AimonProvider
     	
     	//call the api that gets the credit
     	ResultOperation res = doRequest(AimonDictionary.URL_GET_CREDIT, data);
+    	//checks for application errors
     	if (res.HasErrors()) return res;
-
-    	//analyzes reply in case of errors
-    	String errorDesc = parseReplyForErrors(res.getResultAsString());
-    	if (!TextUtils.isEmpty(errorDesc))
-    		return new ResultOperation(new Exception(errorDesc));
+    	//checks for aimon errors
+    	if (parseReplyForErrors(res)) return res;
     	
     	//at this point reply can only contains the remaining credits
+    	//append the message to credit amount
+    	res.setResultAsString(String.format(
+    			mMessages[MSG_INDEX_REMAINING_CREDITS], res.getResultAsString()));
 		return res;
     }
 
@@ -297,20 +311,26 @@ public class AimonProvider
      * Verifies if username and password are correct
      * @return an error if the user is not authenticated, otherwise the message to show
      */
-	private ResultOperation verifyCredentials(String username, String password) {
+	private ResultOperation verifyCredentials(String username, String password)
+	{
 		ResultOperation res;
 		
-		//if i can obtain number of credits from aimon, username e password are correct
+		//calls the verify credits and, if the user has credits,
+		//this means that the user can authenticate and the credentials
+		//are correct.
 		res = verifyCredit(getParameterValue(PARAM_INDEX_USERNAME),
 				getParameterValue(PARAM_INDEX_PASSWORD));
+		//checks for application errors
+		if (res.HasErrors()) return res;
 		
-		//routes to caller method some error
-		if (res.HasErrors())
-			return res;
-
-		//at this point, in the reply there are the user credits, so user
-		//is authenticated
-		return new ResultOperation(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
+		//at this point reply can only contains the remaining credits or
+		//aimon internal errors
+		if (res.getResultAsString().startsWith(mMessages[MSG_INDEX_REMAINING_CREDITS])) {
+			//credits, so credentials are correct
+			res = new ResultOperation(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
+		}
+		
+		return res;
 	}
 	
 	
@@ -357,24 +377,39 @@ public class AimonProvider
 
     
 	/**
-	 * Parse the webservice reply searching for know errors code
+	 * Parse the webservice reply searching for know errors code.
+	 * If one of them is found, the ResultOperation object is modified
+	 * whit the error message to display
 	 * 
-	 * @return empty string if it's all ok otherwise the ResultOperation object with
-	 *   error code inside
+	 * @param resultToAnalyze
+	 * @return true if an aimon error is found, otherwise false
 	 */
-	public String parseReplyForErrors(String reply)
+	public boolean parseReplyForErrors(ResultOperation resultToAnalyze)
 	{
 		String res = "";
-		
+		String reply = resultToAnalyze.getResultAsString();
+
+		//no reply from server
+		if (TextUtils.isEmpty(reply)) {
+			res = mMessages[MSG_INDEX_NO_REPLY];
+				
 		//access denied
-		if (reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED))
+		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)) {
 			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 
 		//server error
-		if (reply.startsWith(AimonDictionary.RESULT_ERROR_INTERNAL_SERVER_ERROR))
+		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_INTERNAL_SERVER_ERROR)) {
 			res = mMessages[MSG_INDEX_SERVER_ERROR];
-
-		//return null if no errors are detected
-		return res;
+		}
+		
+    	//errors are internal to aimon, not related to communication issues.
+    	//so no application errors (like network issues) should be returned, but
+		//the aimon error must stops the execution of the calling method
+    	if (!TextUtils.isEmpty(res)) {
+    		resultToAnalyze.setResultAsString(res);
+    		return true;
+    	} else {
+    		return false;
+    	}
 	}
 }

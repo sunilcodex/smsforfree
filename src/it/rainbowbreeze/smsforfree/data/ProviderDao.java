@@ -146,7 +146,7 @@ public class ProviderDao
 			SmsProvider provider,
 			int dataToSave)
 	{
-		ResultOperation res = new ResultOperation();
+		ResultOperation res = new ResultOperation(true);
 		
 		FileOutputStream fos = null;
 		try {
@@ -181,9 +181,6 @@ public class ProviderDao
 			}
 		}
 		
-		if (!res.HasErrors())
-			//all went good, no errors to return
-			res.setResultAsBoolean(true);
 		return res;
 	}
 	
@@ -355,14 +352,13 @@ public class ProviderDao
 			SmsProvider provider,
 			int dataToLoad)
 	{
-		ResultOperation res = new ResultOperation();;
+		ResultOperation res = new ResultOperation(true);
 		FileInputStream fis = null;
 
 		//checks if file exists
 		File file = context.getFileStreamPath(fileName);
 		if (!file.exists()) {
 			//if file doesn't exist, no problem, reset data
-			res.setResultAsBoolean(true);
 			return res;
 		}
 		
@@ -396,11 +392,6 @@ public class ProviderDao
 			}
 		}
 
-		//checks for errors
-		if (res.HasErrors()) return res;
-		
-		//all went good, no errors to return
-		res.setResultAsBoolean(true);
 		return res;
 	}
 
