@@ -541,6 +541,13 @@ public class ActSendSms
 		}
 		
 		//check if capctha screen is needed
+		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == res.getReturnCode()) {
+			//launch capcha request
+			//TODO
+			ActivityHelper.showInfo(ActSendSms.this, "CAPTCHA REQUEST");
+			return;
+		}
+		
 		if (SmsProvider.CAPTCHAREQUEST.equalsIgnoreCase(res.getResultAsString())) {
 			//launch capcha request
 			//TODO

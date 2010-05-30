@@ -20,5 +20,7 @@ public class GlobalDef {
 	/** file name for providers preferences */
 	public static final String aimonParametersFileName = "aimon_parameters.xml"; 
 	
+	/** international prefix for italy */
+	public static final String italyInternationalPrefix = "+39";
 
 }

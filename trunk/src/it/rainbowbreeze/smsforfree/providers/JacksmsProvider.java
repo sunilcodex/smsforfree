@@ -74,8 +74,6 @@ public class JacksmsProvider
 	@Override
 	public ResultOperation loadTemplates(Context context)
 	{
-		ResultOperation res = new ResultOperation();
-
 		//TODO
 		mTemplates = new ArrayList<SmsService>();
 		
@@ -112,7 +110,8 @@ public class JacksmsProvider
 		
 		Collections.sort(mTemplates);
 
-		return res; 
+		return new ResultOperation("");
+ 
 	}
 
 	
@@ -164,18 +163,18 @@ public class JacksmsProvider
 			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
 		}
 		
-    	ResultOperation res = new ResultOperation();
+    	ResultOperation res;
 		//exams the result
 		if (reply.startsWith(JacksmsDictionary.RESULT_OK)) {
 			//ok
 			//break the reply
-			res.setResultAsString(mDictionary.getTextPartFromReply(reply));
+			res = new ResultOperation(mDictionary.getTextPartFromReply(reply));
 		} else if (reply.startsWith(JacksmsDictionary.RESULT_ERROR)) {
 			//some sort of error
-			res.setException(new Exception(mDictionary.getTextPartFromReply(reply)));
+			res = new ResultOperation(new Exception(mDictionary.getTextPartFromReply(reply)));
 		} else {
 			//captcha
-			res.setResultAsString(newValue)
+			res = new ResultOperation(ResultOperation.RETURNCODE_CAPTCHA_REQUEST, reply);
 		}
 		return res;    	
     }

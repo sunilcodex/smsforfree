@@ -54,7 +54,7 @@
     <string name="actsettingsmain_title">SmsForFree - Settings</string>
     <string name="actsettingsmain_lblApplicationCategory">Application</string>
     <string name="actsettingsmain_lblProvidersCategory">Providers</string>
-    <string name="actsettingsmain_chkResetDataAfterSend">Reset data after send</string>
+    <string name="actsettingsmain_chkResetDataAfterSend">Reset after send</string>
     <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
@@ -62,7 +62,8 @@
     <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
     <string name="actsettingsmain_txtSignature">Signature</string>
     <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
-	<string name="actsettingssmsservice_lblServiceName">Service name</string>    
+    <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>
+    <string name="actsettingsmain_txtDefaultInternationalPrefixSummary">Default international prefix to use when another prefix is not used</string>
 
 
 
@@ -71,6 +72,7 @@
     <string name="actsettingssmsservice_title">SmsForFree - Provider/Service Settings</string>
     <string name="actsettingssmsservice_titleEdit">SmsForFree - Settings for %s</string>
     <string name="actsettingssmsservice_btnConfigureSubservices">Configure services</string>
+	<string name="actsettingssmsservice_lblServiceName">Service name</string>    
 
 
 

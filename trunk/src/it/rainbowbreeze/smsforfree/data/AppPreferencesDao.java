@@ -12,6 +12,7 @@ public class AppPreferencesDao
     private static final String PROP_APPVERSION = "appVersion";
     private static final String PROP_AUTO_CLEAR_MESSAGE = "clearmessage";
     private static final String PROP_INSERT_MESSAGE_INTO_PIM = "insertmessageintopim";
+    private static final String PROP_DEFAULT_INTERNATIONAL_PREFIX = "defaultInternationalPrefix";
     private static final String PROP_SIGNATURE = "signature";
 
     private static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
@@ -50,6 +51,11 @@ public class AppPreferencesDao
     { return mSettings.getString(PROP_SIGNATURE, ""); }
     public void setSignature(String newValue)
     { mEditor.putString(PROP_SIGNATURE, newValue); }
+
+    public String getDefaultInternationalPrefix()
+    { return mSettings.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, GlobalDef.italyInternationalPrefix); }
+    public void setDefaultInternationalPrefix(String newValue)
+    { mEditor.putString(PROP_DEFAULT_INTERNATIONAL_PREFIX, newValue); }
 
     public String getAppVersion()
     {
@@ -99,6 +105,8 @@ public class AppPreferencesDao
 	{
     	editorBackup.putBoolean(PROP_AUTO_CLEAR_MESSAGE, getAutoClearMessage());
     	editorBackup.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, getInsertMessageIntoPim());
+    	editorBackup.putString(PROP_SIGNATURE, getSignature());
+    	editorBackup.putString(PROP_DEFAULT_INTERNATIONAL_PREFIX, getDefaultInternationalPrefix());
     	editorBackup.putString(PROP_LASTUSED_PROVIDERID, getLastUsedProviderId());
     	editorBackup.putString(PROP_LASTUSED_SUBSERVICEID, getLastUsedSubserviceId());
     	editorBackup.putString(PROP_LASTUSED_DESTINATION, getLastUsedDestination());
@@ -113,6 +121,8 @@ public class AppPreferencesDao
 	{
     	setAutoClearMessage(settingsBackup.getBoolean(PROP_AUTO_CLEAR_MESSAGE, false));
     	setInsertMessageIntoPim(settingsBackup.getBoolean(PROP_INSERT_MESSAGE_INTO_PIM, false));
+    	setSignature(settingsBackup.getString(PROP_SIGNATURE, ""));
+    	setDefaultInternationalPrefix(settingsBackup.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, ""));
     	setLastUsedProviderId(settingsBackup.getString(PROP_LASTUSED_PROVIDERID, ""));
     	setLastUsedSubserviceId(settingsBackup.getString(PROP_LASTUSED_SUBSERVICEID, ""));
     	setLastUsedDestination(settingsBackup.getString(PROP_LASTUSED_DESTINATION, ""));
