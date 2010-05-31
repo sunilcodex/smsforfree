@@ -8,6 +8,7 @@ import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -73,12 +74,23 @@ public class ActSubservicesList
 	
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		boolean canContinue = super.onCreateOptionsMenu(menu);
+		if (!canContinue) return canContinue;
 		
+		//creates it's own menu
 		menu.add(0, OPTIONMENU_ADDSERVICE, 0, R.string.actsubserviceslist_mnuAddService)
 			.setIcon(android.R.drawable.ic_menu_add);
-		
+
+		//checks for provider's extended commands
+		if (null != mProvider && mProvider.hasSubservicesListActivityCommands()) {
+			for (SmsProviderMenuCommand command : mProvider.getSubservicesListActivityCommands()) {
+				MenuItem item = menu.add(0,
+						command.getCommandId(), command.getCommandOrder(), command.getCommandDescription());
+				if (command.hasIcon()) item.setIcon(command.getCommandIcon());
+			}
+		}
 		return true;
 	}
 	
@@ -105,20 +117,32 @@ public class ActSubservicesList
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		boolean res;
 		
 		switch (item.getItemId()) {
 		case OPTIONMENU_ADDSERVICE:
 			//launch the activity for selecting subservice template
 			ActivityHelper.openTemplatesList(this, mProvider.getId());
-			res = true;
 			break;
+		
+		//execute one of the provider's command
 		default:
-			res = super.onOptionsItemSelected(item);
-			break;
+			//calls the method passing it all text values
+			ResultOperation res = mProvider.executeCommand(item.getItemId(), null);
+			
+			//show command results
+			if (res.HasErrors()) {
+				ActivityHelper.reportError(ActSubservicesList.this, String.format(
+						//TODO
+						//change standard error message
+						getString(R.string.common_msg_genericError), res.getException().getMessage()));
+			} else {
+				//shows the output of the command
+				ActivityHelper.showInfo(ActSubservicesList.this, res.getResultAsString());
+			}
 		}
 		
-		return res;
+		return true;
+	
 	}
 	
 	@Override

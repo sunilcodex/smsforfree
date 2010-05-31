@@ -26,12 +26,12 @@ public class JacksmsDictionary
 
 	
 	//---------- Private fields
-	private static final String FORMAT_CSV = "csv";
+//	private static final String FORMAT_CSV = "csv";
 	private static final String FORMAT_XML = "xml";
-	private static final String FORMAT_JSON = "jsn";
+//	private static final String FORMAT_JSON = "jsn";
 
 	private static final String URL_BASE = "http://q.jacksms.it/";
-	private static final String ACTION_GET_SERVICE_FULL = "getServiceFull";
+	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "sendMessage";
 	
 	private static final String PARAM_OUTPUTFORMAT = "outputFormat=" + FORMAT_XML;
@@ -42,14 +42,22 @@ public class JacksmsDictionary
 	
 
 	//---------- Public properties
-	public static final String RESULT_OK = "1";
-	public static final String RESULT_ERROR = "0";
+	//message sent
+	public static final String PREFIX_RESULT_OK = "1";
+	//JackSMS has different error signatures
+	public static final String[] PREFIX_RESULT_ERROR_ARRAY = { "error", "0" };
 
 
 	//---------- Public methods
 	public String getUrlForSendingMessage(String username, String password)
 	{
 		return getUrlForCommand(username, password, ACTION_SEND_MESSAGE);
+	}
+	
+	
+	public String getUrlForDownloadTemplates(String username, String password)
+	{
+		return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES);
 	}
 
 	
@@ -91,6 +99,14 @@ public class JacksmsDictionary
 	{
 		if (TextUtils.isEmpty(reply)) return "";
 		
+		//if strings contains error codes from JackSMS
+		for (String errorPrefix : PREFIX_RESULT_ERROR_ARRAY) {
+			if (reply.startsWith(errorPrefix)) {
+				return reply.substring(errorPrefix.length()).trim();
+			}
+		}
+		
+		//other reply from JackSMS
 		String[] lines = reply.split(SEPARATOR);
 		if (lines.length > 2)
 			//message is in the second item

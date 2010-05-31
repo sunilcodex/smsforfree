@@ -2,4 +2,9 @@
 <resources>
     <string name="jacksms_username_desc">Username</string>
     <string name="jacksms_password_desc">Password</string>
+    <string name="jacksms_commandLoadTemplateServices">Reload JackSMS templates</string>
+    <string name="jacksms_commandLoadUserSubservices">Load your JackSMS saved services</string>
+    <string name="jacksms_msg_invalidCredentials">Invalid JackSMS credentials :(</string>
+    <string name="jacksms_msg_serverError">JackSMS internal server error:\n %s</string>
+    <string name="jacksms_msg_messageSent">Message sent.\n %s</string>
 </resources>

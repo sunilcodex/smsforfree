@@ -55,15 +55,13 @@ public abstract class SmsSingleProvider
 
 	/** No subservices, so no additional menu to show */
 	@Override
-	public boolean hasSubservicesListActivityCommands() {
-		return false;
-	}
+	public boolean hasSubservicesListActivityCommands()
+	{ return false; }
 	
 	/** No subservices, so no additional menu to show */
 	@Override
-	public List<SmsProviderMenuCommand> getSubservicesListActivityCommandS() {
-		return null;
-	}
+	public List<SmsProviderMenuCommand> getSubservicesListActivityCommands()
+	{ return null; }
 	
 	
 	//---------- Public methods

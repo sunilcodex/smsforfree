@@ -5,6 +5,8 @@ CONTROLLARE
 IMPLEMENTAZIONI
 -comandi del singolo servizio per vedere credito residuo, autenticazione ecc
 -autoupdate dei servizi jacksms
+-nei codici di errore ritornati all'activity, controllare se l'errore e' uno di quelli standard
+ (no credential, empty reply) e cambiare il messaggio di errore
 
 
 Lista servizi da consultare 

@@ -129,10 +129,10 @@ public class ActSendSms
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
     	//menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
-    	menu.add(0, OPTIONMENU_SETTINGS, 2, R.string.actsendsms_mnuSettings)
-			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, OPTIONMENU_RESETDATA, 3, R.string.actsendsms_mnuResetData)
+		menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
 			.setIcon(android.R.drawable.ic_menu_delete);
+    	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
+		.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
 			.setIcon(android.R.drawable.ic_menu_info_details);
 //		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
@@ -539,14 +539,16 @@ public class ActSendSms
 		//return with errors
 		if (result.HasErrors()) {
 			ActivityHelper.reportError(ActSendSms.this, String.format(
-					getString(R.string.actsendsms_msg_errorSendingMessage), result.getException().getMessage()));
+					//TODO
+					//change standard error message
+					getString(R.string.common_msg_genericError), result.getException().getMessage()));
 			return;
 		}
 		
 		//message sent
 		if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
-			ActivityHelper.showInfo(ActSendSms.this, String.format(
-					getString(R.string.actsendsms_msg_sendOk), result.getResultAsString()));
+			//display returning message of the provider
+			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
 			//check if the text should be deleted
 			if (AppPreferencesDao.instance().getAutoClearMessage()) {
 				cleanDataFields();

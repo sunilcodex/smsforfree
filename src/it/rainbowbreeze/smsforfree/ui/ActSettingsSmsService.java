@@ -115,11 +115,13 @@ public class ActSettingsSmsService
 		
 		//show command results
 		if (res.HasErrors()) {
-			//show an error message
-			ActivityHelper.reportError(ActSettingsSmsService.this, res);
+			ActivityHelper.reportError(ActSettingsSmsService.this, String.format(
+					//TODO
+					//change standard error message
+					getString(R.string.common_msg_genericError), res.getException().getMessage()));
 		} else {
 			//shows the output of the command
-			ActivityHelper.reportError(ActSettingsSmsService.this, res.getResultAsString());
+			ActivityHelper.showInfo(ActSettingsSmsService.this, res.getResultAsString());
 		}
 		
 		return true;

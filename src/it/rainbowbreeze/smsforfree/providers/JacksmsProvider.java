@@ -35,6 +35,22 @@ public class JacksmsProvider
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
+		
+		//initializes the command list
+		mSubservicesListActivityCommands = new ArrayList<SmsProviderMenuCommand>();
+		SmsProviderMenuCommand command;
+		command = new SmsProviderMenuCommand(
+				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1000, R.drawable.ic_menu_refresh);
+		mSubservicesListActivityCommands.add(command);
+		command = new SmsProviderMenuCommand(
+				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 1001);
+		mSubservicesListActivityCommands.add(command);
+		
+		//save some messages
+		mMessages = new String[3];
+		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
+		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
+		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
 	}
 	
 	
@@ -44,10 +60,20 @@ public class JacksmsProvider
 	private final static int PARAM_NUMBER = 2;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
+
+	private final static int COMMAND_LOADTEMPLATESERVICES = 1000;
+	private final static int COMMAND_LOADUSERSERVICES = 1001;
+	
+	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
+	private final static int MSG_INDEX_SERVER_ERROR = 1;
+	private final static int MSG_INDEX_MESSAGE_SENT = 2;
 	
 	private JacksmsDictionary mDictionary;
 	
+	private String[] mMessages;
 
+	
+	
 
 	//---------- Public properties
 	@Override
@@ -63,14 +89,27 @@ public class JacksmsProvider
 	{ return PARAM_NUMBER; }
 
 
+	@Override
+	public boolean hasProviderSettingsActivityCommands()
+	{ return false; }
+
+	@Override
+	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands()
+	{ return null; }
+
+	@Override
+	public boolean hasSubservicesListActivityCommands()
+	{ return true; }
+
+	private List<SmsProviderMenuCommand> mSubservicesListActivityCommands;
+	@Override
+	public List<SmsProviderMenuCommand> getSubservicesListActivityCommands()
+	{ return mSubservicesListActivityCommands; }
 
 
 	
-
 
 	//---------- Public methods
-	
-	
 	@Override
 	public ResultOperation loadTemplates(Context context)
 	{
@@ -121,64 +160,39 @@ public class JacksmsProvider
     		String destination,
     		String message)
     {
-    	String jackSmsUsername = getParameterValue(PARAM_INDEX_USERNAME);
-    	String jackSmsPassword = getParameterValue(PARAM_INDEX_PASSWORD);
-    	//args check
-    	try {
-    		checkCredentialsValidity(jackSmsUsername, jackSmsPassword);
-    	} catch (IllegalArgumentException e) {
-    		return new ResultOperation(e);
-		}
-    	
-    	SmsService service = getSubservice(serviceId);
-    	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
-    	return doRequest(mDictionary.getUrlForSendingMessage(jackSmsUsername, jackSmsPassword), headers);
+		return sendSms(
+				getParameterValue(PARAM_INDEX_USERNAME),
+				getParameterValue(PARAM_INDEX_PASSWORD),
+				serviceId,
+				destination,
+				message);
     }
 
+
+	@Override
+	public ResultOperation executeCommand(int commandId, Bundle extraData) {
+		ResultOperation res;
+
+		//execute commands
+		switch (commandId) {
+		case COMMAND_LOADTEMPLATESERVICES:
+			res = downloadTemplates();
+			break;
+
+		case COMMAND_LOADUSERSERVICES:
+			res = downloadUserConfiguredServices();
+			break;
+
+		default:
+			res = new ResultOperation(new IllegalArgumentException("Command not found!"));
+		}
+
+		return res;
+	}
 
 
 
 	//---------- Private methods
-    
-    
-    private ResultOperation doRequest(String url, HashMap<String, String> headers)
-    {
-    	String reply = "";
-    	WebserviceClient client = new WebserviceClient();
-    	
-    	try {
-    		reply = client.requestPost(url, headers, null);
-		} catch (ClientProtocolException e) {
-			// TODO
-			e.printStackTrace();
-			return new ResultOperation(e);
-		} catch (IOException e) {
-			// TODO
-			e.printStackTrace();
-			return new ResultOperation(e);
-		}
-    	
-    	//empty reply
-    	if (TextUtils.isEmpty(reply)) {
-			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
-		}
-		
-    	ResultOperation res;
-		//exams the result
-		if (reply.startsWith(JacksmsDictionary.RESULT_OK)) {
-			//ok
-			//break the reply
-			res = new ResultOperation(mDictionary.getTextPartFromReply(reply));
-		} else if (reply.startsWith(JacksmsDictionary.RESULT_ERROR)) {
-			//some sort of error
-			res = new ResultOperation(new Exception(mDictionary.getTextPartFromReply(reply)));
-		} else {
-			//captcha
-			res = new ResultOperation(ResultOperation.RETURNCODE_CAPTCHA_REQUEST, reply);
-		}
-		return res;    	
-    }
-
 	@Override
 	protected String getParametersFileName()
 	{ return GlobalDef.jacksmsParametersFileName; }
@@ -191,34 +205,147 @@ public class JacksmsProvider
 	protected String getSubservicesFileName()
 	{ return GlobalDef.jacksmsSubservicesFileName; }
 
-	@Override
-	public ResultOperation executeCommand(int commandId, Bundle extraData) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	/**
+	 * Send an sms via the service API
+	 * 
+	 * @param username
+	 * @param password
+	 * @param serviceId
+	 * @param destination
+	 * @param message
+	 * @return
+	 */
+	private ResultOperation sendSms(
+    		String username,
+    		String password,
+    		String serviceId,
+    		String destination,
+    		String message)
+	{
+    	//credentials check
+    	if (!checkCredentialsValidity(username, password))
+    		return getExceptionForInvalidCredentials();
+    	
+    	//sends the sms
+    	SmsService service = getSubservice(serviceId);
+    	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
+    	ResultOperation res = doRequest(mDictionary.getUrlForSendingMessage(username, password), headers);
+
+    	//checks for applications errors
+    	if (res.HasErrors()) return res;
+    	//checks for jacksms errors
+    	if (parseReplyForErrors(res)) return res;
+    	
+    	//at this point, no error happened, so checks if the sms was sent or
+    	//a captcha code is needed
+    	String reply = res.getResultAsString();
+    	//message sent
+		if (reply.startsWith(JacksmsDictionary.PREFIX_RESULT_OK)) {
+			//breaks the reply and find the message
+			res.setResultAsString(String.format(
+					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
+		//captcha request
+		} else {
+			//returns captcha, message contains all captcha information
+			res.setReturnCode(ResultOperation.RETURNCODE_CAPTCHA_REQUEST);
+		}
+		return res;    	
 	}
 
-	@Override
-	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    
+    /**
+     * Downloads all service templates available from JackSMS site
+     * @return
+     */
+    private ResultOperation downloadTemplates()
+    {
+    	String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
-	@Override
-	public List<SmsProviderMenuCommand> getSubservicesListActivityCommandS() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    	//credentials check
+    	if (!checkCredentialsValidity(username, password))
+    		return getExceptionForInvalidCredentials();
 
-	@Override
-	public boolean hasProviderSettingsActivityCommands() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    	ResultOperation res = doRequest(mDictionary.getUrlForDownloadTemplates(username, password), null);
 
-	@Override
-	public boolean hasSubservicesListActivityCommands() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    	String message = res.getResultAsString();
+    	
+    	return res;
+    }
+    
+    
+    /**
+     * Downloads all services configured for the user from JackSMS site
+     * @return
+     */
+    private ResultOperation downloadUserConfiguredServices()
+    {
+    	String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
+    	//credentials check
+    	if (!checkCredentialsValidity(username, password))
+    		return getExceptionForInvalidCredentials();
+    	
+    	return null;
+    }
+
+    
+    private ResultOperation doRequest(String url, HashMap<String, String> headers)
+    {
+    	String reply = "";
+    	WebserviceClient client = new WebserviceClient();
+    	
+    	try {
+    		reply = client.requestPost(url, headers);
+		} catch (ClientProtocolException e) {
+			return new ResultOperation(e);
+		} catch (IOException e) {
+			return new ResultOperation(e);
+		}
+    	
+    	//empty reply
+    	if (TextUtils.isEmpty(reply)) {
+			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
+		}
+
+    	//return the reply
+    	return new ResultOperation(reply);
+    }
+
+	/**
+	 * Parse the webservice reply searching for know errors code.
+	 * If one of them is found, the ResultOperation object is modified
+	 * whit the error message to display
+	 * 
+	 * @param resultToAnalyze
+	 * @return true if a JackSMS error is found, otherwise false
+	 */
+	public boolean parseReplyForErrors(ResultOperation resultToAnalyze)
+	{
+		String res = "";
+		String reply = resultToAnalyze.getResultAsString();
+
+		//no reply from server is already handled in doRequest method
+				
+		//JackSMS internal error
+		for (String errSignature : JacksmsDictionary.PREFIX_RESULT_ERROR_ARRAY) {
+			if (reply.startsWith(errSignature)) {
+				res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], mDictionary.getTextPartFromReply(reply));
+				//error found, exit from cycle
+				break;
+			}
+		}
+		
+    	//errors are internal to jacksms, not related to communication issues.
+    	//so no application errors (like network issues) should be returned, but
+		//the jacksms error must stops the execution of the calling method
+    	if (!TextUtils.isEmpty(res)) {
+    		resultToAnalyze.setResultAsString(res);
+    		return true;
+    	} else {
+    		return false;
+    	}
+	}
 }

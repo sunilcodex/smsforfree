@@ -32,7 +32,7 @@ public abstract class ActBaseDataEntry
 	
 	
 	//---------- Private fields
-	protected final static int OPTIONMENU_CANCEL = 1000;
+	protected final static int OPTIONMENU_CANCEL = 100;
 	
 	protected final static String KEY_MUSTRETURNFROMCALLEDACTIVITY = "mustReturnFromCalledActivity";
 	

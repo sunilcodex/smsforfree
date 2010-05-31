@@ -34,9 +34,7 @@
     <string name="actsendsms_msg_wrongDestination">Enter a valid phone number as destination...</string>
     <string name="actsendsms_msg_noMessage">Enter a message...</string>
     <string name="actsendsms_msg_messageTooLong">Message is too long...</string>
-    <string name="actsendsms_msg_errorSendingMessage">ERROR sending message:\n %s</string>
-    <string name="actsendsms_msg_sendOk">Message sent.\n %s</string>
-    <string name="actsendsms_msg_providerNotConfigured">%s provider not configured, configure it in the Settings...</string>
+    <string name="actsendsms_msg_providerNotConfigured">%s provider not correctly configured, configure it in the Settings...</string>
     <string name="actsendsms_msg_subserviceNotConfigured">Service not configured, configure it in the Settings...</string>
     <string name="actsendsms_msg_subservicesNotPresent">No services for %s provider. Add them in the Settings...</string>
     <string name="actsendsms_phoneType_home">Home</string>
@@ -92,7 +90,7 @@
     <string name="actsubserviceslist_titleEdit">%s services list</string>
     <string name="actsubserviceslist_mnuHeaderTitle">Choose action</string>
     <string name="actsubserviceslist_mnuDeleteService">Delete</string>
-    <string name="actsubserviceslist_mnuAddService">Add</string>
+    <string name="actsubserviceslist_mnuAddService">Add new service</string>
     <string name="actsubserviceslist_mnuEditService">Edit</string>
 
 

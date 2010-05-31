@@ -39,7 +39,6 @@ public abstract class SmsProvider
 	
 	//---------- Public fields
 	public static final String ERROR_NO_CREDENTIALS = "NO_CREDENTIALS";
-	public static final String ERROR_CREDENTIALS_NOT_VALID = "CREDENTIALS_INVALID";
 	public static final String ERROR_NO_REPLY_FROM_SITE = "NO_REPLY";
 	
 	public static final String CAPTCHAREQUEST = "captcharequest";
@@ -76,7 +75,7 @@ public abstract class SmsProvider
     public abstract boolean hasSubservicesListActivityCommands();
     
 	/** Menu to show on option menu of ActSubservicesList activity */
-    public abstract List<SmsProviderMenuCommand> getSubservicesListActivityCommandS();
+    public abstract List<SmsProviderMenuCommand> getSubservicesListActivityCommands();
 
     
     
