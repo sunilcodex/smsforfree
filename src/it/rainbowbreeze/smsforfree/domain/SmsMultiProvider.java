@@ -77,8 +77,18 @@ public abstract class SmsMultiProvider
 			return mSelectedService.getMaxMessageLenght();
 		}
 	}
-
 	
+	/**
+	 * Generally, no additional command are provided when editing
+	 * subservices list
+	 */
+	@Override
+	public List<SmsServiceCommand> getSubservicesListActivityCommands()
+	{ return null; }
+	
+
+
+
 	//---------- Public methods
 	public ResultOperation loadTemplates(Context context){
 		return mDao.loadProviderTemplates(context, getTemplatesFileName(), this);

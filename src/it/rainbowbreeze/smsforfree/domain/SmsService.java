@@ -1,6 +1,9 @@
 package it.rainbowbreeze.smsforfree.domain;
 
+import java.util.List;
+
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 
@@ -83,9 +86,16 @@ public abstract class SmsService
 	public void setParameterFormat(int index, int value)
 	{ if (index >= 0 && index < mParameters.length) mParameters[index].setFormat(value); }
 	
-	
+	/**
+	 * Returns the list of commands to add to option menu of ActSmsServiceSetting
+	 * activity
+	 */
+    public List<SmsServiceCommand> getSettingsActivityCommands()
+    { return null; }
 
-		
+
+
+
 	//---------- Public methods
 
 	/**
@@ -109,6 +119,28 @@ public abstract class SmsService
 	}
 
 	
+	/**
+	 * Service has additional commands to show on option menu of
+	 * ActSettingSmsService activity
+	 */
+    public boolean hasSettingsActivityCommands()
+    {
+    	List<SmsServiceCommand> commands = getSettingsActivityCommands();
+    	if (null == commands) return false;
+    	return commands.size() > 0;
+    }
+    
+    /**
+     * Executes a command identified by its id
+     * 
+     * @param commandId
+     * @param extraData
+     * @return String with command result
+     */
+    public ResultOperation executeCommand(int commandId, Bundle extraData)
+    { return null; }
+
+    
 	@Override
 	public boolean equals(Object aThat) {
 	    //check for self-comparison

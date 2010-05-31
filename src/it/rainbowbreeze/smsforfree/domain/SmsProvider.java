@@ -6,7 +6,6 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import java.util.List;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.text.TextUtils;
 
 
@@ -58,24 +57,8 @@ public abstract class SmsProvider
 
     public abstract void setSelectedSubservice(String subserviceId);
 
-	/**
-	 * Provider has additional menu to show on option menu of
-	 * ActSettingSmsService activity, when the settings in
-	 * editing are related to the provider
-	 */
-    public abstract boolean hasProviderSettingsActivityCommands();
-    
-	/**
-	 * Menu to show on option menu of ActSettingSmsService activity,
-	 * when the settings in editing are related to the provider
-	 */
-    public abstract List<SmsProviderMenuCommand> getProviderSettingsActivityCommands();
-
-	/** Provider has additional command to show on option menu of ActSubservicesList activity */
-    public abstract boolean hasSubservicesListActivityCommands();
-    
 	/** Menu to show on option menu of ActSubservicesList activity */
-    public abstract List<SmsProviderMenuCommand> getSubservicesListActivityCommands();
+    public abstract List<SmsServiceCommand> getSubservicesListActivityCommands();
 
     
     
@@ -148,6 +131,19 @@ public abstract class SmsProvider
 	 */
 	public abstract boolean hasServiceParametersConfigured(String serviceId);
 
+	
+	/**
+	 * Provider has additional command to show on option menu of
+	 * ActSubservicesList activity
+	 */
+    public boolean hasSubservicesListActivityCommands()
+    {
+    	List<SmsServiceCommand> commands = getSubservicesListActivityCommands();
+    	if (null == commands) return false;
+    	return commands.size() > 0;
+    }
+    
+	
 	/**
 	 * Sends the message
 	 * 
@@ -155,14 +151,6 @@ public abstract class SmsProvider
 	 * @param body
 	 */
 	public abstract ResultOperation sendMessage(String serviceId, String destination, String body);
-	
-    /** Executes the menu command identified by its id
-     * 
-     * @param commandId
-     * @param extraData
-     * @return String with command result
-     */
-    public abstract ResultOperation executeCommand(int commandId, Bundle extraData);
 
     /**
      * Get the captcha image content from a provider reply

@@ -17,7 +17,7 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
-import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 import it.rainbowbreeze.smsforfree.util.Base64;
@@ -37,12 +37,12 @@ public class AimonProvider
 		setParameterDesc(PARAM_INDEX_ID_API, context.getString(R.string.aimon_idapi));
 		
 		//initializes the command list
-		mProviderSettingsActivityCommands = new ArrayList<SmsProviderMenuCommand>();
-		SmsProviderMenuCommand command;
-		command = new SmsProviderMenuCommand(
+		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
+		SmsServiceCommand command;
+		command = new SmsServiceCommand(
 				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
 		mProviderSettingsActivityCommands.add(command);
-		command = new SmsProviderMenuCommand(
+		command = new SmsServiceCommand(
 				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 1001); 
 		mProviderSettingsActivityCommands.add(command);
 		
@@ -103,12 +103,12 @@ public class AimonProvider
 	{ return 160; }
     
 	@Override
-	public boolean hasProviderSettingsActivityCommands()
+	public boolean hasSettingsActivityCommands()
 	{ return true; }
 
-	private List<SmsProviderMenuCommand> mProviderSettingsActivityCommands;
+	private List<SmsServiceCommand> mProviderSettingsActivityCommands;
 	@Override
-	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands()
+	public List<SmsServiceCommand> getSettingsActivityCommands()
 	{ return mProviderSettingsActivityCommands; }
 	
 
