@@ -157,7 +157,7 @@ public class AimonProvider
 			break;
 
 		default:
-			res = new ResultOperation("Nothing to execute");
+			res = new ResultOperation(new IllegalArgumentException("Command not found!"));
 		}
 
 		return res;
@@ -318,8 +318,7 @@ public class AimonProvider
 		//calls the verify credits and, if the user has credits,
 		//this means that the user can authenticate and the credentials
 		//are correct.
-		res = verifyCredit(getParameterValue(PARAM_INDEX_USERNAME),
-				getParameterValue(PARAM_INDEX_PASSWORD));
+		res = verifyCredit(username, password);
 		//checks for application errors
 		if (res.HasErrors()) return res;
 		

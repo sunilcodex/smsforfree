@@ -89,8 +89,16 @@ public class ActSettingsSmsService
 	}
 	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		boolean result;
+		
+		result = super.onOptionsItemSelected(item);
 
+		//exit if the command was processed
+		if (result) return result;
+		
+		
 		//save EditText values
 		Bundle bundle = new Bundle();
 		for (int i = 0; i < MAXFIELDS; i++) {

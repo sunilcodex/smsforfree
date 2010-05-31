@@ -1,7 +1,6 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
@@ -12,10 +11,10 @@ import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
-import it.rainbowbreeze.smsforfree.logic.SendMessageTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -520,54 +519,104 @@ public class ActSendSms
 		}
 		
 		
-		//send message
-		SendMessageTask task = new SendMessageTask(ActSendSms.this, mSelectedProvider, mSelectedServiceId);
+		//preparing the background task for sending message
+		SendMessageTask task = new SendMessageTask(
+				this,
+				getString(R.string.common_msg_sendingMessage),
+				mSelectedProvider, mSelectedServiceId);
+		//and send the message
 		task.execute(mTxtDestination.getText().toString(), mTxtMessage.getText().toString());
-		ResultOperation res = null;
-		try {
-			res = task.get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//at the end of the execution, the sendMessageComplete() method will be called
+	}
+	
+	
+	/**
+	 * Called when the background activity has sent the message
+	 * @param result result of sending message
+	 */
+	private void sendMessageComplete(ResultOperation result)
+	{
+		//return with errors
+		if (result.HasErrors()) {
+			ActivityHelper.reportError(ActSendSms.this, String.format(
+					getString(R.string.actsendsms_msg_errorSendingMessage), result.getException().getMessage()));
+			return;
 		}
 		
-		if (res.HasErrors()) {
+		//message sent
+		if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
 			ActivityHelper.showInfo(ActSendSms.this, String.format(
-					getString(R.string.actsendsms_msg_errorSendingMessage), res.getException().getMessage()));
+					getString(R.string.actsendsms_msg_sendOk), result.getResultAsString()));
+			//check if the text should be deleted
+			if (AppPreferencesDao.instance().getAutoClearMessage()) {
+				cleanDataFields();
+			}
 			return;
 		}
 		
-		//check if capctha screen is needed
-		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == res.getReturnCode()) {
-			//launch capcha request
+		//captcha required
+		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
+			//launch captcha request
 			//TODO
-			ActivityHelper.showInfo(ActSendSms.this, "CAPTCHA REQUEST");
+			ActivityHelper.showInfo(ActSendSms.this, "CAPTCHA REQUEST" + "\n" + result.getResultAsString());
 			return;
-		}
-		
-		if (SmsProvider.CAPTCHAREQUEST.equalsIgnoreCase(res.getResultAsString())) {
-			//launch capcha request
-			//TODO
-			ActivityHelper.showInfo(ActSendSms.this, "CAPTCHA REQUEST");
-			return;
-		}
-
-		ActivityHelper.showInfo(ActSendSms.this, String.format(
-				getString(R.string.actsendsms_msg_sendOk), res.getResultAsString()));
-		
-		//check if the text should be deleted
-		if (AppPreferencesDao.instance().getAutoClearMessage()) {
-			cleanDataFields();
 		}
 	}
 
 
+	/**
+	 * Reset destination and message body
+	 */
 	private void cleanDataFields() {
 		mTxtDestination.setText("");
 		mTxtMessage.setText("");
 	}
+	
+
+	/**
+	 * Send a sms
+	 */
+	private class SendMessageTask
+		extends ProgressDialogAsyncTask
+	{
+	
+		//---------- Ctors
+		public SendMessageTask(Context context, String progressTitle, SmsProvider provider, String servideId)
+		{
+			super(context, progressTitle);
+			mProvider = provider;
+			mServiceId = servideId;
+		}
+		
+		//---------- Private fields
+		private SmsProvider mProvider;
+		private String mServiceId;
+		
+
+
+
+		//---------- Private methods
+		protected ResultOperation doInBackground(String... params)
+		{
+			//params.length must be equals to 2
+				
+			String destination = params[0];
+			String messageBody = params[1];
+			
+			return mProvider.sendMessage(mServiceId, destination, messageBody);
+		}
+		
+		@Override
+		protected void onPostExecute(ResultOperation result) {
+			//close progress dialog
+			super.onPostExecute(result);
+			//and pass the control to caller activity with the result
+			sendMessageComplete(result);
+		}
+	}
+	
+	/**
+	 * 
+	 */
 	
 }

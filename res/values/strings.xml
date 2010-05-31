@@ -9,7 +9,6 @@
     <string name="common_msg_genericError">Generic error: %s</string>
     <string name="common_msg_noErrorToReport">No error to report :(</string>
     <string name="common_msg_cannotsavepreferences">Sorry, cannot save data: </string>
-    <string name="common_msg_errorWrongDestinationOrBody">Missing destination or body parameters</string>
     
 
 
@@ -35,7 +34,7 @@
     <string name="actsendsms_msg_wrongDestination">Enter a valid phone number as destination...</string>
     <string name="actsendsms_msg_noMessage">Enter a message...</string>
     <string name="actsendsms_msg_messageTooLong">Message is too long...</string>
-    <string name="actsendsms_msg_errorSendingMessage">Error sending message:\n %s</string>
+    <string name="actsendsms_msg_errorSendingMessage">ERROR sending message:\n %s</string>
     <string name="actsendsms_msg_sendOk">Message sent.\n %s</string>
     <string name="actsendsms_msg_providerNotConfigured">%s provider not configured, configure it in the Settings...</string>
     <string name="actsendsms_msg_subserviceNotConfigured">Service not configured, configure it in the Settings...</string>
