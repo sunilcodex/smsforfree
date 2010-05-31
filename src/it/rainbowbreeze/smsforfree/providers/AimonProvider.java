@@ -173,6 +173,14 @@ public class AimonProvider
 	protected String getSubservicesFileName()
 	{ return null; }
 
+	@Override
+	public ResultOperation getCaptchaContentFromProviderReply(String providerReply)
+	{ return null; }
+
+	@Override
+	public ResultOperation sendCaptcha(String providerReply, String captchaCode)
+	{ return null; }
+
 	/**
 	 * Sends an sms
 	 */
