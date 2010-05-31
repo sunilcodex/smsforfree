@@ -121,13 +121,19 @@ public abstract class ActBaseDataEntry
 	 */
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		boolean result;
+		
 		switch (item.getItemId()) {
 		case OPTIONMENU_CANCEL:
 			cancelEdit();
+			result = true;
 			break;
+			
+		default:
+			result = super.onOptionsItemSelected(item); 
 		}
-		
-		return super.onOptionsItemSelected(item);
+
+		return result; 
 	};
 
 	

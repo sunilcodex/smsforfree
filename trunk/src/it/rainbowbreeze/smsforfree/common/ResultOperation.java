@@ -53,7 +53,7 @@ public class ResultOperation
 	
 	//---------- Public fields
 	public final static int RETURNCODE_OK = 200;
-	public final static int RETURNCODE_CAPTCHA_REQUEST = 200;
+	public final static int RETURNCODE_CAPTCHA_REQUEST = 1001;
 	public final static int RETURNCODE_ERROR = 400;
 	private final static int RETURNCODE_UNDEFINED = -1;
 
