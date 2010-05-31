@@ -127,7 +127,7 @@ public class AimonProvider
 	}
 
 	@Override
-    public ResultOperation executeCommand(int commandId, Bundle extraData)
+    public ResultOperation executeCommand(int commandId, Context context, Bundle extraData)
 	{
 		ResultOperation res;
 		String currentUsername = null;

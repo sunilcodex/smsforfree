@@ -1,11 +1,15 @@
 package it.rainbowbreeze.smsforfree.providers;
 
+import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * 
@@ -40,6 +44,9 @@ public class JacksmsDictionary
 	private static final String SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
+	
+	/** Max number of parameters a JackSMS service can have */
+	private static final int MAX_SERVICE_PARAMETERS = 4;
 	
 
 	//---------- Public properties
@@ -177,6 +184,44 @@ public class JacksmsDictionary
 		return sessionId;
 	}
 
+	
+	public List<SmsService> extractTemplates(String providerReply)
+	{
+		List<SmsService> templates = new ArrayList<SmsService>();
+		
+		//examine the reply, line by line
+		String[] lines = providerReply.split("\n");
+		
+		for(String templateLine : lines) {
+			String[] pieces = templateLine.split(SEPARATOR);
+			try {
+				String serviceId = pieces[0];
+				String serviceName = pieces[1];
+				int maxChar = Integer.parseInt(pieces[2]);
+				String[] parametersDesc = new String[MAX_SERVICE_PARAMETERS];
+
+				int numberOfParameters = MAX_SERVICE_PARAMETERS;
+				for(int i = 0; i < MAX_SERVICE_PARAMETERS; i++) {
+					parametersDesc[i] = pieces[3+i];
+					//find the total number of parameter
+					if (TextUtils.isEmpty(parametersDesc[i])) numberOfParameters--;
+				}
+				String description = pieces[7];
+				
+				//create new service
+				SmsService newService = new SmsConfigurableService(serviceId, serviceName, maxChar, numberOfParameters);
+				newService.setDescription(description);
+				for (int i = 0; i < numberOfParameters; i++) {
+					newService.setParameterDesc(i, parametersDesc[i]);
+				}
+			} catch (Exception e) {
+				//do nothing simply log the error and skip to next service
+				Log.e("JackSMSDictionary", e.getMessage());
+			}
+		}
+		
+		return templates;
+	}
 
 
 
@@ -218,6 +263,4 @@ public class JacksmsDictionary
 	{
 		return TextUtils.isEmpty(parameter) ? "" : parameter;
 	}
-
-
 }

@@ -45,6 +45,7 @@ public class ProviderDao
 	private final static String XMLNODE_PARAMETERSNUMBER = "ParametersNumber";
 	private final static String XMLNODE_MAXMESSAGELENGHT = "MaxMessageLenght";
 	private final static String XMLNODE_TEMPLATEID = "TemplateId";
+	private final static String XMLNODE_DESCRIPTION = "Description";
 	private final static String XMLNODE_PARAMETERSARRAY = "ParametersArray";
 	private final static String XMLNODE_PARAMETER = "Parameter";
 	private final static String XMLNODE_PARAMETERDESC = "Desc";
@@ -309,6 +310,10 @@ public class ProviderDao
 		serializer.text(parseString(service.getTemplateId()));
 		serializer.endTag("", XMLNODE_TEMPLATEID);
 		
+		serializer.startTag("", XMLNODE_DESCRIPTION);
+		serializer.text(parseString(service.getDescription()));
+		serializer.endTag("", XMLNODE_DESCRIPTION);
+		
 		serializer.startTag("", XMLNODE_PARAMETERSNUMBER);
 		serializer.text(String.valueOf(service.getParametersNumber()));
 		serializer.endTag("", XMLNODE_PARAMETERSNUMBER);
@@ -493,6 +498,8 @@ public class ProviderDao
 					service.setMaxMessageLenght(Integer.parseInt(parser.nextText()));
 				} else if (name.equalsIgnoreCase(XMLNODE_TEMPLATEID)) {
 					service.setTemplateId(parser.nextText());
+				} else if (name.equalsIgnoreCase(XMLNODE_DESCRIPTION)) {
+					service.setDescription(parser.nextText());
 					
 				} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERSARRAY)) {
 					parametersIndex = -1;

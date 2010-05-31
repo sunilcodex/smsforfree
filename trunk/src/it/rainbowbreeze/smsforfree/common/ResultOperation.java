@@ -18,7 +18,6 @@ public class ResultOperation
 		//executes start operations (clean internal values)
 		mException = null;
 		mResult = null;
-		mReturnCode = RETURNCODE_UNDEFINED;
 	}
 	
 	public ResultOperation(Exception ex)
@@ -53,9 +52,8 @@ public class ResultOperation
 	
 	//---------- Public fields
 	public final static int RETURNCODE_OK = 200;
-	public final static int RETURNCODE_CAPTCHA_REQUEST = 1001;
 	public final static int RETURNCODE_ERROR = 400;
-	private final static int RETURNCODE_UNDEFINED = -1;
+	public final static int RETURNCODE_CAPTCHA_REQUEST = 1001;
 
 
 	
