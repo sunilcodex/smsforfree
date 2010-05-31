@@ -33,6 +33,7 @@ public class JacksmsDictionary
 	private static final String URL_BASE = "http://q.jacksms.it/";
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "sendMessage";
+	private static final String ACTION_SEND_CAPTCHA = "continueSend";
 	
 	private static final String PARAM_OUTPUTFORMAT = "outputFormat=" + FORMAT_XML;
 	private static final String PARAM_CLIENTVERSION = "clientVersion=android";
@@ -54,6 +55,9 @@ public class JacksmsDictionary
 		return getUrlForCommand(username, password, ACTION_SEND_MESSAGE);
 	}
 	
+	public String getUrlForSendingCaptcha(String username, String password) {
+		return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA);
+	}
 	
 	public String getUrlForDownloadTemplates(String username, String password)
 	{
@@ -61,6 +65,14 @@ public class JacksmsDictionary
 	}
 
 	
+	/**
+	 * Builds headers used in send sms api
+	 * 
+	 * @param service
+	 * @param destination
+	 * @param message
+	 * @return
+	 */
 	public HashMap<String, String> getHeaderForSendingMessage(
 			SmsService service,
 			String destination,
@@ -91,6 +103,28 @@ public class JacksmsDictionary
 	
 	
 	/**
+	 * Builds headers used in the captcha api
+	 * @param sessionId
+	 * @param captchaCode
+	 * @return
+	 */
+	public HashMap<String, String> getHeaderForSendingCaptcha(String sessionId, String captchaCode)
+	{
+		String key;
+		String value;
+		HashMap<String, String> headers = new HashMap<String, String>();
+		
+		//first header
+		key = "J_R";
+		value = String.valueOf(sessionId) + SEPARATOR + 
+				captchaCode + SEPARATOR;
+		headers.put(key, value);
+		
+		return headers;
+	}
+	
+	
+	/**
 	 * Extracts the message text from provider's reply
 	 * @param reply
 	 * @return
@@ -113,6 +147,34 @@ public class JacksmsDictionary
 			return lines[1];
 		else
 			return "";
+	}
+	
+	/**
+	 * Extracts captcha image content from provider's reply
+	 * @param reply
+	 * @return
+	 */
+	public String getCaptchaImageContentFromReply(String reply)
+	{
+		//captcha content is the text part of the reply
+		String content = getTextPartFromReply(reply);
+		return content;
+	}
+	
+	/**
+	 * Extract sessionId from captcha reply
+	 * @param reply
+	 * @return
+	 */
+	public String getCaptchaSessionIdFromReply(String reply)
+	{
+		//find captcha sessionId, the first part of the message
+		int separatorPos = reply.indexOf(SEPARATOR);
+		if (separatorPos < 0)
+			return "";
+		
+		String sessionId = reply.substring(0, separatorPos).trim();
+		return sessionId;
 	}
 
 
@@ -156,5 +218,6 @@ public class JacksmsDictionary
 	{
 		return TextUtils.isEmpty(parameter) ? "" : parameter;
 	}
+
 
 }

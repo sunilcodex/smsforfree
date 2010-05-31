@@ -47,10 +47,11 @@ public class JacksmsProvider
 		mSubservicesListActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[3];
+		mMessages = new String[4];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
+		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
 	}
 	
 	
@@ -67,6 +68,7 @@ public class JacksmsProvider
 	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
 	private final static int MSG_INDEX_SERVER_ERROR = 1;
 	private final static int MSG_INDEX_MESSAGE_SENT = 2;
+	private final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 3;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -168,6 +170,44 @@ public class JacksmsProvider
 				message);
     }
 
+	@Override
+	public ResultOperation getCaptchaContentFromProviderReply(String providerReply)
+	{
+		//captcha content is the text part of the reply
+		String content = mDictionary.getCaptchaImageContentFromReply(providerReply);
+		
+		return new ResultOperation(content);
+	}
+
+	@Override
+	public ResultOperation sendCaptcha(String providerReply, String captchaCode)
+	{
+		//find captcha sessionId
+		String sessionId = mDictionary.getCaptchaSessionIdFromReply(providerReply);
+		if (TextUtils.isEmpty(sessionId)) {
+			return new ResultOperation(mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
+		}
+    	
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+
+    	//sends the captcha code
+    	HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
+    	ResultOperation res = doRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers);
+
+    	//checks for applications errors
+    	if (res.HasErrors()) return res;
+    	//checks for jacksms errors
+    	if (parseReplyForErrors(res)) return res;
+    	
+    	//at this point, no error happened, so the reply contains captcha submission result
+    	String reply = res.getResultAsString();
+		res.setResultAsString(mDictionary.getTextPartFromReply(reply));
+		
+		return res;    	
+	}
+	
+	
 
 	@Override
 	public ResultOperation executeCommand(int commandId, Bundle extraData) {

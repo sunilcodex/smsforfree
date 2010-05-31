@@ -7,4 +7,5 @@
     <string name="jacksms_msg_invalidCredentials">Invalid JackSMS credentials :(</string>
     <string name="jacksms_msg_serverError">JackSMS internal server error:\n %s</string>
     <string name="jacksms_msg_messageSent">Message sent.\n %s</string>
+    <string name="jacksms_msg_noCaptchaSessionId">Error: cannot find captcha session id.</string>
 </resources>

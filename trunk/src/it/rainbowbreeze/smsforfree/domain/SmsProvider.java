@@ -82,35 +82,81 @@ public abstract class SmsProvider
     
 	//---------- Public methods
 	/**
-	 * Send the message
+	 * Load provider's parameters
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public ResultOperation loadParameters(Context context){
+		return mDao.loadProviderParameters(context, getParametersFileName(), this);
+	}
+	
+	/**
+	 * Save provider's parameters
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public ResultOperation saveParameters(Context context){
+		return mDao.saveProviderParameters(context, getParametersFileName(), this);
+	}
+
+	/**
+	 * Load provider's templates
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public abstract ResultOperation saveTemplates(Context context);
+
+	/**
+	 * Save provider's templates
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public abstract ResultOperation loadTemplates(Context context);
+	
+	/**
+	 * Save provider's configured subservices
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public abstract ResultOperation saveSubservices(Context context);
+
+	/**
+	 * Load provider's configured subservices
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public abstract ResultOperation loadSubservices(Context context);
+	
+	/**
+	 * Create a new service object starting from a template
+	 * 
+	 * @param templateId
+	 * @return
+	 */
+	public abstract SmsService newSubserviceFromTemplate(String templateId);
+
+	/**
+	 * Checks if services has all mandatory parameters configured
+	 * @param serviceId
+	 * @return
+	 */
+	public abstract boolean hasServiceParametersConfigured(String serviceId);
+
+	/**
+	 * Sends the message
 	 * 
 	 * @param destination
 	 * @param body
 	 */
 	public abstract ResultOperation sendMessage(String serviceId, String destination, String body);
 	
-	
-	public ResultOperation loadParameters(Context context){
-		return mDao.loadProviderParameters(context, getParametersFileName(), this);
-	}
-	
-	public ResultOperation saveParameters(Context context){
-		return mDao.saveProviderParameters(context, getParametersFileName(), this);
-	}
-
-	public abstract ResultOperation saveTemplates(Context context);
-
-	public abstract ResultOperation loadTemplates(Context context);
-	
-	public abstract ResultOperation saveSubservices(Context context);
-
-	public abstract ResultOperation loadSubservices(Context context);
-	
-	public abstract SmsService newSubserviceFromTemplate(String templateId);
-
-	public abstract boolean hasServiceParametersConfigured(String serviceId);
-
-    /** Execute the menu command identified by its id
+    /** Executes the menu command identified by its id
      * 
      * @param commandId
      * @param extraData
@@ -118,7 +164,23 @@ public abstract class SmsProvider
      */
     public abstract ResultOperation executeCommand(int commandId, Bundle extraData);
 
+    /**
+     * Get the captcha image content from a provider reply
+     * 
+     * @param providerReply message from the provider used to retrieve the captcha content
+     * @return
+     */
+    public abstract ResultOperation getCaptchaContentFromProviderReply(String providerReply);
     
+    /**
+     * Send a captcha code to the provider
+     * 
+     * @param providerReply original message from the provider used to retrieve
+     *   the captcha content
+     * @param captchaCode the captcha code read
+     * @return
+     */
+    public abstract ResultOperation sendCaptcha(String providerReply, String captchaCode);
     
     
 	//---------- Private methods
