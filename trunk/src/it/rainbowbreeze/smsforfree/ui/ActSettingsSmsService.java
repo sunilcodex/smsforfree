@@ -9,7 +9,7 @@ import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Context;
 import android.content.Intent;
@@ -80,8 +80,8 @@ public class ActSettingsSmsService
 		
 		if (!canContinue) return canContinue;
 		//TODO move to service level
-		if (mIsEditingAProvider && mProvider.hasProviderSettingsActivityCommands()) {
-			for (SmsProviderMenuCommand command : mProvider.getProviderSettingsActivityCommands()) {
+		if (null != mEditedService && mEditedService.hasSettingsActivityCommands()) {
+			for (SmsServiceCommand command : mEditedService.getSettingsActivityCommands()) {
 				MenuItem item = menu.add(0,
 						command.getCommandId(), command.getCommandOrder(), command.getCommandDescription());
 				if (command.hasIcon()) item.setIcon(command.getCommandIcon());
@@ -116,7 +116,7 @@ public class ActSettingsSmsService
 		ExecuteServiceCommandTask task = new ExecuteServiceCommandTask(
 				this,
 				getString(R.string.common_msg_executingCommand),
-				mProvider,
+				mEditedService,
 				item.getItemId(),
 				bundle);
 		//and execute the command
@@ -376,16 +376,16 @@ public class ActSettingsSmsService
 	{
 		//---------- Ctors
 		public ExecuteServiceCommandTask(Context context, String progressTitle,
-				SmsProvider provider, int commandToExecute, Bundle extraData)
+				SmsService service, int commandToExecute, Bundle extraData)
 		{
 			super(context, progressTitle);
-			mProvider = provider;
+			mService = service;
 			mCommandToExecute = commandToExecute;
 			mExtraData = extraData;
 		}
 		
 		//---------- Private fields
-		private SmsProvider mProvider;
+		private SmsService mService;
 		private int mCommandToExecute;
 		Bundle mExtraData;
 		
@@ -395,7 +395,7 @@ public class ActSettingsSmsService
 		//---------- Private methods
 		protected ResultOperation doInBackground(String... params)
 		{
-			return mProvider.executeCommand(mCommandToExecute, mExtraData);
+			return mService.executeCommand(mCommandToExecute, mExtraData);
 		}
 		
 		@Override

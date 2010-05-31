@@ -6,11 +6,11 @@ package it.rainbowbreeze.smsforfree.domain;
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class SmsProviderMenuCommand
+public class SmsServiceCommand
 {
 	//---------- Ctors
 
-	public SmsProviderMenuCommand(
+	public SmsServiceCommand(
 			int commandId,
 			String commandDescription,
 			int commandOrder)
@@ -18,7 +18,7 @@ public class SmsProviderMenuCommand
 		this(commandId, commandDescription, commandOrder, NO_ICON);
 	}
 
-	public SmsProviderMenuCommand(
+	public SmsServiceCommand(
 			int commandId,
 			String commandDescription,
 			int commandOrder,

@@ -8,7 +8,7 @@ import it.rainbowbreeze.smsforfree.common.GlobalBag;
 import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -85,7 +85,7 @@ public class ActSubservicesList
 
 		//checks for provider's extended commands
 		if (null != mProvider && mProvider.hasSubservicesListActivityCommands()) {
-			for (SmsProviderMenuCommand command : mProvider.getSubservicesListActivityCommands()) {
+			for (SmsServiceCommand command : mProvider.getSubservicesListActivityCommands()) {
 				MenuItem item = menu.add(0,
 						command.getCommandId(), command.getCommandOrder(), command.getCommandDescription());
 				if (command.hasIcon()) item.setIcon(command.getCommandIcon());

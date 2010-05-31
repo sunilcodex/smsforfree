@@ -19,7 +19,7 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 
@@ -37,12 +37,12 @@ public class JacksmsProvider
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		
 		//initializes the command list
-		mSubservicesListActivityCommands = new ArrayList<SmsProviderMenuCommand>();
-		SmsProviderMenuCommand command;
-		command = new SmsProviderMenuCommand(
+		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
+		SmsServiceCommand command;
+		command = new SmsServiceCommand(
 				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1000, R.drawable.ic_menu_refresh);
 		mSubservicesListActivityCommands.add(command);
-		command = new SmsProviderMenuCommand(
+		command = new SmsServiceCommand(
 				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 1001);
 		mSubservicesListActivityCommands.add(command);
 		
@@ -92,20 +92,20 @@ public class JacksmsProvider
 
 
 	@Override
-	public boolean hasProviderSettingsActivityCommands()
+	public boolean hasSettingsActivityCommands()
 	{ return false; }
 
 	@Override
-	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands()
+	public List<SmsServiceCommand> getSettingsActivityCommands()
 	{ return null; }
 
 	@Override
 	public boolean hasSubservicesListActivityCommands()
 	{ return true; }
 
-	private List<SmsProviderMenuCommand> mSubservicesListActivityCommands;
+	private List<SmsServiceCommand> mSubservicesListActivityCommands;
 	@Override
-	public List<SmsProviderMenuCommand> getSubservicesListActivityCommands()
+	public List<SmsServiceCommand> getSubservicesListActivityCommands()
 	{ return mSubservicesListActivityCommands; }
 
 
