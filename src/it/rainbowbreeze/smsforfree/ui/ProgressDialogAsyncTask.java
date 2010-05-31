@@ -28,7 +28,8 @@ public abstract class ProgressDialogAsyncTask
 	public ProgressDialogAsyncTask(Context context, String progessTitle)
 	{
 		//create the progress dialog
-		mDialog = new ProgressDialog(context);
+		mContext = context;
+		mDialog = new ProgressDialog(mContext);
 		mDialog.setMessage(progessTitle);
 	}
 
@@ -36,7 +37,8 @@ public abstract class ProgressDialogAsyncTask
 	
 	
 	//---------- Private fields
-	private final ProgressDialog mDialog;
+	protected final ProgressDialog mDialog;
+	protected Context mContext; 
 
 	
 	

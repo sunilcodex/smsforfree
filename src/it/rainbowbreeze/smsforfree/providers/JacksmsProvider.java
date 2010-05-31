@@ -47,11 +47,12 @@ public class JacksmsProvider
 		mSubservicesListActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[4];
+		mMessages = new String[5];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
 		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
+		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplates);
 	}
 	
 	
@@ -69,6 +70,7 @@ public class JacksmsProvider
 	private final static int MSG_INDEX_SERVER_ERROR = 1;
 	private final static int MSG_INDEX_MESSAGE_SENT = 2;
 	private final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 3;
+	private final static int MSG_INDEX_NO_TEMPLATES_PARSED = 4;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -210,17 +212,17 @@ public class JacksmsProvider
 	
 
 	@Override
-	public ResultOperation executeCommand(int commandId, Bundle extraData) {
+	public ResultOperation executeCommand(int commandId, Context context, Bundle extraData) {
 		ResultOperation res;
 
 		//execute commands
 		switch (commandId) {
 		case COMMAND_LOADTEMPLATESERVICES:
-			res = downloadTemplates();
+			res = downloadTemplates(context);
 			break;
 
 		case COMMAND_LOADUSERSERVICES:
-			res = downloadUserConfiguredServices();
+			res = downloadUserConfiguredServices(context);
 			break;
 
 		default:
@@ -298,7 +300,7 @@ public class JacksmsProvider
      * Downloads all service templates available from JackSMS site
      * @return
      */
-    private ResultOperation downloadTemplates()
+    private ResultOperation downloadTemplates(Context context)
     {
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
@@ -309,7 +311,27 @@ public class JacksmsProvider
 
     	ResultOperation res = doRequest(mDictionary.getUrlForDownloadTemplates(username, password), null);
 
-    	String message = res.getResultAsString();
+    	//checks for applications errors
+    	if (res.HasErrors()) return res;
+    	//checks for jacksms errors
+    	if (parseReplyForErrors(res)) return res;
+
+    	//at this point, the provider reply should contains the list of templates
+    	String templatesReply = res.getResultAsString();
+    	
+    	//transform the reply in the list of templates
+    	List<SmsService> newTemplates = mDictionary.extractTemplates(templatesReply);
+    	
+    	if (newTemplates.size() <= 0) {
+    		//retain old templates
+    		res.setResultAsString(mMessages[MSG_INDEX_NO_TEMPLATES_PARSED]);
+    		return res;
+    	}
+    	
+    	//override current templates with new one
+    	mTemplates = newTemplates;
+    	//save the template list
+    	res = saveTemplates(context);
     	
     	return res;
     }
@@ -319,7 +341,7 @@ public class JacksmsProvider
      * Downloads all services configured for the user from JackSMS site
      * @return
      */
-    private ResultOperation downloadUserConfiguredServices()
+    private ResultOperation downloadUserConfiguredServices(Context context)
     {
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);

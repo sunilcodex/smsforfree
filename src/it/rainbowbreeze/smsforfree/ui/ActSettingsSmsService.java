@@ -349,23 +349,14 @@ public class ActSettingsSmsService
 		}
 	}
 
+	
 	/**
 	 * Called by AsyncTask when the command execution completed
 	 * @param res
 	 */
 	private void executeCommandComplete(ResultOperation res) {
-		//show command results
-		if (res.HasErrors()) {
-			ActivityHelper.reportError(this, String.format(
-					//TODO
-					//change standard error message
-					getString(R.string.common_msg_genericError), res.getException().getMessage()));
-		} else {
-			//shows the output of the command
-			ActivityHelper.showInfo(this, res.getResultAsString());
-		}
+		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
 	}
-
 
 	
 	/**
@@ -395,7 +386,7 @@ public class ActSettingsSmsService
 		//---------- Private methods
 		protected ResultOperation doInBackground(String... params)
 		{
-			return mService.executeCommand(mCommandToExecute, mExtraData);
+			return mService.executeCommand(mCommandToExecute, mContext, mExtraData);
 		}
 		
 		@Override

@@ -3,12 +3,15 @@ package it.rainbowbreeze.smsforfree.domain;
 import java.util.List;
 
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 
 /**
  * Base class for service configuration.
+ * 
+ * Id, Name, Parameters number, Max message lenght are mandatory
  *  
  * @author Alfredo "Rainbowbreeze" Morresi
  *
@@ -43,7 +46,7 @@ public abstract class SmsService
 	/** Id for a new service */
 	public static final String NEWSERVICEID = "-1";
 
-	/** The id of the service */
+	/** The id of the service*/
 	public abstract String getId();
 	
 	/** The display name of the service */
@@ -62,6 +65,12 @@ public abstract class SmsService
 	public void setTemplateId(String value)
 	{ mTemplateId = value; }
 	
+	/** Service long description */
+	protected String mDescription;
+	public String getDescription()
+	{ return mDescription; }
+	public void setDescription(String value)
+	{ mDescription = value; }
 
 	/** Description of service parameters */
 	protected SmsServiceParameter[] mParameters;
@@ -137,7 +146,7 @@ public abstract class SmsService
      * @param extraData
      * @return String with command result
      */
-    public ResultOperation executeCommand(int commandId, Bundle extraData)
+    public ResultOperation executeCommand(int commandId, Context context, Bundle extraData)
     { return null; }
 
     

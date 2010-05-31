@@ -185,6 +185,28 @@ public class ActivityHelper {
 		showInfo(context, context.getString(infoMessageId));
 	} 
 
+
+	/**
+	 * Process in a standard way the result of SmsService extended command
+	 * execution
+	 * 
+	 * @param context
+	 * @param result
+	 */
+	public static void showCommandExecutionResult(Context context, ResultOperation result)
+	{
+		//show command results
+		if (result.HasErrors()) {
+			ActivityHelper.reportError(context, String.format(
+					//TODO
+					//change standard error message
+					context.getString(R.string.common_msg_genericError), result.getException().getMessage()));
+		} else {
+			//shows the output of the command
+			ActivityHelper.showInfo(context, result.getResultAsString());
+		}		
+	}
+	
 	
 	/**
 	 * 
