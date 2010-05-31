@@ -47,12 +47,13 @@ public class JacksmsProvider
 		mSubservicesListActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[5];
+		mMessages = new String[6];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
 		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
 		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplates);
+		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
 	}
 	
 	
@@ -71,6 +72,7 @@ public class JacksmsProvider
 	private final static int MSG_INDEX_MESSAGE_SENT = 2;
 	private final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 3;
 	private final static int MSG_INDEX_NO_TEMPLATES_PARSED = 4;
+	private final static int MSG_INDEX_NO_CAPTCHA_PARSED = 5;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -176,8 +178,15 @@ public class JacksmsProvider
 	public ResultOperation getCaptchaContentFromProviderReply(String providerReply)
 	{
 		//captcha content is the text part of the reply
-		String content = mDictionary.getCaptchaImageContentFromReply(providerReply);
-		
+		byte[] content = mDictionary.getCaptchaImageContentFromReply(providerReply);
+
+		if (null == content) {
+    		//errors in parsing captcha
+			ResultOperation res = new ResultOperation(mMessages[MSG_INDEX_NO_CAPTCHA_PARSED]);
+			res.setReturnCode(ResultOperation.RETURNCODE_ERROR);
+    		return res;
+    	}
+
 		return new ResultOperation(content);
 	}
 

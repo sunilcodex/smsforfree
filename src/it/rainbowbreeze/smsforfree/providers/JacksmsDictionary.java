@@ -4,6 +4,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -161,11 +162,20 @@ public class JacksmsDictionary
 	 * @param reply
 	 * @return
 	 */
-	public String getCaptchaImageContentFromReply(String reply)
+	public byte[] getCaptchaImageContentFromReply(String reply)
 	{
 		//captcha content is the text part of the reply
 		String content = getTextPartFromReply(reply);
-		return content;
+		
+		//is encoded in base64, so decode id
+		byte[] decodedCaptcha;
+		try {
+			//decodedCaptcha = new String(Base64.decode(content), "UTF-8");
+			decodedCaptcha = Base64.decode(content);
+		} catch (IOException e) {
+			decodedCaptcha = null;
+		}
+		return decodedCaptcha;
 	}
 	
 	/**

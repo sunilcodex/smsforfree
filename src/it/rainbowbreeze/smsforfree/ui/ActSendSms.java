@@ -4,6 +4,7 @@ import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
@@ -17,21 +18,26 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -47,6 +53,7 @@ public class ActSendSms
 	//---------- Private fields
 	
 	private static final int DIALOG_PHONES = 10;
+	private final static int DIALOG_CAPTCHA = 11;
 
 	//---------- Private fields
 	private final static int OPTIONMENU_EXIT = 1;
@@ -55,6 +62,7 @@ public class ActSendSms
 	private final static int OPTIONMENU_ABOUT = 4;
 	private final static int OPTIONMENU_RESETDATA = 5;
 	private final static int OPTIONMENU_COMPRESS = 6;
+	private final static int OPTIONMENU_DIALOG = 7;
 
 	
 	private Spinner mSpiProviders;
@@ -68,7 +76,8 @@ public class ActSendSms
 	private Button mBtnSend;
 	private ImageButton mBtnPickContact;
 
-	private List<ContactPhone> phonesToShowInDialog;
+	private List<ContactPhone> mPhonesToShowInDialog;
+	private String mCaptchaStorage;
 
 	
 	
@@ -111,13 +120,19 @@ public class ActSendSms
         //populate Spinner with values
         bindProvidersSpinner();
 
-        //load default configuration
+        //load previous saved configuration
         if (null == savedInstanceState) {
-        	//TODO
-        	//combobox values
-        	//mSpiProviders.setSelection(position);
+        	int position;
+        	//provider spinner
+        	position = GlobalUtils.findProviderPositionInList(GlobalBag.providerList, AppPreferencesDao.instance().getLastUsedProviderId());
+        	if (position >= 0) mSpiProviders.setSelection(position);
+        	//text and message
         	mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
         	mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
+        	//TODO
+    		//service spinner
+        	position = GlobalUtils.findProviderPositionInList(GlobalBag.providerList, AppPreferencesDao.instance().getLastUsedProviderId());
+        	if (position >= 0) mSpiProviders.setSelection(position);
         }
     }
     
@@ -137,6 +152,7 @@ public class ActSendSms
 			.setIcon(android.R.drawable.ic_menu_info_details);
 //		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
 //			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(0, OPTIONMENU_DIALOG, 5, "Test dialog");
 		
 		return true;    	
     }
@@ -170,6 +186,14 @@ public class ActSendSms
 
 		case OPTIONMENU_RESETDATA:
 			cleanDataFields();
+			break;
+			
+		case OPTIONMENU_DIALOG:
+			//TODO remove
+			//save captcha data
+			mCaptchaStorage = "3617	iVBORw0KGgoAAAANSUhEUgAAAFUAAAAWCAIAAAA+W0fPAAABHklEQVRYhe1YXQ/DIAgcy/7/X2YPTRqjcIcU23TdPVZEPg7Eiqq+HowPXhaR7sser3HJRBtfsMVMQyc/yuwCYAlreHsGeQi6XaIWc7PEEpL/l59Az7iIjKlTREZ5VcUC5inblgj1pvOPsYIdqtoVnYgA5k+B558WoYl1bZXya0w+sIf7P2qPMB+vJqq9LYRCcP5rg+2LaUdLSFqlo0yEL4ktFDX1n6vG4NXoyZTQYc5/s9MeaUWzISjHnP8gA2k20srqlmpDxv2XBq0FtWwEIcAUO3iu28xDmyvynz7CC4p5/7n603Yn5v+DR8Tn/3gIpu//M0Ed2IaC+DxiRHDpoHbh43rV+y+OW/xZuDJFJ4A2gh/3n2Ih/2+Bv//PxhfjgdscfiyFSwAAAABJRU5ErkJggg==	1";
+			//launch captcha request
+			showDialog(DIALOG_CAPTCHA);
 			break;
 
 		}
@@ -215,6 +239,10 @@ public class ActSendSms
     		retDialog = createPhonesDialog();
     		break;
     		
+    	case DIALOG_CAPTCHA:
+    		retDialog = createCaptchaDialog(mCaptchaStorage);
+    		break;
+    		
 		default:
 			retDialog = super.onCreateDialog(id);
     	}
@@ -222,14 +250,12 @@ public class ActSendSms
     	return retDialog;
     }
     
+    
     @Override
     protected void onPause() {
     	super.onPause();
     	//save current fields value to prefs
-    	AppPreferencesDao.instance().setLastUsedProviderId(
-				null == mSelectedProvider ? "" : mSelectedProvider.getId());
-    	AppPreferencesDao.instance().setLastUsedDestination(
-    			TextUtils.isEmpty(mSelectedServiceId) ? "" : mSelectedServiceId);
+    	//provider and subservice was already saved in change event of the spinner
     	AppPreferencesDao.instance().setLastUsedDestination(
     			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
     	AppPreferencesDao.instance().setLastUsedMessage(
@@ -338,7 +364,12 @@ public class ActSendSms
 			mSpiSubservices.setVisibility(View.GONE);
 			updateMessageLength();
 		}
+		
+		//and save new selected provider
+		AppPreferencesDao.instance().setLastUsedProviderId(provider.getId());
+		AppPreferencesDao.instance().save();
 	}
+	
 	
 	private void changeService(SmsService service) {
 		String newServiceId = null != service ? service.getId() : null;
@@ -347,6 +378,10 @@ public class ActSendSms
 		mSelectedProvider.setSelectedSubservice(newServiceId);
 		mSelectedServiceId = newServiceId;
 		updateMessageLength();
+
+		//and save new selected provider
+		AppPreferencesDao.instance().setLastUsedSubserviceId(newServiceId);
+		AppPreferencesDao.instance().save();
 	}
 
 	
@@ -366,6 +401,7 @@ public class ActSendSms
 			mLblMessageLength.setTextColor(Color.GRAY);
 	}
 	
+	
 	/**
 	 * Assign an phone number to destination view
 	 * @param contactUri 
@@ -374,16 +410,16 @@ public class ActSendSms
 	{
 		try{
 			//get phone numbers for selected contact
-			phonesToShowInDialog = ContactDao.instance().getContactNumbers(this, contactUri);
+			mPhonesToShowInDialog = ContactDao.instance().getContactNumbers(this, contactUri);
 		} catch (Exception e) {
-			phonesToShowInDialog = null;
+			mPhonesToShowInDialog = null;
 			ActivityHelper.reportError(this, String.format(getText(R.string.common_msg_genericError).toString(), e.getMessage()));
 		}
 		
-		if (null == phonesToShowInDialog)
+		if (null == mPhonesToShowInDialog)
 			return;
 		
-		switch (phonesToShowInDialog.size()){
+		switch (mPhonesToShowInDialog.size()){
 
 			//no phones for the contact selected
 			case 0:
@@ -392,7 +428,7 @@ public class ActSendSms
 
 			//contact has only one phone number
 			case 1:
-				mTxtDestination.setText(phonesToShowInDialog.get(0).getNumber());
+				mTxtDestination.setText(mPhonesToShowInDialog.get(0).getNumber());
 				break;
 		
 			//contact has more than one phone number
@@ -412,9 +448,9 @@ public class ActSendSms
 		//create the phone numbers selections
 		//final CharSequence[] items = {"Red", "Green", "Blue"};
 		int i=0;
-		CharSequence[] items = new CharSequence[phonesToShowInDialog.size()];
+		CharSequence[] items = new CharSequence[mPhonesToShowInDialog.size()];
 		
-		for (ContactPhone phone : phonesToShowInDialog) {
+		for (ContactPhone phone : mPhonesToShowInDialog) {
 			items[i++] = getTranslationForPhoneType(phone.getType()) + ": " + phone.getNumber();
 		}
 
@@ -422,7 +458,7 @@ public class ActSendSms
 		builder.setTitle(getText(R.string.actsendsms_dlgPickNumber));
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int item) {
-		        mTxtDestination.setText(phonesToShowInDialog.get(item).getNumber());
+		        mTxtDestination.setText(mPhonesToShowInDialog.get(item).getNumber());
 		        removeDialog(DIALOG_PHONES);
 		    }
 		});
@@ -431,6 +467,60 @@ public class ActSendSms
 		return alert;
 	}
 
+
+	/**
+	 * Create dialog for captcha code
+	 * 
+	 * @return
+	 */
+	private Dialog createCaptchaDialog(final String providerReply)
+	{
+		ResultOperation res = mSelectedProvider.getCaptchaContentFromProviderReply(providerReply);
+		if (res.HasErrors()) {
+			//show errors
+			ActivityHelper.showInfo(this, res.getResultAsString());
+			//and returns with no dialog created
+			return null;
+		}
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog alertDialog;
+
+		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(
+				R.layout.dlgcaptcha, (ViewGroup) findViewById(R.id.dlgcaptcha_layoutroot));
+		
+		//load the image
+		ImageView mImgCaptcha = (ImageView) layout.findViewById(R.id.dlgcaptcha_imgCaptcha);
+		byte[] imageData = res.getResultAsByteArray();
+		BitmapFactory.Options options = new BitmapFactory.Options();
+        //options.inSampleSize = 1;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
+		mImgCaptcha.setImageBitmap(bitmap);
+		
+		//
+		final EditText mTxtCode = (EditText) layout.findViewById(R.id.dlgcaptcha_txtCode);
+
+        ((Button) layout.findViewById(R.id.dlgcaptcha_btnOk)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				removeDialog(DIALOG_CAPTCHA);
+				String code = mTxtCode.getText().toString();
+				sendCaptcha(providerReply, code);
+			}
+		});
+        ((Button) layout.findViewById(R.id.dlgcaptcha_btnCancel)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				removeDialog(DIALOG_CAPTCHA);
+			}
+		});
+
+		builder = new AlertDialog.Builder(this);
+		builder.setView(layout);
+		alertDialog = builder.create();
+		alertDialog.setTitle(R.string.dlgcaptcha_title);
+		return alertDialog;
+	}
+	
 
 	private String getTranslationForPhoneType(String type) {
 		//TODO
@@ -558,11 +648,19 @@ public class ActSendSms
 		
 		//captcha required
 		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
+			//save captcha data
+			mCaptchaStorage = result.getResultAsString();
 			//launch captcha request
-			//TODO
-			ActivityHelper.showInfo(ActSendSms.this, "CAPTCHA REQUEST" + "\n" + result.getResultAsString());
+			showDialog(DIALOG_CAPTCHA);
 			return;
 		}
+	}
+	
+	
+	private void sendCaptcha(String providerReply, String captchaCode)
+	{
+		//TODO
+		ActivityHelper.showInfo(this, captchaCode);
 	}
 
 
@@ -616,9 +714,5 @@ public class ActSendSms
 			sendMessageComplete(result);
 		}
 	}
-	
-	/**
-	 * 
-	 */
 	
 }

@@ -2,8 +2,10 @@
 <resources>
     <!-- Common -->
     <string name="common_appname">SmsForFree</string>
+    <string name="common_btnOk">Ok</string>
     <string name="common_btnYes">Yes</string>
     <string name="common_btnNo">No</string>
+    <string name="common_btnCancel">Cancel</string>
     <string name="common_mnuCancel">Cancel</string>
     <string name="common_msg_sendingMessage">Sending message...</string>
     <string name="common_msg_genericError">Generic error: %s</string>
@@ -105,6 +107,13 @@
 
     <!-- ActCompactMessage -->
     <string name="actcompactmessage_title">SmsForFree - Compact message</string>
+
+
+
+
+    <!-- DlgCaptch -->
+    <string name="dlgcaptcha_title">Captcha request</string>
+    <string name="dlgcaptcha_txtCodeHint">Insert captcha code</string>
 
 
 </resources>
