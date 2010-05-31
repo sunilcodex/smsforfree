@@ -6,10 +6,9 @@
     <string name="aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
     <string name="aimon_commandCheckCredentials">Check credentials</string>
     <string name="aimon_commandCheckCredits">Check credits</string>
-    <string name="aimon_msg_invalidCredentials">Sorry, invalid credentials :(</string>
-    <string name="aimon_msg_validCredentials">Valid credentials</string>
-    <string name="aimon_msg_serverError">Internal server error</string>
+    <string name="aimon_msg_invalidCredentials">Invalid Aimon credentials :(</string>
+    <string name="aimon_msg_validCredentials">Valid Aimon credentials</string>
+    <string name="aimon_msg_serverError">Aimon internal server error</string>
     <string name="aimon_msg_remainingCredits">Remaining credits: %s</string>
-    <string name="aimon_msg_noReplyFromServer">No reply from Aimon server</string>
     <string name="aimon_msg_messageQueued">Message sent.\n %s</string>
 </resources>

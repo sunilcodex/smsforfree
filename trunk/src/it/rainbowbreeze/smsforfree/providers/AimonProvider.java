@@ -37,22 +37,21 @@ public class AimonProvider
 		setParameterDesc(PARAM_INDEX_ID_API, context.getString(R.string.aimon_idapi));
 		
 		//initializes the command list
-		mProviderSettingsMenuCommand = new ArrayList<SmsProviderMenuCommand>();
+		mProviderSettingsActivityCommands = new ArrayList<SmsProviderMenuCommand>();
 		SmsProviderMenuCommand command;
 		command = new SmsProviderMenuCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000);
-		mProviderSettingsMenuCommand.add(command);
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
+		mProviderSettingsActivityCommands.add(command);
 		command = new SmsProviderMenuCommand(
 				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 1001); 
-		mProviderSettingsMenuCommand.add(command);
+		mProviderSettingsActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[6];
+		mMessages = new String[5];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
 		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
 		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.aimon_msg_remainingCredits);
-		mMessages[MSG_INDEX_NO_REPLY] = context.getString(R.string.aimon_msg_noReplyFromServer);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.aimon_msg_messageQueued);
 	}
 	
@@ -68,8 +67,7 @@ public class AimonProvider
 	private final static int MSG_INDEX_VALID_CREDENTIALS = 1;
 	private final static int MSG_INDEX_SERVER_ERROR = 2;
 	private final static int MSG_INDEX_REMAINING_CREDITS = 3;
-	private final static int MSG_INDEX_NO_REPLY = 4;
-	private final static int MSG_INDEX_MESSAGE_SENT = 5;
+	private final static int MSG_INDEX_MESSAGE_SENT = 4;
 	
 	private final static int COMMAND_CHECKCREDENTIALS = 1000;
 	private final static int COMMAND_CHECKCREDITS = 1001;
@@ -101,20 +99,17 @@ public class AimonProvider
 	{ return PARAM_NUMBER; }
 
 	@Override
-	public int getMaxMessageLenght() {
-		return 160;
-	}
+	public int getMaxMessageLenght()
+	{ return 160; }
     
 	@Override
-	public boolean hasProviderSettingsActivityCommands() {
-		return true;
-	}
+	public boolean hasProviderSettingsActivityCommands()
+	{ return true; }
 
-	private List<SmsProviderMenuCommand> mProviderSettingsMenuCommand;
+	private List<SmsProviderMenuCommand> mProviderSettingsActivityCommands;
 	@Override
-	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands() {
-		return mProviderSettingsMenuCommand;
-	}
+	public List<SmsProviderMenuCommand> getProviderSettingsActivityCommands()
+	{ return mProviderSettingsActivityCommands; }
 	
 
 	
@@ -388,18 +383,19 @@ public class AimonProvider
 		String res = "";
 		String reply = resultToAnalyze.getResultAsString();
 
-		//no reply from server
-		if (TextUtils.isEmpty(reply)) {
-			res = mMessages[MSG_INDEX_NO_REPLY];
+		//no reply from server is already handled in doRequest method
 				
 		//access denied
-		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)) {
+		if (reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)) {
 			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 
 		//server error
 		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_INTERNAL_SERVER_ERROR)) {
 			res = mMessages[MSG_INDEX_SERVER_ERROR];
 		}
+		
+		//TODO
+		//add other server errors
 		
     	//errors are internal to aimon, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
