@@ -11,6 +11,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsProviderMenuCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -78,6 +79,7 @@ public class ActSettingsSmsService
 		boolean canContinue = super.onCreateOptionsMenu(menu);
 		
 		if (!canContinue) return canContinue;
+		//TODO move to service level
 		if (mIsEditingAProvider && mProvider.hasProviderSettingsActivityCommands()) {
 			for (SmsProviderMenuCommand command : mProvider.getProviderSettingsActivityCommands()) {
 				MenuItem item = menu.add(0,
@@ -110,23 +112,19 @@ public class ActSettingsSmsService
     		}
 		}
 
-		//calls the method passing it all text values
-		ResultOperation res = mProvider.executeCommand(item.getItemId(), bundle);
-		
-		//show command results
-		if (res.HasErrors()) {
-			ActivityHelper.reportError(ActSettingsSmsService.this, String.format(
-					//TODO
-					//change standard error message
-					getString(R.string.common_msg_genericError), res.getException().getMessage()));
-		} else {
-			//shows the output of the command
-			ActivityHelper.showInfo(ActSettingsSmsService.this, res.getResultAsString());
-		}
+		//preparing the background task for sending message
+		ExecuteServiceCommandTask task = new ExecuteServiceCommandTask(
+				this,
+				getString(R.string.common_msg_executingCommand),
+				mProvider,
+				item.getItemId(),
+				bundle);
+		//and execute the command
+		task.execute();
+		//at the end of the execution, the executeCommandComplete() method will be called
 		
 		return true;
 	}
-
 
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
@@ -348,6 +346,64 @@ public class ActSettingsSmsService
 			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter09);
 			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter09);
 			break;
+		}
+	}
+
+	/**
+	 * Called by AsyncTask when the command execution completed
+	 * @param res
+	 */
+	private void executeCommandComplete(ResultOperation res) {
+		//show command results
+		if (res.HasErrors()) {
+			ActivityHelper.reportError(this, String.format(
+					//TODO
+					//change standard error message
+					getString(R.string.common_msg_genericError), res.getException().getMessage()));
+		} else {
+			//shows the output of the command
+			ActivityHelper.showInfo(this, res.getResultAsString());
+		}
+	}
+
+
+	
+	/**
+	 * Execute a generic command of the service
+	 */
+	private class ExecuteServiceCommandTask
+		extends ProgressDialogAsyncTask
+	{
+		//---------- Ctors
+		public ExecuteServiceCommandTask(Context context, String progressTitle,
+				SmsProvider provider, int commandToExecute, Bundle extraData)
+		{
+			super(context, progressTitle);
+			mProvider = provider;
+			mCommandToExecute = commandToExecute;
+			mExtraData = extraData;
+		}
+		
+		//---------- Private fields
+		private SmsProvider mProvider;
+		private int mCommandToExecute;
+		Bundle mExtraData;
+		
+
+
+
+		//---------- Private methods
+		protected ResultOperation doInBackground(String... params)
+		{
+			return mProvider.executeCommand(mCommandToExecute, mExtraData);
+		}
+		
+		@Override
+		protected void onPostExecute(ResultOperation result) {
+			//close progress dialog
+			super.onPostExecute(result);
+			//and pass the control to caller activity with the result
+			executeCommandComplete(result);
 		}
 	}
 }
