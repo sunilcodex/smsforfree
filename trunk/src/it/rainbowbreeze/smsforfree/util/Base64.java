@@ -1220,8 +1220,8 @@ public class Base64
      * @throws java.io.IOException If there is a problem
      * @since 1.4
      */
-    public static byte[] decode( String s ) throws java.io.IOException {
-        return decode( s, NO_OPTIONS );
+    public static byte[] decode(String s) throws java.io.IOException {
+        return decode(s, NO_OPTIONS );
     }
 
     
@@ -1237,7 +1237,7 @@ public class Base64
      * @throws NullPointerException if <tt>s</tt> is null
      * @since 1.4
      */
-    public static byte[] decode( String s, int options ) throws java.io.IOException {
+    public static byte[] decode(String s, int options) throws java.io.IOException {
         
         if( s == null ){
             throw new NullPointerException( "Input string was null." );

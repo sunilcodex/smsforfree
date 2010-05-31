@@ -9,6 +9,8 @@ IMPLEMENTAZIONI
 -nella sostituzione dei template di jacksms, verificare se ci sono da eliminare anche dei servizi oppure no
 -quando verifico le credeziali di aimon, cercare un modo piu' furbo per farlo, dato che ora a  causa del %s non im riconosce la stringa del credito e quindi mi ritorna il credito
 -gestire meglio i messaggi d'errore del dao
+-Application al posto di GlobalBag e LogicManager.inizializzazioni
+-Vedere se si riescono a persistere le variabili delle form nell'Application oppure se c'e' un modo per tirarle su ad ogni OnCreate quando savedInstance != null
 
 
 Lista servizi da consultare 

@@ -47,6 +47,16 @@ public class ResultOperation
 		setResultAsString(value);
 	}
 
+	public ResultOperation(byte[] value)
+	{ this(RETURNCODE_OK, value); }
+
+	public ResultOperation(int returnCode, byte[] value)
+	{
+		this();
+		setReturnCode(returnCode);
+		setResultAsByteArray(value);
+	}
+
 	
 	
 	
@@ -73,6 +83,10 @@ public class ResultOperation
 	{ return (Boolean) mResult; }
 	public void setResultAsBoolean(Boolean newValue)
 	{ mResult = newValue; }
+	public byte[] getResultAsByteArray()
+	{ return (byte[]) mResult; }
+	public void setResultAsByteArray(byte[] newValue)
+	{ mResult = newValue; }
 	
 	int mReturnCode;
 	public int getReturnCode()
@@ -96,7 +110,7 @@ public class ResultOperation
 	 * Return if the object contains error
 	 */
 	public boolean HasErrors()
-	{ return null != mException; }
+	{ return null != mException || mReturnCode == RETURNCODE_ERROR; }
 	
 	
 	
