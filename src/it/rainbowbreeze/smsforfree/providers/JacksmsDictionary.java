@@ -31,17 +31,18 @@ public class JacksmsDictionary
 
 	
 	//---------- Private fields
-//	private static final String FORMAT_CSV = "csv";
+	private static final String FORMAT_CSV = "csv";
 	private static final String FORMAT_XML = "xml";
-//	private static final String FORMAT_JSON = "jsn";
+	private static final String FORMAT_JSON = "jsn";
 
 	private static final String URL_BASE = "http://q.jacksms.it/";
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "sendMessage";
 	private static final String ACTION_SEND_CAPTCHA = "continueSend";
 	
-	private static final String PARAM_OUTPUTFORMAT = "outputFormat=" + FORMAT_XML;
-	private static final String PARAM_CLIENTVERSION = "clientVersion=android";
+	private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
+	private static final String PARAM_CLIENTVERSION = "clientVersion=";
+	private static final String PARAM_CLIENTVERSION_VALUE = "android";
 	private static final String SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
@@ -60,16 +61,16 @@ public class JacksmsDictionary
 	//---------- Public methods
 	public String getUrlForSendingMessage(String username, String password)
 	{
-		return getUrlForCommand(username, password, ACTION_SEND_MESSAGE, false);
+		return getUrlForCommand(username, password, ACTION_SEND_MESSAGE);
 	}
 	
 	public String getUrlForSendingCaptcha(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA, false);
+		return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA);
 	}
 	
 	public String getUrlForDownloadTemplates(String username, String password)
 	{
-		return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES, true);
+		return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES);
 	}
 
 	
@@ -91,7 +92,7 @@ public class JacksmsDictionary
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
 		//first header
-		key = "J_R";
+		key = "J-R";
 		value = String.valueOf(service.getTemplateId()) + SEPARATOR + 
 				destination + SEPARATOR +
 				replaceServiceParameter(service.getParameterValue(0)) + SEPARATOR +
@@ -102,7 +103,7 @@ public class JacksmsDictionary
 		
 		
 		//second header
-		key = "J_M";
+		key = "J-M";
 		value = message;
 		headers.put(key, value);
 		
@@ -123,7 +124,7 @@ public class JacksmsDictionary
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
 		//first header
-		key = "J_R";
+		key = "J-R";
 		value = String.valueOf(sessionId) + SEPARATOR + 
 				captchaCode + SEPARATOR;
 		headers.put(key, value);
@@ -236,7 +237,7 @@ public class JacksmsDictionary
 
 
 	//---------- Private methods
-	private String getUrlForCommand(String username, String password, String command, boolean appendOutput)
+	private String getUrlForCommand(String username, String password, String command)
 	{
 		String codedUser;
 		String codedPwd;
@@ -254,13 +255,11 @@ public class JacksmsDictionary
 			.append("/")
 			.append(codedPwd)
 			.append("/")
-			.append(command);
-		if (appendOutput) {
-			sb.append("?")
-				.append(PARAM_OUTPUTFORMAT)
-				.append("&")
-				.append(PARAM_CLIENTVERSION);
-		}
+			.append(command)
+			.append("?")
+			.append(FORMAT_CSV)
+			.append(",")
+			.append(PARAM_CLIENTVERSION_VALUE);
 		return sb.toString();
 	}
 	

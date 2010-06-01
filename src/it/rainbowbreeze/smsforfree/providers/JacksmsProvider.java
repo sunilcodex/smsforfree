@@ -369,7 +369,7 @@ public class JacksmsProvider
     	WebserviceClient client = new WebserviceClient();
     	
     	try {
-    		reply = client.requestPost(url, headers);
+    		reply = client.requestPost(url, headers, null);
 		} catch (ClientProtocolException e) {
 			return new ResultOperation(e);
 		} catch (IOException e) {

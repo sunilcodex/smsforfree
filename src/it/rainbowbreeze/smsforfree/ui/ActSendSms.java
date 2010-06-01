@@ -612,7 +612,7 @@ public class ActSendSms
 		//preparing the background task for sending message
 		SendMessageTask task = new SendMessageTask(
 				this,
-				getString(R.string.common_msg_sendingMessage),
+				getString(R.string.actsendsms_msg_sendingMessage),
 				mSelectedProvider, mSelectedServiceId);
 		//and send the message
 		task.execute(mTxtDestination.getText().toString(), mTxtMessage.getText().toString());
@@ -657,13 +657,38 @@ public class ActSendSms
 	}
 	
 	
+	/**
+	 * Send the captcha code to the server
+	 * @param providerReply
+	 * @param captchaCode
+	 */
 	private void sendCaptcha(String providerReply, String captchaCode)
 	{
-		//TODO
-		ActivityHelper.showInfo(this, captchaCode);
+		if (TextUtils.isEmpty(captchaCode)) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
+			return;
+		}
+		
+		//preparing the background task for sending captcha code
+		SendCaptchaTask task = new SendCaptchaTask(
+				this,
+				getString(R.string.actsendsms_msg_sendingCaptcha),
+				mSelectedProvider);
+		//and send the captcha
+		task.execute(providerReply, captchaCode);
+		//at the end of the execution, the sendCaptchaComplete() method will be called
 	}
 
-
+	
+	/**
+	 * Called by AsyncTask when the captcha sending completed
+	 * @param res
+	 */
+	private void sendCaptchaComplete(ResultOperation res) {
+		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
+	}
+	
+	
 	/**
 	 * Reset destination and message body
 	 */
@@ -712,6 +737,46 @@ public class ActSendSms
 			super.onPostExecute(result);
 			//and pass the control to caller activity with the result
 			sendMessageComplete(result);
+		}
+	}
+
+	/**
+	 * Send a captcha
+	 */
+	private class SendCaptchaTask
+		extends ProgressDialogAsyncTask
+	{
+	
+		//---------- Ctors
+		public SendCaptchaTask(Context context, String progressTitle, SmsProvider provider)
+		{
+			super(context, progressTitle);
+			mProvider = provider;
+		}
+		
+		//---------- Private fields
+		private SmsProvider mProvider;
+		
+
+
+
+		//---------- Private methods
+		protected ResultOperation doInBackground(String... params)
+		{
+			//params.length must be equals to 2
+				
+			String providerReply = params[0];
+			String captchaCode = params[1];
+			
+			return mProvider.sendCaptcha(providerReply, captchaCode);
+		}
+		
+		@Override
+		protected void onPostExecute(ResultOperation result) {
+			//close progress dialog
+			super.onPostExecute(result);
+			//and pass the control to caller activity with the result
+			sendCaptchaComplete(result);
 		}
 	}
 	
