@@ -5,11 +5,11 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
-import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;

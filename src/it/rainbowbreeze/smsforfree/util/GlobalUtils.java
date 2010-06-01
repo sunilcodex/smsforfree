@@ -1,4 +1,4 @@
-package it.rainbowbreeze.smsforfree.common;
+package it.rainbowbreeze.smsforfree.util;
 
 import java.util.List;
 

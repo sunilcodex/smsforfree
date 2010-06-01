@@ -60,16 +60,16 @@ public class JacksmsDictionary
 	//---------- Public methods
 	public String getUrlForSendingMessage(String username, String password)
 	{
-		return getUrlForCommand(username, password, ACTION_SEND_MESSAGE);
+		return getUrlForCommand(username, password, ACTION_SEND_MESSAGE, false);
 	}
 	
 	public String getUrlForSendingCaptcha(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA);
+		return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA, false);
 	}
 	
 	public String getUrlForDownloadTemplates(String username, String password)
 	{
-		return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES);
+		return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES, true);
 	}
 
 	
@@ -236,7 +236,7 @@ public class JacksmsDictionary
 
 
 	//---------- Private methods
-	private String getUrlForCommand(String username, String password, String command)
+	private String getUrlForCommand(String username, String password, String command, boolean appendOutput)
 	{
 		String codedUser;
 		String codedPwd;
@@ -254,11 +254,13 @@ public class JacksmsDictionary
 			.append("/")
 			.append(codedPwd)
 			.append("/")
-			.append(command)
-			.append("?")
-			.append(PARAM_OUTPUTFORMAT)
-			.append("&")
-			.append(PARAM_CLIENTVERSION);
+			.append(command);
+		if (appendOutput) {
+			sb.append("?")
+				.append(PARAM_OUTPUTFORMAT)
+				.append("&")
+				.append(PARAM_CLIENTVERSION);
+		}
 		return sb.toString();
 	}
 	
