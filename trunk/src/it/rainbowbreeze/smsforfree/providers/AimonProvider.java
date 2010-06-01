@@ -355,13 +355,13 @@ public class AimonProvider
 	 * @param data
 	 * @return
 	 */
-    private ResultOperation doRequest(String url, HashMap<String, String> data)
+    private ResultOperation doRequest(String url, HashMap<String, String> parameters)
     {
     	String reply = "";
     	WebserviceClient client = new WebserviceClient();
     	
     	try {
-    		reply = client.requestPost(url, data);
+    		reply = client.requestPost(url, parameters, null);
 		} catch (ClientProtocolException e) {
 			return new ResultOperation(e);
 		} catch (IOException e) {

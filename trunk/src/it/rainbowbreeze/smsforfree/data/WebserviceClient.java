@@ -80,26 +80,15 @@ public class WebserviceClient
 	/**
 	 * Send to the webservice a POST request
 	 * 
-	 * @param url
-	 *            the Url of the webservice
-	 * @param postValues
-	 *            the data to pass in post
+	 * @param url the Url of the webservice
+	 * @param parameters the data to pass in post via parameters
+	 * @param headers the data to pass in post via headers
 	 *
 	 * @return the string returned from the webservice
 	 * 
 	 * @throws IOException 
 	 * @throws ClientProtocolException 
 	 */
-	public String requestPost(
-			String url,
-			HashMap<String, String> parameters
-		)
-		throws ClientProtocolException, IOException
-	{
-		return requestPost(url, null, parameters);
-	}
-	
-	
 	public String requestPost(
 			String url,
 			HashMap<String, String> headers,
