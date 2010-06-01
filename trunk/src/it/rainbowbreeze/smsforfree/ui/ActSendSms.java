@@ -4,7 +4,6 @@ import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalBag;
-import it.rainbowbreeze.smsforfree.common.GlobalUtils;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
@@ -12,6 +11,7 @@ import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
+import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
