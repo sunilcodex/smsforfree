@@ -6,11 +6,13 @@ import it.rainbowbreeze.smsforfree.util.Base64;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Chronometer;
 
 /**
  * 
@@ -201,7 +203,7 @@ public class JacksmsDictionary
 		List<SmsService> templates = new ArrayList<SmsService>();
 		
 		//examine the reply, line by line
-		String[] lines = providerReply.split("\n");
+		String[] lines = providerReply.split(String.valueOf((char) 10));
 		
 		for(String templateLine : lines) {
 			String[] pieces = templateLine.split(SEPARATOR);
@@ -217,20 +219,21 @@ public class JacksmsDictionary
 					//find the total number of parameter
 					if (TextUtils.isEmpty(parametersDesc[i])) numberOfParameters--;
 				}
-				String description = pieces[7];
-				
 				//create new service
 				SmsService newService = new SmsConfigurableService(serviceId, serviceName, maxChar, numberOfParameters);
-				newService.setDescription(description);
+				templates.add(newService);
 				for (int i = 0; i < numberOfParameters; i++) {
 					newService.setParameterDesc(i, parametersDesc[i]);
 				}
+				//sometimes the service description could be unavailable
+				if (pieces.length > 7)
+					newService.setDescription(pieces[7]);
 			} catch (Exception e) {
-				//do nothing simply log the error and skip to next service
-				Log.e("JackSMSDictionary", e.getMessage());
+				//do nothing, simply skips to next service
 			}
 		}
 		
+		Collections.sort(templates);
 		return templates;
 	}
 

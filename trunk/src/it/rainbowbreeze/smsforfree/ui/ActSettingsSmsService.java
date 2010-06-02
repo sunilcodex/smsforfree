@@ -40,12 +40,11 @@ public class ActSettingsSmsService
 	private Button mBtnConfigureSubservices;
 	private TextView mLblServiceName;
 	private TextView mTxtServiceName;
-	private TextView mLblServiceInfo;
-	private TextView mTxtServiceInfo;
+	private TextView mLblServiceDesc;
 	
 	//fuck java only passing parameters by value :(
-	TextView mLblDesc;
-	EditText mTxtValue;
+	private TextView mLblDesc;
+	private EditText mTxtValue;
 
 	private final static int MAXFIELDS = 10;
 	
@@ -68,8 +67,7 @@ public class ActSettingsSmsService
         mBtnConfigureSubservices.setOnClickListener(mBtnConfigureSubservicesClickListener);
         mLblServiceName = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceName);
         mTxtServiceName = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceName);
-        mLblServiceInfo = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceInfo);
-        mTxtServiceInfo = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceInfo);
+        mLblServiceDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceDesc);
         
 		showAndHideViews();
 	}
@@ -264,8 +262,6 @@ public class ActSettingsSmsService
 		if (mIsEditingAProvider) {
 			mLblServiceName.setVisibility(View.GONE);
 			mTxtServiceName.setVisibility(View.GONE);
-			mLblServiceInfo.setVisibility(View.GONE);
-			mTxtServiceInfo.setVisibility(View.GONE);
 			if (mProvider.hasSubServices()) {
 				mBtnConfigureSubservices.setVisibility(View.VISIBLE);
 			} else {
@@ -274,8 +270,6 @@ public class ActSettingsSmsService
 		} else {
 			mLblServiceName.setVisibility(View.VISIBLE);
 			mTxtServiceName.setVisibility(View.VISIBLE);
-			mLblServiceInfo.setVisibility(View.GONE);
-			mTxtServiceInfo.setVisibility(View.GONE);
 			mBtnConfigureSubservices.setVisibility(View.GONE);
 		}
 		
@@ -298,6 +292,21 @@ public class ActSettingsSmsService
         		}
         	}
         }
+		
+		//Service description status
+		String description;
+		if (mIsEditingAProvider) {
+			description = mProvider.getDescription();
+		} else {
+			description = mTemplateService.getDescription();
+		}
+		if (TextUtils.isEmpty(description)) {
+			mLblServiceDesc.setVisibility(View.GONE);
+		} else {
+			mLblServiceDesc.setVisibility(View.VISIBLE);
+			mLblServiceDesc.setText(description);
+			
+		}
 		
 	}
 	

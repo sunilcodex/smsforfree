@@ -7,7 +7,8 @@
     <string name="jacksms_msg_invalidCredentials">Invalid JackSMS credentials :(</string>
     <string name="jacksms_msg_serverError">JackSMS internal server error:\n %s</string>
     <string name="jacksms_msg_messageSent">Message sent.\n %s</string>
-    <string name="jacksms_msg_noCaptchaSessionId">Error: cannot find captcha session id... Maybe a JackSMS server error?.\n\nContact the author of this software if the problem persists.</string>
-    <string name="jacksms_msg_noTemplates">Strange, no templates... Maybe a JackSMS server error?.\n\nContact the author of this software if the problem persists.</string>
-    <string name="jacksms_msg_noCaptcha">Strange, no captcha... Maybe a JackSMS server error?.\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_noCaptchaSessionId">Error: cannot find captcha session id... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_noTemplates">Strange, no templates... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_noCaptcha">Strange, no captcha... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_TemplatesListUpdated">Templates list updated</string>
 </resources>
