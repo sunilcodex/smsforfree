@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.data;
 
+import java.util.Calendar;
+
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
@@ -14,7 +16,8 @@ public class AppPreferencesDao
     private static final String PROP_INSERT_MESSAGE_INTO_PIM = "insertmessageintopim";
     private static final String PROP_DEFAULT_INTERNATIONAL_PREFIX = "defaultInternationalPrefix";
     private static final String PROP_SIGNATURE = "signature";
-
+    private static final String PROP_INSTALLATION_TIME = "installationTime";
+    
     private static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     private static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
     private static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
@@ -72,6 +75,22 @@ public class AppPreferencesDao
 	}
     public void setAppVersion(String newValue)
     { mEditor.putString(PROP_APPVERSION, newValue); }
+    
+    public long getInstallationTime()
+    {
+    	long installationTime = mSettings.getLong(PROP_INSTALLATION_TIME, 0);
+    	if (0 == installationTime) {
+    		//first run, set as installation time current milliseconds
+    	    final Calendar c = Calendar.getInstance();
+    	    installationTime = c.getTimeInMillis();
+    	    //store it
+    	    setInstallationTime(installationTime);
+    	    save();
+    	}
+    	return installationTime;
+    }
+    public void setInstallationTime(long newValue)
+    { mEditor.putLong(PROP_INSTALLATION_TIME, newValue); }
     
     public String getLastUsedProviderId()
     { return mSettings.getString(PROP_LASTUSED_PROVIDERID, ""); }

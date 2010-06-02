@@ -5,7 +5,7 @@ public class GlobalDef {
 	public static final String appPreferencesKeys = "SmsForFreePrefs"; 
 	
 	/** Application version, displayed to the user */
-	public static final String appVersionDescription = "1.00";
+	public static final String appVersionDescription = "0.01";
 
 	/** Application version, for internal use */
 	public static final String appVersion = "01.00.00";
