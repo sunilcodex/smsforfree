@@ -2,7 +2,6 @@ package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +16,6 @@ import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
-import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -47,13 +45,14 @@ public class JacksmsProvider
 		mSubservicesListActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[6];
+		mMessages = new String[7];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
 		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
 		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplates);
 		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
+		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_TemplatesListUpdated);
 	}
 	
 	
@@ -73,6 +72,7 @@ public class JacksmsProvider
 	private final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 3;
 	private final static int MSG_INDEX_NO_TEMPLATES_PARSED = 4;
 	private final static int MSG_INDEX_NO_CAPTCHA_PARSED = 5;
+	private final static int MSG_INDEX_TEMPLATES_UPDATED = 6;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -116,48 +116,49 @@ public class JacksmsProvider
 	
 
 	//---------- Public methods
-	@Override
-	public ResultOperation loadTemplates(Context context)
-	{
-		//TODO
-		mTemplates = new ArrayList<SmsService>();
-		
-		SmsConfigurableService service;
-		service = new SmsConfigurableService("62", "Aimon-Free", 112, 3);
-		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
-		service.setParameterDesc(1, "Password di accesso");
-		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
-		mTemplates.add(service);
-		service = new SmsConfigurableService("61", "Aimon", 612, 3);
-		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
-		service.setParameterDesc(1, "Password di accesso");
-		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
-		mTemplates.add(service);
-		service = new SmsConfigurableService("29", "VoipStunt", 160, 3);
-		service.setParameterDesc(0, "Username di accesso su voipstunt.com");
-		service.setParameterDesc(1, "Password di accesso su voipstunt.com");
-		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-		service.setParameterDesc(2, "Numero verificato che verra' visualizzato come mittente");
-		mTemplates.add(service);
-		service = new SmsConfigurableService("1", "Vodafone-SMS", 360, 3);
-		service.setParameterDesc(0, "Username di accesso a www.190.it");
-		service.setParameterDesc(1, "Password di accesso a www.190.it");
-		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-		service.setParameterDesc(2, "Inserisci il numero di telefono della sim con cui vuoi inviare tramite questo account.");
-		mTemplates.add(service);
-		service = new SmsConfigurableService("33", "Enel", 110, 2);
-		service.setParameterDesc(0, "Username");
-		service.setParameterDesc(1, "Password");
-		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-		mTemplates.add(service);
-		
-		Collections.sort(mTemplates);
-
-		return new ResultOperation("");
- 
-	}
+//	@Override
+//	public ResultOperation loadTemplates(Context context)
+//	{
+//		ResultOperation res = mDao.loadProviderTemplates(context, filename, provider)
+//		//TODO
+//		mTemplates = new ArrayList<SmsService>();
+//		
+//		SmsConfigurableService service;
+//		service = new SmsConfigurableService("62", "Aimon-Free", 112, 3);
+//		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
+//		service.setParameterDesc(1, "Password di accesso");
+//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
+//		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
+//		mTemplates.add(service);
+//		service = new SmsConfigurableService("61", "Aimon", 612, 3);
+//		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
+//		service.setParameterDesc(1, "Password di accesso");
+//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
+//		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
+//		mTemplates.add(service);
+//		service = new SmsConfigurableService("29", "VoipStunt", 160, 3);
+//		service.setParameterDesc(0, "Username di accesso su voipstunt.com");
+//		service.setParameterDesc(1, "Password di accesso su voipstunt.com");
+//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
+//		service.setParameterDesc(2, "Numero verificato che verra' visualizzato come mittente");
+//		mTemplates.add(service);
+//		service = new SmsConfigurableService("1", "Vodafone-SMS", 360, 3);
+//		service.setParameterDesc(0, "Username di accesso a www.190.it");
+//		service.setParameterDesc(1, "Password di accesso a www.190.it");
+//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
+//		service.setParameterDesc(2, "Inserisci il numero di telefono della sim con cui vuoi inviare tramite questo account.");
+//		mTemplates.add(service);
+//		service = new SmsConfigurableService("33", "Enel", 110, 2);
+//		service.setParameterDesc(0, "Username");
+//		service.setParameterDesc(1, "Password");
+//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
+//		mTemplates.add(service);
+//		
+//		Collections.sort(mTemplates);
+//
+//		return new ResultOperation("");
+// 
+//	}
 
 	
 	@Override
@@ -341,7 +342,11 @@ public class JacksmsProvider
     	mTemplates = newTemplates;
     	//save the template list
     	res = saveTemplates(context);
+    	//and checks for errors in saving
+    	if (res.HasErrors()) return res;
     	
+    	//all done, set the result message
+    	res.setResultAsString(mMessages[MSG_INDEX_TEMPLATES_UPDATED]);
     	return res;
     }
     

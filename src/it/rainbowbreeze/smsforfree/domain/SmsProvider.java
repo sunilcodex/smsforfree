@@ -32,7 +32,7 @@ public abstract class SmsProvider
 	
 	
 	//---------- Private fields
-	ProviderDao mDao;
+	protected ProviderDao mDao;
 	
 	
 	

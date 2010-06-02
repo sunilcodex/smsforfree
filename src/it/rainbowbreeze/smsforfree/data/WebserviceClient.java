@@ -268,11 +268,11 @@ public class WebserviceClient
 		StringBuilder sb = new StringBuilder();
 
 		String line = null;
-		while ((line = reader.readLine()) != null) {
-			//TODO
-			//check
-			//sb.append(line + "\n");
+		line = reader.readLine();
+		while (line != null) {
 			sb.append(line);
+			line = reader.readLine();
+			if (line != null) sb.append("\n");
 		}
 		is.close();
 
