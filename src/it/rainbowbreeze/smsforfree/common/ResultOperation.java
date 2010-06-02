@@ -64,6 +64,8 @@ public class ResultOperation
 	public final static int RETURNCODE_OK = 200;
 	public final static int RETURNCODE_ERROR = 400;
 	public final static int RETURNCODE_CAPTCHA_REQUEST = 1001;
+	public final static int RETURNCODE_APP_EXPIRED = 1002;
+	public final static int RETURNCODE_SMS_DAILY_LIMIT_OVERTAKED = 1003;
 
 
 	

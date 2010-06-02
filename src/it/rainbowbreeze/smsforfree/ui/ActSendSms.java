@@ -1,5 +1,6 @@
 package it.rainbowbreeze.smsforfree.ui;
 
+import java.util.Calendar;
 import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
@@ -78,6 +79,7 @@ public class ActSendSms
 
 	private List<ContactPhone> mPhonesToShowInDialog;
 	private String mCaptchaStorage;
+	private boolean mAppValidity;
 
 	
 	
@@ -92,16 +94,27 @@ public class ActSendSms
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.actsendsms);
-        setTitle(R.string.actsendsms_title_full);
-        
 
         //only when the activity is created for the first time
+        ResultOperation res = null;
         if (null == savedInstanceState)
         {
-        	LogicManager.executeBeginTask(this);
+        	res = LogicManager.executeBeginTask(this);
         }
+
+        //checks for app validity
+    	mAppValidity = LogicManager.checkIfAppIsValid();
+    	if (!mAppValidity) {
+    		//application is expired
+            setContentView(R.layout.actexpired);
+            setTitle(R.string.actexpired_title);
+    		ActivityHelper.showInfo(this, R.string.common_msg_appExpired);
+    		return;
+    	}
         
+        setContentView(R.layout.actsendsms);
+        setTitle(R.string.actsendsms_title_full);
+
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
         mTxtDestination = (EditText) findViewById(R.id.actsendsms_txtDestination);
@@ -140,7 +153,8 @@ public class ActSendSms
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
-    
+    	if (!mAppValidity) return true;
+    	
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
     	//menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
@@ -152,7 +166,7 @@ public class ActSendSms
 			.setIcon(android.R.drawable.ic_menu_info_details);
 //		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
 //			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-		menu.add(0, OPTIONMENU_DIALOG, 5, "Test dialog");
+//		menu.add(0, OPTIONMENU_DIALOG, 5, "Test dialog");
 		
 		return true;    	
     }
@@ -189,11 +203,6 @@ public class ActSendSms
 			break;
 			
 		case OPTIONMENU_DIALOG:
-			//TODO remove
-			//save captcha data
-			mCaptchaStorage = "3617	iVBORw0KGgoAAAANSUhEUgAAAFUAAAAWCAIAAAA+W0fPAAABHklEQVRYhe1YXQ/DIAgcy/7/X2YPTRqjcIcU23TdPVZEPg7Eiqq+HowPXhaR7sser3HJRBtfsMVMQyc/yuwCYAlreHsGeQi6XaIWc7PEEpL/l59Az7iIjKlTREZ5VcUC5inblgj1pvOPsYIdqtoVnYgA5k+B558WoYl1bZXya0w+sIf7P2qPMB+vJqq9LYRCcP5rg+2LaUdLSFqlo0yEL4ktFDX1n6vG4NXoyZTQYc5/s9MeaUWzISjHnP8gA2k20srqlmpDxv2XBq0FtWwEIcAUO3iu28xDmyvynz7CC4p5/7n603Yn5v+DR8Tn/3gIpu//M0Ed2IaC+DxiRHDpoHbh43rV+y+OW/xZuDJFJ4A2gh/3n2Ih/2+Bv//PxhfjgdscfiyFSwAAAABJRU5ErkJggg==	1";
-			//launch captcha request
-			showDialog(DIALOG_CAPTCHA);
 			break;
 
 		}

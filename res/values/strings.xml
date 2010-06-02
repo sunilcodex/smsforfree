@@ -11,6 +11,7 @@
     <string name="common_msg_noErrorToReport">No error to report :(</string>
     <string name="common_msg_cannotsavepreferences">Sorry, cannot save data: </string>
     <string name="common_msg_executingCommand">Executing command...</string>
+    <string name="common_msg_appExpired">Sorry, activity expired :(</string>
     
 
 
@@ -103,6 +104,13 @@
 
     <!-- ActAbout -->
     <string name="actabout_title">SmsForFree - About</string>
+
+
+
+
+    <!-- ActExpired -->
+    <string name="actexpired_title">SmsForFree - Expired :(</string>
+    <string name="actexpired_msgExpired">Sorry, the application expired.\n\n\nSearch for a new version of SmsForFree.</string>
 
 
 

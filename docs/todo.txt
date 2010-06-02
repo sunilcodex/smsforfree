@@ -11,6 +11,8 @@ IMPLEMENTAZIONI
 -gestire meglio i messaggi d'errore del dao
 -Application al posto di GlobalBag e LogicManager.inizializzazioni
 -Vedere se si riescono a persistere le variabili delle form nell'Application oppure se c'e' un modo per tirarle su ad ogni OnCreate quando savedInstance != null
+-aggiungere menu x registrarsi ad aimon con il proprio codice
+-aggiungere menu x registrarsi a jacksms
 
 
 Lista servizi da consultare 
