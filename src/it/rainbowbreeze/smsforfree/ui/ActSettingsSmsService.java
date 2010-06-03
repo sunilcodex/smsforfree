@@ -4,7 +4,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -225,7 +225,7 @@ public class ActSettingsSmsService
 		//checks if current editing is for a provider or a subservice
 		if(extras != null) {
 			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(GlobalBag.providerList, providerId);
+			mProvider = GlobalUtils.findProviderInList(SmsForFreeApplication.instance().getProviderList(), providerId);
 			String subserviceId = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
 			if (TextUtils.isEmpty(subserviceId)) {
 				//edit a provider preferences

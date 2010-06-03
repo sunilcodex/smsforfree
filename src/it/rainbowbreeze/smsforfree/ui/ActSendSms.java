@@ -1,10 +1,9 @@
 package it.rainbowbreeze.smsforfree.ui;
 
-import java.util.Calendar;
 import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
@@ -95,13 +94,6 @@ public class ActSendSms
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //only when the activity is created for the first time
-        ResultOperation res = null;
-        if (null == savedInstanceState)
-        {
-        	res = LogicManager.executeBeginTask(this);
-        }
-
         //checks for app validity
     	mAppValidity = LogicManager.checkIfAppIsValid();
     	if (!mAppValidity) {
@@ -137,14 +129,14 @@ public class ActSendSms
         if (null == savedInstanceState) {
         	int position;
         	//provider spinner
-        	position = GlobalUtils.findProviderPositionInList(GlobalBag.providerList, AppPreferencesDao.instance().getLastUsedProviderId());
+        	position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), AppPreferencesDao.instance().getLastUsedProviderId());
         	if (position >= 0) mSpiProviders.setSelection(position);
         	//text and message
         	mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
         	mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
         	//TODO
     		//service spinner
-        	position = GlobalUtils.findProviderPositionInList(GlobalBag.providerList, AppPreferencesDao.instance().getLastUsedProviderId());
+        	position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), AppPreferencesDao.instance().getLastUsedProviderId());
         	if (position >= 0) mSpiProviders.setSelection(position);
         }
     }
@@ -333,7 +325,7 @@ public class ActSendSms
     //---------- Private methods
 	private void bindProvidersSpinner() {
 		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
-				android.R.layout.simple_spinner_item, GlobalBag.providerList);
+				android.R.layout.simple_spinner_item, SmsForFreeApplication.instance().getProviderList());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpiProviders.setAdapter(adapter);
 	}
