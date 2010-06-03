@@ -4,7 +4,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -36,12 +36,12 @@ public class ActProvidersList
 		setContentView(R.layout.acttemplateslist);
 
 		setListAdapter(new ArrayAdapter<SmsProvider>(this, 
-	              android.R.layout.simple_list_item_1, GlobalBag.providerList));
+	              android.R.layout.simple_list_item_1, SmsForFreeApplication.instance().getProviderList()));
 	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		SmsProvider provider = GlobalBag.providerList.get(position);
+		SmsProvider provider = SmsForFreeApplication.instance().getProviderList().get(position);
 		
 		ActivityHelper.openSettingsSmsService(this, provider.getId());
 	}

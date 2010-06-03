@@ -4,7 +4,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -71,9 +71,9 @@ public class ActSettingsMain
 		public boolean onPreferenceClick(Preference preference) {
 			//checks if only on provider is configured
 			
-			if (1 == GlobalBag.providerList.size()) {
+			if (1 == SmsForFreeApplication.instance().getProviderList().size()) {
 				//open directly the setting for the only provider present
-				ActivityHelper.openSettingsSmsService(ActSettingsMain.this, GlobalBag.providerList.get(0).getId());
+				ActivityHelper.openSettingsSmsService(ActSettingsMain.this, SmsForFreeApplication.instance().getProviderList().get(0).getId());
 			} else {
 				//open providers list
 				ActivityHelper.openProvidersList(ActSettingsMain.this);

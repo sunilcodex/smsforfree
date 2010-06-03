@@ -8,9 +8,8 @@ import java.util.Calendar;
 import java.util.Collections;
 
 import android.content.ContextWrapper;
-import android.content.pm.ApplicationInfo;
 
-import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -24,8 +23,6 @@ import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
  *
  */
 public class LogicManager {
-	//---------- Ctors
-
 	//---------- Private fields
 
 	//---------- Public properties
@@ -43,7 +40,7 @@ public class LogicManager {
 		
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
-		GlobalBag.providerList = new ArrayList<SmsProvider>();
+		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
 		
 		//add jacksms
 		JacksmsProvider jackProv = new JacksmsProvider(dao, context);
@@ -51,14 +48,14 @@ public class LogicManager {
 		jackProv.loadParameters(context);
 		jackProv.loadTemplates(context);
 		jackProv.loadSubservices(context);
-		GlobalBag.providerList.add(jackProv);
+		SmsForFreeApplication.instance().getProviderList().add(jackProv);
 	
 //		//add aimon
 //		AimonProvider aimonProv = new AimonProvider(dao, context);
 //		aimonProv.loadParameters(context);
-//		GlobalBag.providerList.add(aimonProv);
+//		SmsForFreeApplication.instance().getProviderList().add(aimonProv);
 		
-		Collections.sort(GlobalBag.providerList);
+		Collections.sort(SmsForFreeApplication.instance().getProviderList());
 
 		return res;
 	}

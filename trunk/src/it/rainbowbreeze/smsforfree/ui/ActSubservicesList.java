@@ -4,7 +4,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalBag;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
@@ -217,7 +217,7 @@ public class ActSubservicesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(GlobalBag.providerList, id);
+			mProvider = GlobalUtils.findProviderInList(SmsForFreeApplication.instance().getProviderList(), id);
 		} else {
 			mProvider = null;
 		}

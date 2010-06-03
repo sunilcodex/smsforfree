@@ -8,6 +8,7 @@
     <application
     	android:icon="@drawable/ic_launcher_smsforfree"
     	android:label="@string/common_appname"
+    	android:name=".common.SmsForFreeApplication"
    	>
         <activity
         	android:name=".ui.ActSendSms"
