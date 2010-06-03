@@ -44,12 +44,12 @@ public class ActTemplatesList
 		if (null == mProvider) return;
 
 		setListAdapter(new ArrayAdapter<SmsService>(this, 
-	              android.R.layout.simple_list_item_1, mProvider.getAllTemplate()));
+	              android.R.layout.simple_list_item_1, mProvider.getAllTemplates()));
 	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		SmsService template = mProvider.getAllTemplate().get(position);
+		SmsService template = mProvider.getAllTemplates().get(position);
 		
 		//return to caller activity the template id
 		Intent intent = new Intent();

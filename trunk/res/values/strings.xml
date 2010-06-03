@@ -98,6 +98,7 @@
     <string name="actsubserviceslist_mnuDeleteService">Delete</string>
     <string name="actsubserviceslist_mnuAddService">Add new service</string>
     <string name="actsubserviceslist_mnuEditService">Edit</string>
+    <string name="actsubserviceslist_msgNoTemplates">No templates available...\n\nYou should download them in order to add new services.</string>
 
 
 
@@ -110,7 +111,7 @@
 
     <!-- ActExpired -->
     <string name="actexpired_title">SmsForFree - Expired :(</string>
-    <string name="actexpired_msgExpired">Sorry, the application expired.\n\n\nSearch for a new version of SmsForFree.</string>
+    <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nSearch for a new version of SmsForFree.</string>
 
 
 

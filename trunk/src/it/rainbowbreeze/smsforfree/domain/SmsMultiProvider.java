@@ -36,7 +36,7 @@ public abstract class SmsMultiProvider
 
     protected List<SmsService> mTemplates;
     @Override
-	public List<SmsService> getAllTemplate()
+	public List<SmsService> getAllTemplates()
 	{ return mTemplates; }
 	public void setAllTemplateSubservices(List<SmsService> value)
 	{ mTemplates = value; }
@@ -133,6 +133,12 @@ public abstract class SmsMultiProvider
 		return subservice.hasParametersConfigured();
 	}
 	
+	@Override
+	public boolean hasTemplatesConfigured()
+	{
+		if (null == getAllTemplates()) return false;
+		return getAllTemplates().size() > 0;
+	}	
 	
 
 
