@@ -121,8 +121,7 @@ public class ActSubservicesList
 		
 		switch (item.getItemId()) {
 		case OPTIONMENU_ADDSERVICE:
-			//launch the activity for selecting subservice template
-			ActivityHelper.openTemplatesList(this, mProvider.getId());
+			addNewService();
 			break;
 		
 		//execute one of the provider's command
@@ -142,7 +141,8 @@ public class ActSubservicesList
 		
 		return true;
 	}
-	
+
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item)
 	{
@@ -154,8 +154,7 @@ public class ActSubservicesList
 		
 		switch (item.getItemId()) {
 		case CONTEXTMENU_ADDSERVICE:
-			//launch the activity for selecting subservice template
-			ActivityHelper.openTemplatesList(this, mProvider.getId());
+			addNewService();
 			break;
 		case CONTEXTMENU_EDITSERVICE:
 			//find current selected service
@@ -225,6 +224,19 @@ public class ActSubservicesList
 	}
 	
 	
+	/**
+	 * Add new service 
+	 */
+	private void addNewService() {
+		if (!mProvider.hasTemplatesConfigured()) {
+			ActivityHelper.showInfo(this, R.string.actsubserviceslist_msgNoTemplates);
+		} else {
+			//launch the activity for selecting subservice template
+			ActivityHelper.openTemplatesList(this, mProvider.getId());
+		}
+	}
+	
+
 	/**
 	 * Called by AsyncTask when the command execution completed
 	 * @param res

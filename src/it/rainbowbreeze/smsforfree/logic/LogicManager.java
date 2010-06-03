@@ -45,7 +45,7 @@ public class LogicManager {
 		ProviderDao dao = new ProviderDao();
 		GlobalBag.providerList = new ArrayList<SmsProvider>();
 		
-		//add aimon
+		//add jacksms
 		JacksmsProvider jackProv = new JacksmsProvider(dao, context);
 		//TODO check errors
 		jackProv.loadParameters(context);
@@ -53,10 +53,10 @@ public class LogicManager {
 		jackProv.loadSubservices(context);
 		GlobalBag.providerList.add(jackProv);
 	
-		//add jacksms
-		AimonProvider aimonProv = new AimonProvider(dao, context);
-		aimonProv.loadParameters(context);
-		GlobalBag.providerList.add(aimonProv);
+//		//add aimon
+//		AimonProvider aimonProv = new AimonProvider(dao, context);
+//		aimonProv.loadParameters(context);
+//		GlobalBag.providerList.add(aimonProv);
 		
 		Collections.sort(GlobalBag.providerList);
 
@@ -90,7 +90,6 @@ public class LogicManager {
 	    //find the maximum valid time interval
 	    //60 days
 	    long maxGap = 60 * 86400000;
-	    maxGap = 86400000;
 
 	    //if the difference between the two dates is greater than the max allowed gap
 	    return (currentTime - installTime <= maxGap);

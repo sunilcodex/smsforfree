@@ -26,7 +26,11 @@ public abstract class SmsSingleProvider
 	
 	//---------- Public properties
 	@Override
-	public List<SmsService> getAllTemplate()
+	public boolean hasTemplatesConfigured()
+	{ return false; }
+	
+	@Override
+	public List<SmsService> getAllTemplates()
 	{ return null; }
 	
 	@Override

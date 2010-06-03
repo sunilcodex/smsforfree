@@ -49,7 +49,8 @@ public abstract class SmsProvider
 	/** Has this provider sub-services? */
 	public abstract boolean hasSubServices();
 	
-	public abstract List<SmsService> getAllTemplate();
+	public abstract boolean hasTemplatesConfigured();
+	public abstract List<SmsService> getAllTemplates();
 	public abstract SmsService getTemplate(String templateId);
 
 	public abstract List<SmsService> getAllSubservices();

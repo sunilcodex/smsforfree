@@ -230,8 +230,8 @@ public class ProviderDao
 
 		//write template data
 		serializer.startTag("", XMLNODE_TEMPLATESARRAY);
-		if (null != provider.getAllTemplate()) {
-			for(SmsService template : provider.getAllTemplate()) {
+		if (null != provider.getAllTemplates()) {
+			for(SmsService template : provider.getAllTemplates()) {
 				serializeServiceData(serializer, template, XMLNODE_TEMPLATE);
 			}
 		}

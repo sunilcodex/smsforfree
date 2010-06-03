@@ -40,9 +40,9 @@ public class JacksmsProvider
 		command = new SmsServiceCommand(
 				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1000, R.drawable.ic_menu_refresh);
 		mSubservicesListActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 1001);
-		mSubservicesListActivityCommands.add(command);
+//		command = new SmsServiceCommand(
+//				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 1001);
+//		mSubservicesListActivityCommands.add(command);
 		
 		//save some messages
 		mMessages = new String[7];
@@ -336,6 +336,14 @@ public class JacksmsProvider
     		//retain old templates
     		res.setResultAsString(mMessages[MSG_INDEX_NO_TEMPLATES_PARSED]);
     		return res;
+    	}
+    	
+    	//try to set password fields
+    	for (SmsService template : newTemplates) {
+    		//generally, jacksms use second parameter as password
+    		String description = template.getParameterDesc(1);
+    		if (!TextUtils.isEmpty(description) && description.toUpperCase().contains("PASSWORD"))
+    			template.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
     	}
     	
     	//override current templates with new one
