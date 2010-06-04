@@ -31,6 +31,28 @@ public class SmsForFreeApplication
 	{ return mProviderList; }
 	public void setProviderList(List<SmsProvider> newValue)
 	{ mProviderList = newValue; }
+	
+	/** Max allowed SMS for each day */
+	protected int mAllowedSmsForDay;
+	public int getAllowedSmsForDay()
+	{ return mAllowedSmsForDay; }
+	public void setAllowedSmsForDay(int newValue)
+	{ mAllowedSmsForDay = newValue; }
+
+	/** Application is demo, not full version */
+	protected boolean mDemoApp;
+	public boolean isDemoApp()
+	{ return mDemoApp; }
+	public void setDemoApp(boolean newValue)
+	{ mDemoApp = newValue; }
+
+	/** Application is expired */
+	protected boolean mAppExpired;
+	public boolean isAppExpired()
+	{ return mAppExpired; }
+	public void setAppExpired(boolean newValue)
+	{ mAppExpired = newValue; }
+
 
 
 

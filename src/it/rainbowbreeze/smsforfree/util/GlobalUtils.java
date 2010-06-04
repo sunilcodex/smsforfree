@@ -24,7 +24,7 @@ public class GlobalUtils {
 	
 	public static int findProviderPositionInList(List<SmsProvider> list, String id)
 	{
-		if (TextUtils.isEmpty(id)) return -1;
+		if (TextUtils.isEmpty(id) || null == list) return -1;
 		
 		for(int i = 0; i < list.size(); i++) {
 			if (id.equals(list.get(i).getId())) return i;
