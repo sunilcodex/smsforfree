@@ -43,6 +43,7 @@
     <string name="actsendsms_msg_emptyCaptchaCode">Captcha code is empty.\nMessage sending aborted.</string>
     <string name="actsendsms_msg_sendingMessage">Sending message...</string>
     <string name="actsendsms_msg_sendingCaptcha">Sending captcha code...</string>
+    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the maximum number of sms per day...</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>

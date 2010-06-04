@@ -56,7 +56,7 @@ public class WebserviceClient
 	 * @throws IOException 
 	 * @throws ClientProtocolException 
 	 */
-	public String RequestGET(String url)
+	public String requestGet(String url)
 		throws ClientProtocolException, IOException
 	{
 		// reference here:
@@ -143,7 +143,7 @@ public class WebserviceClient
 	}
 	
 	
-	public String RequestPostQuick(
+	public String requestPostQuick(
 			String urlAddress,
 			HashMap<String, String> postValues
 		)

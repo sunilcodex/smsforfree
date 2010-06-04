@@ -8,7 +8,7 @@ public class GlobalDef {
 	public static final String appVersionDescription = "0.01";
 
 	/** Application version, for internal use */
-	public static final String appVersion = "01.00.00";
+	public static final String appVersion = "00.00.01";
 
 	/** file name for providers preferences */
 	public static final String jacksmsParametersFileName = "jacksms_parameters.xml"; 
@@ -22,5 +22,8 @@ public class GlobalDef {
 	
 	/** international prefix for italy */
 	public static final String italyInternationalPrefix = "+39";
+	
+	/** url where send statistics about device */
+	public static final String statisticsUrl = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
 
 }

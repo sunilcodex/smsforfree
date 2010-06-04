@@ -8,7 +8,9 @@ import java.util.Calendar;
 import java.util.Collections;
 
 import android.content.ContextWrapper;
+import android.text.TextUtils;
 
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
@@ -25,9 +27,19 @@ import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 public class LogicManager {
 	//---------- Private fields
 
+	
+	
+	
 	//---------- Public properties
 
+	
+	
+	
 	//---------- Public methods
+	
+	/**
+	 * Initializes data, execute begin operation
+	 */
 	public static ResultOperation executeBeginTask(ContextWrapper context)
 	{
 		ResultOperation res = new ResultOperation(true);
@@ -35,32 +47,32 @@ public class LogicManager {
 		//load configurations
 		AppPreferencesDao.instance().load(context);
 		
-		//check for application upgrade
-		res = checkForUpgrade(context);
+		//check if the application expired
+		SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
+		if (SmsForFreeApplication.instance().isAppExpired()) return res;
 		
-		//initialize provider list
-		ProviderDao dao = new ProviderDao();
-		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
+		//load some user setting
+		SmsForFreeApplication.instance().setDemoApp(
+				"Demo".equalsIgnoreCase(context.getString(R.string.config_AppType)));
+		SmsForFreeApplication.instance().setAllowedSmsForDay(
+				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
 		
-		//add jacksms
-		JacksmsProvider jackProv = new JacksmsProvider(dao, context);
-		//TODO check errors
-		jackProv.loadParameters(context);
-		jackProv.loadTemplates(context);
-		jackProv.loadSubservices(context);
-		SmsForFreeApplication.instance().getProviderList().add(jackProv);
-	
-//		//add aimon
-//		AimonProvider aimonProv = new AimonProvider(dao, context);
-//		aimonProv.loadParameters(context);
-//		SmsForFreeApplication.instance().getProviderList().add(aimonProv);
+		//checks for application upgrade
+		res = performAppVersionUpgrade(context);
+		
+		addProvidersToList(context);
 		
 		Collections.sort(SmsForFreeApplication.instance().getProviderList());
 
 		return res;
 	}
-	
-	
+
+
+	/**
+	 * Executes final operation, just before the app close
+	 * @param context
+	 * @return
+	 */
 	public static ResultOperation executeEndTast(ContextWrapper context)
 	{
 		ResultOperation res = new ResultOperation(true);
@@ -70,12 +82,67 @@ public class LogicManager {
 
 
 	/**
+	 * Update the number of message sent in current day
+	 */
+	public static void updateSmsCounter()
+	{
+		//check current date hash
+		String currentDateHash = getCurrentDayHash();
+		String lastUpdate = AppPreferencesDao.instance().getSmsCounterDate();
+		
+		if (TextUtils.isEmpty(lastUpdate) || !lastUpdate.equals(currentDateHash)) {
+			//new day :D
+			AppPreferencesDao.instance().setSmsCounterDate(currentDateHash);
+			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(1);
+		} else {
+			//update sms sent in the day
+			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(AppPreferencesDao.instance().getSmsCounterNumberForCurrentDay() + 1);
+		}
+		AppPreferencesDao.instance().save();
+	}
+
+
+	/**
+	 * Checks if sms message sent in the current day is still under the allowed limit
+	 */
+	public static boolean checkIfCanSendSms()
+	{
+		//unlimited sms for normal app
+		if (!SmsForFreeApplication.instance().isDemoApp()) return true;
+		
+		return getSmsSentToday() < SmsForFreeApplication.instance().getAllowedSmsForDay();
+	}
+	
+	/**
+	 * Get the number of sms sent today
+	 */
+	public static int getSmsSentToday()
+	{
+		//check current date hash
+		String currentDateHash = getCurrentDayHash();
+		String lastUpdate = AppPreferencesDao.instance().getSmsCounterDate();
+
+		int sentSms = 0;
+		if (currentDateHash.equals(lastUpdate)) {
+			sentSms = AppPreferencesDao.instance().getSmsCounterNumberForCurrentDay();
+		}
+		
+		return sentSms;
+	}
+
+
+	
+	
+	
+	//---------- Private methods
+
+	/**
 	 * Checks the expiration date of the application
 	 * 
 	 * @return true if the app is valid, false and RETURNCODE_SMS_DAILY_LIMIT_OVERTAKED
 	 *         return code if app is invalid
 	 */
-	public static boolean checkIfAppIsValid()
+	private static boolean checkIfAppExpired()
 	{
 		//get installation time
 	    long installTime = AppPreferencesDao.instance().getInstallationTime();
@@ -89,22 +156,17 @@ public class LogicManager {
 	    long maxGap = 60 * 86400000;
 
 	    //if the difference between the two dates is greater than the max allowed gap
-	    return (currentTime - installTime <= maxGap);
+	    return (currentTime - installTime > maxGap);
 	}
-
-
 	
 	
-	
-	//---------- Private methods
-
 	/**
 	 * Checks if some upgrade is needed between current version of the
 	 * application and the previous one
 	 * 
 	 *  @return true if all ok, otherwise false
 	 */
-	private static ResultOperation checkForUpgrade(ContextWrapper context)
+	private static ResultOperation performAppVersionUpgrade(ContextWrapper context)
 	{
 		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
 		
@@ -125,5 +187,43 @@ public class LogicManager {
 		return new ResultOperation(true);
 	}
 	
+	
+	private static String getCurrentDayHash()
+	{
+        final Calendar c = Calendar.getInstance();
+        StringBuilder dateHash = new StringBuilder();
+        dateHash.append(c.get(Calendar.YEAR));
+        dateHash.append(c.get(Calendar.MONTH));
+        dateHash.append(c.get(Calendar.DAY_OF_MONTH));
+        return dateHash.toString();
+	}
 
+	
+	/**
+	 * @param context
+	 */
+	private static void addProvidersToList(ContextWrapper context) {
+		//initialize provider list
+		ProviderDao dao = new ProviderDao();
+		String allowedProviders = context.getString(R.string.config_AllowedProviders);
+		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
+		
+		if (allowedProviders.toUpperCase().contains("JACKSMS")) {
+			//add jacksms
+			JacksmsProvider jackProv = new JacksmsProvider(dao, context);
+			//TODO check errors
+			jackProv.loadParameters(context);
+			jackProv.loadTemplates(context);
+			jackProv.loadSubservices(context);
+			SmsForFreeApplication.instance().getProviderList().add(jackProv);
+		}
+	
+		if (allowedProviders.toUpperCase().contains("AIMON")) {
+			//add aimon
+			AimonProvider aimonProv = new AimonProvider(dao, context);
+			aimonProv.loadParameters(context);
+			SmsForFreeApplication.instance().getProviderList().add(aimonProv);
+		}
+	}
+	
 }

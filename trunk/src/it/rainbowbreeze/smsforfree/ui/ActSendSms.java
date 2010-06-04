@@ -11,6 +11,7 @@ import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
+import it.rainbowbreeze.smsforfree.logic.SendStatisticsAsyncTask;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -78,7 +79,7 @@ public class ActSendSms
 
 	private List<ContactPhone> mPhonesToShowInDialog;
 	private String mCaptchaStorage;
-	private boolean mAppValidity;
+	private boolean mAppExpired;
 
 	
 	
@@ -95,15 +96,14 @@ public class ActSendSms
         super.onCreate(savedInstanceState);
 
         //checks for app validity
-    	mAppValidity = LogicManager.checkIfAppIsValid();
-    	if (!mAppValidity) {
+    	if (SmsForFreeApplication.instance().isAppExpired()) {
     		//application is expired
             setContentView(R.layout.actexpired);
             setTitle(R.string.actexpired_title);
     		ActivityHelper.showInfo(this, R.string.common_msg_appExpired);
     		return;
     	}
-        
+    	
         setContentView(R.layout.actsendsms);
         setTitle(R.string.actsendsms_title_full);
 
@@ -125,27 +125,24 @@ public class ActSendSms
         //populate Spinner with values
         bindProvidersSpinner();
 
-        //load previous saved configuration
+        //load previous execution saved configuration
         if (null == savedInstanceState) {
-        	int position;
-        	//provider spinner
-        	position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), AppPreferencesDao.instance().getLastUsedProviderId());
-        	if (position >= 0) mSpiProviders.setSelection(position);
-        	//text and message
-        	mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
-        	mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
-        	//TODO
-    		//service spinner
-        	position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), AppPreferencesDao.instance().getLastUsedProviderId());
-        	if (position >= 0) mSpiProviders.setSelection(position);
+        	restorePreviousInputStatus();
+        }
+
+        
+        //send statistics data first time the app runs
+        if (null == savedInstanceState) {
+	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
+	        statsTask.execute(this);
         }
     }
-    
-    
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
-    	if (!mAppValidity) return true;
+    	if (mAppExpired) return true;
     	
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
@@ -323,14 +320,16 @@ public class ActSendSms
 
 
     //---------- Private methods
-	private void bindProvidersSpinner() {
+	private void bindProvidersSpinner()
+	{
 		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
 				android.R.layout.simple_spinner_item, SmsForFreeApplication.instance().getProviderList());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpiProviders.setAdapter(adapter);
 	}
     
-	private void bindSubservicesSpinner(SmsProvider provider) {
+	private void bindSubservicesSpinner(SmsProvider provider)
+	{
 		List<SmsService> subservices = provider.getAllSubservices();
 
 		//display a message when subservices are not configured
@@ -344,8 +343,12 @@ public class ActSendSms
 		mSpiSubservices.setAdapter(adapter);
 	}
 
-	private void changeProvider(SmsProvider provider) {
-		
+	/**
+	 * Called when the selected provider changes
+	 * @param provider
+	 */
+	private void changeProvider(SmsProvider provider)
+	{
 		//already selected provider
 		if (provider == mSelectedProvider) return;
 		
@@ -370,12 +373,18 @@ public class ActSendSms
 		AppPreferencesDao.instance().setLastUsedProviderId(provider.getId());
 		AppPreferencesDao.instance().save();
 	}
-	
-	
-	private void changeService(SmsService service) {
+
+	/**
+	 * Called when the selected subservice changes
+	 * @param service
+	 */
+	private void changeService(SmsService service)
+	{
 		String newServiceId = null != service ? service.getId() : null;
 
+		//already selected subservice
 		if (newServiceId == mSelectedServiceId) return;
+		
 		mSelectedProvider.setSelectedSubservice(newServiceId);
 		mSelectedServiceId = newServiceId;
 		updateMessageLength();
@@ -551,12 +560,44 @@ public class ActSendSms
 		if (!message.endsWith(signature))
 			mTxtMessage.append(signature);
 	}
+	
+	
+	/**
+	 * Called when activity is first loaded, restore
+	 * previous status of input views
+	 * 
+	 */
+	private void restorePreviousInputStatus() {
+		//text and message
+		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
+		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
+
+		int position;
+		//provider spinner
+		position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), AppPreferencesDao.instance().getLastUsedProviderId());
+		if (position >= 0) mSpiProviders.setSelection(position);
+
+		//now the subservice spinner is set to null
+		String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
+		if (!TextUtils.isEmpty(subserviceId)) {
+			position = mSelectedProvider.findSubservicePositionInList(subserviceId);
+			if (position >= 0) mSpiProviders.setSelection(position);
+		}
+	}
+    
+    
+	
 
 	/**
 	 * Send message
 	 */
 	private void sendMessage()
 	{
+		//check if can send another SMS
+		if (!LogicManager.checkIfCanSendSms()) {
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach);
+		}
+		
 		//check provider
 		if (null == mSelectedProvider) {
 			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noProviderSelected);
@@ -640,6 +681,8 @@ public class ActSendSms
 		if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
 			//display returning message of the provider
 			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
+			//update number of messages sent in the day
+			LogicManager.updateSmsCounter();
 			//check if the text should be deleted
 			if (AppPreferencesDao.instance().getAutoClearMessage()) {
 				cleanDataFields();
@@ -686,6 +729,9 @@ public class ActSendSms
 	 * @param res
 	 */
 	private void sendCaptchaComplete(ResultOperation res) {
+		//update number of messages sent in the day
+		LogicManager.updateSmsCounter();
+		//show the results of the send
 		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
 	}
 	

@@ -17,11 +17,16 @@ public class AppPreferencesDao
     private static final String PROP_DEFAULT_INTERNATIONAL_PREFIX = "defaultInternationalPrefix";
     private static final String PROP_SIGNATURE = "signature";
     private static final String PROP_INSTALLATION_TIME = "installationTime";
+    private static final String PROP_SMSCOUNTER_DATE = "smsCounterDate";
+    private static final String PROP_SMSCOUNTER_NUMBERFORCURRENTDAY = "smsCounterNumber";
+    private static final String PROP_SMSCOUNTER_TOTAL = "smsCounterTotal";
+    private static final String PROP_UNIQUEID = "uniqueId";
     
     private static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     private static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
     private static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
     private static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
+    
     
     
 
@@ -92,6 +97,20 @@ public class AppPreferencesDao
     public void setInstallationTime(long newValue)
     { mEditor.putLong(PROP_INSTALLATION_TIME, newValue); }
     
+    public long getUniqueId()
+    {
+    	long installationTime = mSettings.getLong(PROP_UNIQUEID, 0);
+    	if (0 == installationTime) {
+    		//first run, set as installation time current milliseconds
+    	    final Calendar c = Calendar.getInstance();
+    	    installationTime = c.getTimeInMillis();
+    	    //store it
+    	    mEditor.putLong(PROP_UNIQUEID, installationTime);
+    	    save();
+    	}
+    	return installationTime;
+    }
+    
     public String getLastUsedProviderId()
     { return mSettings.getString(PROP_LASTUSED_PROVIDERID, ""); }
     public void setLastUsedProviderId(String newValue)
@@ -111,6 +130,21 @@ public class AppPreferencesDao
     { return mSettings.getString(PROP_LASTUSED_MESSAGE, ""); }
     public void setLastUsedMessage(String newValue)
     { mEditor.putString(PROP_LASTUSED_MESSAGE, newValue); }
+    
+    public String getSmsCounterDate()
+    { return mSettings.getString(PROP_SMSCOUNTER_DATE, ""); }
+    public void setSmsCounterDate(String newValue)
+    { mEditor.putString(PROP_SMSCOUNTER_DATE, newValue); }
+    
+    public int getSmsCounterNumberForCurrentDay()
+    { return mSettings.getInt(PROP_SMSCOUNTER_NUMBERFORCURRENTDAY, 0); }
+    public void setSmsCounterNumberForCurrentDay(int newValue)
+    { mEditor.putInt(PROP_SMSCOUNTER_NUMBERFORCURRENTDAY, newValue); }
+    
+    public int getSmsTotalNumber()
+    { return mSettings.getInt(PROP_SMSCOUNTER_TOTAL, 0); }
+    public void setSmsTotalNumber(int newValue)
+    { mEditor.putInt(PROP_SMSCOUNTER_TOTAL, newValue); }
     
     
 

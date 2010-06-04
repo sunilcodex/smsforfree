@@ -144,6 +144,24 @@ public abstract class SmsProvider
     	return commands.size() > 0;
     }
     
+    /**
+     * Find the subservice index in the provider's subservice list
+     * 
+     * @param subserviceId
+     * @return
+     */
+    public int findSubservicePositionInList(String subserviceId)
+    {
+		if (TextUtils.isEmpty(subserviceId)) return -1;
+		
+		List<SmsService> subservices = getAllSubservices();
+		if (null == subservices) return -1;
+		for(int i = 0; i < subservices.size(); i++) {
+			if (subserviceId.equals(subservices.get(i).getId())) return i;
+		}
+		return -1;
+    }
+    
 	
 	/**
 	 * Sends the message
