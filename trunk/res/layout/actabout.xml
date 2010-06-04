@@ -1,6 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelaviteLayout
+<RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	style="@style/common_layoutBackground"
 >
-</RelaviteLayout>
+	<ImageView
+		android:id="@+id/actabout_imgLogo"
+		style="@style/common_ImageView"
+		android:src="@drawable/smsforfree_logo"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:layout_margin="5dp"
+	/>
+	
+	<TextView
+		android:id="@+id/actabout_lblAppName"
+		style="@style/actabout_lblTitles"
+		android:text="@string/common_appname"
+		android:layout_alignTop="@id/actabout_imgLogo"
+		android:layout_alignParentRight="true"
+		android:layout_marginTop="10dp"
+		android:layout_marginRight="10dp"
+		android:textSize="25dp"
+	/>
+	
+	<TextView
+		android:id="@+id/actabout_lblAppVersion"
+		style="@style/actabout_lblTitles"
+		android:layout_below="@id/actabout_lblAppName"
+		android:layout_alignRight="@id/actabout_lblAppName"
+		android:text="@string/common_appname"
+	/>
+	
+	<TextView
+		android:id="@+id/actabout_lblAuthor"
+		style="@style/actabout_lblTitles"
+		android:layout_below="@id/actabout_lblAppVersion"
+		android:layout_alignRight="@id/actabout_lblAppName"
+		android:layout_marginTop="25dp"
+		android:text="@string/actabout_lblAuthor"
+	/>
+	
+	<TextView
+		android:id="@+id/actabout_lblWebsite"
+		style="@style/actabout_lblTitles"
+		android:layout_below="@id/actabout_lblAuthor"
+		android:layout_alignRight="@id/actabout_lblAppName"
+		android:text="@string/actabout_lblWebsite"
+	/>
+	
+</RelativeLayout>

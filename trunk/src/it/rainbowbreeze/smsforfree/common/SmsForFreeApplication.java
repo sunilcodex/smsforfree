@@ -40,11 +40,11 @@ public class SmsForFreeApplication
 	{ mAllowedSmsForDay = newValue; }
 
 	/** Application is demo, not full version */
-	protected boolean mDemoApp;
-	public boolean isDemoApp()
-	{ return mDemoApp; }
-	public void setDemoApp(boolean newValue)
-	{ mDemoApp = newValue; }
+	protected boolean mLiteVersionApp;
+	public boolean isLiteVersionApp()
+	{ return mLiteVersionApp; }
+	public void setLiteVersionApp(boolean newValue)
+	{ mLiteVersionApp = newValue; }
 
 	/** Application is expired */
 	protected boolean mAppExpired;

@@ -142,8 +142,11 @@ public class ActSendSms
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
-    	if (mAppExpired) return true;
     	
+		menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
+		.setIcon(android.R.drawable.ic_menu_info_details);
+    	if (mAppExpired) return true;
+
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
     	//menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
@@ -151,8 +154,6 @@ public class ActSendSms
 			.setIcon(android.R.drawable.ic_menu_delete);
     	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
 		.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
-			.setIcon(android.R.drawable.ic_menu_info_details);
 //		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
 //			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 //		menu.add(0, OPTIONMENU_DIALOG, 5, "Test dialog");
@@ -579,7 +580,7 @@ public class ActSendSms
 
 		//now the subservice spinner is set to null
 		String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
-		if (!TextUtils.isEmpty(subserviceId)) {
+		if (null != mSelectedProvider && !TextUtils.isEmpty(subserviceId)) {
 			position = mSelectedProvider.findSubservicePositionInList(subserviceId);
 			if (position >= 0) mSpiProviders.setSelection(position);
 		}
