@@ -106,6 +106,8 @@
 
     <!-- ActAbout -->
     <string name="actabout_title">SmsForFree - About</string>
+    <string name="actabout_lblAuthor">by Alfredo Morresi</string>
+    <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
 
 
 

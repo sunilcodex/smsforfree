@@ -46,6 +46,14 @@
 		android:hint="@string/actsendsms_txtDestination"
 	/>
 
+	<TextView
+		android:id="@+id/actsendsms_lblMessageLength"
+		style="@style/common_TextView"
+		android:layout_alignLeft="@id/actsendsms_txtDestination"
+		android:layout_below="@id/actsendsms_txtDestination"
+		android:text="@string/actsendsms_btnSend"
+	/>
+	
 	<Button
 		android:id="@+id/actsendsms_btnSend"
 		style="@style/common_btnAction"
@@ -53,7 +61,7 @@
 		android:layout_alignParentBottom="true"
 		android:text="@string/actsendsms_btnSend"
 	/>
-
+	
 	<EditText
 		android:id="@+id/actsendsms_txtMessage"
 		style="@style/common_EditText"
@@ -64,14 +72,4 @@
 		android:gravity="top|left"
 	/>
 
-
-	<TextView
-		android:id="@+id/actsendsms_lblMessageLength"
-		style="@style/common_TextView"
-		android:layout_marginLeft="5dip"
-		android:layout_alignParentLeft="true"
-		android:layout_alignTop="@id/actsendsms_btnSend"
-		android:text="@string/actsendsms_btnSend"
-	/>
-	
 </RelativeLayout>

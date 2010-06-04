@@ -2,7 +2,7 @@
 <resources>
 	<string name="config_AllowedProviders">Aimon,JackSMS</string>
 	
-	<!-- Demo or Normal -->
+	<!-- Lite or Normal -->
 	<string name="config_AppType">Normal</string>
 	
 	<string name="config_MaxAllowedSmsForDay">5</string>

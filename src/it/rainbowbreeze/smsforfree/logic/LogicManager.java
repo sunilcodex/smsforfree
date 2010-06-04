@@ -52,8 +52,8 @@ public class LogicManager {
 		if (SmsForFreeApplication.instance().isAppExpired()) return res;
 		
 		//load some user setting
-		SmsForFreeApplication.instance().setDemoApp(
-				"Demo".equalsIgnoreCase(context.getString(R.string.config_AppType)));
+		SmsForFreeApplication.instance().setLiteVersionApp(
+				"Lite".equalsIgnoreCase(context.getString(R.string.config_AppType)));
 		SmsForFreeApplication.instance().setAllowedSmsForDay(
 				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
 		
@@ -108,7 +108,7 @@ public class LogicManager {
 	public static boolean checkIfCanSendSms()
 	{
 		//unlimited sms for normal app
-		if (!SmsForFreeApplication.instance().isDemoApp()) return true;
+		if (!SmsForFreeApplication.instance().isLiteVersionApp()) return true;
 		
 		return getSmsSentToday() < SmsForFreeApplication.instance().getAllowedSmsForDay();
 	}

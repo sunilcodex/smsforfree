@@ -1,7 +1,5 @@
 package it.rainbowbreeze.smsforfree.domain;
 
-import it.rainbowbreeze.smsforfree.common.ResultOperation;
-
 public class SmsConfigurableService
 	extends SmsService
 {

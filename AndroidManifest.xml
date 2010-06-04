@@ -55,6 +55,11 @@
         	android:label="@string/actcompactmessage_title"
        	/>
        	
+        <activity
+        	android:name=".ui.ActAbout"
+        	android:label="@string/actabout_title"
+       	/>
+       	
     </application>
     
 	<!-- API support: min 1.6, target 2.0 -->

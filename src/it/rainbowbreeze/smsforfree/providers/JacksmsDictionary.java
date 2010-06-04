@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Chronometer;
 
 /**
  * 

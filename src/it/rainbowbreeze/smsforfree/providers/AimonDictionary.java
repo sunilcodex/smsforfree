@@ -1,7 +1,5 @@
 package it.rainbowbreeze.smsforfree.providers;
 
-import it.rainbowbreeze.smsforfree.common.ResultOperation;
-
 public class AimonDictionary {
 	//---------- Ctors
 
