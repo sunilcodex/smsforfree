@@ -28,6 +28,7 @@ public class AimonDictionary {
 	
 	public static final String RESULT_SENDSMS_OK = "+01 SMS Queued";
 	public static final String RESULT_ERROR_ACCESS_DENIED = "-3-";
+	public static final String RESULT_ERROR_MISSING_PARAMETERS = "-5-";
 	public static final String RESULT_ERROR_INTERNAL_SERVER_ERROR = "-32-";
 	public static final String RESULT_ERROR_INVALID_DESTINATION = "-100-";
 	public static final String RESULT_ERROR_DESTINATION_NOT_ALLOWED = "-101-";

@@ -47,12 +47,13 @@ public class AimonProvider
 		mProviderSettingsActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[5];
+		mMessages = new String[6];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
 		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
 		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.aimon_msg_remainingCredits);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.aimon_msg_messageQueued);
+		mMessages[MSG_INDEX_MISSING_PARAMETERS] = context.getString(R.string.aimon_msg_missingParameters);
 	}
 	
 	
@@ -68,6 +69,7 @@ public class AimonProvider
 	private final static int MSG_INDEX_SERVER_ERROR = 2;
 	private final static int MSG_INDEX_REMAINING_CREDITS = 3;
 	private final static int MSG_INDEX_MESSAGE_SENT = 4;
+	private final static int MSG_INDEX_MISSING_PARAMETERS = 5;
 	
 	private final static int COMMAND_CHECKCREDENTIALS = 1000;
 	private final static int COMMAND_CHECKCREDITS = 1001;
@@ -327,7 +329,13 @@ public class AimonProvider
 		
 		//at this point reply can only contains the remaining credits or
 		//aimon internal errors
-		if (res.getResultAsString().startsWith(mMessages[MSG_INDEX_REMAINING_CREDITS])) {
+		
+		//ok, i know it isn't the best way, but it works as a workaround
+		//for the presence of %s parameter in the source message string ;)
+		int pos = mMessages[MSG_INDEX_REMAINING_CREDITS].indexOf("%");
+		if (pos < 0) pos = mMessages[MSG_INDEX_REMAINING_CREDITS].length();
+		String returnMessage = res.getResultAsString(); 
+		if (returnMessage.substring(0, pos).equals(mMessages[MSG_INDEX_REMAINING_CREDITS].substring(0, pos))) {
 			//credits, so credentials are correct
 			res = new ResultOperation(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
 		}
@@ -361,7 +369,7 @@ public class AimonProvider
     	WebserviceClient client = new WebserviceClient();
     	
     	try {
-    		reply = client.requestPost(url, parameters, null);
+    		reply = client.requestPost(url, null, parameters);
 		} catch (ClientProtocolException e) {
 			return new ResultOperation(e);
 		} catch (IOException e) {
@@ -400,8 +408,12 @@ public class AimonProvider
 		//server error
 		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_INTERNAL_SERVER_ERROR)) {
 			res = mMessages[MSG_INDEX_SERVER_ERROR];
-		}
 		
+		//missing parameters
+		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_MISSING_PARAMETERS)) {
+			res = String.format(mMessages[MSG_INDEX_MISSING_PARAMETERS], reply);
+		}
+	
 		//TODO
 		//add other server errors
 		
