@@ -39,6 +39,8 @@ public class ActSettingsMain
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        setTitle(String.format(
+        		getString(R.string.actsettingsmain_title), SmsForFreeApplication.instance().getAppName()));
 		
 		addPreferencesFromResource(R.layout.actsettingsmain);
 		

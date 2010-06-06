@@ -167,7 +167,8 @@ public class ActSettingsSmsService
 	protected void loadDataIntoViews() {
 		//update title
         this.setTitle(String.format(
-        		getString(R.string.actsettingssmsservice_titleEdit),
+        		getString(R.string.actsettingssmsservice_title),
+        		SmsForFreeApplication.instance().getAppName(),
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice

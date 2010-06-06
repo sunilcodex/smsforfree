@@ -105,7 +105,8 @@ public class ActSendSms
     	}
     	
         setContentView(R.layout.actsendsms);
-        setTitle(R.string.actsendsms_title_full);
+        setTitle(String.format(
+        		getString(R.string.actsendsms_title), SmsForFreeApplication.instance().getAppName()));
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);

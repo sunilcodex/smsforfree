@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Common -->
-    <string name="common_appname">SmsForFree</string>
     <string name="common_btnOk">Ok</string>
     <string name="common_btnYes">Yes</string>
     <string name="common_btnNo">No</string>
@@ -17,8 +16,7 @@
 
 
     <!-- ActSendSms -->
-    <string name="actsendsms_title">SmsForFree</string>
-    <string name="actsendsms_title_full">SmsForFree - Send SMS</string>
+    <string name="actsendsms_title">%s - Send SMS</string>
     <string name="actsendsms_txtDestination">Destionation number</string>
     <string name="actsendsms_txtBody">Message</string>
     <string name="actsendsms_btnSend">Send</string>
@@ -55,7 +53,7 @@
 
 
     <!-- ActSettingsMain -->
-    <string name="actsettingsmain_title">SmsForFree - Settings</string>
+    <string name="actsettingsmain_title">%s - Settings</string>
     <string name="actsettingsmain_lblApplicationCategory">Application</string>
     <string name="actsettingsmain_lblProvidersCategory">Providers</string>
     <string name="actsettingsmain_chkResetDataAfterSend">Reset after send</string>
@@ -73,28 +71,26 @@
 
 
     <!-- ActSettingsSmsService -->
-    <string name="actsettingssmsservice_title">SmsForFree - Provider/Service Settings</string>
-    <string name="actsettingssmsservice_titleEdit">SmsForFree - Settings for %s</string>
+    <string name="actsettingssmsservice_title">%s - Settings for %s</string>
     <string name="actsettingssmsservice_btnConfigureSubservices">Configure services</string>
 	<string name="actsettingssmsservice_lblServiceName">Service name</string>    
 
 
 
     <!-- ActProvidersList -->
-    <string name="actproviderslist_title">SmsForFree - Providers</string>
+    <string name="actproviderslist_title">%s - Providers</string>
 
 
 
 
     <!-- ActTemplatesList -->
-    <string name="acttemplateslist_title">SmsForFree - Choose a template</string>
+    <string name="acttemplateslist_title">%s - Choose a template</string>
 
 
 
 
     <!-- ActSubservicesList -->
-    <string name="actsubserviceslist_title">Provider services list</string>
-    <string name="actsubserviceslist_titleEdit">%s services list</string>
+    <string name="actsubserviceslist_title">%s - Services for %s</string>
     <string name="actsubserviceslist_mnuHeaderTitle">Choose action</string>
     <string name="actsubserviceslist_mnuDeleteService">Delete</string>
     <string name="actsubserviceslist_mnuAddService">Add new service</string>
@@ -105,7 +101,7 @@
 
 
     <!-- ActAbout -->
-    <string name="actabout_title">SmsForFree - About</string>
+    <string name="actabout_title">%s - About</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
 
@@ -113,14 +109,14 @@
 
 
     <!-- ActExpired -->
-    <string name="actexpired_title">SmsForFree - Expired :(</string>
-    <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nSearch for a new version of SmsForFree.</string>
+    <string name="actexpired_title">%s - Expired :(</string>
+    <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nSearch for a new version of the application.</string>
 
 
 
 
     <!-- ActCompactMessage -->
-    <string name="actcompactmessage_title">SmsForFree - Compact message</string>
+    <string name="actcompactmessage_title">%s - Compact message</string>
 
 
 

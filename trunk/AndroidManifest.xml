@@ -12,7 +12,7 @@
    	>
         <activity
         	android:name=".ui.ActSendSms"
-        	android:label="@string/actsendsms_title"
+        	android:label="@string/common_appname"
        	>
 			<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,42 +22,42 @@
 
         <activity
         	android:name=".ui.ActSettingsMain"
-        	android:label="@string/actsettingsmain_title"
+        	android:label="@string/common_appname"
        	/>
 
         <activity
         	android:name=".ui.ActSettingsSmsService"
-        	android:label="@string/actsettingssmsservice_title"
+        	android:label="@string/common_appname"
        	/>
        	
         <activity
         	android:name=".ui.ActProvidersList"
-        	android:label="@string/actproviderslist_title"
+        	android:label="@string/common_appname"
        	/>
        	
         <activity
         	android:name=".ui.ActTemplatesList"
-        	android:label="@string/acttemplateslist_title"
+        	android:label="@string/common_appname"
        	/>
        	
         <activity
         	android:name=".ui.ActSubservicesList"
-        	android:label="@string/actsubserviceslist_title"
+        	android:label="@string/common_appname"
        	/>
        	
         <activity
         	android:name=".ui.ActAbout"
-        	android:label="@string/actabout_title"
+        	android:label="@string/common_appname"
        	/>
        	
         <activity
         	android:name=".ui.ActCompactMessage"
-        	android:label="@string/actcompactmessage_title"
+        	android:label="@string/common_appname"
        	/>
        	
         <activity
         	android:name=".ui.ActAbout"
-        	android:label="@string/actabout_title"
+        	android:label="@string/common_appname"
        	/>
        	
     </application>

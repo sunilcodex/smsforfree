@@ -59,8 +59,9 @@ public class ActSubservicesList
 			return;
 		
 		//update title
-        this.setTitle(String.format(
-        		getString(R.string.actsubserviceslist_titleEdit),
+        setTitle(String.format(
+        		getString(R.string.actsubserviceslist_title),
+        		SmsForFreeApplication.instance().getAppName(),
         		mProvider.getName()));
 
         mListAdapter = new ArrayAdapter<SmsService>(this, 

@@ -3,7 +3,6 @@ package it.rainbowbreeze.smsforfree.ui;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
-import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -23,7 +22,8 @@ public class ActAbout
 	{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.actabout);
-        setTitle(R.string.actabout_title);
+        setTitle(String.format(
+        		getString(R.string.actabout_title), SmsForFreeApplication.instance().getAppName()));
         
         TextView lblVersion = (TextView)findViewById(R.id.actabout_lblAppVersion);
         String version = GlobalDef.appVersionDescription;
