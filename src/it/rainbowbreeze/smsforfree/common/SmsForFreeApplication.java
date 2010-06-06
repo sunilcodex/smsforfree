@@ -53,6 +53,12 @@ public class SmsForFreeApplication
 	public void setAppExpired(boolean newValue)
 	{ mAppExpired = newValue; }
 
+	/** Application name */
+	protected String mAppName;
+	public String getAppName()
+	{ return mAppName; }
+	public void setAppName(String newValue)
+	{ mAppName = newValue; }
 
 
 

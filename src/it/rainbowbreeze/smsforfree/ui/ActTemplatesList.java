@@ -38,6 +38,9 @@ public class ActTemplatesList
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+        setTitle(String.format(
+        		getString(R.string.acttemplateslist_title), SmsForFreeApplication.instance().getAppName()));
+
 		setContentView(R.layout.acttemplateslist);
 		getDataFromIntent(getIntent());
 		

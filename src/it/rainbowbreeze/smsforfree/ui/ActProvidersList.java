@@ -33,6 +33,8 @@ public class ActProvidersList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        setTitle(String.format(
+        		getString(R.string.actproviderslist_title), SmsForFreeApplication.instance().getAppName()));
 		setContentView(R.layout.acttemplateslist);
 
 		setListAdapter(new ArrayAdapter<SmsProvider>(this, 

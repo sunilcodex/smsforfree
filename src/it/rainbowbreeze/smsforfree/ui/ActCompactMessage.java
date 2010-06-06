@@ -3,6 +3,8 @@
  */
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +27,8 @@ public class ActCompactMessage
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        setTitle(String.format(
+        		getString(R.string.actcompactmessage_title), SmsForFreeApplication.instance().getAppName()));
 		
 		Intent intent = getIntent();
 		
