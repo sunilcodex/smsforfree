@@ -11,4 +11,5 @@
     <string name="aimon_msg_serverError">Aimon internal server error</string>
     <string name="aimon_msg_remainingCredits">Remaining credits: %s</string>
     <string name="aimon_msg_messageQueued">Message sent.\n %s</string>
+    <string name="aimon_msg_missingParameters">Error calling Aimon provider. Please, advice the developer of the software about this error. Doing this, a correction will be available soon.\n\n%s</string>
 </resources>

@@ -47,6 +47,9 @@ public class ActSettingsSmsService
 	private EditText mTxtValue;
 
 	private final static int MAXFIELDS = 10;
+	//save originals values of the service
+	private String[] mValuesBackup;
+	private boolean mAssignedValues;
 	
 	//---------- Public properties
 
@@ -61,6 +64,8 @@ public class ActSettingsSmsService
         setContentView(R.layout.actsettingssmsservice);
         getDataFromIntent(getIntent());
         
+        //Debug: check if the service has more parameters than ones that this activity can handle
+        if (mEditedService.getParametersNumber() > MAXFIELDS) return;
         if (null == mProvider) return;
         
         mBtnConfigureSubservices = (Button) findViewById(R.id.actsettingssmsservice_btnConfigsubservices);
@@ -70,6 +75,11 @@ public class ActSettingsSmsService
         mLblServiceDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceDesc);
         
 		showAndHideViews();
+
+		if (null == savedInstanceState) {
+	        //no service parameters saved inside the collection
+	        mAssignedValues = false;
+        }
 	}
 	
 	@Override
@@ -101,16 +111,12 @@ public class ActSettingsSmsService
 		
 		//save EditText values
 		Bundle bundle = new Bundle();
-		for (int i = 0; i < MAXFIELDS; i++) {
-        	if (i < mEditedService.getParametersNumber()) {
-        		findLabelAndEditTextViewsForParameter(i);
-        		bundle.putString(String.valueOf(i), mTxtValue.getText().toString());
-    		}else{
-        		bundle.putString(String.valueOf(i), "");
-    		}
+		for (int i = 0; i < mEditedService.getParametersNumber(); i++) {
+    		findLabelAndEditTextViewsForParameter(i);
+    		bundle.putString(String.valueOf(i), mTxtValue.getText().toString());
 		}
 
-		//preparing the background task for sending message
+		//preparing the background task for executing service command
 		ExecuteServiceCommandTask task = new ExecuteServiceCommandTask(
 				this,
 				getString(R.string.common_msg_executingCommand),
@@ -126,6 +132,23 @@ public class ActSettingsSmsService
 
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
+			//backup data of services
+			if (!mAssignedValues) {
+				mAssignedValues = true;
+				if (mEditedService.getParametersNumber() > 0) {
+					mValuesBackup = new String[mEditedService.getParametersNumber()];
+					for (int i = 0; i < mEditedService.getParametersNumber(); i++) {
+						mValuesBackup[i] = mEditedService.getParameterValue(i);
+					}
+				}
+			}
+
+			//assigns user-edited values to service parameter's values
+			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
+        		findLabelAndEditTextViewsForParameter(i);
+        		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
+			}
+			
 			//open the subservice configuration activity
 			ActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
 		}
@@ -160,13 +183,10 @@ public class ActSettingsSmsService
 		//update data inside views, if the object edited isn't a new subservice
 		if (null != mEditedService) {
 	        //update values of parameters views
-			for (int i = 0; i < MAXFIELDS; i++){
+			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
 	        	findLabelAndEditTextViewsForParameter(i);
 	        	//set the content of the view
-	        	if (i < mEditedService.getParametersNumber()) {
-        			if (null != mTxtValue)
-        				mTxtValue.setText(mEditedService.getParameterValue(i));
-	        	}
+    			if (null != mTxtValue) mTxtValue.setText(mEditedService.getParameterValue(i));
 	        }
 		}
 	}
@@ -186,12 +206,10 @@ public class ActSettingsSmsService
 		if (!mIsEditingAProvider)
 			((SmsConfigurableService)mEditedService).setName(mTxtServiceName.getText().toString());
 
-		for (int i = 0; i < MAXFIELDS; i++){
+		for (int i = 0; i < mEditedService.getParametersNumber(); i++){
         	//save the data inside the object
-        	if (i < mEditedService.getParametersNumber()) {
-        		findLabelAndEditTextViewsForParameter(i);
-        		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
-        	}
+    		findLabelAndEditTextViewsForParameter(i);
+    		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
 		}
 		
 		//persist the parameters
@@ -357,6 +375,41 @@ public class ActSettingsSmsService
 			break;
 		}
 	}
+	
+
+	@Override
+	protected void cancelEdit() {
+		if (mAssignedValues) {
+			//restore saved values of service parameters
+			for (int i = 0; i < mValuesBackup.length; i++)
+				mEditedService.setParameterValue(i, mValuesBackup[i]);
+		}
+
+		super.cancelEdit();
+	}
+	
+	@Override
+	protected void loadVolatileData(Bundle savedInstanceState) {
+		super.loadVolatileData(savedInstanceState);
+		mAssignedValues = savedInstanceState.getBoolean("ASSIGNED");
+		if (mAssignedValues) {
+			int paramsNumber = savedInstanceState.getInt("PARAMSNUMBER");
+			mValuesBackup = new String[paramsNumber];
+			for (int i=0; i < paramsNumber; i++)
+				mValuesBackup[i] = savedInstanceState.getString(String.valueOf(i));
+		}
+	}
+	
+	@Override
+	protected void saveVolatileData(Bundle outState) {
+		super.saveVolatileData(outState);
+		outState.putBoolean("ASSIGNED", mAssignedValues);
+		if (mAssignedValues) {
+			outState.putInt("PARAMSNUMBER", mEditedService.getParametersNumber());
+			for (int i=0; i < mEditedService.getParametersNumber(); i++)
+				outState.putString(String.valueOf(i), mValuesBackup[i]);
+		}
+	}
 
 	
 	/**
@@ -405,5 +458,6 @@ public class ActSettingsSmsService
 			//and pass the control to caller activity with the result
 			executeCommandComplete(result);
 		}
+		
 	}
 }
