@@ -3,6 +3,7 @@ package it.rainbowbreeze.smsforfree.ui;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -29,6 +30,10 @@ public class ActAbout
         String version = GlobalDef.appVersionDescription;
         if (SmsForFreeApplication.instance().isLiteVersionApp()) version = version + " Lite";
         lblVersion.setText(version);
+
+        TextView lblSentSms = (TextView)findViewById(R.id.actabout_lblSentSms);
+        lblSentSms.setText(String.format(
+        		getString(R.string.actabout_lblSentSms), LogicManager.getSmsSentToday()));
 	}
 
 	//---------- Public methods

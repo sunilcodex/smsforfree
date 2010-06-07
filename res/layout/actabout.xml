@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+<ScrollView
+	style="@style/common_scrollActivityArea"
+>
 <RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	style="@style/common_layoutBackground"
+	style="@style/common_layoutActivityAreaScrollable"
 >
 	<ImageView
 		android:id="@+id/actabout_imgLogo"
@@ -49,4 +54,24 @@
 		android:autoLink="web"
 	/>
 	
+	<TextView
+		android:id="@+id/actabout_lblDescription"
+		style="@style/actabout_lblTitles"
+		android:layout_below="@id/actabout_imgLogo"
+		android:layout_alignParentLeft="true"
+		android:layout_marginTop="15dp"
+		android:text="@string/actabout_lblDescription"
+	/>
+	
+	<TextView
+		android:id="@+id/actabout_lblSentSms"
+		style="@style/actabout_lblTitles"
+		android:layout_below="@id/actabout_lblDescription"
+		android:layout_alignParentLeft="true"
+		android:layout_marginTop="15dp"
+	/>
+	
 </RelativeLayout>
+
+</ScrollView>
+</merge>
