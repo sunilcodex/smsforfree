@@ -53,9 +53,9 @@ public class JacksmsDictionary
 
 	//---------- Public properties
 	//message sent
-	public static final String PREFIX_RESULT_OK = "1";
+	public static final String PREFIX_RESULT_OK = "1\t";
 	//JackSMS has different error signatures
-	public static final String[] PREFIX_RESULT_ERROR_ARRAY = { "error", "0" };
+	public static final String[] PREFIX_RESULT_ERROR_ARRAY = { "error\t", "0\t" };
 
 
 	//---------- Public methods

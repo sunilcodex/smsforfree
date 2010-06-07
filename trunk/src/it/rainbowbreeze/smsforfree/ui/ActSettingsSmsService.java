@@ -149,6 +149,9 @@ public class ActSettingsSmsService
         		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
 			}
 			
+			//store that at least one of the providers' subservices list was accessed
+			SmsForFreeApplication.instance().setForceSubserviceRefresh(true);
+			
 			//open the subservice configuration activity
 			ActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
 		}

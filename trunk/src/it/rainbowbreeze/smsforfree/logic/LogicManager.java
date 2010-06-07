@@ -46,6 +46,7 @@ public class LogicManager {
 		
 		//set application name
 		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appname));
+		SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
 		
 		//load configurations
 		AppPreferencesDao.instance().load(context);
