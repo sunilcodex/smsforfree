@@ -65,7 +65,7 @@ public class ActSettingsSmsService
         getDataFromIntent(getIntent());
         
         //Debug: check if the service has more parameters than ones that this activity can handle
-        if (mEditedService.getParametersNumber() > MAXFIELDS) return;
+        if (null != mEditedService && mEditedService.getParametersNumber() > MAXFIELDS) return;
         if (null == mProvider) return;
         
         mBtnConfigureSubservices = (Button) findViewById(R.id.actsettingssmsservice_btnConfigsubservices);
