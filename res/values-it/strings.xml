@@ -1,114 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Common -->
-    <string name="common_appname">SmsForFree</string>
-    <string name="common_username">Nome utente</string>
-    <string name="common_password">Password</string>
-    <string name="common_sender">Mittente</string>
-    <string name="common_aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
+    <string name="common_btnOk">Ok</string>
     <string name="common_btnYes">Si</string>
     <string name="common_btnNo">No</string>
+    <string name="common_btnCancel">Cancel</string>
     <string name="common_mnuCancel">Annulla</string>
-    <string name="common_msg_sendingMessage">Invio messaggio...</string>
     <string name="common_msg_genericError">Errore generico: %s</string>
     <string name="common_msg_noErrorToReport">Nessun errore conosciuto :(</string>
     <string name="common_msg_cannotsavepreferences">Spiacente, impossible salvare i dati: </string>
-    <string name="common_msg_errorWrongDestinationOrBody">Mittente o testo del messaggio mancanti</string>
+    <string name="common_msg_executingCommand">Executing command...</string>
+    <string name="common_msg_appExpired">Sorry, activity expired :(</string>
     
 
 
 
     <!-- ActSendSms -->
-    <string name="actsendsms_title">SmsForFree</string>
-    <string name="actsendsms_title_full">SmsForFree - Invio SMS</string>
-    <string name="actsendsms_txtDestination">Destinatario</string>
-    <string name="actsendsms_txtBody">Messaggio</string>
-    <string name="actsendsms_btnSend">Invia</string>
-    <string name="actsendsms_lblProvider">Scegli il provider</string>
-    <string name="actsendsms_dlgPickNumber">Scegli il service</string>
-    <string name="actsendsms_mnuSignature">Inserisci firma</string>
-    <string name="actsendsms_mnuCompress">Comprimi il testo</string>
-    <string name="actsendsms_mnuSettings">Impostazioni</string>
-    <string name="actsendsms_mnuAbout">Informazioni su</string>
-    <string name="actsendsms_menuExit">Uscita</string>
-    <string name="actsendsms_msg_noPhoneNumber">Nessun numero per il contatto selezionato</string>
-    <string name="actsendsms_msg_noProviderSelected">Scegli un provider...</string>
-    <string name="actsendsms_msg_noSubserviceSelected">Scegli un servizio del provider...</string>
-    <string name="actsendsms_msg_noDestination">Nessun destinatario inserito...</string>
-    <string name="actsendsms_msg_wrongDestination">Il destinatario non è valido...</string>
-    <string name="actsendsms_msg_noMessage">Inserisci un messaggio...</string>
-    <string name="actsendsms_msg_messageTooLong">Il messagio è troppo lungo...</string>
-    <string name="actsendsms_msg_errorSendingMessage">Errore nell\'invio del messaggio:</string>
-    <string name="actsendsms_msg_sendOk">Messaggio spedito.</string>
-    <string name="actsendsms_msg_providerNotConfigured">%s provider non configurato, fallo nelle Impostazioni...</string>
-    <string name="actsendsms_msg_subserviceNotConfigured">Service non configurato, fallo nelle Impostazioni...</string>
-    <string name="actsendsms_msg_subservicesNotPresent">Nessun servizio per il provider %s. Aggiungili nelle Impostazioni...</string>
-    <string name="actsendsms_phoneType_home">Casa</string>
+    <string name="actsendsms_title">%s - Send SMS</string>
+    <string name="actsendsms_txtDestination">Destionation number</string>
+    <string name="actsendsms_txtBody">Message</string>
+    <string name="actsendsms_btnSend">Send</string>
+    <string name="actsendsms_lblProvider">Choose provider</string>
+    <string name="actsendsms_dlgPickNumber">Choose service</string>
+    <string name="actsendsms_mnuSignature">Append signature</string>
+    <string name="actsendsms_mnuCompress">Compress Text</string>
+    <string name="actsendsms_mnuSettings">Settings</string>
+    <string name="actsendsms_mnuResetData">Empty fields</string>
+    <string name="actsendsms_mnuAbout">About</string>
+    <string name="actsendsms_menuExit">Exit</string>
+    <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
+    <string name="actsendsms_msg_noProviderSelected">Choose a provider...</string>
+    <string name="actsendsms_msg_noSubserviceSelected">Choose a provider\'s service...</string>
+    <string name="actsendsms_msg_noDestination">Enter a phone number as destination...</string>
+    <string name="actsendsms_msg_wrongDestination">Enter a valid phone number as destination...</string>
+    <string name="actsendsms_msg_noMessage">Enter a message...</string>
+    <string name="actsendsms_msg_messageTooLong">Message is too long...</string>
+    <string name="actsendsms_msg_providerNotConfigured">%s provider not correctly configured, configure it in the Settings...</string>
+    <string name="actsendsms_msg_subserviceNotConfigured">Service not configured, configure it in the Settings...</string>
+    <string name="actsendsms_msg_subservicesNotPresent">No services for %s provider. Add them in the Settings...</string>
+    <string name="actsendsms_msg_emptyCaptchaCode">Captcha code is empty.\nMessage sending aborted.</string>
+    <string name="actsendsms_msg_sendingMessage">Sending message...</string>
+    <string name="actsendsms_msg_sendingCaptcha">Sending captcha code...</string>
+    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the maximum number of sms per day...</string>
+    <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
-    <string name="actsendsms_phoneType_work">Ufficio</string>
-    <string name="actsendsms_phoneType_workfax">Fax lavoro</string>
-    <string name="actsendsms_phoneType_homefax">Fax casa</string>
-    <string name="actsendsms_phoneType_other">Altro</string>
+    <string name="actsendsms_phoneType_work">Work</string>
+    <string name="actsendsms_phoneType_workfax">Work fax</string>
+    <string name="actsendsms_phoneType_homefax">Home fax</string>
+    <string name="actsendsms_phoneType_other">Other</string>
 
     
 
 
     <!-- ActSettingsMain -->
-    <string name="actsettingsmain_title">SmsForFree - Impostazioni</string>
-    <string name="actsettingsmain_lblApplicationCategory">Applicazione</string>
-    <string name="actsettingsmain_lblProvidersCategory">Provider</string>
-    <string name="actsettingsmain_chkResetDataAfterSend">Cancella i dati dopo l\'invio</string>
-    <string name="actsettingsmain_chkResetDataAfterSendSummary">Cancella destinazione e messaggio dopo aver mandato l\'sms</string>
+    <string name="actsettingsmain_title">%s - Settings</string>
+    <string name="actsettingsmain_lblApplicationCategory">Application</string>
+    <string name="actsettingsmain_lblProvidersCategory">Providers</string>
+    <string name="actsettingsmain_chkResetDataAfterSend">Reset after send</string>
+    <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
-    <string name="actsettingsmain_lblProvidersList">Impostazioni provider</string>
-    <string name="actsettingsmain_lblProvidersListSummary">Impostazioni specifiche di ogni provider</string>
-    <string name="actsettingsmain_txtSignature">Firma</string>
-    <string name="actsettingsmain_txtSignatureSummary">Firma da aggiungere ai messaggi</string>
-	<string name="actsettingssmsservice_lblServiceName">Nome del servizio</string>    
+    <string name="actsettingsmain_lblProvidersList">Providers settings</string>
+    <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
+    <string name="actsettingsmain_txtSignature">Signature</string>
+    <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
+    <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>
+    <string name="actsettingsmain_txtDefaultInternationalPrefixSummary">Default international prefix to use when another prefix is not used</string>
 
 
 
 
     <!-- ActSettingsSmsService -->
-    <string name="actsettingssmsservice_title">SmsForFree - Impostazioni Provider/Servizio</string>
-    <string name="actsettingssmsservice_titleEdit">SmsForFree - Impostazioni per %s</string>
-    <string name="actsettingssmsservice_btnConfigureSubservices">Configurazione servizio</string>
-
+    <string name="actsettingssmsservice_title">%s - Settings for %s</string>
+    <string name="actsettingssmsservice_btnConfigureSubservices">Configure services</string>
+	<string name="actsettingssmsservice_lblServiceName">Service name</string>    
 
 
 
     <!-- ActProvidersList -->
-    <string name="actproviderslist_title">SmsForFree - Provider</string>
+    <string name="actproviderslist_title">%s - Providers</string>
 
 
 
 
     <!-- ActTemplatesList -->
-    <string name="acttemplateslist_title">SmsForFree - Scegli un template</string>
+    <string name="acttemplateslist_title">%s - Choose a template</string>
 
 
 
 
     <!-- ActSubservicesList -->
-    <string name="actsubserviceslist_title">Lista servizi Provider</string>
-    <string name="actsubserviceslist_titleEdit">Lista servizi %s</string>
-    <string name="actsubserviceslist_mnuHeaderTitle">Scegli un\'azione</string>
-    <string name="actsubserviceslist_mnuDeleteService">Cancella</string>
-    <string name="actsubserviceslist_mnuAddService">Aggiungi</string>
-    <string name="actsubserviceslist_mnuEditService">Modifica</string>
+    <string name="actsubserviceslist_title">%s - Services for %s</string>
+    <string name="actsubserviceslist_mnuHeaderTitle">Choose action</string>
+    <string name="actsubserviceslist_mnuDeleteService">Delete</string>
+    <string name="actsubserviceslist_mnuAddService">Add new service</string>
+    <string name="actsubserviceslist_mnuEditService">Edit</string>
+    <string name="actsubserviceslist_msgNoTemplates">No templates available...\n\nYou should download them in order to add new services.</string>
 
 
 
 
     <!-- ActAbout -->
-    <string name="actabout_title">SmsForFree - Informazioni</string>
+    <string name="actabout_title">%s - About</string>
+    <string name="actabout_lblAuthor">by Alfredo Morresi</string>
+    <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
+
+
+
+
+    <!-- ActExpired -->
+    <string name="actexpired_title">%s - Expired :(</string>
+    <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nSearch for a new version of the application.</string>
 
 
 
 
     <!-- ActCompactMessage -->
-    <string name="actcompactmessage_title">SmsForFree - Riduci messaggio</string>
+    <string name="actcompactmessage_title">%s - Compact message</string>
+
+
+
+
+    <!-- DlgCaptch -->
+    <string name="dlgcaptcha_title">Captcha request</string>
+    <string name="dlgcaptcha_txtCodeHint">Insert captcha code</string>
 
 
 </resources>

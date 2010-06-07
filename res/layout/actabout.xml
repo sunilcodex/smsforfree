@@ -46,6 +46,7 @@
 		android:layout_below="@id/actabout_lblAuthor"
 		android:layout_alignRight="@id/actabout_lblAppName"
 		android:text="@string/actabout_lblWebsite"
+		android:autoLink="web"
 	/>
 	
 </RelativeLayout>
