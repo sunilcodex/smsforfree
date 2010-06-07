@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Application name -->
-    <string name="common_appname">SmsForFree</string>
+    <string name="common_appname">JackSMS</string>
 
 
 	<!-- Allowed providers -->
-	<string name="config_AllowedProviders">Aimon,JackSMS</string>
+	<string name="config_AllowedProviders">JackSMS</string>
 	
 	<!-- Lite or Normal -->
 	<string name="config_AppType">Normal</string>
