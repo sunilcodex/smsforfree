@@ -45,7 +45,7 @@ public class JacksmsProvider
 //		mSubservicesListActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[7];
+		mMessages = new String[8];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
@@ -53,6 +53,7 @@ public class JacksmsProvider
 		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplates);
 		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
 		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_TemplatesListUpdated);
+		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.jacksms_msg_captchaOk);
 	}
 	
 	
@@ -73,6 +74,7 @@ public class JacksmsProvider
 	private final static int MSG_INDEX_NO_TEMPLATES_PARSED = 4;
 	private final static int MSG_INDEX_NO_CAPTCHA_PARSED = 5;
 	private final static int MSG_INDEX_TEMPLATES_UPDATED = 6;
+	private final static int MSG_INDEX_CAPTCHA_OK = 7;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -214,7 +216,9 @@ public class JacksmsProvider
     	
     	//at this point, no error happened, so the reply contains captcha submission result
     	String reply = res.getResultAsString();
-		res.setResultAsString(mDictionary.getTextPartFromReply(reply));
+    	String returnMessage = mDictionary.getTextPartFromReply(reply);
+    	if (TextUtils.isEmpty(returnMessage)) returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
+		res.setResultAsString(returnMessage);
 		
 		return res;    	
 	}

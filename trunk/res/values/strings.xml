@@ -104,6 +104,8 @@
     <string name="actabout_title">%s - About</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
+    <string name="actabout_lblDescription">Suggestions, translations, graphics ideas? Send me an email at info (at) rainbowbreeze.it\n\nA special thanks to:\n -Ilaria Mauric for the logo</string>
+    <string name="actabout_lblSentSms">Sms sent today: %s</string>
 
 
 
