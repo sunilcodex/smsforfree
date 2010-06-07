@@ -9,7 +9,7 @@ echo "What cared version you need to install?"
 echo " (1) JackSMS"
 echo " (2) Aimon"
 echo " (3) SmsForFree Lite"
-echo " (4) SmsForFree Premium"
+echo " (4) SmsForFree Normal"
 echo " (0) Exit"
 read -n1 -p "  > " BRANDCODE
 
@@ -26,7 +26,7 @@ case $BRANDCODE in
       BRAND="smsforfree-lite"
   ;;
   4)
-      BRAND="smsforfree-premium"
+      BRAND="smsforfree"
   ;;
   * )
        echo " Abort..."
@@ -38,8 +38,15 @@ esac
 SOURCEPATH="brand/$BRAND"
 
 # Apply brand
+echo
+echo
+echo "Copying files..."
 cp -v $SOURCEPATH/res/drawable-hdpi/* ./res/drawable-hdpi/
 cp -v $SOURCEPATH/res/drawable-mdpi/* ./res/drawable-mdpi/
 cp -v $SOURCEPATH/res/drawable-ldpi/* ./res/drawable-ldpi/
 cp -v $SOURCEPATH/res/values/* ./res/values/
+
+echo
+echo "Done, time to rebuild your software!"
+echo
  
