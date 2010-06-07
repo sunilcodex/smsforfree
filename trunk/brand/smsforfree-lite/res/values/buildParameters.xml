@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Application name -->
-    <string name="common_appname">SmsForFree</string>
+	<string name="common_appname">SmsForFree</string>
 
 	<!-- Allowed providers -->
 	<string name="config_AllowedProviders">Aimon,JackSMS</string>
-
+	
 	<!-- Lite or Normal -->
-	<string name="config_AppType">Normal</string>
-
+	<string name="config_AppType">Lite</string>
+	
 	<!-- Number of sms allowed each day foe lite version of the software-->
 	<string name="config_MaxAllowedSmsForDay">5</string>
 </resources>
