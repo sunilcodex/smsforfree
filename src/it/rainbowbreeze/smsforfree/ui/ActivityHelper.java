@@ -30,6 +30,7 @@ public class ActivityHelper {
 	public final static int REQUESTCODE_PICKCONTACT = 3;
 	public final static int REQUESTCODE_PICKTEMPLATE = 4;
 	public final static int REQUESTCODE_COMPACTMESSAGE = 5;
+	public final static int REQUESTCODE_SETTINGS = 6;
 	
 	public final static String INTENTKEY_SMSSERVICEID = "SmsService";
 	public final static String INTENTKEY_SMSPROVIDERID = "SmsProvider";
@@ -49,7 +50,7 @@ public class ActivityHelper {
 	 */
 	public static void openSettingsMain(Activity callerActivity)
 	{
-		openActivity(callerActivity, ActSettingsMain.class, null, false, REQUESTCODE_NONE);
+		openActivity(callerActivity, ActSettingsMain.class, null, true, REQUESTCODE_SETTINGS);
 	}
 	
 	/**

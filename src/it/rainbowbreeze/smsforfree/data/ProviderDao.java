@@ -50,6 +50,7 @@ public class ProviderDao
 	private final static String XMLNODE_PARAMETER = "Parameter";
 	private final static String XMLNODE_PARAMETERDESC = "Desc";
 	private final static String XMLNODE_PARAMETERVALUE = "Value";
+	private final static String XMLNODE_PARAMETERFORMAT = "Format";
 	private final static String XMLATTRIBUTE_PARAMETERSNUMBER = "ParametersNumber";
 	
 	private final static int PROVIDERDATA_PARAMETERS = 1;
@@ -327,6 +328,9 @@ public class ProviderDao
 				serializer.startTag("", XMLNODE_PARAMETERVALUE);
 				serializer.text(parseString(service.getParameterValue(i)));
 				serializer.endTag("", XMLNODE_PARAMETERVALUE);
+				serializer.startTag("", XMLNODE_PARAMETERFORMAT);
+				serializer.text(String.valueOf(service.getParameterFormat(i)));
+				serializer.endTag("", XMLNODE_PARAMETERFORMAT);
 			serializer.endTag("", XMLNODE_PARAMETER);
 		}
 		serializer.endTag("", XMLNODE_PARAMETERSARRAY);
@@ -425,6 +429,8 @@ public class ProviderDao
 					parametersIndex++;
 				} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERVALUE)) {
 					provider.setParameterValue(parametersIndex, parser.nextText());
+				} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERFORMAT)) {
+					provider.setParameterFormat(parametersIndex, Integer.valueOf(parser.nextText()));
 				}
 				break;
 				

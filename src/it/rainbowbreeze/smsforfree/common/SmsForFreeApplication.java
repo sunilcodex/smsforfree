@@ -60,6 +60,13 @@ public class SmsForFreeApplication
 	public void setAppName(String newValue)
 	{ mAppName = newValue; }
 
+	/** Force the refresh of subservice list */
+	protected boolean mForceSubserviceRefresh;
+	public boolean getForceSubserviceRefresh()
+	{ return mForceSubserviceRefresh; }
+	public void setForceSubserviceRefresh(boolean newValue)
+	{ mForceSubserviceRefresh = newValue; }
+
 
 
 	

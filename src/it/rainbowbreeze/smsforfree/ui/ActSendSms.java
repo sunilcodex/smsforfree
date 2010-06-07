@@ -222,6 +222,14 @@ public class ActSendSms
 				String message = data.getStringExtra(ActivityHelper.INTENTKEY_MESSAGE);
     			if (!TextUtils.isEmpty(message))
     				mTxtMessage.setText(message);
+    		break;
+    		
+    		case (ActivityHelper.REQUESTCODE_SETTINGS):
+    			//refresh subservices list if subservices of a provider was edited
+    			if (SmsForFreeApplication.instance().getForceSubserviceRefresh()) {
+    				SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
+    				changeProvider(mSelectedProvider, true);
+    			}
     		break;  
     	}  
 	}
@@ -267,7 +275,7 @@ public class ActSendSms
     private OnItemSelectedListener mSpiProvidersSelectedListener = new OnItemSelectedListener() {
 		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 			SmsProvider provider = (SmsProvider) parent.getItemAtPosition(pos);
-			changeProvider(provider);
+			changeProvider(provider, false);
 		}
 
 		public void onNothingSelected(AdapterView<?> parent) {
@@ -348,11 +356,13 @@ public class ActSendSms
 	/**
 	 * Called when the selected provider changes
 	 * @param provider
+	 * @param forceRefresh refresh the provider and service list also if
+	 *        the same provider was selected
 	 */
-	private void changeProvider(SmsProvider provider)
+	private void changeProvider(SmsProvider provider, boolean forceRefresh)
 	{
 		//already selected provider
-		if (provider == mSelectedProvider) return;
+		if (!forceRefresh && provider == mSelectedProvider) return;
 		
 		//first, check if selected service has subservices
 		if (provider.hasSubServices()) {
