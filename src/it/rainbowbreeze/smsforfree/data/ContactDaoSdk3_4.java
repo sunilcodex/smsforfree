@@ -54,7 +54,7 @@ public class ContactDaoSdk3_4
 	@Override
 	public ArrayList<ContactPhone> getContactNumbers(Activity callerActivity, Uri contactUri) {
 
-		ArrayList<ContactPhone> numbers = new ArrayList<ContactPhone>();
+		ArrayList<ContactPhone> phones = new ArrayList<ContactPhone>();
 		
 		String id = String.valueOf(ContentUris.parseId(contactUri));
 		Cursor pCur = callerActivity.managedQuery(
@@ -68,12 +68,11 @@ public class ContactDaoSdk3_4
  		    // This would allow you get several phones number
  			String number = pCur.getString(pCur.getColumnIndex(Contacts.Phones.NUMBER));
  			String numberType = pCur.getString(pCur.getColumnIndex(Contacts.Phones.TYPE)); 
- 			
- 			numbers.add(new ContactPhone(numberType, number));
+ 			phones.add(new ContactPhone(numberType, number));
  		} 
  		pCur.close();
  		
-	return numbers;
+	return phones;
 	}
 
 	
