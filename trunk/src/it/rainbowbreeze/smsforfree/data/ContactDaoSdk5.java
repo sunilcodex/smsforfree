@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 /**
  * @author rainbowbreeze
@@ -59,10 +60,9 @@ public class ContactDaoSdk5
  				ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?", 
  				new String[]{id}, null);
  		while (pCur.moveToNext()) {
- 			phones.add(new ContactPhone(
- 					pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)),
- 					pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE))
- 			));
+ 			String numberType = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)); 
+ 			String number = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+ 			phones.add(new ContactPhone(numberType, number));
  		} 
  		pCur.close();
  		return phones;
