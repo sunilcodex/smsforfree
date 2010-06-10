@@ -3,16 +3,20 @@ package it.rainbowbreeze.smsforfree.data;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 
 
 public abstract class ContactDao
 {
 	//---------- Private fields
+	private static final String SEPARATOR_FIELD = "$@§?";
+	private static final String SEPARATOR_ROW = "&£$%";
 
 	   
 
@@ -75,6 +79,52 @@ public abstract class ContactDao
      * @param callerActivity
      * @param contactUri
      */
-    public abstract ArrayList<ContactPhone> getContactNumbers(Activity callerActivity,  Uri contactUri);
+    public abstract List<ContactPhone> getContactNumbers(Activity callerActivity,  Uri contactUri);
 
+    
+    /**
+     * Serialize a List of ContactPhone into a string
+     * @return
+     */
+    public String SerializeContactPhones(List<ContactPhone> phones)
+    {
+    	if (null == phones) return "";
+    	
+    	StringBuilder sb = new StringBuilder();
+    	int index = 0;
+    	for(ContactPhone phone : phones)
+    	{
+    		sb.append(phone.getType())
+    			.append(SEPARATOR_FIELD)
+    			.append(phone.getNumber());
+    		if (index < phones.size() -1) sb.append(SEPARATOR_ROW);
+    		index++;
+    	}
+    	
+    	return sb.toString();
+    }
+    
+    /**
+     * Deserialize a string onto a List of ContactPhone
+     * @return
+     */
+    public List<ContactPhone> deserializeContactPhones(String phones)
+    {
+    	List<ContactPhone> contactPhones = new ArrayList<ContactPhone>();
+    	if (TextUtils.isEmpty(phones)) return contactPhones;
+
+    	String[] rows = phones.split(SEPARATOR_ROW);
+    	for(String row : rows){
+    		String[] fields = row.split(SEPARATOR_FIELD);
+    		try{
+    			String numberType = fields[0];
+    			String number = fields[1];
+    			contactPhones.add(new ContactPhone(numberType, number));
+    		} catch (Exception e) {
+    			//simpy, continue because never should arrive here
+    		}
+    	}
+    	
+    	return contactPhones;
+    }
 }

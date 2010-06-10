@@ -46,15 +46,15 @@ import android.widget.AdapterView.OnItemSelectedListener;
 public class ActSendSms
 	extends Activity
 {
-	//---------- Ctors
-
-
-
-
 	//---------- Private fields
-	
 	private static final int DIALOG_PHONES = 10;
 	private final static int DIALOG_CAPTCHA = 11;
+	
+	private final static String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
+	private final static String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
+
+
+
 
 	//---------- Private fields
 	private final static int OPTIONMENU_EXIT = 1;
@@ -79,7 +79,6 @@ public class ActSendSms
 
 	private List<ContactPhone> mPhonesToShowInDialog;
 	private String mCaptchaStorage;
-	private boolean mAppExpired;
 
 	
 	
@@ -126,16 +125,18 @@ public class ActSendSms
         //populate Spinner with values
         bindProvidersSpinner();
 
-        //load previous execution saved configuration
+        //executed when the app first runs
         if (null == savedInstanceState) {
-        	restorePreviousInputStatus();
-        }
-
-        
-        //send statistics data first time the app runs
-        if (null == savedInstanceState) {
+        	//send statistics data first time the app runs
 	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
 	        statsTask.execute(this);
+	        //load values of view from previous application execution
+        	restoreLastViewsValues();
+        	
+    	//executed when the activity is reloaded (rotate, for example)
+        } else {
+        	//load volatile data
+        	loadVolatileData(savedInstanceState);
         }
     }
 
@@ -146,7 +147,7 @@ public class ActSendSms
     	
 		menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
 		.setIcon(android.R.drawable.ic_menu_info_details);
-    	if (mAppExpired) return true;
+    	if (SmsForFreeApplication.instance().isAppExpired()) return true;
 
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
@@ -319,6 +320,18 @@ public class ActSendSms
 		
 		public void afterTextChanged(Editable s) {
 		}
+	};
+	
+	
+	/**
+	 * Save volatile data (for example, when the activity is
+	 * rotated
+	 */
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		String phones = ContactDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
+		outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
+		outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
 	};
 
 
@@ -579,7 +592,7 @@ public class ActSendSms
 	 * previous status of input views
 	 * 
 	 */
-	private void restorePreviousInputStatus() {
+	private void restoreLastViewsValues() {
 		//text and message
 		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
 		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
@@ -756,6 +769,20 @@ public class ActSendSms
 		mTxtMessage.setText("");
 	}
 	
+
+	/**
+	 * Load volatile data into inner fields, for example when the
+	 * activity is rotated
+	 * 
+	 * @param savedInstanceState
+	 */
+	private void loadVolatileData(Bundle savedInstanceState) {
+		//restore volatile values
+		mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
+		mPhonesToShowInDialog = ContactDao.instance().deserializeContactPhones(
+				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
+	}
+
 
 	/**
 	 * Send a sms

@@ -6,6 +6,7 @@ package it.rainbowbreeze.smsforfree.data;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -13,7 +14,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 /**
  * @author rainbowbreeze
@@ -50,7 +50,8 @@ public class ContactDaoSdk5
 	 * @see it.rainbowbreeze.smsforfree.data.ContactDao#getContactNumbers(android.app.Activity, android.net.Uri)
 	 */
 	@Override
-	public ArrayList<ContactPhone> getContactNumbers(Activity callerActivity, Uri contactUri) {
+	public List<ContactPhone> getContactNumbers(Activity callerActivity, Uri contactUri)
+	{
  		ArrayList<ContactPhone> phones = new ArrayList<ContactPhone>();
  		
 		String id = String.valueOf(ContentUris.parseId(contactUri));

@@ -112,6 +112,12 @@
 		<item name="android:layout_height">fill_parent</item>
 	</style>
 
+	<style name="actsubservicelist_lblNoSubservices" parent="@style/common_TextView">
+		<item name="android:gravity">top|center_horizontal</item>
+		<item name="android:layout_margin">5dp</item>
+		<item name="android:textSize">30dp</item>
+	</style>
+
 
 	
 	
@@ -133,7 +139,7 @@
 		<item name="android:layout_height">fill_parent</item>
 		<item name="android:layout_weight">1</item>
 	</style>
-	
+
 	<style name="actcompactsmessage_lblResultMessage">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">fill_parent</item>

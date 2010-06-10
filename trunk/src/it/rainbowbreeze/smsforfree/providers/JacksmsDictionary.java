@@ -43,20 +43,25 @@ public class JacksmsDictionary
 	private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
 	private static final String PARAM_CLIENTVERSION = "clientVersion=";
 	private static final String PARAM_CLIENTVERSION_VALUE = "android";
-	private static final String SEPARATOR = "\t";
+	private static final String CSV_SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
 	
 	/** Max number of parameters a JackSMS service can have */
 	private static final int MAX_SERVICE_PARAMETERS = 4;
 	
+	
+	
 
 	//---------- Public properties
 	//message sent
-	public static final String PREFIX_RESULT_OK = "1\t";
+	public static final String PREFIX_RESULT_OK = "1" + CSV_SEPARATOR;
 	//JackSMS has different error signatures
-	public static final String[] PREFIX_RESULT_ERROR_ARRAY = { "error\t", "0\t" };
+	public static final String[] PREFIX_RESULT_ERROR_ARRAY =
+		{ "error" + CSV_SEPARATOR, "0" + CSV_SEPARATOR };
 
+	
+	
 
 	//---------- Public methods
 	public String getUrlForSendingMessage(String username, String password)
@@ -93,11 +98,11 @@ public class JacksmsDictionary
 		
 		//first header
 		key = "J-R";
-		value = String.valueOf(service.getTemplateId()) + SEPARATOR + 
-				destination + SEPARATOR +
-				replaceServiceParameter(service.getParameterValue(0)) + SEPARATOR +
-				replaceServiceParameter(service.getParameterValue(1)) + SEPARATOR +
-				replaceServiceParameter(service.getParameterValue(2)) + SEPARATOR +
+		value = String.valueOf(service.getTemplateId()) + CSV_SEPARATOR + 
+				destination + CSV_SEPARATOR +
+				replaceServiceParameter(service.getParameterValue(0)) + CSV_SEPARATOR +
+				replaceServiceParameter(service.getParameterValue(1)) + CSV_SEPARATOR +
+				replaceServiceParameter(service.getParameterValue(2)) + CSV_SEPARATOR +
 				replaceServiceParameter(service.getParameterValue(3));
 		headers.put(key, value);
 		
@@ -125,8 +130,8 @@ public class JacksmsDictionary
 		
 		//first header
 		key = "J-R";
-		value = String.valueOf(sessionId) + SEPARATOR + 
-				captchaCode + SEPARATOR;
+		value = String.valueOf(sessionId) + CSV_SEPARATOR + 
+				captchaCode + CSV_SEPARATOR;
 		headers.put(key, value);
 		
 		return headers;
@@ -150,7 +155,7 @@ public class JacksmsDictionary
 		}
 		
 		//other reply from JackSMS
-		String[] lines = reply.split(SEPARATOR);
+		String[] lines = reply.split(CSV_SEPARATOR);
 		if (lines.length > 2)
 			//message is in the second item
 			return lines[1];
@@ -187,7 +192,7 @@ public class JacksmsDictionary
 	public String getCaptchaSessionIdFromReply(String reply)
 	{
 		//find captcha sessionId, the first part of the message
-		int separatorPos = reply.indexOf(SEPARATOR);
+		int separatorPos = reply.indexOf(CSV_SEPARATOR);
 		if (separatorPos < 0)
 			return "";
 		
@@ -204,7 +209,7 @@ public class JacksmsDictionary
 		String[] lines = providerReply.split(String.valueOf((char) 10));
 		
 		for(String templateLine : lines) {
-			String[] pieces = templateLine.split(SEPARATOR);
+			String[] pieces = templateLine.split(CSV_SEPARATOR);
 			try {
 				String serviceId = pieces[0];
 				String serviceName = pieces[1];

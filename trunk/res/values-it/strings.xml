@@ -91,6 +91,7 @@
 
     <!-- ActSubservicesList -->
     <string name="actsubserviceslist_title">%s - Services for %s</string>
+    <string name="actsubserviceslist_lblNoSubservices">You don\'t have any service to display.\n\n To add services, press Menu and select \"Add new service\"</string>
     <string name="actsubserviceslist_mnuHeaderTitle">Choose action</string>
     <string name="actsubserviceslist_mnuDeleteService">Delete</string>
     <string name="actsubserviceslist_mnuAddService">Add new service</string>
