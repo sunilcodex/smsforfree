@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<merge
+<FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	style="@style/common_layoutBackground"
 >
+	<TextView
+		android:id="@+id/actsubservicelist_lblNoSubservices"
+		style="@style/actsubservicelist_lblNoSubservices"
+		android:text="@string/actsubserviceslist_lblNoSubservices"
+	/>
+	
 	<ListView
 		android:id="@android:id/list"
 		style="@style/actsubserviceslist_lstSubservices"
 	/>
-</merge>
+</FrameLayout>

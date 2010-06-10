@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
@@ -38,10 +39,11 @@ public class ActSubservicesList
 	
 	private SmsProvider mProvider;
     ArrayAdapter<SmsService> mListAdapter;
+    TextView mLblNoSubservices;
 
-	
-	
-	
+
+
+
 	//---------- Public properties
 
 	
@@ -51,7 +53,7 @@ public class ActSubservicesList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.actserviceslist);
+		setContentView(R.layout.actsubserviceslist);
 		
 		getDataFromIntent(getIntent());
 		
@@ -64,6 +66,7 @@ public class ActSubservicesList
         		SmsForFreeApplication.instance().getAppName(),
         		mProvider.getName()));
 
+        mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);
         mListAdapter = new ArrayAdapter<SmsService>(this, 
 	              android.R.layout.simple_list_item_1, mProvider.getAllSubservices());
 		setListAdapter(mListAdapter);
@@ -72,6 +75,8 @@ public class ActSubservicesList
 		//alternative method:
 		//http://www.anddev.org/creating_a_contextmenu_on_a_listview-t2438.html
 		registerForContextMenu(getListView());
+		
+		showHideInfoLabel();
 	}
 	
 	
@@ -170,6 +175,7 @@ public class ActSubservicesList
 			ResultOperation res = mProvider.saveSubservices(this);
 			if (null == res || res.HasErrors())
 				ActivityHelper.reportError(this, res);
+			showHideInfoLabel();
 			break;
 		}
 		
@@ -201,6 +207,10 @@ public class ActSubservicesList
 			//and launch the creation of new subservice
 			ActivityHelper.openSettingsSmsService(this, mProvider.getId(), templateId, SmsService.NEWSERVICEID);
 			break;
+			
+		case ActivityHelper.REQUESTCODE_SERVICESETTINGS:
+			showHideInfoLabel();
+			break;
 		}
 	}
 	
@@ -225,6 +235,19 @@ public class ActSubservicesList
 	}
 	
 	
+	/**
+	 * Show or hide label with description
+	 */
+	private void showHideInfoLabel()
+	{
+		if (mProvider.getAllSubservices().size() == 0) {
+			mLblNoSubservices.setVisibility(View.VISIBLE);
+		} else {
+			mLblNoSubservices.setVisibility(View.GONE);
+		}
+	}
+
+
 	/**
 	 * Add new service 
 	 */

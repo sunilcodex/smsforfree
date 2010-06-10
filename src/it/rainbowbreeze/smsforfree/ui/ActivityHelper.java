@@ -31,6 +31,7 @@ public class ActivityHelper {
 	public final static int REQUESTCODE_PICKTEMPLATE = 4;
 	public final static int REQUESTCODE_COMPACTMESSAGE = 5;
 	public final static int REQUESTCODE_SETTINGS = 6;
+	public final static int REQUESTCODE_SERVICESETTINGS = 7;
 	
 	public final static String INTENTKEY_SMSSERVICEID = "SmsService";
 	public final static String INTENTKEY_SMSPROVIDERID = "SmsProvider";
@@ -69,7 +70,7 @@ public class ActivityHelper {
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		intent.putExtra(INTENTKEY_SMSTEMPLATEID, templateId);
 		intent.putExtra(INTENTKEY_SMSSERVICEID, serviceId);
-		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
+		openActivity(intent, callerActivity, true, REQUESTCODE_SERVICESETTINGS);
 	}
 	
 	/**
