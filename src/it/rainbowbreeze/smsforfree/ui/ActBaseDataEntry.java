@@ -32,7 +32,8 @@ public abstract class ActBaseDataEntry
 	
 	
 	//---------- Private fields
-	protected final static int OPTIONMENU_CANCEL = 100;
+	protected final static int OPTIONMENU_SAVE = 100;
+	protected final static int OPTIONMENU_CANCEL = 101;
 	
 	protected final static String KEY_MUSTRETURNFROMCALLEDACTIVITY = "mustReturnFromCalledActivity";
 	
@@ -108,7 +109,9 @@ public abstract class ActBaseDataEntry
 	{
 		super.onCreateOptionsMenu(menu);
 		
-		menu.add(0, OPTIONMENU_CANCEL, 9, R.string.common_mnuCancel)
+		menu.add(0, OPTIONMENU_SAVE, 10, R.string.common_mnuSave)
+			.setIcon(android.R.drawable.ic_menu_save);
+		menu.add(0, OPTIONMENU_CANCEL, 11, R.string.common_mnuCancel)
 			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		
 		return true;
@@ -126,6 +129,11 @@ public abstract class ActBaseDataEntry
 		switch (item.getItemId()) {
 		case OPTIONMENU_CANCEL:
 			cancelEdit();
+			result = true;
+			break;
+			
+		case OPTIONMENU_SAVE:
+			confirmEdit();
 			result = true;
 			break;
 			
@@ -176,7 +184,7 @@ public abstract class ActBaseDataEntry
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.isTracking()
                 && !event.isCanceled()) {
-            if (saveDataFromViews()) finish();
+            confirmEdit();
             return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -243,6 +251,18 @@ public abstract class ActBaseDataEntry
 	protected void loadVolatileData(Bundle savedInstanceState)
 	{
 		mMustReturnedFromStartedActivity = savedInstanceState.getBoolean(KEY_MUSTRETURNFROMCALLEDACTIVITY);
+	}
+	
+	/**
+	 * Called when the user press the save menu button or press the back.
+	 * Confirm the editing of activity data
+	 */
+	protected void confirmEdit()
+	{
+		if (saveDataFromViews()){
+			setResult(RESULT_OK);
+			finish();
+		}
 	}
 	
 	

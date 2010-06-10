@@ -15,8 +15,8 @@ import android.text.TextUtils;
 public abstract class ContactDao
 {
 	//---------- Private fields
-	private static final String SEPARATOR_FIELD = "$@§?";
-	private static final String SEPARATOR_ROW = "&£$%";
+	private static final String SEPARATOR_FIELD = "A1A2A3";
+	private static final String SEPARATOR_ROW = "B1B2B3";
 
 	   
 
