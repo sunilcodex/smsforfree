@@ -114,7 +114,8 @@
 
 	<style name="actsubservicelist_lblNoSubservices" parent="@style/common_TextView">
 		<item name="android:gravity">top|center_horizontal</item>
-		<item name="android:layout_margin">5dp</item>
+		<item name="android:layout_margin">10dp</item>
+		<item name="android:layout_marginTop">20dp</item>
 		<item name="android:textSize">30dp</item>
 	</style>
 

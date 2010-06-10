@@ -1,19 +1,19 @@
 CONTROLLARE
 -come funziona la rotazione dello schermo qnd sto mandando un messaggio
+-quanto vado nei setting, ruoto il form, cancello i servizi e ritorno, controllare come va il provider e perche'
+ mi ha generato un errore nullpointerexcepition nella changeProvider
 
 
 IMPLEMENTAZIONI
+-sistemare l'associazione telefono-tipo
 -gestione servizi salvati di jacksms
 -nei codici di errore ritornati all'activity, controllare se l'errore e' uno di quelli standard
  (no credential, empty reply) e cambiare il messaggio di errore
 -nella sostituzione dei template di jacksms, verificare se ci sono da eliminare anche dei servizi oppure no
--quando verifico le credeziali di aimon, cercare un modo piu' furbo per farlo, dato che ora a  causa del %s non im riconosce la stringa del credito e quindi mi ritorna il credito
 -gestire meglio i messaggi d'errore del dao
--Vedere se si riescono a persistere le variabili delle form nell'Application oppure se c'e' un modo per tirarle su ad ogni OnCreate quando savedInstance != null
 -aggiungere menu x registrarsi ad aimon con il proprio codice
 -aggiungere menu x registrarsi a jacksms
--aggiungere controllo su sms totali giornalieri
--aggiungere ping a sito con info
+-mettere salvataggio di provider numero e subservice nei dati volatili e riprenderli
 
 
 Lista servizi da consultare 

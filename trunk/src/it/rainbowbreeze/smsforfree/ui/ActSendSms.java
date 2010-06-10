@@ -125,13 +125,15 @@ public class ActSendSms
         //populate Spinner with values
         bindProvidersSpinner();
 
-        //executed when the app first runs
+        //load values of view from previous application execution
+        //used also in case of screen rotation
+    	restoreLastViewsValues();
+
+    	//executed when the app first runs
         if (null == savedInstanceState) {
         	//send statistics data first time the app runs
 	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
 	        statsTask.execute(this);
-	        //load values of view from previous application execution
-        	restoreLastViewsValues();
         	
     	//executed when the activity is reloaded (rotate, for example)
         } else {
@@ -594,9 +596,12 @@ public class ActSendSms
 	 */
 	private void restoreLastViewsValues() {
 		//text and message
+		//the system already assigns this two values after a screen rotation, but for saving some lines of code,
+		//i reassign them.
 		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
 		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
 
+		//in case of screen rotation, reassign mSelectedProvider and mSelectedServiceId inner fields 
 		int position;
 		//provider spinner
 		position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), AppPreferencesDao.instance().getLastUsedProviderId());
