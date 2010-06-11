@@ -79,7 +79,6 @@ public class ActSendSms
 
 	private List<ContactPhone> mPhonesToShowInDialog;
 	private String mCaptchaStorage;
-	private boolean mMustReassingSubservice;
 
 	
 	
@@ -126,21 +125,19 @@ public class ActSendSms
         //populate Spinner with values
         bindProvidersSpinner();
 
-        //load values of view from previous application execution
-        //used also in case of screen rotation
-        mMustReassingSubservice = true;
-    	restoreLastRunValues();
 
     	//executed when the app first runs
         if (null == savedInstanceState) {
         	//send statistics data first time the app runs
 	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
 	        statsTask.execute(this);
+            //load values of view from previous application execution
+        	restoreLastRunViewValues();
         	
     	//executed when the activity is reloaded (rotate, for example)
         } else {
         	//load volatile data
-        	loadVolatileData(savedInstanceState);
+        	reloadVolatileData(savedInstanceState);
         }
     }
 
@@ -393,18 +390,6 @@ public class ActSendSms
 			//configure subservice spinner
 			bindSubservicesSpinner(provider);
 			mSpiSubservices.setVisibility(View.VISIBLE);
-			
-			//check if the subservice must be reassigned
-			if (mMustReassingSubservice) {
-				//now the subservice spinner is set to null
-				String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
-				if (null != mSelectedProvider && !TextUtils.isEmpty(subserviceId)) {
-					int position = mSelectedProvider.findSubservicePositionInList(subserviceId);
-					if (position >= 0) mSpiSubservices.setSelection(position);
-				}
-				mMustReassingSubservice = false;
-			}
-			
 
 		} else {
 			mSelectedProvider = provider;
@@ -601,28 +586,48 @@ public class ActSendSms
 	
 	/**
 	 * Called when activity is first loaded, restore
-	 * previous status of input views
+	 * previous status of input views. Called also when the activity is rotated,
+	 * because not always the text view values are preserver
 	 * 
 	 */
-	private void restoreLastRunValues() {
+	private void restoreLastRunViewValues() {
 		//text and message
-		//the system already assigns this two values after a screen rotation, but for saving some lines of code,
-		//i reassign them.
 		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
 		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
 
-		//in case of screen rotation, reassign mSelectedProvider and mSelectedServiceId inner fields 
-		int position;
-		//provider spinner
-		String providerId = AppPreferencesDao.instance().getLastUsedProviderId();
-		position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), providerId);
-		if (position >= 0) mSpiProviders.setSelection(position);
-		//the subservice is reassigned under the changeProvider method thanks to the value of
-		//mMustReassingSubservice variable
+		//reassing spinner values and status of class inner fields
+		reloadSpinnerValues();
 	}
     
     
 	
+	/**
+	 * Reassign spinner values and class inner fields value.
+	 * Used when activity is loaded for the first time and when is rotated
+	 * 
+	 * @param providerId
+	 * @param subserviceId
+	 */
+	private void reloadSpinnerValues() {
+		String providerId = AppPreferencesDao.instance().getLastUsedProviderId();
+		String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
+
+		//assign provider
+		SmsProvider provider = GlobalUtils.findProviderInList(SmsForFreeApplication.instance().getProviderList(), providerId);
+		changeProvider(provider, false);
+		//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
+		//in the provider spinner, because is execute at the end of this method, but i need it
+		//before assign subservice
+		int providerPos = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), providerId);
+		if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
+		
+		if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
+			int subservicePos = mSelectedProvider.findSubservicePositionInList(subserviceId);
+			if (subservicePos >= 0) mSpiSubservices.setSelection(subservicePos);
+			//call changeSubservice after this function, but it's ok now
+		}
+	}
+
 
 	/**
 	 * Send message
@@ -787,11 +792,16 @@ public class ActSendSms
 	 * 
 	 * @param savedInstanceState
 	 */
-	private void loadVolatileData(Bundle savedInstanceState) {
+	private void reloadVolatileData(Bundle savedInstanceState) {
 		//restore volatile values
 		mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
 		mPhonesToShowInDialog = ContactDao.instance().deserializeContactPhones(
 				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
+		
+		//when the activity is rotated, in the onPause event the values of
+		//provider, text values and subservice are persisted, so i can rely on this value
+		//for reassigning them
+		restoreLastRunViewValues();
 	}
 
 
