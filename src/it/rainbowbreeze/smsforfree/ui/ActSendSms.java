@@ -79,6 +79,7 @@ public class ActSendSms
 
 	private List<ContactPhone> mPhonesToShowInDialog;
 	private String mCaptchaStorage;
+	private boolean mMustReassingSubservice;
 
 	
 	
@@ -127,7 +128,8 @@ public class ActSendSms
 
         //load values of view from previous application execution
         //used also in case of screen rotation
-    	restoreLastViewsValues();
+        mMustReassingSubservice = true;
+    	restoreLastRunValues();
 
     	//executed when the app first runs
         if (null == savedInstanceState) {
@@ -271,6 +273,10 @@ public class ActSendSms
     			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
     	AppPreferencesDao.instance().setLastUsedMessage(
     			TextUtils.isEmpty(mTxtMessage.getText()) ? "" : mTxtMessage.getText().toString());
+		
+		//and save new selected provider
+		AppPreferencesDao.instance().setLastUsedProviderId(mSelectedProvider.getId());
+		AppPreferencesDao.instance().setLastUsedSubserviceId(mSelectedServiceId);
     	AppPreferencesDao.instance().save();
     }
 
@@ -387,6 +393,18 @@ public class ActSendSms
 			//configure subservice spinner
 			bindSubservicesSpinner(provider);
 			mSpiSubservices.setVisibility(View.VISIBLE);
+			
+			//check if the subservice must be reassigned
+			if (mMustReassingSubservice) {
+				//now the subservice spinner is set to null
+				String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
+				if (null != mSelectedProvider && !TextUtils.isEmpty(subserviceId)) {
+					int position = mSelectedProvider.findSubservicePositionInList(subserviceId);
+					if (position >= 0) mSpiSubservices.setSelection(position);
+				}
+				mMustReassingSubservice = false;
+			}
+			
 
 		} else {
 			mSelectedProvider = provider;
@@ -395,10 +413,6 @@ public class ActSendSms
 			mSpiSubservices.setVisibility(View.GONE);
 			updateMessageLength();
 		}
-		
-		//and save new selected provider
-		AppPreferencesDao.instance().setLastUsedProviderId(provider.getId());
-		AppPreferencesDao.instance().save();
 	}
 
 	/**
@@ -415,10 +429,6 @@ public class ActSendSms
 		mSelectedProvider.setSelectedSubservice(newServiceId);
 		mSelectedServiceId = newServiceId;
 		updateMessageLength();
-
-		//and save new selected provider
-		AppPreferencesDao.instance().setLastUsedSubserviceId(newServiceId);
-		AppPreferencesDao.instance().save();
 	}
 
 	
@@ -594,7 +604,7 @@ public class ActSendSms
 	 * previous status of input views
 	 * 
 	 */
-	private void restoreLastViewsValues() {
+	private void restoreLastRunValues() {
 		//text and message
 		//the system already assigns this two values after a screen rotation, but for saving some lines of code,
 		//i reassign them.
@@ -604,15 +614,11 @@ public class ActSendSms
 		//in case of screen rotation, reassign mSelectedProvider and mSelectedServiceId inner fields 
 		int position;
 		//provider spinner
-		position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), AppPreferencesDao.instance().getLastUsedProviderId());
+		String providerId = AppPreferencesDao.instance().getLastUsedProviderId();
+		position = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), providerId);
 		if (position >= 0) mSpiProviders.setSelection(position);
-
-		//now the subservice spinner is set to null
-		String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
-		if (null != mSelectedProvider && !TextUtils.isEmpty(subserviceId)) {
-			position = mSelectedProvider.findSubservicePositionInList(subserviceId);
-			if (position >= 0) mSpiProviders.setSelection(position);
-		}
+		//the subservice is reassigned under the changeProvider method thanks to the value of
+		//mMustReassingSubservice variable
 	}
     
     
