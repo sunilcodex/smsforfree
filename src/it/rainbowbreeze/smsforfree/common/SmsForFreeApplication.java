@@ -20,9 +20,10 @@ public class SmsForFreeApplication
     private static SmsForFreeApplication mInstance;
     public static SmsForFreeApplication instance()
     {
-    	if (null == mInstance)
-    		mInstance = new SmsForFreeApplication();
+//    	if (null == mInstance)
+//    		mInstance = new SmsForFreeApplication();
     	return mInstance;
+    	
     }
 	
     /** List of providers */
@@ -75,6 +76,9 @@ public class SmsForFreeApplication
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		//this is the first instruction, so no fear that mInstance is null is following calls
+		mInstance = this;
 		
 		//execute begin task
 		LogicManager.executeBeginTask(this);

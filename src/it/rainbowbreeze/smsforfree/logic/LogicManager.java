@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
-import android.content.ContextWrapper;
+import android.content.Context;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -40,7 +40,7 @@ public class LogicManager {
 	/**
 	 * Initializes data, execute begin operation
 	 */
-	public static ResultOperation executeBeginTask(ContextWrapper context)
+	public static ResultOperation executeBeginTask(Context context)
 	{
 		ResultOperation res = new ResultOperation(true);
 		
@@ -77,7 +77,7 @@ public class LogicManager {
 	 * @param context
 	 * @return
 	 */
-	public static ResultOperation executeEndTast(ContextWrapper context)
+	public static ResultOperation executeEndTast(Context context)
 	{
 		ResultOperation res = new ResultOperation(true);
 
@@ -170,7 +170,7 @@ public class LogicManager {
 	 * 
 	 *  @return true if all ok, otherwise false
 	 */
-	private static ResultOperation performAppVersionUpgrade(ContextWrapper context)
+	private static ResultOperation performAppVersionUpgrade(Context context)
 	{
 		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
 		
@@ -206,7 +206,7 @@ public class LogicManager {
 	/**
 	 * @param context
 	 */
-	private static void addProvidersToList(ContextWrapper context) {
+	private static void addProvidersToList(Context context) {
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
 		String allowedProviders = context.getString(R.string.config_AllowedProviders);
