@@ -3,20 +3,23 @@ package it.rainbowbreeze.smsforfree.ui;
 import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.ISendCaptchaActivity;
+import it.rainbowbreeze.smsforfree.common.ISendSmsActivity;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
+import it.rainbowbreeze.smsforfree.logic.SendCaptchaAsyncTask;
+import it.rainbowbreeze.smsforfree.logic.SendSmsAsyncTask;
 import it.rainbowbreeze.smsforfree.logic.SendStatisticsAsyncTask;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,6 +48,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ActSendSms
 	extends Activity
+	implements ISendSmsActivity, ISendCaptchaActivity
 {
 	//---------- Private fields
 	private static final int DIALOG_PHONES = 10;
@@ -96,6 +100,7 @@ public class ActSendSms
 
         //checks for app validity
     	if (SmsForFreeApplication.instance().isAppExpired()) {
+    	//if (SmsForFreeApplication.instance().isAppExpired()) {
     		//application is expired
             setContentView(R.layout.actexpired);
             setTitle(R.string.actexpired_title);
@@ -276,7 +281,7 @@ public class ActSendSms
 		AppPreferencesDao.instance().setLastUsedSubserviceId(mSelectedServiceId);
     	AppPreferencesDao.instance().save();
     }
-
+    
     
     private OnItemSelectedListener mSpiProvidersSelectedListener = new OnItemSelectedListener() {
 		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -343,6 +348,55 @@ public class ActSendSms
 
 
 	//---------- Public methods
+	/**
+	 * Called by AsyncTask when the captcha sending completed
+	 * @param res
+	 */
+	public void sendCaptchaComplete(ResultOperation res) {
+		//update number of messages sent in the day
+		LogicManager.updateSmsCounter();
+		//show the results of the send
+		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
+	}
+	
+	
+	/**
+	 * Called when the background activity has sent the message
+	 * @param result result of sending message
+	 */
+	public void sendMessageComplete(ResultOperation result)
+	{
+		//return with errors
+		if (result.HasErrors()) {
+			ActivityHelper.reportError(ActSendSms.this, String.format(
+					//TODO
+					//change standard error message
+					getString(R.string.common_msg_genericError), result.getException().getMessage()));
+			return;
+		}
+		
+		//message sent
+		if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
+			//display returning message of the provider
+			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
+			//update number of messages sent in the day
+			LogicManager.updateSmsCounter();
+			//check if the text should be deleted
+			if (AppPreferencesDao.instance().getAutoClearMessage()) {
+				cleanDataFields();
+			}
+			return;
+		}
+		
+		//captcha required
+		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
+			//save captcha data
+			mCaptchaStorage = result.getResultAsString();
+			//launch captcha request
+			showDialog(DIALOG_CAPTCHA);
+			return;
+		}
+	}
 
 
 
@@ -693,52 +747,13 @@ public class ActSendSms
 		
 		
 		//preparing the background task for sending message
-		SendMessageTask task = new SendMessageTask(
-				this,
+		SendSmsAsyncTask task = new SendSmsAsyncTask(
+				this, this,
 				getString(R.string.actsendsms_msg_sendingMessage),
 				mSelectedProvider, mSelectedServiceId);
 		//and send the message
 		task.execute(mTxtDestination.getText().toString(), mTxtMessage.getText().toString());
 		//at the end of the execution, the sendMessageComplete() method will be called
-	}
-	
-	
-	/**
-	 * Called when the background activity has sent the message
-	 * @param result result of sending message
-	 */
-	private void sendMessageComplete(ResultOperation result)
-	{
-		//return with errors
-		if (result.HasErrors()) {
-			ActivityHelper.reportError(ActSendSms.this, String.format(
-					//TODO
-					//change standard error message
-					getString(R.string.common_msg_genericError), result.getException().getMessage()));
-			return;
-		}
-		
-		//message sent
-		if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
-			//display returning message of the provider
-			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
-			//update number of messages sent in the day
-			LogicManager.updateSmsCounter();
-			//check if the text should be deleted
-			if (AppPreferencesDao.instance().getAutoClearMessage()) {
-				cleanDataFields();
-			}
-			return;
-		}
-		
-		//captcha required
-		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
-			//save captcha data
-			mCaptchaStorage = result.getResultAsString();
-			//launch captcha request
-			showDialog(DIALOG_CAPTCHA);
-			return;
-		}
 	}
 	
 	
@@ -755,25 +770,13 @@ public class ActSendSms
 		}
 		
 		//preparing the background task for sending captcha code
-		SendCaptchaTask task = new SendCaptchaTask(
-				this,
+		SendCaptchaAsyncTask task = new SendCaptchaAsyncTask(
+				this, this,
 				getString(R.string.actsendsms_msg_sendingCaptcha),
 				mSelectedProvider);
 		//and send the captcha
 		task.execute(providerReply, captchaCode);
 		//at the end of the execution, the sendCaptchaComplete() method will be called
-	}
-
-	
-	/**
-	 * Called by AsyncTask when the captcha sending completed
-	 * @param res
-	 */
-	private void sendCaptchaComplete(ResultOperation res) {
-		//update number of messages sent in the day
-		LogicManager.updateSmsCounter();
-		//show the results of the send
-		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
 	}
 	
 	
@@ -802,89 +805,6 @@ public class ActSendSms
 		//provider, text values and subservice are persisted, so i can rely on this value
 		//for reassigning them
 		restoreLastRunViewValues();
-	}
-
-
-	/**
-	 * Send a sms
-	 */
-	private class SendMessageTask
-		extends ProgressDialogAsyncTask
-	{
-	
-		//---------- Ctors
-		public SendMessageTask(Context context, String progressTitle, SmsProvider provider, String servideId)
-		{
-			super(context, progressTitle);
-			mProvider = provider;
-			mServiceId = servideId;
-		}
-		
-		//---------- Private fields
-		private SmsProvider mProvider;
-		private String mServiceId;
-		
-
-
-
-		//---------- Private methods
-		protected ResultOperation doInBackground(String... params)
-		{
-			//params.length must be equals to 2
-				
-			String destination = params[0];
-			String messageBody = params[1];
-			
-			return mProvider.sendMessage(mServiceId, destination, messageBody);
-		}
-		
-		@Override
-		protected void onPostExecute(ResultOperation result) {
-			//close progress dialog
-			super.onPostExecute(result);
-			//and pass the control to caller activity with the result
-			sendMessageComplete(result);
-		}
-	}
-
-	/**
-	 * Send a captcha
-	 */
-	private class SendCaptchaTask
-		extends ProgressDialogAsyncTask
-	{
-	
-		//---------- Ctors
-		public SendCaptchaTask(Context context, String progressTitle, SmsProvider provider)
-		{
-			super(context, progressTitle);
-			mProvider = provider;
-		}
-		
-		//---------- Private fields
-		private SmsProvider mProvider;
-		
-
-
-
-		//---------- Private methods
-		protected ResultOperation doInBackground(String... params)
-		{
-			//params.length must be equals to 2
-				
-			String providerReply = params[0];
-			String captchaCode = params[1];
-			
-			return mProvider.sendCaptcha(providerReply, captchaCode);
-		}
-		
-		@Override
-		protected void onPostExecute(ResultOperation result) {
-			//close progress dialog
-			super.onPostExecute(result);
-			//and pass the control to caller activity with the result
-			sendCaptchaComplete(result);
-		}
 	}
 	
 }

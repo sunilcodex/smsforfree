@@ -3,7 +3,7 @@
  */
 package it.rainbowbreeze.smsforfree.data;
 
-import android.content.ContextWrapper;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
@@ -21,7 +21,7 @@ public abstract class BasePreferencesDao
 	/**
 	 * Load the preferences
 	 */
-	public void load(ContextWrapper context) {
+	public void load(Context context) {
 	    mSettings = context.getSharedPreferences(getPreferencesKey(), 0);
 	    mEditor = mSettings.edit();
 	}
@@ -37,7 +37,7 @@ public abstract class BasePreferencesDao
 	/**
 	 * Backup preferences
 	 */
-    public void backup(ContextWrapper context)
+    public void backup(Context context)
     {
         //load normal preferences, if needed
         if (null == mSettings)
@@ -55,7 +55,7 @@ public abstract class BasePreferencesDao
      * Restore a previously backup data
      * @param context
      */
-    public void restore(ContextWrapper context)
+    public void restore(Context context)
     {
         //if settings is null, no backup was made at the settings
         if (null == mSettings)

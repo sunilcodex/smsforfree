@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
@@ -43,7 +44,7 @@ public class SendStatisticsAsyncTask
 			.append(AppPreferencesDao.instance().getUniqueId())
 			.append("&")
 			.append("swname=")
-			.append("SmsForFree")
+			.append(SmsForFreeApplication.instance().getAppName())
 			.append("&")
 			.append("ver=")
 			.append(GlobalDef.appVersion)

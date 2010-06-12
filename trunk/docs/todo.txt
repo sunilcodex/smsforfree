@@ -1,11 +1,11 @@
 CONTROLLARE
--come funziona la rotazione dello schermo qnd sto mandando un messaggio
--quanto vado nei setting, ruoto il form, cancello i servizi e ritorno, controllare come va il provider e perche'
- mi ha generato un errore nullpointerexcepition nella changeProvider
+-vedere se si puo' passare per onRestoreInstanceState nell'act di base dei settings
 
 
 IMPLEMENTAZIONI
 -sistemare l'associazione telefono-tipo
+-rendere lungo il toast per il messaggio spedito, oppure label con ultima operazione
+-issue da sparazza (daniele) su layout schermata di send sms
 -gestione servizi salvati di jacksms
 -nei codici di errore ritornati all'activity, controllare se l'errore e' uno di quelli standard
  (no credential, empty reply) e cambiare il messaggio di errore
@@ -13,7 +13,8 @@ IMPLEMENTAZIONI
 -gestire meglio i messaggi d'errore del dao
 -aggiungere menu x registrarsi ad aimon con il proprio codice
 -aggiungere menu x registrarsi a jacksms
--mettere salvataggio di provider numero e subservice nei dati volatili e riprenderli
+-controllare nell'onpause e altri metodi se l'app e' spirata
+-gestire meglio contesto di app
 
 
 Lista servizi da consultare 

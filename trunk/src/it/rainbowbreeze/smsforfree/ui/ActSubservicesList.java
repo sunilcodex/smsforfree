@@ -4,14 +4,15 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.IExecuteProviderCommandActivity;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandAsyncTask;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -30,6 +31,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
  */
 public class ActSubservicesList
 	extends ListActivity
+	implements IExecuteProviderCommandActivity
 {
 	//---------- Private fields
 	private static final int OPTIONMENU_ADDSERVICE = 10;
@@ -133,7 +135,8 @@ public class ActSubservicesList
 		//execute one of the provider's command
 		default:
 			//preparing the background task for sending message
-			ExecuteProviderCommandTask task = new ExecuteProviderCommandTask(
+			ExecuteProviderCommandAsyncTask task = new ExecuteProviderCommandAsyncTask(
+					this,
 					this,
 					getString(R.string.common_msg_executingCommand),
 					mProvider,
@@ -217,8 +220,15 @@ public class ActSubservicesList
 	
 
 	//---------- Public methods
+	/**
+	 * Called by AsyncTask when the command execution completed
+	 * @param res
+	 */
+	public void executeCommandComplete(ResultOperation res) {
+		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
+	}
+		
 
-	
 	
 	
 	//---------- Private methods
@@ -261,51 +271,4 @@ public class ActSubservicesList
 	}
 	
 
-	/**
-	 * Called by AsyncTask when the command execution completed
-	 * @param res
-	 */
-	private void executeCommandComplete(ResultOperation res) {
-		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
-	}
-	
-	
-	/**
-	 * Execute a generic command of the service
-	 */
-	private class ExecuteProviderCommandTask
-		extends ProgressDialogAsyncTask
-	{
-		//---------- Ctors
-		public ExecuteProviderCommandTask(Context context, String progressTitle,
-				SmsService service, int commandToExecute, Bundle extraData)
-		{
-			super(context, progressTitle);
-			mService = service;
-			mCommandToExecute = commandToExecute;
-			mExtraData = extraData;
-		}
-		
-		//---------- Private fields
-		private SmsService mService;
-		private int mCommandToExecute;
-		Bundle mExtraData;
-		
-
-
-
-		//---------- Private methods
-		protected ResultOperation doInBackground(String... params)
-		{
-			return mService.executeCommand(mCommandToExecute, mContext, mExtraData);
-		}
-		
-		@Override
-		protected void onPostExecute(ResultOperation result) {
-			//close progress dialog
-			super.onPostExecute(result);
-			//and pass the control to caller activity with the result
-			executeCommandComplete(result);
-		}
-	}
 }

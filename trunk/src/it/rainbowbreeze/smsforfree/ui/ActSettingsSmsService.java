@@ -4,19 +4,22 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.IExecuteServiceCommandActivity;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandAsyncTask;
+import it.rainbowbreeze.smsforfree.logic.ExecuteServiceCommandAsyncTask;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,8 +34,11 @@ import android.widget.TextView;
  */
 public class ActSettingsSmsService
 	extends ActBaseDataEntry
+	implements IExecuteServiceCommandActivity
 {
 	//---------- Private fields
+	private final static int MAXFIELDS = 10;
+
 	private SmsService mEditedService;
 	private SmsService mTemplateService;
 	private SmsProvider mProvider;
@@ -46,10 +52,12 @@ public class ActSettingsSmsService
 	private TextView mLblDesc;
 	private EditText mTxtValue;
 
-	private final static int MAXFIELDS = 10;
 	//save originals values of the service
 	private String[] mValuesBackup;
 	private boolean mAssignedValues;
+	
+	private ExecuteServiceCommandAsyncTask mExecuteServiceCommandAsyncTask;
+	
 	
 	//---------- Public properties
 
@@ -117,19 +125,49 @@ public class ActSettingsSmsService
 		}
 
 		//preparing the background task for executing service command
-		ExecuteServiceCommandTask task = new ExecuteServiceCommandTask(
+		mExecuteServiceCommandAsyncTask = new ExecuteServiceCommandAsyncTask(
+				this,
 				this,
 				getString(R.string.common_msg_executingCommand),
 				mEditedService,
 				item.getItemId(),
 				bundle);
 		//and execute the command
-		task.execute();
+		mExecuteServiceCommandAsyncTask.execute();
 		//at the end of the execution, the executeCommandComplete() method will be called
 		
 		return true;
 	}
+	
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mExecuteServiceCommandAsyncTask = (ExecuteServiceCommandAsyncTask) getLastNonConfigurationInstance();
+		if (null != mExecuteServiceCommandAsyncTask) {
+			//a background task in pending, so register new activity
+//			mExecuteServiceCommandAsyncTask.registrerCallerActity(this);
+//			mExecuteServiceCommandAsyncTask.registrerNewContext(this);
+		}
+	}
+	
+	@Override
+	protected void onStop() {
+		if (null != mExecuteServiceCommandAsyncTask) {
+			//detach activity from the background task
+//			mExecuteServiceCommandAsyncTask.unregisterCallerActivity();
+		}
+		super.onStop();
+	}
+	
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		//save eventually open background task
+		return mExecuteServiceCommandAsyncTask;
+	}
 
+	
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
 			//backup data of services
@@ -161,6 +199,18 @@ public class ActSettingsSmsService
 
 
 	//---------- Public methods
+	/**
+	 * Called by AsyncTask when the command execution completed
+	 * @param res
+	 */
+	public void executeCommandComplete(ResultOperation res)
+	{
+		Log.i("SmsForFree", "executeCommandComplete");
+		//and show the result
+		ActivityHelper.showCommandExecutionResult(this, res);
+		//free the async task
+		mExecuteServiceCommandAsyncTask = null;
+	}
 
 	
 	
@@ -416,52 +466,4 @@ public class ActSettingsSmsService
 	}
 
 	
-	/**
-	 * Called by AsyncTask when the command execution completed
-	 * @param res
-	 */
-	private void executeCommandComplete(ResultOperation res) {
-		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
-	}
-
-	
-	/**
-	 * Execute a generic command of the service
-	 */
-	private class ExecuteServiceCommandTask
-		extends ProgressDialogAsyncTask
-	{
-		//---------- Ctors
-		public ExecuteServiceCommandTask(Context context, String progressTitle,
-				SmsService service, int commandToExecute, Bundle extraData)
-		{
-			super(context, progressTitle);
-			mService = service;
-			mCommandToExecute = commandToExecute;
-			mExtraData = extraData;
-		}
-		
-		//---------- Private fields
-		private SmsService mService;
-		private int mCommandToExecute;
-		Bundle mExtraData;
-		
-
-
-
-		//---------- Private methods
-		protected ResultOperation doInBackground(String... params)
-		{
-			return mService.executeCommand(mCommandToExecute, mContext, mExtraData);
-		}
-		
-		@Override
-		protected void onPostExecute(ResultOperation result) {
-			//close progress dialog
-			super.onPostExecute(result);
-			//and pass the control to caller activity with the result
-			executeCommandComplete(result);
-		}
-		
-	}
 }
