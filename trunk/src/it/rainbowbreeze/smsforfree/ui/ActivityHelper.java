@@ -8,6 +8,7 @@ import it.rainbowbreeze.smsforfree.data.ContactDao;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -246,21 +247,15 @@ public class ActivityHelper {
 	}
 	
 	
-	public static Dialog createAndShowProgressDialog(
+	public static ProgressDialog createAndShowProgressDialog(
 			Activity callerActivity,
-			int titleId,
-			int infoMessageId
+			int messageId
 		)
 	{
-		String title = 0 != titleId ? callerActivity.getString(titleId) : "";
-		String message = 0 != infoMessageId ? callerActivity.getString(infoMessageId) : "";
-		Dialog progressDialog = null;
-//		Dialog progressDialog = progressDialog.show(
-//				callerActivity,
-//				title,
-//                message
-//                );
-				
+		String message = 0 != messageId ? callerActivity.getString(messageId) : "";
+		ProgressDialog progressDialog = new ProgressDialog(callerActivity);
+		progressDialog.setMessage(message);
+		progressDialog.show();
 		return progressDialog;
 	}
 

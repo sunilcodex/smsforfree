@@ -4,17 +4,19 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.IExecuteProviderCommandActivity;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
-import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandAsyncTask;
+import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandThread;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,12 +28,11 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
- * @author rainbowbreeze
+ * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class ActSubservicesList
 	extends ListActivity
-	implements IExecuteProviderCommandActivity
 {
 	//---------- Private fields
 	private static final int OPTIONMENU_ADDSERVICE = 10;
@@ -42,6 +43,9 @@ public class ActSubservicesList
 	private SmsProvider mProvider;
     ArrayAdapter<SmsService> mListAdapter;
     TextView mLblNoSubservices;
+
+	private ExecuteProviderCommandThread mExecutedProviderCommandThread;
+	private ProgressDialog mProgressDialog;
 
 
 
@@ -79,8 +83,35 @@ public class ActSubservicesList
 		registerForContextMenu(getListView());
 		
 		showHideInfoLabel();
-	}
+	}	
 	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mExecutedProviderCommandThread = (ExecuteProviderCommandThread) getLastNonConfigurationInstance();
+		if (null != mExecutedProviderCommandThread) {
+			//create and show a new progress dialog
+			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
+			//register new handler
+			mExecutedProviderCommandThread.registerCallerHandler(mExecutedCommandHandler);
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		if (null != mExecutedProviderCommandThread) {
+			//unregister handler from background thread
+			mExecutedProviderCommandThread.registerCallerHandler(null);
+		}
+		super.onStop();
+	}
+		
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		//save eventually open background thread
+		return mExecutedProviderCommandThread;
+	}
+
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -134,18 +165,7 @@ public class ActSubservicesList
 		
 		//execute one of the provider's command
 		default:
-			//preparing the background task for sending message
-			ExecuteProviderCommandAsyncTask task = new ExecuteProviderCommandAsyncTask(
-					this,
-					this,
-					getString(R.string.common_msg_executingCommand),
-					mProvider,
-					item.getItemId(),
-					null);
-			
-			//and execute the command
-			task.execute();
-			//at the end of the execution, the executeCommandComplete() method will be called
+			execureProviderCommand(mProvider, item.getItemId(), null);
 		}
 		
 		return true;
@@ -227,6 +247,28 @@ public class ActSubservicesList
 	public void executeCommandComplete(ResultOperation res) {
 		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
 	}
+
+	
+	/**
+	 * Hander to call when the execute command menu option ended
+	 */
+	private Handler mExecutedCommandHandler = new Handler() {
+		public void handleMessage(Message msg)
+		{
+			//check if the message is for this handler
+			if (msg.what != ExecuteProviderCommandThread.WHAT_EXECUTEDPROVIDERCOMMAND)
+				return;
+			
+			//dismisses progress dialog
+			if (null != mProgressDialog && mProgressDialog.isShowing())
+				mProgressDialog.dismiss();
+			ResultOperation res = mExecutedProviderCommandThread.getResult();
+			//and show the result
+			ActivityHelper.showCommandExecutionResult(ActSubservicesList.this, res);
+			//free the thread
+			mExecutedProviderCommandThread = null;
+		};
+	};
 		
 
 	
@@ -269,6 +311,29 @@ public class ActSubservicesList
 			ActivityHelper.openTemplatesList(this, mProvider.getId());
 		}
 	}
-	
+
+	/**
+	 * Launch the background executions of a provider command
+	 * 
+	 * @param provider
+	 * @param subserviceId
+	 * @param extraData
+	 */
+	private void execureProviderCommand(SmsProvider provider, int subserviceId, Bundle extraData)
+	{
+		//create new progress dialog
+		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
+
+		//preparing the background thread for executing provider command
+		mExecutedProviderCommandThread = new ExecuteProviderCommandThread(
+				this.getApplicationContext(),
+				mExecutedCommandHandler,
+				provider,
+				subserviceId,
+				extraData);
+		//and execute the command
+		mExecutedProviderCommandThread.start();
+		//at the end of the execution, the handler will be called
+	}
 
 }

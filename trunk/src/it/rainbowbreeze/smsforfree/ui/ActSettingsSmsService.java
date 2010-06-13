@@ -4,22 +4,22 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.IExecuteServiceCommandActivity;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
-import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandAsyncTask;
-import it.rainbowbreeze.smsforfree.logic.ExecuteServiceCommandAsyncTask;
+import it.rainbowbreeze.smsforfree.logic.ExecuteServiceCommandThread;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +34,6 @@ import android.widget.TextView;
  */
 public class ActSettingsSmsService
 	extends ActBaseDataEntry
-	implements IExecuteServiceCommandActivity
 {
 	//---------- Private fields
 	private final static int MAXFIELDS = 10;
@@ -56,9 +55,13 @@ public class ActSettingsSmsService
 	private String[] mValuesBackup;
 	private boolean mAssignedValues;
 	
-	private ExecuteServiceCommandAsyncTask mExecuteServiceCommandAsyncTask;
+	private ExecuteServiceCommandThread mExecutedServiceCommandThread;
 	
-	
+	private ProgressDialog mProgressDialog;
+
+
+
+
 	//---------- Public properties
 
 	
@@ -89,6 +92,34 @@ public class ActSettingsSmsService
 	        mAssignedValues = false;
         }
 	}
+		
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mExecutedServiceCommandThread = (ExecuteServiceCommandThread) getLastNonConfigurationInstance();
+		if (null != mExecutedServiceCommandThread) {
+			//create and show a new progress dialog
+			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
+			//register new handler
+			mExecutedServiceCommandThread.registerCallerHandler(mExecutedCommandHandler);
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		if (null != mExecutedServiceCommandThread) {
+			//unregister handler from background thread
+			mExecutedServiceCommandThread.registerCallerHandler(null);
+		}
+		super.onStop();
+	}
+		
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		//save eventually open background thread
+		return mExecutedServiceCommandThread;
+	}
+
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,51 +154,27 @@ public class ActSettingsSmsService
     		findLabelAndEditTextViewsForParameter(i);
     		bundle.putString(String.valueOf(i), mTxtValue.getText().toString());
 		}
+		
+		//create new progress dialog
+		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
 
-		//preparing the background task for executing service command
-		mExecuteServiceCommandAsyncTask = new ExecuteServiceCommandAsyncTask(
-				this,
-				this,
-				getString(R.string.common_msg_executingCommand),
+		//preparing the background thread for executing service command
+		mExecutedServiceCommandThread = new ExecuteServiceCommandThread(
+				this.getApplicationContext(),
+				mExecutedCommandHandler,
 				mEditedService,
 				item.getItemId(),
 				bundle);
+		//register the listener
+		//mExecuteServiceCommandThread.setOnExecutedServiceCommandListener(mExecutedServiceCommandListener);
+		mExecutedServiceCommandThread.registerCallerHandler(mExecutedCommandHandler);
 		//and execute the command
-		mExecuteServiceCommandAsyncTask.execute();
-		//at the end of the execution, the executeCommandComplete() method will be called
-		
+		mExecutedServiceCommandThread.start();
+		//at the end of the execution, the listener call will be make
 		return true;
 	}
-	
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mExecuteServiceCommandAsyncTask = (ExecuteServiceCommandAsyncTask) getLastNonConfigurationInstance();
-		if (null != mExecuteServiceCommandAsyncTask) {
-			//a background task in pending, so register new activity
-//			mExecuteServiceCommandAsyncTask.registrerCallerActity(this);
-//			mExecuteServiceCommandAsyncTask.registrerNewContext(this);
-		}
-	}
-	
-	@Override
-	protected void onStop() {
-		if (null != mExecuteServiceCommandAsyncTask) {
-			//detach activity from the background task
-//			mExecuteServiceCommandAsyncTask.unregisterCallerActivity();
-		}
-		super.onStop();
-	}
-	
-	
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		//save eventually open background task
-		return mExecuteServiceCommandAsyncTask;
-	}
 
-	
+
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
 			//backup data of services
@@ -197,22 +204,32 @@ public class ActSettingsSmsService
 
 	
 
+	/**
+	 * Hander to call when the execute command menu option ended
+	 */
+	private Handler mExecutedCommandHandler = new Handler() {
+		public void handleMessage(Message msg)
+		{
+			//check if the message is for this handler
+			if (msg.what != ExecuteServiceCommandThread.WHAT_EXECUTESERVICECOMMAND)
+				return;
+			
+			//dismisses progress dialog
+			if (null != mProgressDialog && mProgressDialog.isShowing())
+				mProgressDialog.dismiss();
+			ResultOperation res = mExecutedServiceCommandThread.getResult();
+			//and show the result
+			ActivityHelper.showCommandExecutionResult(ActSettingsSmsService.this, res);
+			//free the thread
+			mExecutedServiceCommandThread = null;
+		};
+	};
+	
+
 
 	//---------- Public methods
-	/**
-	 * Called by AsyncTask when the command execution completed
-	 * @param res
-	 */
-	public void executeCommandComplete(ResultOperation res)
-	{
-		Log.i("SmsForFree", "executeCommandComplete");
-		//and show the result
-		ActivityHelper.showCommandExecutionResult(this, res);
-		//free the async task
-		mExecuteServiceCommandAsyncTask = null;
-	}
-
 	
+
 	
 	
 	//---------- Private methods
@@ -464,6 +481,5 @@ public class ActSettingsSmsService
 				outState.putString(String.valueOf(i), mValuesBackup[i]);
 		}
 	}
-
 	
 }
