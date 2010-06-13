@@ -3,8 +3,10 @@ CONTROLLARE
 
 
 IMPLEMENTAZIONI
+-mettere try-catch su dismiss del progress dialog dentro l'hander
 -sistemare l'associazione telefono-tipo
 -rendere lungo il toast per il messaggio spedito, oppure label con ultima operazione
+-mettere picture dell captcha piu' piccola
 -issue da sparazza (daniele) su layout schermata di send sms
 -gestione servizi salvati di jacksms
 -nei codici di errore ritornati all'activity, controllare se l'errore e' uno di quelli standard
