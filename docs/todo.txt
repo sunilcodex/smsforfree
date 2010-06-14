@@ -14,7 +14,6 @@ CONTROLLARE
 -aggiungere menu x registrarsi a jacksms
 -controllare nell'onpause e altri metodi se l'app e' spirata
 -gestire meglio contesto di app
--reset del numero di messaggi giornaliero quando l'app parte
 -controllo connettivita' quando c'e' da mandare un mess e altre cose
 -controllo perche' password non sono correttamente visualizzate
 
