@@ -67,7 +67,15 @@
 	</style>
 
 
+
 	
+	<!-- ActSendSms -->
+	<style name="actsendsms_btnSend" parent="@style/common_btnAction">
+		<item name="android:layout_width">fill_parent</item>
+	</style>
+
+
+
 	
 	<!-- ActSettingsSmsService -->
 	<style name="actsettingssmsservice_lblParameterDesc" parent="@style/common_TextView">

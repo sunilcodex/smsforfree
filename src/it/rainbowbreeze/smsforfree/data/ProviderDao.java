@@ -515,6 +515,8 @@ public class ProviderDao
 					service.setParameterDesc(parametersIndex, parser.nextText());
 				} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERVALUE)) {
 					service.setParameterValue(parametersIndex, parser.nextText());
+				} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERFORMAT)) {
+					service.setParameterFormat(parametersIndex, Integer.parseInt(parser.nextText()));
 				}
 				break;
 				

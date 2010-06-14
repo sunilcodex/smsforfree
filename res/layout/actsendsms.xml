@@ -56,8 +56,7 @@
 	
 	<Button
 		android:id="@+id/actsendsms_btnSend"
-		style="@style/common_btnAction"
-		android:layout_alignParentRight="true"
+		style="@style/actsendsms_btnSend"
 		android:layout_alignParentBottom="true"
 		android:text="@string/actsendsms_btnSend"
 	/>
