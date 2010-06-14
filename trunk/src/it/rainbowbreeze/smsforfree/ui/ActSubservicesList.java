@@ -236,19 +236,8 @@ public class ActSubservicesList
 			break;
 		}
 	}
-	
-	
 
-	//---------- Public methods
-	/**
-	 * Called by AsyncTask when the command execution completed
-	 * @param res
-	 */
-	public void executeCommandComplete(ResultOperation res) {
-		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
-	}
 
-	
 	/**
 	 * Hander to call when the execute command menu option ended
 	 */
@@ -268,8 +257,13 @@ public class ActSubservicesList
 			//free the thread
 			mExecutedProviderCommandThread = null;
 		};
-	};
-		
+	};	
+
+
+
+
+	//---------- Public methods
+	
 
 	
 	
@@ -335,5 +329,4 @@ public class ActSubservicesList
 		mExecutedProviderCommandThread.start();
 		//at the end of the execution, the handler will be called
 	}
-
 }

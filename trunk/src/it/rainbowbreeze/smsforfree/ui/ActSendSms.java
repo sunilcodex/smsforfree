@@ -3,8 +3,6 @@ package it.rainbowbreeze.smsforfree.ui;
 import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.ISendCaptchaActivity;
-import it.rainbowbreeze.smsforfree.common.ISendSmsActivity;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -12,14 +10,16 @@ import it.rainbowbreeze.smsforfree.data.ContactDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.logic.ExecuteServiceCommandThread;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
-import it.rainbowbreeze.smsforfree.logic.SendCaptchaAsyncTask;
-import it.rainbowbreeze.smsforfree.logic.SendSmsAsyncTask;
+import it.rainbowbreeze.smsforfree.logic.SendCaptchaThread;
+import it.rainbowbreeze.smsforfree.logic.SendMessageThread;
 import it.rainbowbreeze.smsforfree.logic.SendStatisticsAsyncTask;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,6 +27,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -48,7 +50,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ActSendSms
 	extends Activity
-	implements ISendSmsActivity, ISendCaptchaActivity
 {
 	//---------- Private fields
 	private static final int DIALOG_PHONES = 10;
@@ -83,6 +84,11 @@ public class ActSendSms
 
 	private List<ContactPhone> mPhonesToShowInDialog;
 	private String mCaptchaStorage;
+
+	private SendMessageThread mSendMessageThread;
+	private SendCaptchaThread mSendCaptchaThread;
+	
+	private ProgressDialog mProgressDialog;
 
 	
 	
@@ -131,23 +137,117 @@ public class ActSendSms
         bindProvidersSpinner();
 
 
-    	//executed when the app first runs
+    	//executed when the application first runs
         if (null == savedInstanceState) {
         	//send statistics data first time the app runs
 	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
 	        statsTask.execute(this);
             //load values of view from previous application execution
         	restoreLastRunViewValues();
-        	
-    	//executed when the activity is reloaded (rotate, for example)
-        } else {
-        	//load volatile data
-        	reloadVolatileData(savedInstanceState);
         }
     }
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		Object savedThread = getLastNonConfigurationInstance();
+		
+		//nothing saved
+		if (null == savedThread) return;
+	
+		//saved object is a SendMessageThread
+		if (savedThread instanceof SendMessageThread) {
+			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
+			mSendMessageThread = (SendMessageThread) savedThread;
+			//register new handler
+			mSendMessageThread.registerCallerHandler(mActivityHandler);
+		
+		//saved object is a SendCaptchaThread
+		} else {
+			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
+			mSendCaptchaThread = (SendCaptchaThread) savedThread;
+			//register new handler
+			mSendCaptchaThread.registerCallerHandler(mActivityHandler);
+		}
+	}
 
-
+	@Override
+	protected void onStop() {
+		if (null != mSendMessageThread) {
+			//unregister handler from background thread
+			mSendMessageThread.registerCallerHandler(null);
+		} else if (null != mSendCaptchaThread) {
+			//unregister handler from background thread
+			mSendCaptchaThread.registerCallerHandler(null);
+		}
+		super.onStop();
+	}
+		
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		//save eventually open background thread
+		if (null != mSendMessageThread) {
+			return mSendMessageThread;
+		} else if (null != mSendCaptchaThread) {
+			return mSendCaptchaThread;
+		}
+		return null;
+	}
+    
+    
     @Override
+    protected void onPause() {
+    	super.onPause();
+    	//save current fields value to prefs
+    	//provider and subservice was already saved in change event of the spinner
+    	AppPreferencesDao.instance().setLastUsedDestination(
+    			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
+    	AppPreferencesDao.instance().setLastUsedMessage(
+    			TextUtils.isEmpty(mTxtMessage.getText()) ? "" : mTxtMessage.getText().toString());
+		
+		//and save new selected provider
+		AppPreferencesDao.instance().setLastUsedProviderId(mSelectedProvider.getId());
+		AppPreferencesDao.instance().setLastUsedSubserviceId(mSelectedServiceId);
+    	AppPreferencesDao.instance().save();
+    }
+	
+	
+	/**
+	 * Save volatile data (for example, when the activity is
+	 * rotated
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+		String phones = ContactDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
+		outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
+		outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
+	};
+
+	
+	@Override
+	/**
+	 * Load volatile data into inner fields, for example when the
+	 * activity is rotated
+	 * 
+	 * @param savedInstanceState
+	 */
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		//restore volatile values
+		mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
+		mPhonesToShowInDialog = ContactDao.instance().deserializeContactPhones(
+				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
+		
+		//when the activity is rotated, in the onPause event the values of
+		//provider, text values and subservice are persisted, so i can rely on this value
+		//for reassigning them
+		restoreLastRunViewValues();
+	}
+
+	
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
     	
@@ -162,8 +262,6 @@ public class ActSendSms
 			.setIcon(android.R.drawable.ic_menu_delete);
     	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
 		.setIcon(android.R.drawable.ic_menu_preferences);
-//		menu.add(0, OPTIONMENU_EXIT, 4, R.string.actsendsms_menuExit)
-//			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 //		menu.add(0, OPTIONMENU_DIALOG, 5, "Test dialog");
 		
 		return true;    	
@@ -266,23 +364,6 @@ public class ActSendSms
     }
     
     
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	//save current fields value to prefs
-    	//provider and subservice was already saved in change event of the spinner
-    	AppPreferencesDao.instance().setLastUsedDestination(
-    			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
-    	AppPreferencesDao.instance().setLastUsedMessage(
-    			TextUtils.isEmpty(mTxtMessage.getText()) ? "" : mTxtMessage.getText().toString());
-		
-		//and save new selected provider
-		AppPreferencesDao.instance().setLastUsedProviderId(mSelectedProvider.getId());
-		AppPreferencesDao.instance().setLastUsedSubserviceId(mSelectedServiceId);
-    	AppPreferencesDao.instance().save();
-    }
-    
-    
     private OnItemSelectedListener mSpiProvidersSelectedListener = new OnItemSelectedListener() {
 		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 			SmsProvider provider = (SmsProvider) parent.getItemAtPosition(pos);
@@ -331,17 +412,39 @@ public class ActSendSms
 		public void afterTextChanged(Editable s) {
 		}
 	};
-	
-	
+
+
 	/**
-	 * Save volatile data (for example, when the activity is
-	 * rotated
+	 * Hander to call when a message is sent or a captcha code is inserted
 	 */
-	protected void onSaveInstanceState(Bundle outState)
-	{
-		String phones = ContactDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
-		outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
-		outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
+	private Handler mActivityHandler = new Handler() {
+		public void handleMessage(Message msg)
+		{
+			//check if the message is for this handler
+			if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
+					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
+				return;
+			
+			//dismisses progress dialog
+			if (null != mProgressDialog && mProgressDialog.isShowing())
+				mProgressDialog.dismiss();
+			
+			ResultOperation res;
+			switch (msg.what) {
+			case SendMessageThread.WHAT_SENDMESSAGE:
+				res = mSendMessageThread.getResult();
+				mSendMessageThread = null;
+				sendMessageComplete(res);
+				break;
+
+			case SendCaptchaThread.WHAT_SENDCAPTCHA:
+				res = mSendCaptchaThread.getResult();
+				mSendCaptchaThread = null;
+				sendCaptchaComplete(res);
+				break;
+
+			}
+		};
 	};
 
 
@@ -349,7 +452,7 @@ public class ActSendSms
 
 	//---------- Public methods
 	/**
-	 * Called by AsyncTask when the captcha sending completed
+	 * Called when the captcha sending completed
 	 * @param res
 	 */
 	public void sendCaptchaComplete(ResultOperation res) {
@@ -649,7 +752,7 @@ public class ActSendSms
 		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
 		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
 
-		//reassing spinner values and status of class inner fields
+		//reassign spinner values and status of class inner fields
 		reloadSpinnerValues();
 	}
     
@@ -745,15 +848,18 @@ public class ActSendSms
 			return;
 		}
 		
+		//create new progress dialog
+		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
 		
 		//preparing the background task for sending message
-		SendSmsAsyncTask task = new SendSmsAsyncTask(
-				this, this,
-				getString(R.string.actsendsms_msg_sendingMessage),
-				mSelectedProvider, mSelectedServiceId);
-		//and send the message
-		task.execute(mTxtDestination.getText().toString(), mTxtMessage.getText().toString());
-		//at the end of the execution, the sendMessageComplete() method will be called
+		String destination = mTxtDestination.getText().toString();
+		String message = mTxtMessage.getText().toString();
+		mSendMessageThread = new SendMessageThread(
+				this, mActivityHandler,
+				mSelectedProvider, mSelectedServiceId,
+				destination, message);
+		mSendMessageThread.start();
+		//at the end of the execution, the activity handler will be called
 	}
 	
 	
@@ -769,14 +875,18 @@ public class ActSendSms
 			return;
 		}
 		
+		//create new progress dialog
+		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
+
 		//preparing the background task for sending captcha code
-		SendCaptchaAsyncTask task = new SendCaptchaAsyncTask(
-				this, this,
-				getString(R.string.actsendsms_msg_sendingCaptcha),
-				mSelectedProvider);
-		//and send the captcha
-		task.execute(providerReply, captchaCode);
-		//at the end of the execution, the sendCaptchaComplete() method will be called
+		mSendCaptchaThread = new SendCaptchaThread(
+				this, mActivityHandler,
+				mSelectedProvider,
+				providerReply,
+				captchaCode);
+		//and execute the command
+		mSendCaptchaThread.start();
+		//at the end of the execution, a caller to handler will be make
 	}
 	
 	
@@ -786,25 +896,5 @@ public class ActSendSms
 	private void cleanDataFields() {
 		mTxtDestination.setText("");
 		mTxtMessage.setText("");
-	}
-	
-
-	/**
-	 * Load volatile data into inner fields, for example when the
-	 * activity is rotated
-	 * 
-	 * @param savedInstanceState
-	 */
-	private void reloadVolatileData(Bundle savedInstanceState) {
-		//restore volatile values
-		mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
-		mPhonesToShowInDialog = ContactDao.instance().deserializeContactPhones(
-				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
-		
-		//when the activity is rotated, in the onPause event the values of
-		//provider, text values and subservice are persisted, so i can rely on this value
-		//for reassigning them
-		restoreLastRunViewValues();
-	}
-	
+	}	
 }
