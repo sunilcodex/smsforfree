@@ -3,7 +3,6 @@ CONTROLLARE
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -sistemare l'associazione telefono-tipo
 -rendere lungo il toast per il messaggio spedito, oppure label con ultima operazione
--mettere picture dell captcha piu' piccola
 -issue da sparazza (daniele) su layout schermata di send sms
 -gestione servizi salvati di jacksms
 -nei codici di errore ritornati all'activity, controllare se l'errore e' uno di quelli standard
@@ -12,10 +11,8 @@ CONTROLLARE
 -gestire meglio i messaggi d'errore del dao
 -aggiungere menu x registrarsi ad aimon con il proprio codice
 -aggiungere menu x registrarsi a jacksms
--controllare nell'onpause e altri metodi se l'app e' spirata
 -gestire meglio contesto di app
 -controllo connettivita' quando c'e' da mandare un mess e altre cose
--controllo perche' password non sono correttamente visualizzate
 
 
 Lista servizi da consultare 

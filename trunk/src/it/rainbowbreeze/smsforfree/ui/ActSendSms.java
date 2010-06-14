@@ -108,7 +108,8 @@ public class ActSendSms
     	//if (SmsForFreeApplication.instance().isAppExpired()) {
     		//application is expired
             setContentView(R.layout.actexpired);
-            setTitle(R.string.actexpired_title);
+            setTitle(String.format(
+            		getString(R.string.actexpired_title), SmsForFreeApplication.instance().getAppName()));
     		ActivityHelper.showInfo(this, R.string.common_msg_appExpired);
     		return;
     	}
@@ -197,6 +198,9 @@ public class ActSendSms
     @Override
     protected void onPause() {
     	super.onPause();
+    	
+    	if (SmsForFreeApplication.instance().isAppExpired()) return;
+    	
     	//save current fields value to prefs
     	//provider and subservice was already saved in change event of the spinner
     	AppPreferencesDao.instance().setLastUsedDestination(
@@ -746,7 +750,10 @@ public class ActSendSms
 	 * because not always the text view values are preserver
 	 * 
 	 */
-	private void restoreLastRunViewValues() {
+	private void restoreLastRunViewValues()
+	{
+		if (SmsForFreeApplication.instance().isAppExpired()) return;
+		
 		//text and message
 		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
 		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
