@@ -124,9 +124,8 @@ public class ActSettingsSmsService
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean canContinue = super.onCreateOptionsMenu(menu);
-		
 		if (!canContinue) return canContinue;
-		//TODO move to service level
+
 		if (null != mEditedService && mEditedService.hasSettingsActivityCommands()) {
 			for (SmsServiceCommand command : mEditedService.getSettingsActivityCommands()) {
 				MenuItem item = menu.add(0,
@@ -165,12 +164,8 @@ public class ActSettingsSmsService
 				mEditedService,
 				item.getItemId(),
 				bundle);
-		//register the listener
-		//mExecuteServiceCommandThread.setOnExecutedServiceCommandListener(mExecutedServiceCommandListener);
-		mExecutedServiceCommandThread.registerCallerHandler(mExecutedCommandHandler);
 		//and execute the command
 		mExecutedServiceCommandThread.start();
-		//at the end of the execution, the listener call will be make
 		return true;
 	}
 
@@ -202,7 +197,6 @@ public class ActSettingsSmsService
 		}
 	};
 
-	
 
 	/**
 	 * Hander to call when the execute command menu option ended
@@ -225,6 +219,7 @@ public class ActSettingsSmsService
 		};
 	};
 	
+
 
 
 	//---------- Public methods
@@ -458,7 +453,8 @@ public class ActSettingsSmsService
 
 		super.cancelEdit();
 	}
-	
+
+
 	@Override
 	protected void loadVolatileData(Bundle savedInstanceState) {
 		super.loadVolatileData(savedInstanceState);

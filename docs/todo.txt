@@ -1,8 +1,5 @@
 CONTROLLARE
 -vedere se si puo' passare per onRestoreInstanceState nell'act di base dei settings
-
-
-IMPLEMENTAZIONI
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -sistemare l'associazione telefono-tipo
 -rendere lungo il toast per il messaggio spedito, oppure label con ultima operazione
@@ -17,6 +14,9 @@ IMPLEMENTAZIONI
 -aggiungere menu x registrarsi a jacksms
 -controllare nell'onpause e altri metodi se l'app e' spirata
 -gestire meglio contesto di app
+-reset del numero di messaggi giornaliero quando l'app parte
+-controllo connettivita' quando c'e' da mandare un mess e altre cose
+-controllo perche' password non sono correttamente visualizzate
 
 
 Lista servizi da consultare 
