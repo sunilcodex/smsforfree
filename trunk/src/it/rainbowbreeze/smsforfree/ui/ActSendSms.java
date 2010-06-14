@@ -10,7 +10,6 @@ import it.rainbowbreeze.smsforfree.data.ContactDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
-import it.rainbowbreeze.smsforfree.logic.ExecuteServiceCommandThread;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.logic.SendCaptchaThread;
 import it.rainbowbreeze.smsforfree.logic.SendMessageThread;
@@ -457,7 +456,7 @@ public class ActSendSms
 	 */
 	public void sendCaptchaComplete(ResultOperation res) {
 		//update number of messages sent in the day
-		LogicManager.updateSmsCounter();
+		LogicManager.updateSmsCounter(1);
 		//show the results of the send
 		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
 	}
@@ -483,7 +482,7 @@ public class ActSendSms
 			//display returning message of the provider
 			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
 			//update number of messages sent in the day
-			LogicManager.updateSmsCounter();
+			LogicManager.updateSmsCounter(1);
 			//check if the text should be deleted
 			if (AppPreferencesDao.instance().getAutoClearMessage()) {
 				cleanDataFields();

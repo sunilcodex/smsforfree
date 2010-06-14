@@ -55,6 +55,9 @@ public class LogicManager {
 		SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
 		if (SmsForFreeApplication.instance().isAppExpired()) return res;
 		
+		//update the daily number of sms
+		updateSmsCounter(0);
+		
 		//load some user setting
 		SmsForFreeApplication.instance().setLiteVersionApp(
 				"Lite".equalsIgnoreCase(context.getString(R.string.config_AppType)));
@@ -87,8 +90,10 @@ public class LogicManager {
 
 	/**
 	 * Update the number of message sent in current day
+	 * 
+	 * @param factorToAdd number of sms to add to the total
 	 */
-	public static void updateSmsCounter()
+	public static void updateSmsCounter(int factorToAdd)
 	{
 		//check current date hash
 		String currentDateHash = getCurrentDayHash();
@@ -97,10 +102,10 @@ public class LogicManager {
 		if (TextUtils.isEmpty(lastUpdate) || !lastUpdate.equals(currentDateHash)) {
 			//new day :D
 			AppPreferencesDao.instance().setSmsCounterDate(currentDateHash);
-			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(1);
+			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(factorToAdd);
 		} else {
 			//update sms sent in the day
-			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(AppPreferencesDao.instance().getSmsCounterNumberForCurrentDay() + 1);
+			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(AppPreferencesDao.instance().getSmsCounterNumberForCurrentDay() + factorToAdd);
 		}
 		AppPreferencesDao.instance().save();
 	}
