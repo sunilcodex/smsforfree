@@ -15,6 +15,9 @@ CONTROLLARE
 -mettere lite su versioni inviata al sito
 
 
+FUTURE IMPLEMENTAZIONI
+-installOnStorage http://developer.android.com/guide/appendix/install-location.html
+
 Lista servizi da consultare 
 http://q.jacksms.it/login/getProviders
 

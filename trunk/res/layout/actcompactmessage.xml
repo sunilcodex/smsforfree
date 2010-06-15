@@ -4,10 +4,43 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	style="@style/common_layoutBackground"
 >
-	<LinearLayout
-		style="@style/actcompactsmessage_LinearLayout"
+	<TextView
+		android:id="@+id/actcompactmessage_lblHelp"
+		style="@style/common_TextView"
+		android:text="@string/actcompactmessage_lblHelp"
 		android:layout_alignParentTop="true"
-	>
-	</LinearLayout>
+		android:layout_centerHorizontal="true"
+	/>
+	
+	<EditText
+		android:id="@+id/actcompactmessage_lblMessage"
+		style="@style/common_TextView"
+		android:layout_below="@id/actcompactmessage_lblHelp"
+		android:editable="false"
+	/>
+	
+	<SeekBar
+		android:id="@+id/actcompactmessage_barCompressRatio"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/actcompactmessage_lblMessage"
+		android:layout_centerHorizontal="true"
+	/>
 
+	<Button
+		android:id="@+id/actcompactmessage_btnOk"
+		style="@style/common_btnAction"
+		android:text="@string/common_btnOk"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+	/>
+	
+	<Button
+		android:id="@+id/actcompactmessage_btnCancel"
+		style="@style/common_btnAction"
+		android:text="@string/common_btnCancel"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+	/>
+	
 </RelativeLayout>
