@@ -51,25 +51,27 @@ public class LogicManager {
 		//load configurations
 		AppPreferencesDao.instance().load(context);
 		
-		//check if the application expired
-		SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
-		if (SmsForFreeApplication.instance().isAppExpired()) return res;
-		
-		//update the daily number of sms
-		updateSmsCounter(0);
-		
-		//load some user setting
+		//load some application license setting
 		SmsForFreeApplication.instance().setLiteVersionApp(
 				"Lite".equalsIgnoreCase(context.getString(R.string.config_AppType)));
 		SmsForFreeApplication.instance().setAllowedSmsForDay(
 				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
 		
+		//check if the application expired
+		if (SmsForFreeApplication.instance().isLiteVersionApp()) {
+			SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
+			if (SmsForFreeApplication.instance().isAppExpired()) return res;
+		} else {
+			SmsForFreeApplication.instance().setAppExpired(false);
+		}
+		
+		//update the daily number of sms
+		updateSmsCounter(0);
+		
 		//checks for application upgrade
 		res = performAppVersionUpgrade(context);
 		
 		addProvidersToList(context);
-		
-		Collections.sort(SmsForFreeApplication.instance().getProviderList());
 
 		return res;
 	}
@@ -209,9 +211,11 @@ public class LogicManager {
 
 	
 	/**
+	 * Add providers to the list of available providers, according with configurations
 	 * @param context
 	 */
-	private static void addProvidersToList(Context context) {
+	private static void addProvidersToList(Context context)
+	{
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
 		String allowedProviders = context.getString(R.string.config_AllowedProviders);
@@ -233,6 +237,9 @@ public class LogicManager {
 			aimonProv.loadParameters(context);
 			SmsForFreeApplication.instance().getProviderList().add(aimonProv);
 		}
+		
+		Collections.sort(SmsForFreeApplication.instance().getProviderList());
+		
 	}
 	
 }

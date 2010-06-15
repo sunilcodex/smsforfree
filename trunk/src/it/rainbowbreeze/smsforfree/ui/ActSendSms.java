@@ -18,7 +18,6 @@ import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,6 +44,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ActSendSms
@@ -89,7 +89,6 @@ public class ActSendSms
 	private SendMessageThread mSendMessageThread;
 	private SendCaptchaThread mSendCaptchaThread;
 	
-	private ProgressDialog mProgressDialog;
 
 	
 	
@@ -159,14 +158,14 @@ public class ActSendSms
 	
 		//saved object is a SendMessageThread
 		if (savedThread instanceof SendMessageThread) {
-			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
+//			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
 			mSendMessageThread = (SendMessageThread) savedThread;
 			//register new handler
 			mSendMessageThread.registerCallerHandler(mActivityHandler);
 		
 		//saved object is a SendCaptchaThread
 		} else {
-			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
+//			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
 			mSendCaptchaThread = (SendCaptchaThread) savedThread;
 			//register new handler
 			mSendCaptchaThread.registerCallerHandler(mActivityHandler);
@@ -362,11 +361,11 @@ public class ActSendSms
     		break;
     		
     	case DIALOG_SENDING_MESSAGE:
-    		retDialog = createCaptchaDialog(mCaptchaStorage);
+    		retDialog = ActivityHelper.createProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
     		break;
     		
     	case DIALOG_SENDING_CAPTCHA:
-    		retDialog = createCaptchaDialog(mCaptchaStorage);
+    		retDialog = ActivityHelper.createProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
     		break;
     		
 		default:
@@ -438,22 +437,20 @@ public class ActSendSms
 					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
 				return;
 			
-			//dismisses progress dialog
-			if (null != mProgressDialog && mProgressDialog.isShowing())
-				mProgressDialog.dismiss();
-			
 			ResultOperation res;
 			switch (msg.what) {
 			case SendMessageThread.WHAT_SENDMESSAGE:
+				//pass data to method
 				res = mSendMessageThread.getResult();
 				mSendMessageThread = null;
 				sendMessageComplete(res);
 				break;
 
 			case SendCaptchaThread.WHAT_SENDCAPTCHA:
+				//pass data to method
 				res = mSendCaptchaThread.getResult();
 				mSendCaptchaThread = null;
-				displayMessageSendResult(res);
+				displayMessageSendResult(res, true);
 				break;
 
 			}
@@ -809,8 +806,8 @@ public class ActSendSms
 		}
 		
 		//create new progress dialog
-		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
-		
+		showDialog(DIALOG_SENDING_MESSAGE);
+
 		//preparing the background task for sending message
 		String destination = mTxtDestination.getText().toString();
 		String message = mTxtMessage.getText().toString();
@@ -834,10 +831,10 @@ public class ActSendSms
 			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
 			return;
 		}
-		
-		//create new progress dialog
-		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
 
+		//create new progress dialog
+		showDialog(DIALOG_SENDING_CAPTCHA);
+		
 		//preparing the background task for sending captcha code
 		mSendCaptchaThread = new SendCaptchaThread(
 				this, mActivityHandler,
@@ -865,18 +862,19 @@ public class ActSendSms
 	 */
 	private void sendMessageComplete(ResultOperation result)
 	{
-		//return with errors
-		//message sent
-		if (result.HasErrors() || ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
-			displayMessageSendResult(result);
-
+		//dismiss progress dialog
+		removeDialog(DIALOG_SENDING_MESSAGE);
+		
 		//captcha required
-		} else if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
+		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
 			//save captcha data
 			mCaptchaStorage = result.getResultAsString();
 			//launch captcha request
 			showDialog(DIALOG_CAPTCHA_REQUEST);
-			return;
+		
+		//return with errors or message sent
+		} else if (result.HasErrors() || ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
+			displayMessageSendResult(result, false);
 		}
 	}
 
@@ -886,8 +884,13 @@ public class ActSendSms
 	 * 
 	 * @param result
 	 */
-	private void displayMessageSendResult(ResultOperation result)
+	private void displayMessageSendResult(ResultOperation result, boolean returnFromCaptcha)
 	{
+		if (returnFromCaptcha) {
+			//dismiss captcha progress dialog
+			removeDialog(DIALOG_SENDING_CAPTCHA);
+		}
+
 		//return with errors
 		if (result.HasErrors()) {
 			ActivityHelper.reportError(ActSendSms.this, String.format(
@@ -895,9 +898,8 @@ public class ActSendSms
 					//change standard error message
 					getString(R.string.common_msg_genericError), result.getException().getMessage()));
 		} else {
-		
 			//display returning message of the provider
-			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
+			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString(), Toast.LENGTH_LONG);
 			//update number of messages sent in the day
 			LogicManager.updateSmsCounter(1);
 			//check if the text should be deleted

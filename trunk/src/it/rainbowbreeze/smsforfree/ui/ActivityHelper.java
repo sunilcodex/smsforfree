@@ -179,13 +179,21 @@ public class ActivityHelper {
 	 * @param context
 	 * @param infoMessage
 	 */
-	public static void showInfo(Context context, String infoMessage)
-	{
-		Toast.makeText(context, infoMessage, Toast.LENGTH_LONG).show();
-	}
 	public static void showInfo(Context context, int infoMessageId)
 	{
-		showInfo(context, context.getString(infoMessageId));
+		showInfo(context, context.getString(infoMessageId), Toast.LENGTH_SHORT);
+	} 
+	public static void showInfo(Context context, String infoMessage)
+	{
+		showInfo(context, infoMessage, Toast.LENGTH_LONG);
+	}
+	public static void showInfo(Context context, String infoMessage, int messageLenght)
+	{
+		Toast.makeText(context, infoMessage, messageLenght).show();
+	}
+	public static void showInfo(Context context, int infoMessageId, int messageLenght)
+	{
+		Toast.makeText(context, infoMessageId, messageLenght).show();
 	} 
 
 
@@ -256,6 +264,18 @@ public class ActivityHelper {
 		ProgressDialog progressDialog = new ProgressDialog(callerActivity);
 		progressDialog.setMessage(message);
 		progressDialog.show();
+		return progressDialog;
+	}
+
+
+	public static ProgressDialog createProgressDialog(
+			Activity callerActivity,
+			int messageId
+		)
+	{
+		String message = 0 != messageId ? callerActivity.getString(messageId) : "";
+		ProgressDialog progressDialog = new ProgressDialog(callerActivity);
+		progressDialog.setMessage(message);
 		return progressDialog;
 	}
 
