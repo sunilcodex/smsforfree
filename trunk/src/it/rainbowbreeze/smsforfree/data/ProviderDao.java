@@ -72,7 +72,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation saveProviderParameters(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Boolean> saveProviderParameters(Context context, String filename, SmsProvider provider)
 	{
 		return saveProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
 	}
@@ -82,7 +82,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation saveProviderTemplates(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Boolean> saveProviderTemplates(Context context, String filename, SmsProvider provider)
 	{
 		return saveProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
 	}
@@ -92,7 +92,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation saveProviderSubservices(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Boolean> saveProviderSubservices(Context context, String filename, SmsProvider provider)
 	{
 		return saveProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
 	}
@@ -103,7 +103,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation loadProviderParameters(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Boolean> loadProviderParameters(Context context, String filename, SmsProvider provider)
 	{
 		return loadProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
 	}
@@ -113,7 +113,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation loadProviderTemplates(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Boolean> loadProviderTemplates(Context context, String filename, SmsProvider provider)
 	{
 		return loadProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
 	}
@@ -123,7 +123,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation loadProviderSubservices(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Boolean> loadProviderSubservices(Context context, String filename, SmsProvider provider)
 	{
 		return loadProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
 	}
@@ -142,13 +142,13 @@ public class ProviderDao
 	 * @param dataToSave part of the provider to save
 	 * @return
 	 */
-	private ResultOperation saveProviderData(
+	private ResultOperation<Boolean> saveProviderData(
 			Context context,
 			String filename,
 			SmsProvider provider,
 			int dataToSave)
 	{
-		ResultOperation res = new ResultOperation(true);
+		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
 		
 		FileOutputStream fos = null;
 		try {
@@ -355,13 +355,13 @@ public class ProviderDao
 	 * @param datatosave
 	 * @return
 	 */
-	private ResultOperation loadProviderData(
+	private ResultOperation<Boolean> loadProviderData(
 			Context context,
 			String fileName,
 			SmsProvider provider,
 			int dataToLoad)
 	{
-		ResultOperation res = new ResultOperation(true);
+		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
 		FileInputStream fis = null;
 
 		//checks if file exists

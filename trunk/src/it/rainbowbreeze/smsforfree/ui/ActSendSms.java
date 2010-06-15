@@ -434,7 +434,7 @@ public class ActSendSms
 					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
 				return;
 			
-			ResultOperation res;
+			ResultOperation<String> res;
 			switch (msg.what) {
 			case SendMessageThread.WHAT_SENDMESSAGE:
 				//pass data to method
@@ -622,10 +622,10 @@ public class ActSendSms
 	 */
 	private Dialog createCaptchaDialog(final String providerReply)
 	{
-		ResultOperation res = mSelectedProvider.getCaptchaContentFromProviderReply(providerReply);
+		ResultOperation<Object> res = mSelectedProvider.getCaptchaContentFromProviderReply(providerReply);
 		if (res.HasErrors()) {
 			//show errors
-			ActivityHelper.showInfo(this, res.getResultAsString());
+			ActivityHelper.showInfo(this, res.getResult().toString());
 			//and returns with no dialog created
 			return null;
 		}
@@ -639,7 +639,7 @@ public class ActSendSms
 		
 		//load the image
 		ImageView mImgCaptcha = (ImageView) layout.findViewById(R.id.dlgcaptcha_imgCaptcha);
-		byte[] imageData = res.getResultAsByteArray();
+		byte[] imageData = (byte[]) res.getResult();
 		BitmapFactory.Options options = new BitmapFactory.Options();
         //options.inSampleSize = 1;
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
@@ -857,7 +857,7 @@ public class ActSendSms
 	 * Called when the background activity has sent the message
 	 * @param result result of sending message
 	 */
-	private void sendMessageComplete(ResultOperation result)
+	private void sendMessageComplete(ResultOperation<String> result)
 	{
 		//dismiss progress dialog
 		removeDialog(DIALOG_SENDING_MESSAGE);
@@ -865,7 +865,7 @@ public class ActSendSms
 		//captcha required
 		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
 			//save captcha data
-			mCaptchaStorage = result.getResultAsString();
+			mCaptchaStorage = result.getResult();
 			//launch captcha request
 			showDialog(DIALOG_CAPTCHA_REQUEST);
 		
@@ -881,7 +881,7 @@ public class ActSendSms
 	 * 
 	 * @param result
 	 */
-	private void displayMessageSendResult(ResultOperation result, boolean returnFromCaptcha)
+	private void displayMessageSendResult(ResultOperation<String> result, boolean returnFromCaptcha)
 	{
 		if (returnFromCaptcha) {
 			//dismiss captcha progress dialog
@@ -896,7 +896,7 @@ public class ActSendSms
 					getString(R.string.common_msg_genericError), result.getException().getMessage()));
 		} else {
 			//display returning message of the provider
-			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString(), Toast.LENGTH_LONG);
+			ActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
 			//update number of messages sent in the day
 			LogicManager.updateSmsCounter(1);
 			//check if the text should be deleted

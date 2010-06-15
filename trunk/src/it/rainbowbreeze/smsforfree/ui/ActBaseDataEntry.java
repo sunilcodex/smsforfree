@@ -13,7 +13,8 @@ import android.view.MenuItem;
 
 /**
  * A basic data editing activity, with saving of
- * user data only when the user press the back button.
+ * user data only when the user press the back button or the select
+ * save from option menu.
  * 
  * Starting from Android 2.0 (API 5), i can use the onBackPressed
  * method to execute code when the user press the back button.
@@ -32,8 +33,8 @@ public abstract class ActBaseDataEntry
 	
 	
 	//---------- Private fields
-	protected final static int OPTIONMENU_SAVE = 100;
-	protected final static int OPTIONMENU_CANCEL = 101;
+	protected final static int OPTIONMENU_SAVE = 10000;
+	protected final static int OPTIONMENU_CANCEL = 10001;
 	
 	protected final static String KEY_MUSTRETURNFROMCALLEDACTIVITY = "mustReturnFromCalledActivity";
 	
@@ -63,8 +64,6 @@ public abstract class ActBaseDataEntry
 		super.onCreate(savedInstanceState);
 
 		if (null != savedInstanceState){
-			//reload volatile data (screen rotated etc)
-			loadVolatileData(savedInstanceState);
 			mFirstStart = false;
 		} else {
 			//first start
@@ -154,6 +153,20 @@ public abstract class ActBaseDataEntry
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		saveVolatileData(outState);
+	}
+	
+
+	/**
+	 * Called when the activity is recreated (like when the user rotate the screen)
+	 * 
+	 * Called after the onCreate method, between onStart() and onPostCreate(Bundle).
+	 * 
+	 */
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		//reload volatile data (screen rotated etc)
+		loadVolatileData(savedInstanceState);
 	}
 	
 	
@@ -275,7 +288,7 @@ public abstract class ActBaseDataEntry
     }
 	
 	/**
-	 * Called when this activity calls another activiy and the called activity returns
+	 * Called when this activity calls another activity and the called activity returns
 	 */
 	protected void returnFromStartedActivity()
 	{	}

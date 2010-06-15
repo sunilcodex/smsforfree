@@ -65,16 +65,16 @@ public abstract class SmsSingleProvider
 	
 	
 	//---------- Public methods
-	public ResultOperation saveTemplates(Context context)
+	public ResultOperation<Boolean> saveTemplates(Context context)
 	{ return null; }
 
-	public ResultOperation loadTemplates(Context context)
+	public ResultOperation<Boolean> loadTemplates(Context context)
 	{ return null; }
 
-	public ResultOperation saveSubservices(Context context)
+	public ResultOperation<Boolean> saveSubservices(Context context)
 	{ return null; }
 
-	public ResultOperation loadSubservices(Context context)
+	public ResultOperation<Boolean> loadSubservices(Context context)
 	{ return null; }
 	
 	public SmsService newSubserviceFromTemplate(String templateId)

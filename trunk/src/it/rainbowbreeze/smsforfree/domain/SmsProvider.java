@@ -71,7 +71,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public ResultOperation loadParameters(Context context){
+	public ResultOperation<Boolean> loadParameters(Context context){
 		return mDao.loadProviderParameters(context, getParametersFileName(), this);
 	}
 	
@@ -81,7 +81,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public ResultOperation saveParameters(Context context){
+	public ResultOperation<Boolean> saveParameters(Context context){
 		return mDao.saveProviderParameters(context, getParametersFileName(), this);
 	}
 
@@ -91,7 +91,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation saveTemplates(Context context);
+	public abstract ResultOperation<Boolean> saveTemplates(Context context);
 
 	/**
 	 * Save provider's templates
@@ -99,7 +99,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation loadTemplates(Context context);
+	public abstract ResultOperation<Boolean> loadTemplates(Context context);
 	
 	/**
 	 * Save provider's configured subservices
@@ -107,7 +107,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation saveSubservices(Context context);
+	public abstract ResultOperation<Boolean> saveSubservices(Context context);
 
 	/**
 	 * Load provider's configured subservices
@@ -115,7 +115,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation loadSubservices(Context context);
+	public abstract ResultOperation<Boolean> loadSubservices(Context context);
 	
 	/**
 	 * Create a new service object starting from a template
@@ -169,7 +169,7 @@ public abstract class SmsProvider
 	 * @param destination
 	 * @param body
 	 */
-	public abstract ResultOperation sendMessage(String serviceId, String destination, String body);
+	public abstract ResultOperation<String> sendMessage(String serviceId, String destination, String body);
 
     /**
      * Get the captcha image content from a provider reply
@@ -177,7 +177,7 @@ public abstract class SmsProvider
      * @param providerReply message from the provider used to retrieve the captcha content
      * @return
      */
-    public abstract ResultOperation getCaptchaContentFromProviderReply(String providerReply);
+    public abstract ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply);
     
     /**
      * Send a captcha code to the provider
@@ -187,7 +187,7 @@ public abstract class SmsProvider
      * @param captchaCode the captcha code read
      * @return
      */
-    public abstract ResultOperation sendCaptcha(String providerReply, String captchaCode);
+    public abstract ResultOperation<String> sendCaptcha(String providerReply, String captchaCode);
     
     
 	//---------- Private methods
@@ -217,9 +217,9 @@ public abstract class SmsProvider
 	 * Create an exception for empty username or password
 	 * @return
 	 */
-	protected ResultOperation getExceptionForInvalidCredentials()
+	protected ResultOperation<String> getExceptionForInvalidCredentials()
 	{
-		return new ResultOperation(new Exception(ERROR_NO_CREDENTIALS));
+		return new ResultOperation<String>(new Exception(ERROR_NO_CREDENTIALS));
 	}  
 
 }

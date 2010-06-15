@@ -33,7 +33,7 @@ public abstract class BaseBackgroundThread
 	protected static final int INTERVAL_BETWEEN_RETRIES = 2000;
 	
 	protected WeakReference<Context> mWeakContext; 
-	protected ResultOperation mResultOperation;
+	protected ResultOperation<String> mResultOperation;
 	protected Handler mCallerHandler;
 
 	
@@ -54,7 +54,7 @@ public abstract class BaseBackgroundThread
 	public void registerCallerHandler(Handler newHandler)
 	{ mCallerHandler = newHandler; }
 
-	public ResultOperation getResult()
+	public ResultOperation<String> getResult()
 	{ return mResultOperation; }
 
 

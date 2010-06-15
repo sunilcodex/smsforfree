@@ -1,5 +1,4 @@
 CONTROLLARE
--vedere se si puo' passare per onRestoreInstanceState nell'act di base dei settings
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -sistemare l'associazione telefono-tipo
 -issue da sparazza (daniele) su layout schermata di send sms
@@ -10,7 +9,6 @@ CONTROLLARE
 -gestire meglio i messaggi d'errore del dao
 -aggiungere menu x registrarsi ad aimon con il proprio codice
 -aggiungere menu x registrarsi a jacksms
--gestire meglio contesto di app
 -controllo connettivita' quando c'e' da mandare un mess e altre cose
 -mettere lite su versioni inviata al sito
 

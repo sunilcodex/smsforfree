@@ -146,7 +146,7 @@ public abstract class SmsService
      * @param extraData
      * @return String with command result
      */
-    public ResultOperation executeCommand(int commandId, Context context, Bundle extraData)
+    public ResultOperation<String> executeCommand(int commandId, Context context, Bundle extraData)
     { return null; }
 
     

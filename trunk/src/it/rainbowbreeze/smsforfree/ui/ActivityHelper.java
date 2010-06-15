@@ -149,22 +149,27 @@ public class ActivityHelper {
 	 * @param errorMessage
 	 */
 	public static void reportError(Context context, String errorMessage)
-	{
-		Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
-	}
+	{ Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show(); }
+	
 	public static void reportError(Context context, int errorMessageId)
+	{ reportError(context, context.getString(errorMessageId)); }
+	
+	public static void reportError(Context context, ResultOperation<String> res)
+	{ reportError(context, res.getException()); }
+
+	public static void reportError(Context context, Exception exception)
 	{
-		reportError(context, context.getString(errorMessageId));
-	}
-	public static void reportError(Context context, ResultOperation res)
-	{
-		if (null != res) {
+		if (null != exception) {
+			//TODO
+			//manage standard errors
 			reportError(context,
 					String.format(
 							context.getString(R.string.common_msg_genericError),
-							res.getException().getMessage()));
+							exception.getMessage()));
 			//print stack trace
-			res.getException().printStackTrace();
+			exception.printStackTrace();
+			//TODO
+			//update log file
 		} else {
 			reportError(context,
 					String.format(
@@ -204,7 +209,7 @@ public class ActivityHelper {
 	 * @param context
 	 * @param result
 	 */
-	public static void showCommandExecutionResult(Context context, ResultOperation result)
+	public static void showCommandExecutionResult(Context context, ResultOperation<String> result)
 	{
 		//show command results
 		if (result.HasErrors()) {
@@ -214,7 +219,7 @@ public class ActivityHelper {
 					context.getString(R.string.common_msg_genericError), result.getException().getMessage()));
 		} else {
 			//shows the output of the command
-			ActivityHelper.showInfo(context, result.getResultAsString());
+			ActivityHelper.showInfo(context, result.getResult());
 		}		
 	}
 	
@@ -444,5 +449,6 @@ public class ActivityHelper {
 		else
 			callerActivity.startActivity(intent);
 	}
+
 
 }

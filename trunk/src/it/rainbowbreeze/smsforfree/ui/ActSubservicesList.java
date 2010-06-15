@@ -195,9 +195,11 @@ public class ActSubservicesList
 			service = (SmsService) getListAdapter().getItem(menuInfo.position);
 			mProvider.getAllSubservices().remove(service);
 			mListAdapter.notifyDataSetChanged();
-			ResultOperation res = mProvider.saveSubservices(this);
-			if (null == res || res.HasErrors())
-				ActivityHelper.reportError(this, res);
+			ResultOperation<Boolean> res = mProvider.saveSubservices(this);
+			if (res.HasErrors()) {
+				ActivityHelper.reportError(this, res.getException());
+				return false;
+			}
 			showHideInfoLabel();
 			break;
 		}
@@ -251,7 +253,7 @@ public class ActSubservicesList
 			//dismisses progress dialog
 			if (null != mProgressDialog && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
-			ResultOperation res = mExecutedProviderCommandThread.getResult();
+			ResultOperation<String> res = mExecutedProviderCommandThread.getResult();
 			//and show the result
 			ActivityHelper.showCommandExecutionResult(ActSubservicesList.this, res);
 			//free the thread
