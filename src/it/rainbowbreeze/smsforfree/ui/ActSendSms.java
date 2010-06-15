@@ -52,7 +52,9 @@ public class ActSendSms
 {
 	//---------- Private fields
 	private static final int DIALOG_PHONES = 10;
-	private final static int DIALOG_CAPTCHA = 11;
+	private final static int DIALOG_CAPTCHA_REQUEST = 11;
+	private final static int DIALOG_SENDING_MESSAGE = 12;
+	private final static int DIALOG_SENDING_CAPTCHA = 13;
 	
 	private final static String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	private final static String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
@@ -355,7 +357,15 @@ public class ActSendSms
     		retDialog = createPhonesDialog();
     		break;
     		
-    	case DIALOG_CAPTCHA:
+    	case DIALOG_CAPTCHA_REQUEST:
+    		retDialog = createCaptchaDialog(mCaptchaStorage);
+    		break;
+    		
+    	case DIALOG_SENDING_MESSAGE:
+    		retDialog = createCaptchaDialog(mCaptchaStorage);
+    		break;
+    		
+    	case DIALOG_SENDING_CAPTCHA:
     		retDialog = createCaptchaDialog(mCaptchaStorage);
     		break;
     		
@@ -443,7 +453,7 @@ public class ActSendSms
 			case SendCaptchaThread.WHAT_SENDCAPTCHA:
 				res = mSendCaptchaThread.getResult();
 				mSendCaptchaThread = null;
-				sendCaptchaComplete(res);
+				displayMessageSendResult(res);
 				break;
 
 			}
@@ -454,55 +464,6 @@ public class ActSendSms
 
 
 	//---------- Public methods
-	/**
-	 * Called when the captcha sending completed
-	 * @param res
-	 */
-	public void sendCaptchaComplete(ResultOperation res) {
-		//update number of messages sent in the day
-		LogicManager.updateSmsCounter(1);
-		//show the results of the send
-		ActivityHelper.showCommandExecutionResult(this.getBaseContext(), res);
-	}
-	
-	
-	/**
-	 * Called when the background activity has sent the message
-	 * @param result result of sending message
-	 */
-	public void sendMessageComplete(ResultOperation result)
-	{
-		//return with errors
-		if (result.HasErrors()) {
-			ActivityHelper.reportError(ActSendSms.this, String.format(
-					//TODO
-					//change standard error message
-					getString(R.string.common_msg_genericError), result.getException().getMessage()));
-			return;
-		}
-		
-		//message sent
-		if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
-			//display returning message of the provider
-			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
-			//update number of messages sent in the day
-			LogicManager.updateSmsCounter(1);
-			//check if the text should be deleted
-			if (AppPreferencesDao.instance().getAutoClearMessage()) {
-				cleanDataFields();
-			}
-			return;
-		}
-		
-		//captcha required
-		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
-			//save captcha data
-			mCaptchaStorage = result.getResultAsString();
-			//launch captcha request
-			showDialog(DIALOG_CAPTCHA);
-			return;
-		}
-	}
 
 
 
@@ -695,14 +656,14 @@ public class ActSendSms
 
         ((Button) layout.findViewById(R.id.dlgcaptcha_btnOk)).setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				removeDialog(DIALOG_CAPTCHA);
+				removeDialog(DIALOG_CAPTCHA_REQUEST);
 				String code = mTxtCode.getText().toString();
 				sendCaptcha(providerReply, code);
 			}
 		});
         ((Button) layout.findViewById(R.id.dlgcaptcha_btnCancel)).setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				removeDialog(DIALOG_CAPTCHA);
+				removeDialog(DIALOG_CAPTCHA_REQUEST);
 			}
 		});
 
@@ -714,7 +675,14 @@ public class ActSendSms
 	}
 	
 
-	private String getTranslationForPhoneType(String type) {
+	/**
+	 * Associates phone type to a label
+	 * 
+	 * @param type
+	 * @return
+	 */
+	private String getTranslationForPhoneType(String type)
+	{
 		//TODO
 		//check the links between numbers and values
 		if ("1".equals(type))
@@ -748,7 +716,6 @@ public class ActSendSms
 	 * Called when activity is first loaded, restore
 	 * previous status of input views. Called also when the activity is rotated,
 	 * because not always the text view values are preserver
-	 * 
 	 */
 	private void restoreLastRunViewValues()
 	{
@@ -759,19 +726,6 @@ public class ActSendSms
 		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
 
 		//reassign spinner values and status of class inner fields
-		reloadSpinnerValues();
-	}
-    
-    
-	
-	/**
-	 * Reassign spinner values and class inner fields value.
-	 * Used when activity is loaded for the first time and when is rotated
-	 * 
-	 * @param providerId
-	 * @param subserviceId
-	 */
-	private void reloadSpinnerValues() {
 		String providerId = AppPreferencesDao.instance().getLastUsedProviderId();
 		String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
 
@@ -902,5 +856,54 @@ public class ActSendSms
 	private void cleanDataFields() {
 		mTxtDestination.setText("");
 		mTxtMessage.setText("");
-	}	
+	}
+	
+	
+	/**
+	 * Called when the background activity has sent the message
+	 * @param result result of sending message
+	 */
+	private void sendMessageComplete(ResultOperation result)
+	{
+		//return with errors
+		//message sent
+		if (result.HasErrors() || ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
+			displayMessageSendResult(result);
+
+		//captcha required
+		} else if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
+			//save captcha data
+			mCaptchaStorage = result.getResultAsString();
+			//launch captcha request
+			showDialog(DIALOG_CAPTCHA_REQUEST);
+			return;
+		}
+	}
+
+	
+	/**
+	 * Display result of the send message action, eventually processing low level errors
+	 * 
+	 * @param result
+	 */
+	private void displayMessageSendResult(ResultOperation result)
+	{
+		//return with errors
+		if (result.HasErrors()) {
+			ActivityHelper.reportError(ActSendSms.this, String.format(
+					//TODO
+					//change standard error message
+					getString(R.string.common_msg_genericError), result.getException().getMessage()));
+		} else {
+		
+			//display returning message of the provider
+			ActivityHelper.showInfo(ActSendSms.this, result.getResultAsString());
+			//update number of messages sent in the day
+			LogicManager.updateSmsCounter(1);
+			//check if the text should be deleted
+			if (AppPreferencesDao.instance().getAutoClearMessage()) {
+				cleanDataFields();
+			}
+		}
+	}
 }
