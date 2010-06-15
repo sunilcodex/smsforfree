@@ -13,7 +13,7 @@
 	/>
 	
 	<EditText
-		android:id="@+id/actcompactmessage_lblMessage"
+		android:id="@+id/actcompactmessage_txtMessage"
 		style="@style/common_TextView"
 		android:layout_below="@id/actcompactmessage_lblHelp"
 		android:editable="false"
@@ -23,8 +23,9 @@
 		android:id="@+id/actcompactmessage_barCompressRatio"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/actcompactmessage_lblMessage"
+		android:layout_below="@id/actcompactmessage_txtMessage"
 		android:layout_centerHorizontal="true"
+		android:max="4"
 	/>
 
 	<Button
