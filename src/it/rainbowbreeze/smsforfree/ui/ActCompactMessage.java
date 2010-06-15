@@ -29,6 +29,7 @@ public class ActCompactMessage
 		super.onCreate(savedInstanceState);
         setTitle(String.format(
         		getString(R.string.actcompactmessage_title), SmsForFreeApplication.instance().getAppName()));
+        setContentView(R.layout.actcompactmessage);
 		
 		Intent intent = getIntent();
 		

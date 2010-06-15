@@ -106,7 +106,6 @@ public class ActSendSms
 
         //checks for app validity
     	if (SmsForFreeApplication.instance().isAppExpired()) {
-    	//if (SmsForFreeApplication.instance().isAppExpired()) {
     		//application is expired
             setContentView(R.layout.actexpired);
             setTitle(String.format(
@@ -261,7 +260,7 @@ public class ActSendSms
 
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
-    	//menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
+    	menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress);
 		menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
 			.setIcon(android.R.drawable.ic_menu_delete);
     	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
@@ -292,10 +291,8 @@ public class ActSendSms
 			break;
 
 		case OPTIONMENU_COMPRESS:
-			if (mTxtMessage.length() <= 0)
-				ActivityHelper.showInfo(this, R.string.actsendsms_msg_noMessage);
-			else
-				ActivityHelper.openCompactMessage(this, mTxtMessage.getText().toString());
+			String message = mTxtMessage.getText().toString();
+			ActivityHelper.openCompactMessage(this, message);
 			break;
 
 		case OPTIONMENU_RESETDATA:

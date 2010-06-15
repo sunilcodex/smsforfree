@@ -8,10 +8,10 @@
     <application
     	android:icon="@drawable/ic_launcher_smsforfree"
     	android:label="@string/common_appname"
-    	android:name=".common.SmsForFreeApplication"
+    	android:name="it.rainbowbreeze.smsforfree.common.SmsForFreeApplication"
    	>
         <activity
-        	android:name=".ui.ActSendSms"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActSendSms"
         	android:label="@string/common_appname"
        	>
 			<intent-filter>
@@ -21,42 +21,42 @@
         </activity>
 
         <activity
-        	android:name=".ui.ActSettingsMain"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActSettingsMain"
         	android:label="@string/common_appname"
        	/>
 
         <activity
-        	android:name=".ui.ActSettingsSmsService"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActSettingsSmsService"
         	android:label="@string/common_appname"
        	/>
        	
         <activity
-        	android:name=".ui.ActProvidersList"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActProvidersList"
         	android:label="@string/common_appname"
        	/>
        	
         <activity
-        	android:name=".ui.ActTemplatesList"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActTemplatesList"
         	android:label="@string/common_appname"
        	/>
        	
         <activity
-        	android:name=".ui.ActSubservicesList"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActSubservicesList"
         	android:label="@string/common_appname"
        	/>
        	
         <activity
-        	android:name=".ui.ActAbout"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActAbout"
         	android:label="@string/common_appname"
        	/>
        	
         <activity
-        	android:name=".ui.ActCompactMessage"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActCompactMessage"
         	android:label="@string/common_appname"
        	/>
        	
         <activity
-        	android:name=".ui.ActAbout"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActAbout"
         	android:label="@string/common_appname"
        	/>
        	
@@ -69,7 +69,7 @@
 	/>     
 
 	<!-- Internet access -->
-	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
 
 </manifest> 
