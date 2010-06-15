@@ -69,7 +69,6 @@ public class ActSendSms
 	private final static int OPTIONMENU_ABOUT = 4;
 	private final static int OPTIONMENU_RESETDATA = 5;
 	private final static int OPTIONMENU_COMPRESS = 6;
-	private final static int OPTIONMENU_DIALOG = 7;
 
 	
 	private Spinner mSpiProviders;
@@ -265,7 +264,6 @@ public class ActSendSms
 			.setIcon(android.R.drawable.ic_menu_delete);
     	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
 		.setIcon(android.R.drawable.ic_menu_preferences);
-//		menu.add(0, OPTIONMENU_DIALOG, 5, "Test dialog");
 		
 		return true;    	
     }
@@ -299,9 +297,6 @@ public class ActSendSms
 			cleanDataFields();
 			break;
 			
-		case OPTIONMENU_DIALOG:
-			break;
-
 		}
 		return super.onOptionsItemSelected(item);
 	}
