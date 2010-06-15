@@ -211,7 +211,7 @@ public class ActSettingsSmsService
 			//dismisses progress dialog
 			if (null != mProgressDialog && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
-			ResultOperation res = mExecutedServiceCommandThread.getResult();
+			ResultOperation<String> res = mExecutedServiceCommandThread.getResult();
 			//and show the result
 			ActivityHelper.showCommandExecutionResult(ActSettingsSmsService.this, res);
 			//free the thread
@@ -279,7 +279,7 @@ public class ActSettingsSmsService
 		}
 		
 		//persist the parameters
-		ResultOperation res;
+		ResultOperation<Boolean> res;
 		if (mIsEditingAProvider) {
 			//update provider data
 			res = mProvider.saveParameters(this);
@@ -292,8 +292,8 @@ public class ActSettingsSmsService
 			res = mProvider.saveSubservices(this);
 		}
 		
-		if (null == res || res.HasErrors()) {
-			ActivityHelper.reportError(this, res);
+		if (res.HasErrors()) {
+			ActivityHelper.reportError(this, res. getException());
 			return false;
 		}
 		

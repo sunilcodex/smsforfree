@@ -118,7 +118,7 @@ public class AimonProvider
 	
     //---------- Public methods
     @Override
-	public ResultOperation sendMessage(String serviceId, String destination, String body) {
+	public ResultOperation<String> sendMessage(String serviceId, String destination, String body) {
 		return sendSms(
 				getParameterValue(PARAM_INDEX_USERNAME),
 				getParameterValue(PARAM_INDEX_PASSWORD),
@@ -129,9 +129,9 @@ public class AimonProvider
 	}
 
 	@Override
-    public ResultOperation executeCommand(int commandId, Context context, Bundle extraData)
+    public ResultOperation<String> executeCommand(int commandId, Context context, Bundle extraData)
 	{
-		ResultOperation res;
+		ResultOperation<String> res;
 		String currentUsername = null;
 		String currentPassword = null;
 
@@ -154,7 +154,7 @@ public class AimonProvider
 			break;
 
 		default:
-			res = new ResultOperation(new IllegalArgumentException("Command not found!"));
+			res = new ResultOperation<String>(new IllegalArgumentException("Command not found!"));
 		}
 
 		return res;
@@ -176,17 +176,17 @@ public class AimonProvider
 	{ return null; }
 
 	@Override
-	public ResultOperation getCaptchaContentFromProviderReply(String providerReply)
+	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
 	{ return null; }
 
 	@Override
-	public ResultOperation sendCaptcha(String providerReply, String captchaCode)
+	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode)
 	{ return null; }
 
 	/**
 	 * Sends an sms
 	 */
-	private ResultOperation sendSms(
+	private ResultOperation<String> sendSms(
     		String username,
     		String password,
     		String sender,
@@ -262,16 +262,16 @@ public class AimonProvider
     	data.put(AimonDictionary.PARAM_ID_API, idApi);
     	
     	//sends the sms
-    	ResultOperation res = doRequest(AimonDictionary.URL_SEND_SMS, data);
+    	ResultOperation<String> res = doRequest(AimonDictionary.URL_SEND_SMS, data);
     	//checks for applications errors
     	if (res.HasErrors()) return res;
     	//checks for aimon errors
     	if (parseReplyForErrors(res)) return res;
     	
     	//examine it the return contains confirmation if the message was sent
-		if (res.getResultAsString().startsWith(AimonDictionary.RESULT_SENDSMS_OK)) {
-			res.setResultAsString(String.format(
-					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResultAsString()));
+		if (res.getResult().startsWith(AimonDictionary.RESULT_SENDSMS_OK)) {
+			res.setResult(String.format(
+					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
 			
 			//TODO
 			//at this point, i cal also read the remaining credits and append it to
@@ -288,7 +288,7 @@ public class AimonProvider
 	 * @param password
 	 * @return
 	 */
-    private ResultOperation verifyCredit(String username, String password)
+    private ResultOperation<String> verifyCredit(String username, String password)
     {
     	//args check
     	if (!checkCredentialsValidity(username, password))
@@ -298,7 +298,7 @@ public class AimonProvider
     	appendCredential(data, username, password);
     	
     	//call the api that gets the credit
-    	ResultOperation res = doRequest(AimonDictionary.URL_GET_CREDIT, data);
+    	ResultOperation<String> res = doRequest(AimonDictionary.URL_GET_CREDIT, data);
     	//checks for application errors
     	if (res.HasErrors()) return res;
     	//checks for aimon errors
@@ -306,8 +306,8 @@ public class AimonProvider
     	
     	//at this point reply can only contains the remaining credits
     	//append the message to credit amount
-    	res.setResultAsString(String.format(
-    			mMessages[MSG_INDEX_REMAINING_CREDITS], res.getResultAsString()));
+    	res.setResult(String.format(
+    			mMessages[MSG_INDEX_REMAINING_CREDITS], res.getResult()));
 		return res;
     }
 
@@ -316,9 +316,9 @@ public class AimonProvider
      * Verifies if username and password are correct
      * @return an error if the user is not authenticated, otherwise the message to show
      */
-	private ResultOperation verifyCredentials(String username, String password)
+	private ResultOperation<String> verifyCredentials(String username, String password)
 	{
-		ResultOperation res;
+		ResultOperation<String> res;
 		
 		//calls the verify credits and, if the user has credits,
 		//this means that the user can authenticate and the credentials
@@ -334,10 +334,10 @@ public class AimonProvider
 		//for the presence of %s parameter in the source message string ;)
 		int pos = mMessages[MSG_INDEX_REMAINING_CREDITS].indexOf("%");
 		if (pos < 0) pos = mMessages[MSG_INDEX_REMAINING_CREDITS].length();
-		String returnMessage = res.getResultAsString(); 
+		String returnMessage = res.getResult(); 
 		if (returnMessage.substring(0, pos).equals(mMessages[MSG_INDEX_REMAINING_CREDITS].substring(0, pos))) {
 			//credits, so credentials are correct
-			res = new ResultOperation(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
+			res = new ResultOperation<String>(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
 		}
 		
 		return res;
@@ -363,7 +363,7 @@ public class AimonProvider
 	 * @param data
 	 * @return
 	 */
-    private ResultOperation doRequest(String url, HashMap<String, String> parameters)
+    private ResultOperation<String> doRequest(String url, HashMap<String, String> parameters)
     {
     	String reply = "";
     	WebserviceClient client = new WebserviceClient();
@@ -371,18 +371,18 @@ public class AimonProvider
     	try {
     		reply = client.requestPost(url, null, parameters);
 		} catch (ClientProtocolException e) {
-			return new ResultOperation(e);
+			return new ResultOperation<String>(e);
 		} catch (IOException e) {
-			return new ResultOperation(e);
+			return new ResultOperation<String>(e);
 		}
     	
     	//empty reply
     	if (TextUtils.isEmpty(reply)) {
-			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
+			return new ResultOperation<String>(new Exception(ERROR_NO_REPLY_FROM_SITE));
 		}
 
     	//return the reply
-    	return new ResultOperation(reply);
+    	return new ResultOperation<String>(reply);
     }
 
     
@@ -394,10 +394,10 @@ public class AimonProvider
 	 * @param resultToAnalyze
 	 * @return true if an aimon error is found, otherwise false
 	 */
-	public boolean parseReplyForErrors(ResultOperation resultToAnalyze)
+	public boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze)
 	{
 		String res = "";
-		String reply = resultToAnalyze.getResultAsString();
+		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
 				
@@ -421,7 +421,7 @@ public class AimonProvider
     	//so no application errors (like network issues) should be returned, but
 		//the aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
-    		resultToAnalyze.setResultAsString(res);
+    		resultToAnalyze.setResult(res);
     		return true;
     	} else {
     		return false;

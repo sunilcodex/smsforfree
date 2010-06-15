@@ -192,7 +192,7 @@ public class WebserviceClient
 		// Get the response
 		String result = convertStreamToString(conn.getInputStream());
 		//Field summary: http://java.sun.com/j2se/1.4.2/docs/api/java/net/HttpURLConnection.html
-		int response = conn.getResponseCode();
+		//int response = conn.getResponseCode();
 		wr.close();
 		
 		return result;

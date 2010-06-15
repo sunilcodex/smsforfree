@@ -40,9 +40,9 @@ public class LogicManager {
 	/**
 	 * Initializes data, execute begin operation
 	 */
-	public static ResultOperation executeBeginTask(Context context)
+	public static ResultOperation<Boolean> executeBeginTask(Context context)
 	{
-		ResultOperation res = new ResultOperation(true);
+		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
 		
 		//set application name
 		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appname));
@@ -82,9 +82,9 @@ public class LogicManager {
 	 * @param context
 	 * @return
 	 */
-	public static ResultOperation executeEndTast(Context context)
+	public static ResultOperation<Boolean> executeEndTast(Context context)
 	{
-		ResultOperation res = new ResultOperation(true);
+		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
 
 		return res;
 	}
@@ -177,7 +177,7 @@ public class LogicManager {
 	 * 
 	 *  @return true if all ok, otherwise false
 	 */
-	private static ResultOperation performAppVersionUpgrade(Context context)
+	private static ResultOperation<Boolean> performAppVersionUpgrade(Context context)
 	{
 		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
 		
@@ -195,7 +195,7 @@ public class LogicManager {
 			AppPreferencesDao.instance().save();
 		}
 		
-		return new ResultOperation(true);
+		return new ResultOperation<Boolean>(true);
 	}
 	
 	

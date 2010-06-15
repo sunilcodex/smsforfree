@@ -10,55 +10,27 @@ package it.rainbowbreeze.smsforfree.common;
  *
  * @author Alfredo Morresi
  */
-public class ResultOperation
+public class ResultOperation<T>
 {
 	//---------- Ctors
-	private ResultOperation()
-	{
-		//executes start operations (clean internal values)
-		mException = null;
-		mResult = null;
-	}
-	
 	public ResultOperation(Exception ex)
 	{
-		this();
 		mReturnCode = RETURNCODE_ERROR;
 		mException = ex;
 	}
 
-	public ResultOperation(boolean value)
-	{ this(RETURNCODE_OK, value); }
-
-	public ResultOperation(int returnCode, boolean value)
+	public ResultOperation(T value)
 	{
-		this();
-		setReturnCode(returnCode);
-		setResultAsBoolean(value);
+		this(RETURNCODE_OK, value);
 	}
 
-	public ResultOperation(String value)
-	{ this(RETURNCODE_OK, value); }
-
-	public ResultOperation(int returnCode, String value)
+	public ResultOperation(int returnCode, T value)
 	{
-		this();
 		setReturnCode(returnCode);
-		setResultAsString(value);
+		setResult(value);
 	}
 
-	public ResultOperation(byte[] value)
-	{ this(RETURNCODE_OK, value); }
 
-	public ResultOperation(int returnCode, byte[] value)
-	{
-		this();
-		setReturnCode(returnCode);
-		setResultAsByteArray(value);
-	}
-
-	
-	
 	
 	//---------- Public fields
 	public final static int RETURNCODE_OK = 200;
@@ -72,22 +44,10 @@ public class ResultOperation
 	
 	//---------- Public properties
 
-	Object mResult;
-	public Integer getResultAsInt()
-	{ return (Integer) mResult; }
-	public void setResultAsInt(Integer newValue)
-	{ mResult = newValue; }
-	public String getResultAsString()
-	{ return mResult != null ? mResult.toString() : ""; }
-	public void setResultAsString(String newValue)
-	{ mResult = newValue; }
-	public Boolean getResultAsBoolean()
-	{ return (Boolean) mResult; }
-	public void setResultAsBoolean(Boolean newValue)
-	{ mResult = newValue; }
-	public byte[] getResultAsByteArray()
-	{ return (byte[]) mResult; }
-	public void setResultAsByteArray(byte[] newValue)
+	T mResult;
+	public T getResult()
+	{return mResult; }
+	public void setResult(T newValue)
 	{ mResult = newValue; }
 	
 	int mReturnCode;

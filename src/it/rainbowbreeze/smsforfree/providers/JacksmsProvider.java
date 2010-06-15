@@ -164,7 +164,7 @@ public class JacksmsProvider
 
 	
 	@Override
-    public ResultOperation sendMessage(
+    public ResultOperation<String> sendMessage(
     		String serviceId,
     		String destination,
     		String message)
@@ -178,28 +178,28 @@ public class JacksmsProvider
     }
 
 	@Override
-	public ResultOperation getCaptchaContentFromProviderReply(String providerReply)
+	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
 	{
 		//captcha content is the text part of the reply
 		byte[] content = mDictionary.getCaptchaImageContentFromReply(providerReply);
 
 		if (null == content) {
     		//errors in parsing captcha
-			ResultOperation res = new ResultOperation(mMessages[MSG_INDEX_NO_CAPTCHA_PARSED]);
+			ResultOperation<Object> res = new ResultOperation<Object>(mMessages[MSG_INDEX_NO_CAPTCHA_PARSED]);
 			res.setReturnCode(ResultOperation.RETURNCODE_ERROR);
     		return res;
     	}
 
-		return new ResultOperation(content);
+		return new ResultOperation<Object>(content);
 	}
 
 	@Override
-	public ResultOperation sendCaptcha(String providerReply, String captchaCode)
+	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode)
 	{
 		//find captcha sessionId
 		String sessionId = mDictionary.getCaptchaSessionIdFromReply(providerReply);
 		if (TextUtils.isEmpty(sessionId)) {
-			return new ResultOperation(mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
+			return new ResultOperation<String>(mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
 		}
     	
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
@@ -207,7 +207,7 @@ public class JacksmsProvider
 
     	//sends the captcha code
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
-    	ResultOperation res = doRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers);
+    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -215,10 +215,10 @@ public class JacksmsProvider
     	if (parseReplyForErrors(res)) return res;
     	
     	//at this point, no error happened, so the reply contains captcha submission result
-    	String reply = res.getResultAsString();
+    	String reply = res.getResult();
     	String returnMessage = mDictionary.getTextPartFromReply(reply);
     	if (TextUtils.isEmpty(returnMessage)) returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
-		res.setResultAsString(returnMessage);
+		res.setResult(returnMessage);
 		
 		return res;    	
 	}
@@ -226,8 +226,8 @@ public class JacksmsProvider
 	
 
 	@Override
-	public ResultOperation executeCommand(int commandId, Context context, Bundle extraData) {
-		ResultOperation res;
+	public ResultOperation<String> executeCommand(int commandId, Context context, Bundle extraData) {
+		ResultOperation<String> res;
 
 		//execute commands
 		switch (commandId) {
@@ -240,7 +240,7 @@ public class JacksmsProvider
 			break;
 
 		default:
-			res = new ResultOperation(new IllegalArgumentException("Command not found!"));
+			res = new ResultOperation<String>(new IllegalArgumentException("Command not found!"));
 		}
 
 		return res;
@@ -272,7 +272,7 @@ public class JacksmsProvider
 	 * @param message
 	 * @return
 	 */
-	private ResultOperation sendSms(
+	private ResultOperation<String> sendSms(
     		String username,
     		String password,
     		String serviceId,
@@ -286,7 +286,7 @@ public class JacksmsProvider
     	//sends the sms
     	SmsService service = getSubservice(serviceId);
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
-    	ResultOperation res = doRequest(mDictionary.getUrlForSendingMessage(username, password), headers);
+    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingMessage(username, password), headers);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -295,11 +295,11 @@ public class JacksmsProvider
     	
     	//at this point, no error happened, so checks if the sms was sent or
     	//a captcha code is needed
-    	String reply = res.getResultAsString();
+    	String reply = res.getResult();
     	//message sent
 		if (reply.startsWith(JacksmsDictionary.PREFIX_RESULT_OK)) {
 			//breaks the reply and find the message
-			res.setResultAsString(String.format(
+			res.setResult(String.format(
 					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
 		//captcha request
 		} else {
@@ -314,7 +314,7 @@ public class JacksmsProvider
      * Downloads all service templates available from JackSMS site
      * @return
      */
-    private ResultOperation downloadTemplates(Context context)
+    private ResultOperation<String> downloadTemplates(Context context)
     {
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
@@ -323,7 +323,7 @@ public class JacksmsProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
 
-    	ResultOperation res = doRequest(mDictionary.getUrlForDownloadTemplates(username, password), null);
+    	ResultOperation<String> res = doRequest(mDictionary.getUrlForDownloadTemplates(username, password), null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -331,14 +331,14 @@ public class JacksmsProvider
     	if (parseReplyForErrors(res)) return res;
 
     	//at this point, the provider reply should contains the list of templates
-    	String templatesReply = res.getResultAsString();
+    	String templatesReply = res.getResult();
     	
     	//transform the reply in the list of templates
     	List<SmsService> newTemplates = mDictionary.extractTemplates(templatesReply);
     	
     	if (newTemplates.size() <= 0) {
     		//retain old templates
-    		res.setResultAsString(mMessages[MSG_INDEX_NO_TEMPLATES_PARSED]);
+    		res.setResult(mMessages[MSG_INDEX_NO_TEMPLATES_PARSED]);
     		return res;
     	}
     	
@@ -353,12 +353,15 @@ public class JacksmsProvider
     	//override current templates with new one
     	mTemplates = newTemplates;
     	//save the template list
-    	res = saveTemplates(context);
+    	ResultOperation<Boolean> saveResult = saveTemplates(context);
     	//and checks for errors in saving
-    	if (res.HasErrors()) return res;
+    	if (saveResult.HasErrors()) {
+    		res.setException(saveResult.getException());
+    		return res;
+    	}
     	
     	//all done, set the result message
-    	res.setResultAsString(mMessages[MSG_INDEX_TEMPLATES_UPDATED]);
+    	res.setResult(mMessages[MSG_INDEX_TEMPLATES_UPDATED]);
     	return res;
     }
     
@@ -367,7 +370,7 @@ public class JacksmsProvider
      * Downloads all services configured for the user from JackSMS site
      * @return
      */
-    private ResultOperation downloadUserConfiguredServices(Context context)
+    private ResultOperation<String> downloadUserConfiguredServices(Context context)
     {
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
@@ -380,7 +383,7 @@ public class JacksmsProvider
     }
 
     
-    private ResultOperation doRequest(String url, HashMap<String, String> headers)
+    private ResultOperation<String> doRequest(String url, HashMap<String, String> headers)
     {
     	String reply = "";
     	WebserviceClient client = new WebserviceClient();
@@ -388,18 +391,18 @@ public class JacksmsProvider
     	try {
     		reply = client.requestPost(url, headers, null);
 		} catch (ClientProtocolException e) {
-			return new ResultOperation(e);
+			return new ResultOperation<String>(e);
 		} catch (IOException e) {
-			return new ResultOperation(e);
+			return new ResultOperation<String>(e);
 		}
     	
     	//empty reply
     	if (TextUtils.isEmpty(reply)) {
-			return new ResultOperation(new Exception(ERROR_NO_REPLY_FROM_SITE));
+			return new ResultOperation<String>(new Exception(ERROR_NO_REPLY_FROM_SITE));
 		}
 
     	//return the reply
-    	return new ResultOperation(reply);
+    	return new ResultOperation<String>(reply);
     }
 
 	/**
@@ -410,10 +413,10 @@ public class JacksmsProvider
 	 * @param resultToAnalyze
 	 * @return true if a JackSMS error is found, otherwise false
 	 */
-	public boolean parseReplyForErrors(ResultOperation resultToAnalyze)
+	public boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze)
 	{
 		String res = "";
-		String reply = resultToAnalyze.getResultAsString();
+		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
 				
@@ -430,7 +433,7 @@ public class JacksmsProvider
     	//so no application errors (like network issues) should be returned, but
 		//the jacksms error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
-    		resultToAnalyze.setResultAsString(res);
+    		resultToAnalyze.setResult(res);
     		return true;
     	} else {
     		return false;
