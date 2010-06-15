@@ -2,7 +2,6 @@ CONTROLLARE
 -vedere se si puo' passare per onRestoreInstanceState nell'act di base dei settings
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -sistemare l'associazione telefono-tipo
--rendere lungo il toast per il messaggio spedito, oppure label con ultima operazione
 -issue da sparazza (daniele) su layout schermata di send sms
 -gestione servizi salvati di jacksms
 -nei codici di errore ritornati all'activity, controllare se l'errore e' uno di quelli standard
@@ -13,6 +12,7 @@ CONTROLLARE
 -aggiungere menu x registrarsi a jacksms
 -gestire meglio contesto di app
 -controllo connettivita' quando c'e' da mandare un mess e altre cose
+-mettere lite su versioni inviata al sito
 
 
 Lista servizi da consultare 

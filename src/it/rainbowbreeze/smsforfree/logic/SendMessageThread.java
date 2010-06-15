@@ -50,6 +50,7 @@ public class SendMessageThread
 	public void run() {
 		//execute the command
 		mResultOperation = mProvider.sendMessage(mServiceId, mDestination, mMessage);
+		
 		//and call the caller activity handler when the execution is terminated
 		callHandlerAndRetry(mCallerHandler.obtainMessage(WHAT_SENDMESSAGE));
 	}
