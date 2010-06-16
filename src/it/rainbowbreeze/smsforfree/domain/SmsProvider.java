@@ -71,7 +71,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public ResultOperation<Boolean> loadParameters(Context context){
+	public ResultOperation<Void> loadParameters(Context context){
 		return mDao.loadProviderParameters(context, getParametersFileName(), this);
 	}
 	
@@ -81,7 +81,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public ResultOperation<Boolean> saveParameters(Context context){
+	public ResultOperation<Void> saveParameters(Context context){
 		return mDao.saveProviderParameters(context, getParametersFileName(), this);
 	}
 
@@ -91,7 +91,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation<Boolean> saveTemplates(Context context);
+	public abstract ResultOperation<Void> saveTemplates(Context context);
 
 	/**
 	 * Save provider's templates
@@ -99,7 +99,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation<Boolean> loadTemplates(Context context);
+	public abstract ResultOperation<Void> loadTemplates(Context context);
 	
 	/**
 	 * Save provider's configured subservices
@@ -107,7 +107,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation<Boolean> saveSubservices(Context context);
+	public abstract ResultOperation<Void> saveSubservices(Context context);
 
 	/**
 	 * Load provider's configured subservices
@@ -115,7 +115,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public abstract ResultOperation<Boolean> loadSubservices(Context context);
+	public abstract ResultOperation<Void> loadSubservices(Context context);
 	
 	/**
 	 * Create a new service object starting from a template
@@ -219,7 +219,7 @@ public abstract class SmsProvider
 	 */
 	protected ResultOperation<String> getExceptionForInvalidCredentials()
 	{
-		return new ResultOperation<String>(new Exception(ERROR_NO_CREDENTIALS));
+		return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL);
 	}  
 
 }

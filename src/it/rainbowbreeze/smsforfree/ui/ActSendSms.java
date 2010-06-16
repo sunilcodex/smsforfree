@@ -885,10 +885,7 @@ public class ActSendSms
 
 		//return with errors
 		if (result.HasErrors()) {
-			ActivityHelper.reportError(ActSendSms.this, String.format(
-					//TODO
-					//change standard error message
-					getString(R.string.common_msg_genericError), result.getException().getMessage()));
+			ActivityHelper.reportError(ActSendSms.this, result);
 		} else {
 			//display returning message of the provider
 			ActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);

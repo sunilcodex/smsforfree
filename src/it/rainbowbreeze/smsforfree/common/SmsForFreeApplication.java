@@ -81,6 +81,7 @@ public class SmsForFreeApplication
 		mInstance = this;
 		
 		//execute begin task
+		//TODO: result check
 		LogicManager.executeBeginTask(this);
 	}
 	

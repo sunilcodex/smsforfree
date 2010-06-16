@@ -154,7 +154,9 @@ public class AimonProvider
 			break;
 
 		default:
-			res = new ResultOperation<String>(new IllegalArgumentException("Command not found!"));
+			res = new ResultOperation<String>(
+					new Exception("No command with id " + commandId + " for Aimon provider"),
+					ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		}
 
 		return res;
@@ -274,7 +276,7 @@ public class AimonProvider
 					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
 			
 			//TODO
-			//at this point, i cal also read the remaining credits and append it to
+			//at this point, i can also read the remaining credits and append it to
 			//the message
 		}
 		
@@ -371,14 +373,14 @@ public class AimonProvider
     	try {
     		reply = client.requestPost(url, null, parameters);
 		} catch (ClientProtocolException e) {
-			return new ResultOperation<String>(e);
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
 		} catch (IOException e) {
-			return new ResultOperation<String>(e);
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
 		}
     	
     	//empty reply
     	if (TextUtils.isEmpty(reply)) {
-			return new ResultOperation<String>(new Exception(ERROR_NO_REPLY_FROM_SITE));
+			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
 		}
 
     	//return the reply
@@ -417,9 +419,9 @@ public class AimonProvider
 		//TODO
 		//add other server errors
 		
-    	//errors are internal to aimon, not related to communication issues.
+    	//errors are internal to Aimon, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
-		//the aimon error must stops the execution of the calling method
+		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
     		resultToAnalyze.setResult(res);
     		return true;
