@@ -279,7 +279,7 @@ public class ActSettingsSmsService
 		}
 		
 		//persist the parameters
-		ResultOperation<Boolean> res;
+		ResultOperation<Void> res;
 		if (mIsEditingAProvider) {
 			//update provider data
 			res = mProvider.saveParameters(this);
@@ -293,7 +293,7 @@ public class ActSettingsSmsService
 		}
 		
 		if (res.HasErrors()) {
-			ActivityHelper.reportError(this, res. getException());
+			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 			return false;
 		}
 		

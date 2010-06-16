@@ -40,9 +40,9 @@ public class LogicManager {
 	/**
 	 * Initializes data, execute begin operation
 	 */
-	public static ResultOperation<Boolean> executeBeginTask(Context context)
+	public static ResultOperation<Void> executeBeginTask(Context context)
 	{
-		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
+		ResultOperation<Void> res = new ResultOperation<Void>();
 		
 		//set application name
 		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appname));
@@ -60,7 +60,10 @@ public class LogicManager {
 		//check if the application expired
 		if (SmsForFreeApplication.instance().isLiteVersionApp()) {
 			SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
-			if (SmsForFreeApplication.instance().isAppExpired()) return res;
+			if (SmsForFreeApplication.instance().isAppExpired()) {
+				res.setReturnCode(ResultOperation.RETURNCODE_APP_EXPIRED);
+				return res;
+			}
 		} else {
 			SmsForFreeApplication.instance().setAppExpired(false);
 		}
@@ -82,9 +85,9 @@ public class LogicManager {
 	 * @param context
 	 * @return
 	 */
-	public static ResultOperation<Boolean> executeEndTast(Context context)
+	public static ResultOperation<Void> executeEndTast(Context context)
 	{
-		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
+		ResultOperation<Void> res = new ResultOperation<Void>();
 
 		return res;
 	}
@@ -177,7 +180,7 @@ public class LogicManager {
 	 * 
 	 *  @return true if all ok, otherwise false
 	 */
-	private static ResultOperation<Boolean> performAppVersionUpgrade(Context context)
+	private static ResultOperation<Void> performAppVersionUpgrade(Context context)
 	{
 		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
 		
@@ -195,7 +198,7 @@ public class LogicManager {
 			AppPreferencesDao.instance().save();
 		}
 		
-		return new ResultOperation<Boolean>(true);
+		return new ResultOperation<Void>();
 	}
 	
 	

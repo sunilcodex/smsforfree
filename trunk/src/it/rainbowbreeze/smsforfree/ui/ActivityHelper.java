@@ -155,27 +155,51 @@ public class ActivityHelper {
 	{ reportError(context, context.getString(errorMessageId)); }
 	
 	public static void reportError(Context context, ResultOperation<String> res)
-	{ reportError(context, res.getException()); }
+	{ reportError(context, res.getException(), res.getReturnCode()); }
 
-	public static void reportError(Context context, Exception exception)
+	public static void reportError(Context context, Exception exception, int returnCode)
 	{
-		if (null != exception) {
-			//TODO
-			//manage standard errors
-			reportError(context,
-					String.format(
-							context.getString(R.string.common_msg_genericError),
-							exception.getMessage()));
-			//print stack trace
-			exception.printStackTrace();
-			//TODO
-			//update log file
-		} else {
-			reportError(context,
-					String.format(
-							context.getString(R.string.common_msg_genericError),
-							context.getString(R.string.common_msg_noErrorToReport)));
+		//First of all, examines return code for standard errors
+		String userMessage;
+		switch (returnCode) {
+		case ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE:
+			userMessage = String.format(
+					context.getString(R.string.common_msg_architecturalError), exception.getMessage());
+			break;
+		case ResultOperation.RETURNCODE_ERROR_COMMUNICATION:
+			userMessage = String.format(
+					context.getString(R.string.common_msg_communicationError), exception.getMessage());
+			break;
+		case ResultOperation.RETURNCODE_ERROR_GENERIC:
+			userMessage = String.format(
+					context.getString(R.string.common_msg_genericError), exception.getMessage());
+			break;
+		case ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY:
+			userMessage = context.getString(R.string.common_msg_noReplyFromProvider);
+			break;
+		case ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA:
+			userMessage = String.format(
+					context.getString(R.string.common_msg_cannotLoadProviderData), exception.getMessage());
+			break;
+		case ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL:
+			userMessage = context.getString(R.string.common_msg_noCredentials);
+			break;
+		case ResultOperation.RETURNCODE_ERROR_SAVE_PROVIDER_DATA:
+			userMessage = String.format(
+					context.getString(R.string.common_msg_cannotSaveProviderData), exception.getMessage());
+			break;
+		default:
+			userMessage = String.format(
+					context.getString(R.string.common_msg_architecturalError), "No error result code managed.");
+			break;
 		}
+		
+		//display the error to the user
+		reportError(context, userMessage);
+		
+		//and log it
+		//TODO
+		exception.printStackTrace();
 	}
 	
 
@@ -213,10 +237,7 @@ public class ActivityHelper {
 	{
 		//show command results
 		if (result.HasErrors()) {
-			ActivityHelper.reportError(context, String.format(
-					//TODO
-					//change standard error message
-					context.getString(R.string.common_msg_genericError), result.getException().getMessage()));
+			ActivityHelper.reportError(context, result);
 		} else {
 			//shows the output of the command
 			ActivityHelper.showInfo(context, result.getResult());

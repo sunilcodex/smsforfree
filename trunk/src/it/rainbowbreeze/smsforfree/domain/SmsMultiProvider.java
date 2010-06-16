@@ -90,19 +90,19 @@ public abstract class SmsMultiProvider
 
 
 	//---------- Public methods
-	public ResultOperation<Boolean> loadTemplates(Context context){
+	public ResultOperation<Void> loadTemplates(Context context){
 		return mDao.loadProviderTemplates(context, getTemplatesFileName(), this);
 	}
 
-	public ResultOperation<Boolean> saveTemplates(Context context){
+	public ResultOperation<Void> saveTemplates(Context context){
 		return mDao.saveProviderTemplates(context, getTemplatesFileName(), this);
 	}
 
-	public ResultOperation<Boolean> loadSubservices(Context context) {
+	public ResultOperation<Void> loadSubservices(Context context) {
 		return mDao.loadProviderSubservices(context, getSubservicesFileName(), this);
 	}
 
-	public ResultOperation<Boolean> saveSubservices(Context context) {
+	public ResultOperation<Void> saveSubservices(Context context) {
 		adjustSubservicesIds();
 		Collections.sort(mSubservices);
 		return mDao.saveProviderSubservices(context, getSubservicesFileName(), this);

@@ -72,7 +72,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation<Boolean> saveProviderParameters(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Void> saveProviderParameters(Context context, String filename, SmsProvider provider)
 	{
 		return saveProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
 	}
@@ -82,7 +82,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation<Boolean> saveProviderTemplates(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Void> saveProviderTemplates(Context context, String filename, SmsProvider provider)
 	{
 		return saveProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
 	}
@@ -92,7 +92,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation<Boolean> saveProviderSubservices(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Void> saveProviderSubservices(Context context, String filename, SmsProvider provider)
 	{
 		return saveProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
 	}
@@ -103,7 +103,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation<Boolean> loadProviderParameters(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Void> loadProviderParameters(Context context, String filename, SmsProvider provider)
 	{
 		return loadProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
 	}
@@ -113,7 +113,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation<Boolean> loadProviderTemplates(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Void> loadProviderTemplates(Context context, String filename, SmsProvider provider)
 	{
 		return loadProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
 	}
@@ -123,7 +123,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation<Boolean> loadProviderSubservices(Context context, String filename, SmsProvider provider)
+	public ResultOperation<Void> loadProviderSubservices(Context context, String filename, SmsProvider provider)
 	{
 		return loadProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
 	}
@@ -142,13 +142,13 @@ public class ProviderDao
 	 * @param dataToSave part of the provider to save
 	 * @return
 	 */
-	private ResultOperation<Boolean> saveProviderData(
+	private ResultOperation<Void> saveProviderData(
 			Context context,
 			String filename,
 			SmsProvider provider,
 			int dataToSave)
 	{
-		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
+		ResultOperation<Void> res = new ResultOperation<Void>();
 		
 		FileOutputStream fos = null;
 		try {
@@ -170,7 +170,7 @@ public class ProviderDao
 			fos.write(xmlExport.getBytes());
 
 		} catch (Exception e) {
-			res.setException(e);
+			res.setException(e, ResultOperation.RETURNCODE_ERROR_SAVE_PROVIDER_DATA);
 			
 		} finally {
 			if (null != fos) {
@@ -178,7 +178,7 @@ public class ProviderDao
 					fos.close();
 					fos = null;
 				} catch (IOException e) {
-					res.setException(e);
+					res.setException(e, ResultOperation.RETURNCODE_ERROR_SAVE_PROVIDER_DATA);
 				}
 			}
 		}
@@ -355,13 +355,13 @@ public class ProviderDao
 	 * @param datatosave
 	 * @return
 	 */
-	private ResultOperation<Boolean> loadProviderData(
+	private ResultOperation<Void> loadProviderData(
 			Context context,
 			String fileName,
 			SmsProvider provider,
 			int dataToLoad)
 	{
-		ResultOperation<Boolean> res = new ResultOperation<Boolean>(true);
+		ResultOperation<Void> res = new ResultOperation<Void>();
 		FileInputStream fis = null;
 
 		//checks if file exists
@@ -385,18 +385,18 @@ public class ProviderDao
 				break;
 			}
 		} catch (FileNotFoundException e) {
-			res.setException(e);
+			res.setException(e, ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA);
 		} catch (XmlPullParserException e) {
-			res.setException(e);
+			res.setException(e, ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA);
 		} catch (IOException e) {
-			res.setException(e);
+			res.setException(e, ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA);
 		} finally {
 			if (null != fis) {
 				try {
 					fis.close();
 					fis = null;
 				} catch (IOException e) {
-					res.setException(e);
+					res.setException(e, ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA);
 				}
 			}
 		}

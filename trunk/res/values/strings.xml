@@ -8,10 +8,15 @@
     <string name="common_mnuSave">Save</string>
     <string name="common_mnuCancel">Cancel</string>
     <string name="common_msg_genericError">Generic error: %s</string>
-    <string name="common_msg_noErrorToReport">No error to report :(</string>
     <string name="common_msg_cannotsavepreferences">Sorry, cannot save data: </string>
     <string name="common_msg_executingCommand">Executing command...</string>
     <string name="common_msg_appExpired">Sorry, activity expired :(</string>
+    <string name="common_msg_noReplyFromProvider">No reply from provider. Retry again, maybe the provider has problem or is down...</string>
+    <string name="common_msg_cannotSaveProviderData">Cannot save provider data:\n%s\n\nPlease, report this error to the developer.</string>
+    <string name="common_msg_cannotLoadProviderData">Cannot load provider data:\n%s\n\nPlease, report this error to the developer.</string>
+    <string name="common_msg_communicationError">Generic communication error:\n%s\n\nNetwork issues, or maybe the provider has problem or is down...</string>
+    <string name="common_msg_architecturalError">Inner application error:\n%s\n\nPlease, report it to the developer.</string>
+    <string name="common_msg_noCredentials">No credentials supplied.\nInsert them in the settings of provider or service.</string>
     
 
 

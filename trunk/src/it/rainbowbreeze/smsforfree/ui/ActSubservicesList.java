@@ -195,9 +195,9 @@ public class ActSubservicesList
 			service = (SmsService) getListAdapter().getItem(menuInfo.position);
 			mProvider.getAllSubservices().remove(service);
 			mListAdapter.notifyDataSetChanged();
-			ResultOperation<Boolean> res = mProvider.saveSubservices(this);
+			ResultOperation<Void> res = mProvider.saveSubservices(this);
 			if (res.HasErrors()) {
-				ActivityHelper.reportError(this, res.getException());
+				ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 				return false;
 			}
 			showHideInfoLabel();

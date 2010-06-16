@@ -118,51 +118,6 @@ public class JacksmsProvider
 	
 
 	//---------- Public methods
-//	@Override
-//	public ResultOperation loadTemplates(Context context)
-//	{
-//		ResultOperation res = mDao.loadProviderTemplates(context, filename, provider)
-//		//TODO
-//		mTemplates = new ArrayList<SmsService>();
-//		
-//		SmsConfigurableService service;
-//		service = new SmsConfigurableService("62", "Aimon-Free", 112, 3);
-//		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
-//		service.setParameterDesc(1, "Password di accesso");
-//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-//		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
-//		mTemplates.add(service);
-//		service = new SmsConfigurableService("61", "Aimon", 612, 3);
-//		service.setParameterDesc(0, "Username di login (SOLO il nome, senza @aimon.it)");
-//		service.setParameterDesc(1, "Password di accesso");
-//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-//		service.setParameterDesc(2, "Mittente (senza pref internazionale)");
-//		mTemplates.add(service);
-//		service = new SmsConfigurableService("29", "VoipStunt", 160, 3);
-//		service.setParameterDesc(0, "Username di accesso su voipstunt.com");
-//		service.setParameterDesc(1, "Password di accesso su voipstunt.com");
-//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-//		service.setParameterDesc(2, "Numero verificato che verra' visualizzato come mittente");
-//		mTemplates.add(service);
-//		service = new SmsConfigurableService("1", "Vodafone-SMS", 360, 3);
-//		service.setParameterDesc(0, "Username di accesso a www.190.it");
-//		service.setParameterDesc(1, "Password di accesso a www.190.it");
-//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-//		service.setParameterDesc(2, "Inserisci il numero di telefono della sim con cui vuoi inviare tramite questo account.");
-//		mTemplates.add(service);
-//		service = new SmsConfigurableService("33", "Enel", 110, 2);
-//		service.setParameterDesc(0, "Username");
-//		service.setParameterDesc(1, "Password");
-//		service.setParameterFormat(1, SmsServiceParameter.FORMAT_PASSWORD);
-//		mTemplates.add(service);
-//		
-//		Collections.sort(mTemplates);
-//
-//		return new ResultOperation("");
-// 
-//	}
-
-	
 	@Override
     public ResultOperation<String> sendMessage(
     		String serviceId,
@@ -186,7 +141,7 @@ public class JacksmsProvider
 		if (null == content) {
     		//errors in parsing captcha
 			ResultOperation<Object> res = new ResultOperation<Object>(mMessages[MSG_INDEX_NO_CAPTCHA_PARSED]);
-			res.setReturnCode(ResultOperation.RETURNCODE_ERROR);
+			res.setReturnCode(ResultOperation.RETURNCODE_ERROR_GENERIC);
     		return res;
     	}
 
@@ -240,7 +195,9 @@ public class JacksmsProvider
 			break;
 
 		default:
-			res = new ResultOperation<String>(new IllegalArgumentException("Command not found!"));
+			res = new ResultOperation<String>(
+					new Exception("No command with id " + commandId + " for JackSMS provider"),
+					ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		}
 
 		return res;
@@ -353,10 +310,10 @@ public class JacksmsProvider
     	//override current templates with new one
     	mTemplates = newTemplates;
     	//save the template list
-    	ResultOperation<Boolean> saveResult = saveTemplates(context);
+    	ResultOperation<Void> saveResult = saveTemplates(context);
     	//and checks for errors in saving
     	if (saveResult.HasErrors()) {
-    		res.setException(saveResult.getException());
+    		res.setException(saveResult.getException(), saveResult.getReturnCode());
     		return res;
     	}
     	
@@ -391,14 +348,14 @@ public class JacksmsProvider
     	try {
     		reply = client.requestPost(url, headers, null);
 		} catch (ClientProtocolException e) {
-			return new ResultOperation<String>(e);
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
 		} catch (IOException e) {
-			return new ResultOperation<String>(e);
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
 		}
     	
     	//empty reply
     	if (TextUtils.isEmpty(reply)) {
-			return new ResultOperation<String>(new Exception(ERROR_NO_REPLY_FROM_SITE));
+			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
 		}
 
     	//return the reply
@@ -429,9 +386,9 @@ public class JacksmsProvider
 			}
 		}
 		
-    	//errors are internal to jacksms, not related to communication issues.
+    	//errors are internal to JackSMS, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
-		//the jacksms error must stops the execution of the calling method
+		//the JackSMS error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
     		resultToAnalyze.setResult(res);
     		return true;
