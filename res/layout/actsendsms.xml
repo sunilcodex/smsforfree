@@ -12,34 +12,47 @@
 		android:layout_alignParentTop="true"
 		android:text="@string/actsendsms_lblProvider"
 	/>
-
-	<Spinner
-		android:id="@+id/actsendsms_spiProviders"
-		style="@style/common_Spinner"
-		android:layout_alignParentLeft="true"
+	
+	
+	<LinearLayout
+		android:id="@+id/actsendsms_layoutProvider"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
 		android:layout_below="@id/actsendsms_lblProvider"
-		android:prompt="@string/actsendsms_lblProvider"
-	/>			
+		android:orientation="horizontal"
+	>
+		<Spinner
+			android:id="@+id/actsendsms_spiProviders"
+			style="@style/common_Spinner"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@id/actsendsms_lblProvider"
+			android:prompt="@string/actsendsms_lblProvider"
+			android:layout_weight="1"
+		/>			
+	
+		<Spinner
+			android:id="@+id/actsendsms_spiServices"
+			style="@style/common_Spinner"
+			android:layout_toRightOf="@id/actsendsms_spiProviders"
+			android:layout_alignTop="@id/actsendsms_spiProviders"
+			android:layout_weight="1"
+		/>			
 
-	<Spinner
-		android:id="@+id/actsendsms_spiServices"
-		style="@style/common_Spinner"
-		android:layout_toRightOf="@id/actsendsms_spiProviders"
-		android:layout_alignTop="@id/actsendsms_spiProviders"
-	/>			
+	</LinearLayout>
+	
 
 	<ImageButton
 		android:id="@+id/actsendsms_btnPickContact"
 		style="@style/common_ImageView"
 		android:layout_alignParentRight="true"
-		android:layout_below="@id/actsendsms_spiProviders"
+		android:layout_below="@id/actsendsms_layoutProvider"
 		android:src="@drawable/ic_menu_invite"
 	/>
 
 	<EditText
 		android:id="@+id/actsendsms_txtDestination"
 		style="@style/common_EditText"
-		android:layout_below="@id/actsendsms_spiProviders"
+		android:layout_below="@id/actsendsms_layoutProvider"
 		android:layout_alignParentLeft="true"
 		android:layout_toLeftOf="@id/actsendsms_btnPickContact"
 		android:layout_weight="1"

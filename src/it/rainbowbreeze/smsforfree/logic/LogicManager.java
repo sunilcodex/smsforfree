@@ -24,7 +24,8 @@ import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class LogicManager {
+public class LogicManager
+{
 	//---------- Private fields
 
 	
@@ -73,8 +74,9 @@ public class LogicManager {
 		
 		//checks for application upgrade
 		res = performAppVersionUpgrade(context);
-		
-		addProvidersToList(context);
+		if (res.HasErrors()) return res;
+		res = addProvidersToList(context);
+		if (res.HasErrors()) return res;
 
 		return res;
 	}
@@ -217,32 +219,38 @@ public class LogicManager {
 	 * Add providers to the list of available providers, according with configurations
 	 * @param context
 	 */
-	private static void addProvidersToList(Context context)
+	private static ResultOperation<Void> addProvidersToList(Context context)
 	{
+		ResultOperation<Void> res = null;
+		
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
 		String allowedProviders = context.getString(R.string.config_AllowedProviders);
 		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
 		
 		if (allowedProviders.toUpperCase().contains("JACKSMS")) {
-			//add jacksms
+			//add JackSMS
 			JacksmsProvider jackProv = new JacksmsProvider(dao, context);
-			//TODO check errors
-			jackProv.loadParameters(context);
-			jackProv.loadTemplates(context);
-			jackProv.loadSubservices(context);
+			res = jackProv.loadParameters(context);
+			if (res.HasErrors()) return res;
+			res = jackProv.loadTemplates(context);
+			if (res.HasErrors()) return res;
+			res = jackProv.loadSubservices(context);
+			if (res.HasErrors()) return res;
 			SmsForFreeApplication.instance().getProviderList().add(jackProv);
 		}
 	
 		if (allowedProviders.toUpperCase().contains("AIMON")) {
-			//add aimon
+			//add Aimon
 			AimonProvider aimonProv = new AimonProvider(dao, context);
-			aimonProv.loadParameters(context);
+			res = aimonProv.loadParameters(context);
+			if (res.HasErrors()) return res;
 			SmsForFreeApplication.instance().getProviderList().add(aimonProv);
 		}
 		
+		//sort the collection of provider
 		Collections.sort(SmsForFreeApplication.instance().getProviderList());
-		
+		return res;
 	}
 	
 }
