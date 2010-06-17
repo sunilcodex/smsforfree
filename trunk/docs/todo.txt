@@ -3,14 +3,12 @@ CONTROLLARE
 -sistemare l'associazione telefono-tipo
 -issue da sparazza (daniele) su layout schermata di send sms
 -gestione servizi salvati di jacksms
--nei codici di errore ritornati all'activity, controllare se l'errore e' uno di quelli standard
- (no credential, empty reply) e cambiare il messaggio di errore
 -nella sostituzione dei template di jacksms, verificare se ci sono da eliminare anche dei servizi oppure no
--gestire meglio i messaggi d'errore del dao
 -aggiungere menu x registrarsi ad aimon con il proprio codice
 -aggiungere menu x registrarsi a jacksms
 -controllo connettivita' quando c'e' da mandare un mess e altre cose
 -mettere lite su versioni inviata al sito
+-controllo di errori all'avvio del programma che bloccano l'applicazione
 
 
 FUTURE IMPLEMENTAZIONI

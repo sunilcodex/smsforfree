@@ -4,6 +4,7 @@ import java.util.List;
 
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import android.app.Application;
 
 public class SmsForFreeApplication
@@ -19,12 +20,7 @@ public class SmsForFreeApplication
 	//singleton
     private static SmsForFreeApplication mInstance;
     public static SmsForFreeApplication instance()
-    {
-//    	if (null == mInstance)
-//    		mInstance = new SmsForFreeApplication();
-    	return mInstance;
-    	
-    }
+    { return mInstance; }
 	
     /** List of providers */
 	protected List<SmsProvider> mProviderList;
@@ -74,23 +70,30 @@ public class SmsForFreeApplication
 	//---------- Events
 	
 	@Override
-	public void onCreate() {
+	public void onCreate()
+	{
 		super.onCreate();
 		
 		//this is the first instruction, so no fear that mInstance is null is following calls
 		mInstance = this;
 		
 		//execute begin task
-		//TODO: result check
-		LogicManager.executeBeginTask(this);
+		ResultOperation<Void> res = LogicManager.executeBeginTask(this);
+		if (res.HasErrors()) {
+			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
+		}
 	}
 	
 	
 	
 	@Override
-	public void onTerminate() {
-		//
-		LogicManager.executeEndTast(this);
+	public void onTerminate()
+	{
+		//execute end tasks
+		ResultOperation<Void> res = LogicManager.executeEndTast(this);
+		if (res.HasErrors()) {
+			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
+		}
 		super.onTerminate();
 	}
 
