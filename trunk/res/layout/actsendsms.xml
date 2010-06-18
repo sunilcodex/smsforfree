@@ -27,7 +27,7 @@
 			android:layout_alignParentLeft="true"
 			android:layout_below="@id/actsendsms_lblProvider"
 			android:prompt="@string/actsendsms_lblProvider"
-			android:layout_weight="1"
+			android:layout_weight="0.2"
 		/>			
 	
 		<Spinner
@@ -35,7 +35,7 @@
 			style="@style/common_Spinner"
 			android:layout_toRightOf="@id/actsendsms_spiProviders"
 			android:layout_alignTop="@id/actsendsms_spiProviders"
-			android:layout_weight="1"
+			android:layout_weight="0.8"
 		/>			
 
 	</LinearLayout>
@@ -55,7 +55,6 @@
 		android:layout_below="@id/actsendsms_layoutProvider"
 		android:layout_alignParentLeft="true"
 		android:layout_toLeftOf="@id/actsendsms_btnPickContact"
-		android:layout_weight="1"
 		android:hint="@string/actsendsms_txtDestination"
 	/>
 
@@ -72,6 +71,7 @@
 		style="@style/actsendsms_btnSend"
 		android:layout_alignParentBottom="true"
 		android:text="@string/actsendsms_btnSend"
+		android:drawableLeft="@drawable/ic_btn_sendmessage"
 	/>
 	
 	<EditText

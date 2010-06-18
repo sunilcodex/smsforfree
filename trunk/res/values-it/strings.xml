@@ -127,6 +127,7 @@
     <!-- ActCompactMessage -->
     <string name="actcompactmessage_title">%s - Compact message</string>
     <string name="actcompactmessage_lblHelp">Choose compress ratio of the message</string>
+    <string name="actcompactmessage_lblStatus">Original length: %s - New: %s</string>
 
 
 

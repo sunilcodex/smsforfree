@@ -5,27 +5,25 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 /**
  * @author rainbowbreeze
  *
  */
 public class ActCompactMessage
-	extends Activity
+	extends ActBaseDataEntry
 {
 	//---------- Private fields
 	private String mOriginalText;
 	private EditText mTxtMessage;
 	private SeekBar mBarCompressRatio;
+	private TextView mLblStatus;
+
 
 
 
@@ -49,9 +47,10 @@ public class ActCompactMessage
         mBarCompressRatio = (SeekBar) findViewById(R.id.actcompactmessage_barCompressRatio);
         mBarCompressRatio.setOnSeekBarChangeListener(mOnSeekBarChange);
         mTxtMessage = (EditText) findViewById(R.id.actcompactmessage_txtMessage);
-		mTxtMessage.setText(mOriginalText);
-		((Button) findViewById(R.id.actcompactmessage_btnOk)).setOnClickListener(mBtnOkClickListener);
-		((Button) findViewById(R.id.actcompactmessage_btnCancel)).setOnClickListener(mBtnCancelClickListener);
+        mLblStatus = (TextView) findViewById(R.id.actcompactmessage_lblStatus);
+        
+        if (null == savedInstanceState)
+        	changeCompressionRatio(0);
 	}
 	
 	
@@ -69,63 +68,39 @@ public class ActCompactMessage
 			changeCompressionRatio(progress);
 		}
 	};
-	
-	/**
-	 * Intercept when the user press the Back button and create an event tracking
-	 * of the event
-	 * @param keyCode
-	 * @param event
-	 * @return
-	 */
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK
-//                && event.getRepeatCount() == 0) {
-            event.startTracking();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-	/**
-	 * Intercept when the user release the Back button, call the method for
-	 * saving data and close the activity
-	 * @param keyCode
-	 * @param event
-	 * @return
-	 */
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.isTracking()
-                && !event.isCanceled()) {
-            confirmEdit();
-            return true;
-        }
-        return super.onKeyUp(keyCode, event);
-    }	
-
-    
-	private OnClickListener mBtnOkClickListener = new OnClickListener() {
-		public void onClick(View v) {
-			confirmEdit();
-		}
-	};
 
 
-	private OnClickListener mBtnCancelClickListener = new OnClickListener() {
-		public void onClick(View v) {
-			cancelEdit();
-		}
-	};
-	
-	
 
-	
+
 	//---------- Public methods
 
 
 
 
 	//---------- Private methods
+
+	/**
+	 * Completely overwrite father method, returning an intent with data
+	 */
+	@Override
+	protected void confirmEdit()
+	{
+		Intent intent = new Intent();
+		intent.putExtra(ActivityHelper.INTENTKEY_MESSAGE, mTxtMessage.getText().toString());
+		setResult(RESULT_OK, intent);
+		finish();
+	}
+	
+	@Override
+	protected void loadDataIntoViews() {
+		mTxtMessage.setText(mOriginalText);
+	}
+
+	@Override
+	protected boolean saveDataFromViews() {
+		return true;
+	}
+	
 	
 	/**
 	 * Compress the text by the selected compression ratio
@@ -156,6 +131,8 @@ public class ActCompactMessage
 		}
 		//and update the text message
 		mTxtMessage.setText(message);
+		//and update status label
+		mLblStatus.setText(String.format(getString(R.string.actcompactmessage_lblStatus), mOriginalText.length(), message.length()));
 	} 
 	
 	
@@ -182,7 +159,7 @@ public class ActCompactMessage
 		}
 		
 		//trims spaces before and after punctuation characters
-		String punctuation = ";,.:-_°<>\\/|!?'\"()[]{}^=";
+		String punctuation = ";,.:-_°<>\\/|!?\"()[]{}^=";
 		for (int index = 0; index < punctuation.length(); index++) {
 			char singleChar = punctuation.charAt(index);
 			result = result.replace(" " + singleChar + " ", singleChar + "");
@@ -214,21 +191,6 @@ public class ActCompactMessage
 		}
 		
 		return result;
-	}
-	
-	
-	private void confirmEdit()
-	{
-		Intent intent = new Intent();
-		intent.putExtra(ActivityHelper.INTENTKEY_MESSAGE, mTxtMessage.getText().toString());
-		setResult(RESULT_OK, intent);
-		finish();
-	}
-	
-	private void cancelEdit()
-	{
-		setResult(RESULT_CANCELED);
-		finish();
 	}
 
 }
