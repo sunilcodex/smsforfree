@@ -17,13 +17,15 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
+import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
+import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
+import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
-import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 public class AimonProvider
-	extends SmsSingleProvider
+	extends SmsMultiProvider
 {
 	//---------- Ctors
 	public AimonProvider(ProviderDao dao, Context context)
@@ -34,7 +36,6 @@ public class AimonProvider
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender));
-		setParameterDesc(PARAM_INDEX_ID_API, context.getString(R.string.aimon_idapi));
 		
 		//initializes the command list
 		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
@@ -47,22 +48,25 @@ public class AimonProvider
 		mProviderSettingsActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[6];
+		mMessages = new String[10];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
 		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
 		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.aimon_msg_remainingCredits);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.aimon_msg_messageQueued);
 		mMessages[MSG_INDEX_MISSING_PARAMETERS] = context.getString(R.string.aimon_msg_missingParameters);
+		mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS] = context.getString(R.string.aimon_serviceNameAnonymous);
+		mMessages[MSG_INDEX_SERVICENANE_FREE] = context.getString(R.string.aimon_serviceNameFree);
+		mMessages[MSG_INDEX_SERVICENANE_NORMAL] = context.getString(R.string.aimon_serviceNameNormal);
+		mMessages[MSG_INDEX_SERVICENANE_REPORT] = context.getString(R.string.aimon_serviceNameReport);
 	}
 	
 	
 	//---------- Private fields
-	private final static int PARAM_NUMBER = 4;
+	private final static int PARAM_NUMBER = 3;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
 	private final static int PARAM_INDEX_SENDER = 2;
-	private final static int PARAM_INDEX_ID_API = 3;
 
 	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
 	private final static int MSG_INDEX_VALID_CREDENTIALS = 1;
@@ -70,6 +74,10 @@ public class AimonProvider
 	private final static int MSG_INDEX_REMAINING_CREDITS = 3;
 	private final static int MSG_INDEX_MESSAGE_SENT = 4;
 	private final static int MSG_INDEX_MISSING_PARAMETERS = 5;
+	private final static int MSG_INDEX_SERVICENANE_FREE = 6;
+	private final static int MSG_INDEX_SERVICENANE_ANONYMOUS = 7;
+	private final static int MSG_INDEX_SERVICENANE_NORMAL = 8;
+	private final static int MSG_INDEX_SERVICENANE_REPORT = 9;
 	
 	private final static int COMMAND_CHECKCREDENTIALS = 1000;
 	private final static int COMMAND_CHECKCREDITS = 1001;
@@ -80,7 +88,7 @@ public class AimonProvider
 	
 
 	//---------- Public fields
-	public final static String ID_API_FIXED_SENDER = "106";
+	public final static String ID_API_ANONYMOUS_SENDER = "106";
 	public final static String ID_API_FREE_SENDER_NO_REPORT = "59";
 	public final static String ID_API_FREE_SENDER_REPORT = "84";
 	
@@ -103,6 +111,10 @@ public class AimonProvider
 	@Override
 	public int getMaxMessageLenght()
 	{ return 160; }
+	
+	@Override
+	public boolean hasSubServicesToConfigure()
+	{ return false; }
     
 	@Override
 	public boolean hasSettingsActivityCommands()
@@ -117,6 +129,19 @@ public class AimonProvider
 	
 	
     //---------- Public methods
+	
+	@Override
+	public ResultOperation<Void> initProvider(Context context) {
+		ResultOperation<Void> res;
+		
+		res = loadParameters(context);
+		if (res.HasErrors()) return res;
+		res = loadSubservices(context);
+		if (res.HasErrors()) return res;
+		
+		return res;
+	}
+	
     @Override
 	public ResultOperation<String> sendMessage(String serviceId, String destination, String body) {
 		return sendSms(
@@ -125,7 +150,7 @@ public class AimonProvider
 				getParameterValue(PARAM_INDEX_SENDER),
 				destination,
 				body,
-				getParameterValue(PARAM_INDEX_ID_API));
+				serviceId);
 	}
 
 	@Override
@@ -184,6 +209,42 @@ public class AimonProvider
 	@Override
 	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode)
 	{ return null; }
+
+	@Override
+	protected ResultOperation<Void> loadTemplates(Context context)
+	{ return null; }
+
+	@Override
+	protected ResultOperation<Void> saveTemplates(Context context)
+	{ return null; }
+
+	@Override
+	protected ResultOperation<Void> loadSubservices(Context context)
+	{
+		//the subservice have as id the id to use with Aimon api for sending message
+		SmsConfigurableService service;
+		
+		//create the list of subservices
+		mSubservices = new ArrayList<SmsService>();
+		
+		service = new SmsConfigurableService(0);
+		service.setId(ID_API_ANONYMOUS_SENDER);
+		service.setName(mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS]);
+		mSubservices.add(service);
+
+		service = new SmsConfigurableService(0);
+		service.setId(ID_API_FREE_SENDER_NO_REPORT);
+		service.setName(mMessages[MSG_INDEX_SERVICENANE_NORMAL]);
+		mSubservices.add(service);
+
+		service = new SmsConfigurableService(0);
+		service.setId(ID_API_FREE_SENDER_REPORT);
+		service.setName(mMessages[MSG_INDEX_SERVICENANE_REPORT]);
+		mSubservices.add(service);
+		
+		return new ResultOperation<Void>();
+	}
+
 
 	/**
 	 * Sends an sms

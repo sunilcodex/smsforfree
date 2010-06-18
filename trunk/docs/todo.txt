@@ -9,6 +9,7 @@ CONTROLLARE
 -controllo connettivita' quando c'e' da mandare un mess e altre cose
 -mettere lite su versioni inviata al sito
 -controllo di errori all'avvio del programma che bloccano l'applicazione
+-mettere a private le classi del provider tipo save/load
 
 
 FUTURE IMPLEMENTAZIONI

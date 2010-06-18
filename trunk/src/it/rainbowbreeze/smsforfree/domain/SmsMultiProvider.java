@@ -34,6 +34,10 @@ public abstract class SmsMultiProvider
 	public boolean hasSubServices()
 	{ return true; }
 
+	@Override
+	public boolean hasSubServicesToConfigure()
+	{ return true; }
+
     protected List<SmsService> mTemplates;
     @Override
 	public List<SmsService> getAllTemplates()
@@ -90,18 +94,21 @@ public abstract class SmsMultiProvider
 
 
 	//---------- Public methods
-	public ResultOperation<Void> loadTemplates(Context context){
-		return mDao.loadProviderTemplates(context, getTemplatesFileName(), this);
+	
+	@Override
+	public ResultOperation<Void> initProvider(Context context) {
+		ResultOperation<Void> res;
+		
+		res = loadParameters(context);
+		if (res.HasErrors()) return res;
+		res = loadTemplates(context);
+		if (res.HasErrors()) return res;
+		res = loadSubservices(context);
+		if (res.HasErrors()) return res;
+		
+		return res;
 	}
-
-	public ResultOperation<Void> saveTemplates(Context context){
-		return mDao.saveProviderTemplates(context, getTemplatesFileName(), this);
-	}
-
-	public ResultOperation<Void> loadSubservices(Context context) {
-		return mDao.loadProviderSubservices(context, getSubservicesFileName(), this);
-	}
-
+	
 	public ResultOperation<Void> saveSubservices(Context context) {
 		adjustSubservicesIds();
 		Collections.sort(mSubservices);
@@ -143,6 +150,18 @@ public abstract class SmsMultiProvider
 
 
 	//---------- Private methods
+	protected ResultOperation<Void> loadTemplates(Context context){
+		return mDao.loadProviderTemplates(context, getTemplatesFileName(), this);
+	}
+
+	protected ResultOperation<Void> saveTemplates(Context context){
+		return mDao.saveProviderTemplates(context, getTemplatesFileName(), this);
+	}
+
+	protected ResultOperation<Void> loadSubservices(Context context) {
+		return mDao.loadProviderSubservices(context, getSubservicesFileName(), this);
+	}
+
 	protected SmsService findServiceInList(List<SmsService> list, String serviceId) {
 		if (TextUtils.isEmpty(serviceId)) return null;
 		for (SmsService service : list){
