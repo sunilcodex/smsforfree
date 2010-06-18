@@ -20,6 +20,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 public class JacksmsProvider
 	extends SmsMultiProvider
@@ -34,15 +35,21 @@ public class JacksmsProvider
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		
-		//initializes the command list
-		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
 		SmsServiceCommand command;
+		//subservices commands list
+		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
 		command = new SmsServiceCommand(
-				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1000, R.drawable.ic_menu_refresh);
+				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1, R.drawable.ic_menu_refresh);
 		mSubservicesListActivityCommands.add(command);
 //		command = new SmsServiceCommand(
-//				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 1001);
+//				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 2, R.drawable.ic_menu_cloud);
 //		mSubservicesListActivityCommands.add(command);
+		//provider commands list
+		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
+		command = new SmsServiceCommand(
+				COMMAND_REGISTER, context.getString(R.string.jacksms_commandRegister), 1, R.drawable.ic_menu_invite); 
+		mProviderSettingsActivityCommands.add(command);
+		
 		
 		//save some messages
 		mMessages = new String[8];
@@ -66,6 +73,7 @@ public class JacksmsProvider
 
 	private final static int COMMAND_LOADTEMPLATESERVICES = 1000;
 	private final static int COMMAND_LOADUSERSERVICES = 1001;
+	private final static int COMMAND_REGISTER = 1002;
 	
 	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
 	private final static int MSG_INDEX_SERVER_ERROR = 1;
@@ -97,17 +105,10 @@ public class JacksmsProvider
 	{ return PARAM_NUMBER; }
 
 
-	@Override
-	public boolean hasSettingsActivityCommands()
-	{ return false; }
-
+	private List<SmsServiceCommand> mProviderSettingsActivityCommands;
 	@Override
 	public List<SmsServiceCommand> getSettingsActivityCommands()
-	{ return null; }
-
-	@Override
-	public boolean hasSubservicesListActivityCommands()
-	{ return true; }
+	{ return mProviderSettingsActivityCommands; }
 
 	private List<SmsServiceCommand> mSubservicesListActivityCommands;
 	@Override
@@ -192,6 +193,10 @@ public class JacksmsProvider
 
 		case COMMAND_LOADUSERSERVICES:
 			res = downloadUserConfiguredServices(context);
+			break;
+
+		case COMMAND_REGISTER:
+			res = registerToProvider(context);
 			break;
 
 		default:
@@ -395,5 +400,18 @@ public class JacksmsProvider
     	} else {
     		return false;
     	}
+	}
+
+	
+	/**
+	 * Launch the browser activity with a personalized link for subscribe to provider
+	 * @param context
+	 * @return
+	 */
+	private ResultOperation<String> registerToProvider(Context context)
+	{
+		String urlToOpen = context.getString(R.string.jacksms_registerLink);
+		ActivityHelper.openBrowser(context, urlToOpen, true);
+		return new ResultOperation<String>();
 	}
 }
