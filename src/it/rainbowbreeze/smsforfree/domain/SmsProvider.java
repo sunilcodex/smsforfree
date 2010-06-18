@@ -2,8 +2,13 @@ package it.rainbowbreeze.smsforfree.domain;
 
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+
+import org.apache.http.client.ClientProtocolException;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -233,4 +238,39 @@ public abstract class SmsProvider
 		return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL);
 	}  
 
+	
+    
+
+	/**
+	 * Execute the http request
+	 * @param url
+	 * @param headers
+	 * @param parameters
+	 * @return
+	 */
+    protected ResultOperation<String> doRequest(
+    		String url,
+    		HashMap<String, String> headers,
+    		HashMap<String, String> parameters
+		)
+    {
+    	String reply = "";
+    	WebserviceClient client = new WebserviceClient();
+    	
+    	try {
+    		reply = client.requestPost(url, headers, parameters);
+		} catch (ClientProtocolException e) {
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		} catch (IOException e) {
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		}
+    	
+    	//empty reply
+    	if (TextUtils.isEmpty(reply)) {
+			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
+		}
+
+    	//return the reply
+    	return new ResultOperation<String>(reply);
+    }	
 }

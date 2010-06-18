@@ -19,6 +19,7 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
+import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -230,16 +231,23 @@ public class LogicManager
 		
 		if (allowedProviders.toUpperCase().contains("JACKSMS")) {
 			//add JackSMS
-			JacksmsProvider jackProv = new JacksmsProvider(dao, context);
-			res = jackProv.initProvider(context);
-			SmsForFreeApplication.instance().getProviderList().add(jackProv);
+			JacksmsProvider prov = new JacksmsProvider(dao, context);
+			res = prov.initProvider(context);
+			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 	
 		if (allowedProviders.toUpperCase().contains("AIMON")) {
 			//add Aimon
-			AimonProvider aimonProv = new AimonProvider(dao, context);
-			res = aimonProv.initProvider(context);
-			SmsForFreeApplication.instance().getProviderList().add(aimonProv);
+			AimonProvider prov = new AimonProvider(dao, context);
+			res = prov.initProvider(context);
+			SmsForFreeApplication.instance().getProviderList().add(prov);
+		}
+		
+		if (allowedProviders.toUpperCase().contains("VOIPSTUNT")) {
+			//add Voipstunt
+			VoipstuntProvider prov = new VoipstuntProvider(dao, context);
+			res = prov.initProvider(context);
+			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 		
 		//sort the collection of provider

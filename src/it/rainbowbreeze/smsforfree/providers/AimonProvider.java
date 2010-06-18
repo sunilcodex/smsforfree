@@ -1,11 +1,8 @@
 package it.rainbowbreeze.smsforfree.providers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.http.client.ClientProtocolException;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,7 +13,6 @@ import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
-import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -25,6 +21,11 @@ import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
+/**
+ * 
+ * @author Alfredo "Rainbowbreeze" Morresi
+ *
+ */
 public class AimonProvider
 	extends SmsMultiProvider
 {
@@ -37,6 +38,7 @@ public class AimonProvider
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender));
+		setDescription(context.getString(R.string.aimon_description));
 		
 		SmsServiceCommand command;
 		//initializes the command list
@@ -324,15 +326,15 @@ public class AimonProvider
 		okBody = Base64.encodeBytes(okBody.getBytes());
     	
     	
-    	HashMap<String, String> data = new HashMap<String, String>();
-    	appendCredential(data, username, password);
-    	data.put(AimonDictionary.PARAM_SENDER, okSender);
-    	data.put(AimonDictionary.PARAM_DESTINATION, okDestination);
-    	data.put(AimonDictionary.PARAM_BODY, okBody);
-    	data.put(AimonDictionary.PARAM_ID_API, idApi);
+    	HashMap<String, String> params = new HashMap<String, String>();
+    	appendCredential(params, username, password);
+    	params.put(AimonDictionary.PARAM_SENDER, okSender);
+    	params.put(AimonDictionary.PARAM_DESTINATION, okDestination);
+    	params.put(AimonDictionary.PARAM_BODY, okBody);
+    	params.put(AimonDictionary.PARAM_ID_API, idApi);
     	
     	//sends the sms
-    	ResultOperation<String> res = doRequest(AimonDictionary.URL_SEND_SMS, data);
+    	ResultOperation<String> res = doRequest(AimonDictionary.URL_SEND_SMS, null, params);
     	//checks for applications errors
     	if (res.HasErrors()) return res;
     	//checks for aimon errors
@@ -364,11 +366,11 @@ public class AimonProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
     	
-		HashMap<String, String> data = new HashMap<String, String>();
-    	appendCredential(data, username, password);
+		HashMap<String, String> params = new HashMap<String, String>();
+    	appendCredential(params, username, password);
     	
     	//call the api that gets the credit
-    	ResultOperation<String> res = doRequest(AimonDictionary.URL_GET_CREDIT, data);
+    	ResultOperation<String> res = doRequest(AimonDictionary.URL_GET_CREDIT, null, params);
     	//checks for application errors
     	if (res.HasErrors()) return res;
     	//checks for aimon errors
@@ -425,35 +427,7 @@ public class AimonProvider
     	data.put(AimonDictionary.PARAM_USERNAME, username);
     	data.put(AimonDictionary.PARAM_PASSWORD, password);
     }
-    
 
-	/**
-	 * Execute the http request
-	 * @param url
-	 * @param data
-	 * @return
-	 */
-    private ResultOperation<String> doRequest(String url, HashMap<String, String> parameters)
-    {
-    	String reply = "";
-    	WebserviceClient client = new WebserviceClient();
-    	
-    	try {
-    		reply = client.requestPost(url, null, parameters);
-		} catch (ClientProtocolException e) {
-			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
-		} catch (IOException e) {
-			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
-		}
-    	
-    	//empty reply
-    	if (TextUtils.isEmpty(reply)) {
-			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
-		}
-
-    	//return the reply
-    	return new ResultOperation<String>(reply);
-    }
 
     
 	/**
@@ -498,7 +472,7 @@ public class AimonProvider
     	}
 	}
 
-	
+    
 	/**
 	 * Launch the browser activity with a personalized link for subscribe to provider
 	 * @param context

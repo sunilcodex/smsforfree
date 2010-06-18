@@ -3,6 +3,7 @@
     <string name="aimon_username">Username (@aimon.it)</string>
     <string name="aimon_password">Password</string>
     <string name="aimon_sender">Sender</string>
+    <string name="aimon_description">Send worldwide SMS with custom sender using your credit on aimon.it.</string>
     <string name="aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
     <string name="aimon_commandCheckCredentials">Check credentials</string>
     <string name="aimon_commandCheckCredits">Check credits</string>
