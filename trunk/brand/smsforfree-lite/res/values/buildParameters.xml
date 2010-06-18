@@ -4,7 +4,7 @@
 	<string name="common_appname">SmsForFree</string>
 
 	<!-- Allowed providers -->
-	<string name="config_AllowedProviders">Aimon,JackSMS</string>
+	<string name="config_AllowedProviders">Aimon,JackSMS,Voipstunt</string>
 	
 	<!-- Lite or Normal -->
 	<string name="config_AppType">Lite</string>

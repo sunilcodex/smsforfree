@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voipstunt_username">Username</string>
+    <string name="voipstunt_password">Password</string>
+    <string name="voipstunt_sender">Sender number (international format)</string>
+    <string name="voipstunt_description">Send worldwide SMS with custom sender using your credit on voipstunt.it.</string>
+	<string name="voipstunt_msg_messageSent">Message sent.\n %s</string>
+</resources>

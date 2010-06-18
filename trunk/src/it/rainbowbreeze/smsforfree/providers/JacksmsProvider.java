@@ -1,11 +1,8 @@
 package it.rainbowbreeze.smsforfree.providers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.http.client.ClientProtocolException;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,13 +12,17 @@ import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
-import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
+/**
+ * 
+ * @author Alfredo "Rainbowbreeze" Morresi
+ *
+ */
 public class JacksmsProvider
 	extends SmsMultiProvider
 {
@@ -163,7 +164,7 @@ public class JacksmsProvider
 
     	//sends the captcha code
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
-    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers);
+    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -248,7 +249,7 @@ public class JacksmsProvider
     	//sends the sms
     	SmsService service = getSubservice(serviceId);
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
-    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingMessage(username, password), headers);
+    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -285,7 +286,7 @@ public class JacksmsProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
 
-    	ResultOperation<String> res = doRequest(mDictionary.getUrlForDownloadTemplates(username, password), null);
+    	ResultOperation<String> res = doRequest(mDictionary.getUrlForDownloadTemplates(username, password), null, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -345,28 +346,6 @@ public class JacksmsProvider
     }
 
     
-    private ResultOperation<String> doRequest(String url, HashMap<String, String> headers)
-    {
-    	String reply = "";
-    	WebserviceClient client = new WebserviceClient();
-    	
-    	try {
-    		reply = client.requestPost(url, headers, null);
-		} catch (ClientProtocolException e) {
-			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
-		} catch (IOException e) {
-			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
-		}
-    	
-    	//empty reply
-    	if (TextUtils.isEmpty(reply)) {
-			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
-		}
-
-    	//return the reply
-    	return new ResultOperation<String>(reply);
-    }
-
 	/**
 	 * Parse the webservice reply searching for know errors code.
 	 * If one of them is found, the ResultOperation object is modified

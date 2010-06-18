@@ -99,4 +99,10 @@ public abstract class SmsSingleProvider
 	protected ResultOperation<Void> loadSubservices(Context context)
 	{ return null; }
 
+	protected String getSubservicesFileName()
+	{ return null; }
+
+	protected String getTemplatesFileName()
+	{ return null; }
+
 }
