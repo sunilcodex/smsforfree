@@ -231,20 +231,14 @@ public class LogicManager
 		if (allowedProviders.toUpperCase().contains("JACKSMS")) {
 			//add JackSMS
 			JacksmsProvider jackProv = new JacksmsProvider(dao, context);
-			res = jackProv.loadParameters(context);
-			if (res.HasErrors()) return res;
-			res = jackProv.loadTemplates(context);
-			if (res.HasErrors()) return res;
-			res = jackProv.loadSubservices(context);
-			if (res.HasErrors()) return res;
+			res = jackProv.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(jackProv);
 		}
 	
 		if (allowedProviders.toUpperCase().contains("AIMON")) {
 			//add Aimon
 			AimonProvider aimonProv = new AimonProvider(dao, context);
-			res = aimonProv.loadParameters(context);
-			if (res.HasErrors()) return res;
+			res = aimonProv.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(aimonProv);
 		}
 		

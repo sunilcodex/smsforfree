@@ -12,4 +12,8 @@
     <string name="aimon_msg_remainingCredits">Remaining credits: %s</string>
     <string name="aimon_msg_messageQueued">Message sent.\n %s</string>
     <string name="aimon_msg_missingParameters">Error calling Aimon provider. Please, advice the developer of the software about this error. Doing this, a correction will be available soon.\n\n%s</string>
+    <string name="aimon_serviceNameFree">Free</string>
+    <string name="aimon_serviceNameAnonymous">Anonymous (1 credit)</string>
+    <string name="aimon_serviceNameNormal">Normal (1.5 credits)</string>
+    <string name="aimon_serviceNameReport">Report (2 credits)</string>
 </resources>

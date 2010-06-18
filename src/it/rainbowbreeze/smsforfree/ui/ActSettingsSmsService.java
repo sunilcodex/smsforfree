@@ -346,7 +346,7 @@ public class ActSettingsSmsService
 		if (mIsEditingAProvider) {
 			mLblServiceName.setVisibility(View.GONE);
 			mTxtServiceName.setVisibility(View.GONE);
-			if (mProvider.hasSubServices()) {
+			if (mProvider.hasSubServicesToConfigure()) {
 				mBtnConfigureSubservices.setVisibility(View.VISIBLE);
 			} else {
 				mBtnConfigureSubservices.setVisibility(View.GONE);

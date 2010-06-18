@@ -48,6 +48,10 @@ public abstract class SmsSingleProvider
 	@Override
 	public boolean hasSubServices() 
 	{ return false; }
+
+	@Override
+	public boolean hasSubServicesToConfigure() 
+	{ return false; }
 	
 	@Override
 	public void setSelectedSubservice(String subserviceId)
@@ -65,16 +69,18 @@ public abstract class SmsSingleProvider
 	
 	
 	//---------- Public methods
-	public ResultOperation<Void> saveTemplates(Context context)
-	{ return null; }
-
-	public ResultOperation<Void> loadTemplates(Context context)
-	{ return null; }
-
+	@Override
+	public ResultOperation<Void> initProvider(Context context)
+	{
+		ResultOperation<Void> res;
+		
+		res = loadParameters(context);
+		if (res.HasErrors()) return res;
+		
+		return res;
+	}
+	
 	public ResultOperation<Void> saveSubservices(Context context)
-	{ return null; }
-
-	public ResultOperation<Void> loadSubservices(Context context)
 	{ return null; }
 	
 	public SmsService newSubserviceFromTemplate(String templateId)
@@ -84,5 +90,13 @@ public abstract class SmsSingleProvider
 	
 	
 	//---------- Private methods
-	
+	protected ResultOperation<Void> saveTemplates(Context context)
+	{ return null; }
+
+	protected ResultOperation<Void> loadTemplates(Context context)
+	{ return null; }
+
+	protected ResultOperation<Void> loadSubservices(Context context)
+	{ return null; }
+
 }

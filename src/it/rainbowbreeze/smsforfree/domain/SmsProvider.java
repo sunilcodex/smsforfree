@@ -49,6 +49,9 @@ public abstract class SmsProvider
 	/** Has this provider sub-services? */
 	public abstract boolean hasSubServices();
 	
+	/** Has this provider sub-services to configure? */
+	public abstract boolean hasSubServicesToConfigure();
+	
 	public abstract boolean hasTemplatesConfigured();
 	public abstract List<SmsService> getAllTemplates();
 	public abstract SmsService getTemplate(String templateId);
@@ -65,6 +68,12 @@ public abstract class SmsProvider
     
     
 	//---------- Public methods
+    
+    /**
+     * Initialize provider
+     */
+    public abstract ResultOperation<Void> initProvider(Context context);
+    
 	/**
 	 * Load provider's parameters
 	 * 
@@ -86,36 +95,12 @@ public abstract class SmsProvider
 	}
 
 	/**
-	 * Load provider's templates
-	 * 
-	 * @param context
-	 * @return
-	 */
-	public abstract ResultOperation<Void> saveTemplates(Context context);
-
-	/**
-	 * Save provider's templates
-	 * 
-	 * @param context
-	 * @return
-	 */
-	public abstract ResultOperation<Void> loadTemplates(Context context);
-	
-	/**
 	 * Save provider's configured subservices
 	 * 
 	 * @param context
 	 * @return
 	 */
 	public abstract ResultOperation<Void> saveSubservices(Context context);
-
-	/**
-	 * Load provider's configured subservices
-	 * 
-	 * @param context
-	 * @return
-	 */
-	public abstract ResultOperation<Void> loadSubservices(Context context);
 	
 	/**
 	 * Create a new service object starting from a template
@@ -188,6 +173,8 @@ public abstract class SmsProvider
      * @return
      */
     public abstract ResultOperation<String> sendCaptcha(String providerReply, String captchaCode);
+
+    
     
     
 	//---------- Private methods
@@ -200,6 +187,30 @@ public abstract class SmsProvider
 
 	/** file name where save provider subservices */
 	protected abstract String getSubservicesFileName();
+	
+	/**
+	 * Load provider's templates
+	 * 
+	 * @param context
+	 * @return
+	 */
+	protected abstract ResultOperation<Void> saveTemplates(Context context);
+
+	/**
+	 * Save provider's templates
+	 * 
+	 * @param context
+	 * @return
+	 */
+	protected abstract ResultOperation<Void> loadTemplates(Context context);
+
+	/**
+	 * Load provider's configured subservices
+	 * 
+	 * @param context
+	 * @return
+	 */
+	protected abstract ResultOperation<Void> loadSubservices(Context context);
 	
 	/**
 	 * Checks if username and password are not empty
