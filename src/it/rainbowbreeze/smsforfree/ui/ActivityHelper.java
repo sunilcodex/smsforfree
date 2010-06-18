@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
+import android.net.Uri;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -141,6 +142,17 @@ public class ActivityHelper {
 	{
 		Intent intent = ContactDao.instance().getPickContactIntent();
 		openActivity(intent, callerActivity, true, REQUESTCODE_PICKCONTACT);
+	}
+	
+	
+	public static void openBrowser(Context context, String urlToOpen, boolean openInNewTask)
+	{
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_VIEW);
+		intent.addCategory(Intent.CATEGORY_BROWSABLE);
+		intent.setData(Uri.parse(urlToOpen));
+		if (openInNewTask) intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent); 		
 	}
 	
 	/**

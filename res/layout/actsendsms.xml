@@ -10,7 +10,6 @@
 		style="@style/common_TextView"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
-		android:text="@string/actsendsms_lblProvider"
 	/>
 	
 	
@@ -26,7 +25,7 @@
 			style="@style/common_Spinner"
 			android:layout_alignParentLeft="true"
 			android:layout_below="@id/actsendsms_lblProvider"
-			android:prompt="@string/actsendsms_lblProvider"
+			android:prompt="@string/actsendsms_spiProvidersPrompt"
 			android:layout_weight="0.2"
 		/>			
 	
@@ -35,6 +34,7 @@
 			style="@style/common_Spinner"
 			android:layout_toRightOf="@id/actsendsms_spiProviders"
 			android:layout_alignTop="@id/actsendsms_spiProviders"
+			android:prompt="@string/actsendsms_spiServicesPrompt"
 			android:layout_weight="0.8"
 		/>			
 

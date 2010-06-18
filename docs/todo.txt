@@ -1,19 +1,14 @@
 CONTROLLARE
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -sistemare l'associazione telefono-tipo
--issue da sparazza (daniele) su layout schermata di send sms
--gestione servizi salvati di jacksms
--nella sostituzione dei template di jacksms, verificare se ci sono da eliminare anche dei servizi oppure no
--aggiungere menu x registrarsi ad aimon con il proprio codice
--aggiungere menu x registrarsi a jacksms
--controllo connettivita' quando c'e' da mandare un mess e altre cose
 -mettere lite su versioni inviata al sito
 -controllo di errori all'avvio del programma che bloccano l'applicazione
--mettere a private le classi del provider tipo save/load
 
 
 FUTURE IMPLEMENTAZIONI
 -installOnStorage http://developer.android.com/guide/appendix/install-location.html
+-gestione servizi salvati di jacksms
+
 
 Lista servizi da consultare 
 http://q.jacksms.it/login/getProviders

@@ -26,7 +26,10 @@
     <string name="actsendsms_txtDestination">Destionation number</string>
     <string name="actsendsms_txtBody">Message</string>
     <string name="actsendsms_btnSend">Send</string>
-    <string name="actsendsms_lblProvider">Choose provider</string>
+    <string name="actsendsms_lblProviderMulti">Choose a provider and one of it\'s services</string>
+    <string name="actsendsms_lblProviderSingle">Choose a provider</string>
+    <string name="actsendsms_spiProvidersPrompt">Choose a provider</string>
+    <string name="actsendsms_spiServicesPrompt">Choose a service</string>
     <string name="actsendsms_dlgPickNumber">Choose service</string>
     <string name="actsendsms_mnuSignature">Append signature</string>
     <string name="actsendsms_mnuCompress">Compress Text</string>

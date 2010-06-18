@@ -81,6 +81,7 @@ public class ActSendSms
 	private TextView mLblMessageLength;
 	private Button mBtnSend;
 	private ImageButton mBtnPickContact;
+	private TextView mLblProvider;
 
 	private List<ContactPhone> mPhonesToShowInDialog;
 	private String mCaptchaStorage;
@@ -122,6 +123,7 @@ public class ActSendSms
         mTxtDestination = (EditText) findViewById(R.id.actsendsms_txtDestination);
         mTxtMessage = (EditText) findViewById(R.id.actsendsms_txtMessage);
         mLblMessageLength = (TextView) findViewById(R.id.actsendsms_lblMessageLength);
+        mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
         mBtnSend = (Button) findViewById(R.id.actsendsms_btnSend);
         mBtnPickContact = (ImageButton) findViewById(R.id.actsendsms_btnPickContact);
 
@@ -502,12 +504,14 @@ public class ActSendSms
 			//configure subservice spinner
 			bindSubservicesSpinner(provider);
 			mSpiSubservices.setVisibility(View.VISIBLE);
+			mLblProvider.setText(R.string.actsendsms_lblProviderMulti);
 
 		} else {
 			mSelectedProvider = provider;
 			mSelectedServiceId = provider.getId();
 
 			mSpiSubservices.setVisibility(View.GONE);
+			mLblProvider.setText(R.string.actsendsms_lblProviderSingle);
 			updateMessageLength();
 		}
 	}

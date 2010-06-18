@@ -22,6 +22,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 public class AimonProvider
@@ -37,14 +38,17 @@ public class AimonProvider
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender));
 		
+		SmsServiceCommand command;
 		//initializes the command list
 		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
-		SmsServiceCommand command;
 		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
+				COMMAND_REGISTER, context.getString(R.string.aimon_commandRegister), 1, R.drawable.ic_menu_invite); 
 		mProviderSettingsActivityCommands.add(command);
 		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 1001); 
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 2, R.drawable.ic_menu_login);
+		mProviderSettingsActivityCommands.add(command);
+		command = new SmsServiceCommand(
+				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 3);
 		mProviderSettingsActivityCommands.add(command);
 		
 		//save some messages
@@ -81,6 +85,7 @@ public class AimonProvider
 	
 	private final static int COMMAND_CHECKCREDENTIALS = 1000;
 	private final static int COMMAND_CHECKCREDITS = 1001;
+	private final static int COMMAND_REGISTER = 1002;
 	
 	private String[] mMessages;
 	
@@ -116,10 +121,6 @@ public class AimonProvider
 	public boolean hasSubServicesToConfigure()
 	{ return false; }
     
-	@Override
-	public boolean hasSettingsActivityCommands()
-	{ return true; }
-
 	private List<SmsServiceCommand> mProviderSettingsActivityCommands;
 	@Override
 	public List<SmsServiceCommand> getSettingsActivityCommands()
@@ -178,6 +179,10 @@ public class AimonProvider
 			res = verifyCredit(currentUsername, currentPassword);
 			break;
 
+		case COMMAND_REGISTER:
+			res = registerToProvider(context);
+			break;
+
 		default:
 			res = new ResultOperation<String>(
 					new Exception("No command with id " + commandId + " for Aimon provider"),
@@ -187,7 +192,9 @@ public class AimonProvider
 		return res;
 	}
 
+
 	
+
 	//---------- Private methods
 
 	@Override
@@ -490,4 +497,18 @@ public class AimonProvider
     		return false;
     	}
 	}
+
+	
+	/**
+	 * Launch the browser activity with a personalized link for subscribe to provider
+	 * @param context
+	 * @return
+	 */
+	private ResultOperation<String> registerToProvider(Context context)
+	{
+		String urlToOpen = context.getString(R.string.aimon_registerLink);
+		ActivityHelper.openBrowser(context, urlToOpen, true);
+		return new ResultOperation<String>();
+	}
+	
 }
