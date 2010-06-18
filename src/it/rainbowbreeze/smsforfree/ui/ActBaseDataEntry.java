@@ -284,6 +284,7 @@ public abstract class ActBaseDataEntry
 	 */
 	protected void cancelEdit()
     {
+		setResult(RESULT_CANCELED);
     	finish();
     }
 	
