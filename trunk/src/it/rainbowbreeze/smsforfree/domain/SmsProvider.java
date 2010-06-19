@@ -1,6 +1,7 @@
 package it.rainbowbreeze.smsforfree.domain;
 
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 
@@ -272,5 +273,24 @@ public abstract class SmsProvider
 
     	//return the reply
     	return new ResultOperation<String>(reply);
-    }	
+    }
+    
+    
+    protected String transalteInInternationalFormat(String number)
+    {
+    	String defaultPrefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+    	return transalteInInternationalFormat(number, defaultPrefix);
+	}
+    
+    protected String transalteInInternationalFormat(String number, String internationaPrefix)
+    {
+    	String finalNumber = number;
+    	if (!finalNumber.substring(0, 1).equals("+")) {
+    		
+    	}
+    	
+    	return finalNumber;
+    	
+    }
+    
 }
