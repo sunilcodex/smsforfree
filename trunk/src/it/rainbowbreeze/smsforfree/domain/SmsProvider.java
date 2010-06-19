@@ -276,21 +276,37 @@ public abstract class SmsProvider
     }
     
     
+    /**
+     * Append to destination number the default international prefix
+     * 
+     * @param number
+     * @return
+     */
     protected String transalteInInternationalFormat(String number)
     {
     	String defaultPrefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
     	return transalteInInternationalFormat(number, defaultPrefix);
 	}
     
-    protected String transalteInInternationalFormat(String number, String internationaPrefix)
+    /**
+     * Append to destination number the specified international prefix
+     * 
+     * @param number
+     * @return
+     */
+    protected String transalteInInternationalFormat(String number, String internationalPrefix)
     {
-    	String finalNumber = number;
-    	if (!finalNumber.substring(0, 1).equals("+")) {
-    		
+    	String finalNumber;
+    	if (!TextUtils.isEmpty(number) &&
+    			TextUtils.isDigitsOnly(number) &&
+    			!number.substring(0, 1).equals("+")) {
+    		//append prefix to number
+    		finalNumber = internationalPrefix + number;
+    	} else {
+    		finalNumber =  number;
     	}
     	
     	return finalNumber;
-    	
     }
     
 }

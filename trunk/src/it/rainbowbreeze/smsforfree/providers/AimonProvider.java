@@ -305,14 +305,9 @@ public class AimonProvider
     	okSender = Base64.encodeBytes(okSender.getBytes());
 
     	//check the destination
-    	if (destination.substring(0, 1).equals("+")) {
-    		okDestination = destination.substring(1);
-    	} else {
-    		String prefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
-    		if (TextUtils.isEmpty(prefix)) prefix = GlobalDef.italyInternationalPrefix;
-    		//removes begin + char
-    		okDestination = prefix.substring(1) + destination;
-    	}
+    	okDestination = transalteInInternationalFormat(destination);
+		//removes begin + char
+		okDestination = okDestination.substring(1);
 
 		//checks body length
     	if (body.length() > AimonDictionary.MAX_BODY_LENGTH) {

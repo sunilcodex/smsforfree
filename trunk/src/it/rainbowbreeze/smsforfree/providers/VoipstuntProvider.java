@@ -1,5 +1,8 @@
 package it.rainbowbreeze.smsforfree.providers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import android.content.Context;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
@@ -15,6 +18,7 @@ public class VoipstuntProvider
 	public VoipstuntProvider(ProviderDao dao, Context context)
 	{
 		super(dao, PARAM_NUMBER);
+		mDictionary = new VoipstuntDictionary();
 		
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.voipstunt_username));
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.voipstunt_password));
@@ -23,8 +27,9 @@ public class VoipstuntProvider
 		setDescription(context.getString(R.string.voipstunt_description));
 
 		//save some messages
-		mMessages = new String[1];
+		mMessages = new String[2];
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.voipstunt_msg_messageSent);
+		mMessages[MSG_INDEX_MESSAGE_NO_SENT] = context.getString(R.string.voipstunt_msg_messageNotSent);
 	}
 
 
@@ -37,11 +42,11 @@ public class VoipstuntProvider
 	private final static int PARAM_INDEX_SENDER = 2;
 	
 	private final static int MSG_INDEX_MESSAGE_SENT = 0;
-	
+	private final static int MSG_INDEX_MESSAGE_NO_SENT = 1;
 	
 	private String[] mMessages;
+	private VoipstuntDictionary mDictionary;
 	
-	private final static String VOIPSTUNT_BASE_URL = "https://www.voipstunt.com/myaccount/sendsms.php";
 
 	
 	
@@ -82,36 +87,32 @@ public class VoipstuntProvider
 		//build url
 		
 		//check for destination number and, eventually, add internation prefix
+    	String okDestination = transalteInInternationalFormat(destination);
+    	String okBody;
+    	try {
+			okBody = URLEncoder.encode(body, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			okBody = body;
+		}
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append(VOIPSTUNT_BASE_URL)
-			.append("?")
-			.append("username=")
-			.append(getParameterValue(PARAM_INDEX_USERNAME))
-			.append("&")
-			.append("password=")
-			.append(getParameterValue(PARAM_INDEX_PASSWORD))
-			.append("&")
-			.append("from=")
-			.append(getParameterValue(PARAM_INDEX_SENDER))
-			.append("&")
-			.append("to=")
-			.append(destination)
-			.append("&")
-			.append("text=")
-			.append(body);
+		String urlToSend = mDictionary.getUrlForMessage(
+				getParameterValue(PARAM_INDEX_USERNAME),
+				getParameterValue(PARAM_INDEX_PASSWORD),
+				getParameterValue(PARAM_INDEX_SENDER),
+				okDestination,
+				okBody);		
 			
-
-		ResultOperation<String> res = doRequest(sb.toString(), null, null);
+		ResultOperation<String> res = doRequest(urlToSend, null, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
     	
     	//examine it the return contains confirmation if the message was sent
-		if (res.getResult().startsWith(AimonDictionary.RESULT_SENDSMS_OK)) {
-			res.setResult(String.format(
-					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
-		}
+    	if (mDictionary.messageWasSent(res.getResult())) {
+    		res.setResult(mMessages[MSG_INDEX_MESSAGE_SENT]);
+    	} else {
+    		res.setResult(mMessages[MSG_INDEX_MESSAGE_NO_SENT]);
+    	}
 		
 		return res;    	
 	}

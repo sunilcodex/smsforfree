@@ -7,6 +7,9 @@ import android.util.Log;
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
+
+//TODO
+//print stack trace in error
 public class LogFacility {
 	//---------- Private fields
 	protected static final String LOG_TAG = "SmsForFree";
@@ -20,6 +23,9 @@ public class LogFacility {
 
 	
 	//---------- Public methods
+	public static void e(Exception e)
+	{ log(Log.ERROR, e.getMessage()); }
+
 	public static void e(String message)
 	{ log(Log.ERROR, message); }
 
