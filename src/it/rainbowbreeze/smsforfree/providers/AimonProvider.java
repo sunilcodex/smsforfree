@@ -287,7 +287,6 @@ public class AimonProvider
         	if (TextUtils.isDigitsOnly(sender)) {
         		//find prefix to use
         		String prefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
-        		if (TextUtils.isEmpty(prefix)) prefix = GlobalDef.italyInternationalPrefix;
         		//append it to number
         		okSender = prefix + sender;
         		//and check length

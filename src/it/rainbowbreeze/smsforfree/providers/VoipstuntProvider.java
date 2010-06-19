@@ -81,6 +81,8 @@ public class VoipstuntProvider
 		 */
 		//build url
 		
+		//check for destination number and, eventually, add internation prefix
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append(VOIPSTUNT_BASE_URL)
 			.append("?")
