@@ -20,7 +20,7 @@
 	<TextView
 		android:id="@+id/actabout_lblAppName"
 		style="@style/actabout_lblTitles"
-		android:text="@string/common_appname"
+		android:text="@string/common_appNameForDisplay"
 		android:layout_alignTop="@id/actabout_imgLogo"
 		android:layout_alignParentRight="true"
 		android:layout_marginTop="10dp"
@@ -33,7 +33,6 @@
 		style="@style/actabout_lblTitles"
 		android:layout_below="@id/actabout_lblAppName"
 		android:layout_alignRight="@id/actabout_lblAppName"
-		android:text="@string/common_appname"
 	/>
 	
 	<TextView

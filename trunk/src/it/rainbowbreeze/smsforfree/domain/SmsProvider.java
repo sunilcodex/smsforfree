@@ -4,6 +4,7 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -308,5 +309,16 @@ public abstract class SmsProvider
     	
     	return finalNumber;
     }
-    
+
+	
+	/**
+	 * Launch the browser activity with a personalized link for subscribe to provider
+	 * @param context
+	 * @return
+	 */
+	protected ResultOperation<String> registerToProvider(Context context, String urlToOpen)
+	{
+		ActivityHelper.openBrowser(context, urlToOpen, true);
+		return new ResultOperation<String>();
+	}
 }

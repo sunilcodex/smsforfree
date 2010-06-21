@@ -47,7 +47,7 @@ public class LogicManager
 		ResultOperation<Void> res = new ResultOperation<Void>();
 		
 		//set application name
-		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appname));
+		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
 		SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
 		
 		//load configurations
@@ -55,7 +55,7 @@ public class LogicManager
 		
 		//load some application license setting
 		SmsForFreeApplication.instance().setLiteVersionApp(
-				"Lite".equalsIgnoreCase(context.getString(R.string.config_AppType)));
+				GlobalDef.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType)));
 		SmsForFreeApplication.instance().setAllowedSmsForDay(
 				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
 		
@@ -127,7 +127,7 @@ public class LogicManager
 		//unlimited sms for normal app
 		if (!SmsForFreeApplication.instance().isLiteVersionApp()) return true;
 		
-		return getSmsSentToday() < SmsForFreeApplication.instance().getAllowedSmsForDay();
+		return getSmsSentToday() <= SmsForFreeApplication.instance().getAllowedSmsForDay();
 	}
 	
 	/**

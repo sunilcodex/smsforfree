@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Application name -->
-    <string name="common_appname">SmsForFree</string>
+    <string name="common_appName">SmsForFree</string>
+    <string name="common_appNameForDisplay">SmsForFree</string>
 
 	<!-- Allowed providers -->
 	<string name="config_AllowedProviders">Aimon,JackSMS,Voipstunt</string>

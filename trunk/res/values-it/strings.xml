@@ -50,7 +50,7 @@
     <string name="actsendsms_msg_emptyCaptchaCode">Captcha code is empty.\nMessage sending aborted.</string>
     <string name="actsendsms_msg_sendingMessage">Sending message...</string>
     <string name="actsendsms_msg_sendingCaptcha">Sending captcha code...</string>
-    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the maximum number of sms per day...</string>
+    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the daily maximum number of allowed attempts to send SMS of this Lite version...\n\nWant unlimited SMS and no banner? Buy the full version in the Android Market!</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>
@@ -115,7 +115,7 @@
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
     <string name="actabout_lblDescription">Suggestions, translations, graphics ideas? Send me an email at info (at) rainbowbreeze.it\n\nA special thanks to:\n -Ilaria Mauric for the logo</string>
-    <string name="actabout_lblSentSms">Sms sent today: %s</string>
+    <string name="actabout_lblSentSms">Attempts to send SMS today: %s</string>
 
 
 
@@ -123,6 +123,13 @@
     <!-- ActExpired -->
     <string name="actexpired_title">%s - Expired :(</string>
     <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nSearch for a new version of the application.</string>
+
+
+
+
+    <!-- ActInitializationError -->
+    <string name="actinitialization_title">%s - Initialization errors :(</string>
+    <string name="actinitialization_msgErrors">Sorry, some initialization errors block this application...\n\nIf the problem persists, send an email to the author.\n\nThank you!</string>
 
 
 
