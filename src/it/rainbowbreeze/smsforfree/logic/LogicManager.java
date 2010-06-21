@@ -59,16 +59,24 @@ public class LogicManager
 		SmsForFreeApplication.instance().setAllowedSmsForDay(
 				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
 		
-		//check if the application expired
-		if (SmsForFreeApplication.instance().isLiteVersionApp()) {
-			SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
-			if (SmsForFreeApplication.instance().isAppExpired()) {
-				res.setReturnCode(ResultOperation.RETURNCODE_APP_EXPIRED);
-				return res;
-			}
-		} else {
-			SmsForFreeApplication.instance().setAppExpired(false);
+		//TODO
+		//in this beta version of the app, the expiration check is always made
+		SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
+		if (SmsForFreeApplication.instance().isAppExpired()) {
+			res.setReturnCode(ResultOperation.RETURNCODE_APP_EXPIRED);
+			return res;
 		}
+
+//		//check if the application expired
+//		if (SmsForFreeApplication.instance().isLiteVersionApp()) {
+//			SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
+//			if (SmsForFreeApplication.instance().isAppExpired()) {
+//				res.setReturnCode(ResultOperation.RETURNCODE_APP_EXPIRED);
+//				return res;
+//			}
+//		} else {
+//			SmsForFreeApplication.instance().setAppExpired(false);
+//		}
 		
 		//update the daily number of sms
 		updateSmsCounter(0);
