@@ -18,7 +18,6 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
-import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 /**
@@ -182,7 +181,7 @@ public class AimonProvider
 			break;
 
 		case COMMAND_REGISTER:
-			res = registerToProvider(context);
+			res = registerToProvider(context, context.getString(R.string.aimon_registerLink));
 			break;
 
 		default:
@@ -465,18 +464,4 @@ public class AimonProvider
     		return false;
     	}
 	}
-
-    
-	/**
-	 * Launch the browser activity with a personalized link for subscribe to provider
-	 * @param context
-	 * @return
-	 */
-	private ResultOperation<String> registerToProvider(Context context)
-	{
-		String urlToOpen = context.getString(R.string.aimon_registerLink);
-		ActivityHelper.openBrowser(context, urlToOpen, true);
-		return new ResultOperation<String>();
-	}
-	
 }

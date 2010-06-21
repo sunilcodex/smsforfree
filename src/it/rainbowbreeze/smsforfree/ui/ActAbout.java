@@ -28,12 +28,14 @@ public class ActAbout
         
         TextView lblVersion = (TextView)findViewById(R.id.actabout_lblAppVersion);
         String version = GlobalDef.appVersionDescription;
-        if (SmsForFreeApplication.instance().isLiteVersionApp()) version = version + " Lite";
+        if (SmsForFreeApplication.instance().isLiteVersionApp()) version = version + " " + GlobalDef.lite_description;
         lblVersion.setText(version);
 
         TextView lblSentSms = (TextView)findViewById(R.id.actabout_lblSentSms);
+        String sentSms = String.valueOf(LogicManager.getSmsSentToday());
+        if (SmsForFreeApplication.instance().isLiteVersionApp()) sentSms = sentSms + "/" + SmsForFreeApplication.instance().getAllowedSmsForDay();
         lblSentSms.setText(String.format(
-        		getString(R.string.actabout_lblSentSms), LogicManager.getSmsSentToday()));
+        		getString(R.string.actabout_lblSentSms), sentSms));
 	}
 
 	//---------- Public methods

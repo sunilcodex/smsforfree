@@ -1,13 +1,10 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import it.rainbowbreeze.smsforfree.common.LogFacility;
-import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 import org.xmlpull.v1.XmlPullParser;

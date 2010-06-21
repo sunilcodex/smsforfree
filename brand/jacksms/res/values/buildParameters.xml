@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Application name -->
-    <string name="common_appname">JackSMS</string>
+    <string name="common_appName">JackSMS</string>
+    <string name="common_appNameForDisplay">JackSMS</string>
 
 
 	<!-- Allowed providers -->

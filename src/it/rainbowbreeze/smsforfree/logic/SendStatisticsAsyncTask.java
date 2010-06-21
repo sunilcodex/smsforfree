@@ -34,7 +34,9 @@ public class SendStatisticsAsyncTask
 	protected Void doInBackground(Activity... params)
 	{
 		Activity activity = params[0];
-		String screenres = ActivityHelper.getScreenWidth(activity) + "x" + ActivityHelper.getScreenHeight(activity); 
+		String screenres = ActivityHelper.getScreenWidth(activity) + "x" + ActivityHelper.getScreenHeight(activity);
+		String appName = SmsForFreeApplication.instance().getAppName();
+		if (SmsForFreeApplication.instance().isLiteVersionApp()) appName = appName + "-" + GlobalDef.lite_description;
 		
 		//prepare data to send
 		StringBuilder url = new StringBuilder();
@@ -44,7 +46,7 @@ public class SendStatisticsAsyncTask
 			.append(AppPreferencesDao.instance().getUniqueId())
 			.append("&")
 			.append("swname=")
-			.append(SmsForFreeApplication.instance().getAppName())
+			.append(appName)
 			.append("&")
 			.append("ver=")
 			.append(GlobalDef.appVersion)

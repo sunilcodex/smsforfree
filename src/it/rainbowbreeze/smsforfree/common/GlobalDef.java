@@ -23,10 +23,13 @@ public class GlobalDef {
 	/** file name for providers preferences */
 	public static String voipstuntParametersFileName = "voipstunt_parameters.xml";
 
-	/** international prefix for italy */
+	/** international prefix for Italy */
 	public static final String italyInternationalPrefix = "+39";
 	
 	/** url where send statistics about device */
 	public static final String statisticsUrl = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
+	
+	/** string for lite version */
+	public static final String lite_description = "Lite";
 
 }

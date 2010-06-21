@@ -104,6 +104,15 @@ public class ActSendSms
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //checks for app was correctly initialized
+    	if (!SmsForFreeApplication.instance().isCorrectlyInitialized()) {
+    		//application is expired
+            setContentView(R.layout.actinitializationerror);
+            setTitle(String.format(
+            		getString(R.string.actinitialization_title), SmsForFreeApplication.instance().getAppName()));
+    		return;
+    	}
+    	
         //checks for app validity
     	if (SmsForFreeApplication.instance().isAppExpired()) {
     		//application is expired
@@ -151,8 +160,8 @@ public class ActSendSms
 	@Override
 	protected void onStart() {
 		super.onStart();
-		Object savedThread = getLastNonConfigurationInstance();
 		
+		Object savedThread = getLastNonConfigurationInstance();
 		//nothing saved
 		if (null == savedThread) return;
 	
@@ -199,8 +208,6 @@ public class ActSendSms
     @Override
     protected void onPause() {
     	super.onPause();
-    	
-    	if (SmsForFreeApplication.instance().isAppExpired()) return;
     	
     	//save current fields value to prefs
     	//provider and subservice was already saved in change event of the spinner
@@ -255,8 +262,12 @@ public class ActSendSms
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
     	
-		menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
+    	//errors on initialization
+    	if (!SmsForFreeApplication.instance().isCorrectlyInitialized()) return true;
+
+    	menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
 		.setIcon(android.R.drawable.ic_menu_info_details);
+    	//menu ends here if the application is expired
     	if (SmsForFreeApplication.instance().isAppExpired()) return true;
 
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
@@ -748,7 +759,8 @@ public class ActSendSms
 	{
 		//check if can send another SMS
 		if (!LogicManager.checkIfCanSendSms()) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach);
+			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
+			return;
 		}
 		
 		//check provider

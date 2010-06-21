@@ -63,6 +63,12 @@ public class SmsForFreeApplication
 	{ return mForceSubserviceRefresh; }
 	public void setForceSubserviceRefresh(boolean newValue)
 	{ mForceSubserviceRefresh = newValue; }
+	
+	/** the application was correctly initialized */
+	protected boolean mIsCorrectlyInitialized;
+	public boolean isCorrectlyInitialized()
+	{ return mIsCorrectlyInitialized; }
+	
 
 
 
@@ -80,7 +86,10 @@ public class SmsForFreeApplication
 		//execute begin task
 		ResultOperation<Void> res = LogicManager.executeBeginTask(this);
 		if (res.HasErrors()) {
+			mIsCorrectlyInitialized = false;
 			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
+		} else {
+			mIsCorrectlyInitialized = true;
 		}
 	}
 	
