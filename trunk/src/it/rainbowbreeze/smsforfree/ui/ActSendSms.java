@@ -77,7 +77,7 @@ public class ActSendSms
 	private SmsProvider mSelectedProvider;
 	private String mSelectedServiceId;
 	private EditText mTxtDestination;
-	private EditText mTxtMessage;
+	private EditText mTxtBody;
 	private TextView mLblMessageLength;
 	private Button mBtnSend;
 	private ImageButton mBtnPickContact;
@@ -130,7 +130,7 @@ public class ActSendSms
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
         mTxtDestination = (EditText) findViewById(R.id.actsendsms_txtDestination);
-        mTxtMessage = (EditText) findViewById(R.id.actsendsms_txtMessage);
+        mTxtBody = (EditText) findViewById(R.id.actsendsms_txtMessage);
         mLblMessageLength = (TextView) findViewById(R.id.actsendsms_lblMessageLength);
         mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
         mBtnSend = (Button) findViewById(R.id.actsendsms_btnSend);
@@ -141,11 +141,10 @@ public class ActSendSms
 		mSpiSubservices.setOnItemSelectedListener(mSpiSubservicesSelectedListener);
         mBtnSend.setOnClickListener(mBtnSendClickListener);
         mBtnPickContact.setOnClickListener(mBtnPickContactListener);
-        mTxtMessage.addTextChangedListener(mTxtBodyTextChangedListener);
+        mTxtBody.addTextChangedListener(mTxtBodyTextChangedListener);
 
         //populate Spinner with values
         bindProvidersSpinner();
-
 
     	//executed when the application first runs
         if (null == savedInstanceState) {
@@ -154,9 +153,12 @@ public class ActSendSms
 	        statsTask.execute(this);
             //load values of view from previous application execution
         	restoreLastRunViewValues();
+
+        	processIntentData(getIntent());
         }
+
     }
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -214,7 +216,7 @@ public class ActSendSms
     	AppPreferencesDao.instance().setLastUsedDestination(
     			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
     	AppPreferencesDao.instance().setLastUsedMessage(
-    			TextUtils.isEmpty(mTxtMessage.getText()) ? "" : mTxtMessage.getText().toString());
+    			TextUtils.isEmpty(mTxtBody.getText()) ? "" : mTxtBody.getText().toString());
 		
 		//and save new selected provider
 		AppPreferencesDao.instance().setLastUsedProviderId(mSelectedProvider.getId());
@@ -303,7 +305,7 @@ public class ActSendSms
 			break;
 
 		case OPTIONMENU_COMPRESS:
-			String message = mTxtMessage.getText().toString();
+			String message = mTxtBody.getText().toString();
 			ActivityHelper.openCompactMessage(this, message);
 			break;
 
@@ -337,7 +339,7 @@ public class ActSendSms
     		case (ActivityHelper.REQUESTCODE_COMPACTMESSAGE):  
 				String message = data.getStringExtra(ActivityHelper.INTENTKEY_MESSAGE);
     			if (!TextUtils.isEmpty(message))
-    				mTxtMessage.setText(message);
+    				mTxtBody.setText(message);
     		break;
     		
     		case (ActivityHelper.REQUESTCODE_SETTINGS):
@@ -551,9 +553,9 @@ public class ActSendSms
 			maxLength = mSelectedProvider.getMaxMessageLenght();
 
 		//set length text
-		mLblMessageLength.setText(mTxtMessage.length() + "/" + maxLength);
+		mLblMessageLength.setText(mTxtBody.length() + "/" + maxLength);
 		//set text color
-		boolean tooLong = mTxtMessage.length() > maxLength;
+		boolean tooLong = mTxtBody.length() > maxLength;
 		if (tooLong)
 			mLblMessageLength.setTextColor(Color.RED);
 		else
@@ -710,11 +712,11 @@ public class ActSendSms
 	 */
 	private void addSignature() {
 		String signature = AppPreferencesDao.instance().getSignature();
-		String message = mTxtMessage.getText().toString();
+		String message = mTxtBody.getText().toString();
 
 		//check if the signature was already added
 		if (!message.endsWith(signature))
-			mTxtMessage.append(signature);
+			mTxtBody.append(signature);
 	}
 	
 	
@@ -729,7 +731,7 @@ public class ActSendSms
 		
 		//text and message
 		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
-		mTxtMessage.setText(AppPreferencesDao.instance().getLastUsedMessage());
+		mTxtBody.setText(AppPreferencesDao.instance().getLastUsedMessage());
 
 		//reassign spinner values and status of class inner fields
 		String providerId = AppPreferencesDao.instance().getLastUsedProviderId();
@@ -804,13 +806,13 @@ public class ActSendSms
 //		}
 		
 		//check body
-		if (TextUtils.isEmpty(mTxtMessage.getText())) {
+		if (TextUtils.isEmpty(mTxtBody.getText())) {
 			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noMessage);
 			return;
 		}
 		
 		//check message length
-		if (mTxtMessage.length() > mSelectedProvider.getMaxMessageLenght()) {
+		if (mTxtBody.length() > mSelectedProvider.getMaxMessageLenght()) {
 			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
 			return;
 		}
@@ -820,7 +822,7 @@ public class ActSendSms
 
 		//preparing the background task for sending message
 		String destination = mTxtDestination.getText().toString();
-		String message = mTxtMessage.getText().toString();
+		String message = mTxtBody.getText().toString();
 		mSendMessageThread = new SendMessageThread(
 				this, mActivityHandler,
 				mSelectedProvider, mSelectedServiceId,
@@ -862,7 +864,7 @@ public class ActSendSms
 	 */
 	private void cleanDataFields() {
 		mTxtDestination.setText("");
-		mTxtMessage.setText("");
+		mTxtBody.setText("");
 	}
 	
 	
@@ -915,4 +917,35 @@ public class ActSendSms
 			}
 		}
 	}
+	
+	/**
+	 * Called when the activity first start, process data passed via intent in reply to
+	 * intent-filter android.intent.action.SENDTO or android.intent.action.SEND 
+	 * 
+	 * @param intent 
+	 * 
+	 */
+	private void processIntentData(Intent intent)
+	{
+		if (null == intent) return;
+		
+		if (Intent.ACTION_SENDTO.equals(intent.getAction())) {
+			//in the data i'll find the number of the destination
+			String destionationNumber = intent.getDataString();
+			//clear the string
+			destionationNumber = destionationNumber.replace("-", "")
+				.replace("smsto:", "")
+				.replace("sms:", "");
+			//and set fields
+			mTxtDestination.setText(destionationNumber);
+			
+		} else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
+			//in the data i'll find the content of the message
+			String message = intent.getStringExtra(Intent.EXTRA_TEXT);
+			//clear the string
+			mTxtBody.setText(message);
+		}
+	}
+	
+	
 }
