@@ -1,5 +1,6 @@
 package it.rainbowbreeze.smsforfree.ui;
 
+import java.net.URLDecoder;
 import java.util.List;
 
 import it.rainbowbreeze.smsforfree.R;
@@ -932,6 +933,7 @@ public class ActSendSms
 		if (Intent.ACTION_SENDTO.equals(intent.getAction())) {
 			//in the data i'll find the number of the destination
 			String destionationNumber = intent.getDataString();
+			destionationNumber = URLDecoder.decode(destionationNumber);
 			//clear the string
 			destionationNumber = destionationNumber.replace("-", "")
 				.replace("smsto:", "")
