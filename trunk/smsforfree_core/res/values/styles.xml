@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!-- Base for all activities root LinearLayout (the first you use) -->
+	<style name="common_layoutBackground">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:orientation">vertical</item>
+<!--		<item name="android:background">#FFbfc4cc</item>-->
+	</style>
+
+	<!-- Main layout - assign to ScrollArea and use common_layoutActivityAreaScrollable
+		 for LinearLayout inside the ScrollArea -->
+	<style name="common_scrollActivityArea">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+<!--		<item name="android:background">#FFbfc4cc</item>-->
+	</style>
+	<style name="common_layoutActivityAreaScrollable">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:padding">6dip</item>
+	</style>
+
+	<!-- Main layout - assign for a LinearLayout without scrollbar -->
+	<style name="common_layoutActivityAreaNotScrollable" parent="@style/common_layoutActivityAreaScrollable">
+		<item name="android:background">#FFbfc4cc</item>
+	</style>
+
+	<style name="common_btnAction">
+		<item name="android:layout_width">100dip</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">#000</item>
+		<!-- Text position -->
+		<item name="android:gravity">center_horizontal|center_vertical</item>
+	</style>
+
+	<style name="common_EditText">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+	
+	<style name="common_CheckBox">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+	
+	<style name="common_TextView">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="common_Spinner">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="common_ImageView">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+	
+	<style name="common_WebView">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+
+
+	
+	<!-- ActSendSms -->
+	<style name="actsendsms_btnSend" parent="@style/common_btnAction">
+		<item name="android:layout_width">fill_parent</item>
+	</style>
+
+
+
+	
+	<!-- ActSettingsSmsService -->
+	<style name="actsettingssmsservice_lblParameterDesc" parent="@style/common_TextView">
+	</style>
+	<style name="actsettingssmsservice_txtParameterValue" parent="@style/common_EditText">
+		<item name="android:layout_marginLeft">5dip</item>
+		<item name="android:layout_marginBottom">10dip</item>
+	</style>
+	<style name="actsettingssmsservice_lblServiceDesc" parent="@style/common_TextView">
+		<item name="android:gravity">top|center_horizontal</item>
+		<item name="android:layout_margin">5dp</item>
+	</style>
+	<style name="actsettingssmsservice_btnCommon" parent="@style/common_btnAction">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_marginTop">10dp</item>
+	</style>
+
+
+	
+	
+	<!-- ActProvidersList -->
+	<style name="actproviderslist_lstProviders">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+
+	
+	
+	<!-- ActTemplatesList -->
+	<style name="acttemplateslist_lstTemplates">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+
+	
+	
+	<!-- ActSubServicesList -->
+	<style name="actsubserviceslist_lstSubservices">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+	<style name="actsubservicelist_lblNoSubservices" parent="@style/common_TextView">
+		<item name="android:gravity">top|center_horizontal</item>
+		<item name="android:layout_margin">10dp</item>
+		<item name="android:layout_marginTop">20dp</item>
+		<item name="android:textSize">30dp</item>
+	</style>
+
+
+	
+	
+	<!-- ActCompactMessage -->
+	<style name="actcompactsmessage_LinearLayout">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:orientation">horizontal</item>
+		<item name="android:layout_gravity">center_horizontal|center_vertical</item>
+	</style>
+	
+	<style name="actcompactsmessage_btnCompressLevel">
+		<item name="android:layout_width">50dp</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+	
+	<style name="actcompactsmessage_lblCompressLevel">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_weight">1</item>
+	</style>
+
+	<style name="actcompactsmessage_lblResultMessage">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<!-- Text position -->
+		<item name="android:gravity">center_horizontal|center_vertical</item>
+		<item name="android:layout_margin">20dp</item>
+	</style>
+
+
+
+	
+	<!-- ActAbout -->
+	<style name="actabout_lblTitles">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textSize">15dp</item>
+	</style>
+
+	
+
+</resources>
