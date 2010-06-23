@@ -23,7 +23,6 @@ public class ActSettingsMain
 {
 	//---------- Private fields
 	private CheckBoxPreference mChkResetData;
-//	private CheckBoxPreference mChkInserIntoPim;
 	private EditTextPreference mTxtSignature;
 	private EditTextPreference mTxtPrefix;
 
@@ -47,7 +46,6 @@ public class ActSettingsMain
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
 		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
 		mTxtPrefix = (EditTextPreference) findPreference("actsettingsmain_txtDefaultInternationalPrefix");
-//		mChkInserIntoPim = (CheckBoxPreference) findPreference("actsettingsmain_chkInsertSmsIntoPim");
 		
 		//Get the custom preference
 		Preference customPref = (Preference) findPreference("actsettingsmain_providersPref");

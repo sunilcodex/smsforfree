@@ -147,7 +147,11 @@ public abstract class SmsService
      * @return String with command result
      */
     public ResultOperation<String> executeCommand(int commandId, Context context, Bundle extraData)
-    { return null; }
+    {
+		return new ResultOperation<String>(
+				new Exception("No command with id " + commandId + " for " + getName()),
+				ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
+    }
 
     
 	@Override

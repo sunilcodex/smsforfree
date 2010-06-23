@@ -200,9 +200,7 @@ public class JacksmsProvider
 			break;
 
 		default:
-			res = new ResultOperation<String>(
-					new Exception("No command with id " + commandId + " for JackSMS provider"),
-					ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
+			res = super.executeCommand(commandId, context, extraData);
 		}
 
 		return res;
