@@ -16,6 +16,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -251,8 +252,10 @@ public class ActivityHelper {
 		if (result.HasErrors()) {
 			ActivityHelper.reportError(context, result);
 		} else {
-			//shows the output of the command
-			ActivityHelper.showInfo(context, result.getResult());
+			if (!TextUtils.isEmpty(result.getResult())){
+				//shows the output of the command
+				ActivityHelper.showInfo(context, result.getResult());
+			}
 		}		
 	}
 	

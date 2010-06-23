@@ -2,12 +2,16 @@ package it.rainbowbreeze.smsforfree.providers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
+import android.os.Bundle;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 
@@ -26,6 +30,13 @@ public class VoipstuntProvider
 		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.voipstunt_sender));
 		setDescription(context.getString(R.string.voipstunt_description));
 
+		SmsServiceCommand command;
+		//initializes the command list
+		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
+		command = new SmsServiceCommand(
+				COMMAND_REGISTER, context.getString(R.string.voipstunt_commandRegister), 1, R.drawable.ic_menu_invite); 
+		mProviderSettingsActivityCommands.add(command);
+
 		//save some messages
 		mMessages = new String[2];
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.voipstunt_msg_messageSent);
@@ -43,6 +54,8 @@ public class VoipstuntProvider
 	
 	private final static int MSG_INDEX_MESSAGE_SENT = 0;
 	private final static int MSG_INDEX_MESSAGE_NO_SENT = 1;
+	
+	private final static int COMMAND_REGISTER = 1000;
 	
 	private String[] mMessages;
 	private VoipstuntDictionary mDictionary;
@@ -67,6 +80,12 @@ public class VoipstuntProvider
 	@Override
 	public int getParametersNumber()
 	{ return PARAM_NUMBER; }
+
+	private List<SmsServiceCommand> mProviderSettingsActivityCommands;
+	@Override
+	public List<SmsServiceCommand> getSettingsActivityCommands()
+	{ return mProviderSettingsActivityCommands; }
+
 
 
 	
@@ -115,6 +134,25 @@ public class VoipstuntProvider
     	}
 		
 		return res;    	
+	}
+
+
+	@Override
+    public ResultOperation<String> executeCommand(int commandId, Context context, Bundle extraData)
+	{
+		ResultOperation<String> res;
+
+		//execute commands
+		switch (commandId) {
+		case COMMAND_REGISTER:
+			res = registerToProvider(context, context.getString(R.string.voipstunt_registerLink));
+			break;
+
+		default:
+			res = super.executeCommand(commandId, context, extraData);
+		}
+
+		return res;
 	}
 
 

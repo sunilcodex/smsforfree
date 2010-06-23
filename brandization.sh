@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Checks parameters
-# TODO
 
 #ask for brand version
 echo
