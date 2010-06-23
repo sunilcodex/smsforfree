@@ -2,7 +2,7 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import java.util.Map;
 
-import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree_core.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
 import android.app.Activity;
