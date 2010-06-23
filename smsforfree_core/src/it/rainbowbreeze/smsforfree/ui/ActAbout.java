@@ -1,6 +1,6 @@
 package it.rainbowbreeze.smsforfree.ui;
 
-import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree_core.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;

@@ -3,7 +3,7 @@
  */
 package it.rainbowbreeze.smsforfree.ui;
 
-import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree_core.R;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import android.os.Bundle;
