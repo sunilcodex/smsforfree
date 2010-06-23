@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import it.rainbowbreeze.smsforfree_core.R;
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
