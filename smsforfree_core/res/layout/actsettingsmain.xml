@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="@string/actsettingsmain_lblApplicationCategory">
+		<CheckBoxPreference
+			android:key="actsettingsmain_chkResetDataAfterSend"
+			android:title="@string/actsettingsmain_chkResetDataAfterSend"
+			android:summary="@string/actsettingsmain_chkResetDataAfterSendSummary"
+		/>
+<!--		<CheckBoxPreference-->
+<!--			android:key="actsettingsmain_chkInsertSmsIntoPim"-->
+<!--			android:title="@string/actsettingsmain_chkInsertSmsIntoPim"-->
+<!--			android:summary="@string/actsettingsmain_chkInsertSmsIntoPimSummary"-->
+<!--		/>-->
+		<EditTextPreference
+			android:key="actsettingsmain_txtSignature"
+			android:title="@string/actsettingsmain_txtSignature"
+			android:summary="@string/actsettingsmain_txtSignatureSummary"
+		/>
+		<EditTextPreference
+			android:key="actsettingsmain_txtDefaultInternationalPrefix"
+			android:title="@string/actsettingsmain_txtDefaultInternationalPrefix"
+			android:summary="@string/actsettingsmain_txtDefaultInternationalPrefixSummary"
+		/>
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/actsettingsmain_lblProvidersCategory">
+		<Preference
+			android:key="actsettingsmain_providersPref"
+			android:title="@string/actsettingsmain_lblProvidersList"
+			android:summary="@string/actsettingsmain_lblProvidersListSummary"
+		/>
+	</PreferenceCategory>
+	
+</PreferenceScreen>

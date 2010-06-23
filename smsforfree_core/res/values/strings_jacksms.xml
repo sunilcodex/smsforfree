@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="jacksms_username_desc">Username</string>
+    <string name="jacksms_password_desc">Password</string>
+    <string name="jacksms_commandLoadTemplateServices">Download JackSMS templates</string>
+    <string name="jacksms_commandLoadUserSubservices">Load your JackSMS saved services</string>
+    <string name="jacksms_commandRegister">Register to JackSMS</string>
+    <string name="jacksms_msg_invalidCredentials">Invalid JackSMS credentials :(</string>
+    <string name="jacksms_msg_serverError">JackSMS internal server error:\n %s</string>
+    <string name="jacksms_msg_messageSent">Message sent.\n %s</string>
+    <string name="jacksms_msg_captchaOk">Message sent.</string>
+    <string name="jacksms_msg_noCaptchaSessionId">Error: cannot find captcha session id... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_noTemplates">Strange, no templates... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_noCaptcha">Strange, no captcha... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_TemplatesListUpdated">JackSMS Templates list updated.</string>
+    <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aimon_username">Username (@aimon.it)</string>
+    <string name="aimon_password">Password</string>
+    <string name="aimon_sender">Sender</string>
+    <string name="aimon_description">Invia SMS verso numeri di tutto il mondo col mittente personalizzato usando il tuo credito su aimon.it.</string>
+    <string name="aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
+    <string name="aimon_commandCheckCredentials">Check credentials</string>
+    <string name="aimon_commandCheckCredits">Check credits</string>
+    <string name="aimon_commandRegister">Register to Aimon</string>
+    <string name="aimon_msg_invalidCredentials">Invalid Aimon credentials :(</string>
+    <string name="aimon_msg_validCredentials">Valid Aimon credentials</string>
+    <string name="aimon_msg_serverError">Aimon internal server error</string>
+    <string name="aimon_msg_remainingCredits">Remaining credits: %s</string>
+    <string name="aimon_msg_messageQueued">Message sent.\n %s</string>
+    <string name="aimon_msg_missingParameters">Error calling Aimon provider. Please, advice the developer of the software about this error. Doing this, a correction will be available soon.\n\n%s</string>
+    <string name="aimon_serviceNameFree">Free</string>
+    <string name="aimon_serviceNameAnonymous">Anonymous (1 credit)</string>
+    <string name="aimon_serviceNameNormal">Normal (1.5 credits)</string>
+    <string name="aimon_serviceNameReport">Report (1.6 credits)</string>
+    <string name="aimon_registerLink">http://aimon.it/new/89h</string>
+</resources>

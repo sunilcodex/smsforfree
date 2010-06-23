@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voipstunt_username">Username</string>
+    <string name="voipstunt_password">Password</string>
+    <string name="voipstunt_sender">Sender number (international format)</string>
+    <string name="voipstunt_description">Send worldwide SMS with custom sender using your credit on voipstunt.it.</string>
+	<string name="voipstunt_msg_messageSent">Message sent.</string>
+    <string name="voipstunt_msg_messageNotSent">Error sending message.\nMaybe wrong username/password or a provider internal error.\n\nContact the author of this software if the problem persists.</string>
+    <string name="voipstunt_commandRegister">Register to Voipstunt</string>
+    <string name="voipstunt_registerLink">http://voipstunt.com</string>
+</resources>
