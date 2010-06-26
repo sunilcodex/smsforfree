@@ -16,6 +16,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.logic.LogicManager;
 
 /**
  * 
@@ -34,6 +35,7 @@ public class JacksmsProvider
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
+		setDescription(context.getString(R.string.jacksms_description));
 		
 		SmsServiceCommand command;
 		//subservices commands list
@@ -261,6 +263,8 @@ public class JacksmsProvider
 			//breaks the reply and find the message
 			res.setResult(String.format(
 					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
+			//update number of messages sent in the day
+			LogicManager.updateSmsCounter(1);
 		//captcha request
 		} else {
 			//returns captcha, message contains all captcha information

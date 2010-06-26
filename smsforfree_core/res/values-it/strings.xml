@@ -4,147 +4,146 @@
     <string name="common_btnOk">Ok</string>
     <string name="common_btnYes">Si</string>
     <string name="common_btnNo">No</string>
-    <string name="common_btnCancel">Cancel</string>
-    <string name="common_mnuSave">Save</string>
+    <string name="common_btnCancel">Annulla</string>
+    <string name="common_mnuSave">Salva</string>
     <string name="common_mnuCancel">Annulla</string>
     <string name="common_msg_genericError">Errore generico: %s</string>
     <string name="common_msg_cannotsavepreferences">Spiacente, impossible salvare i dati: </string>
-    <string name="common_msg_executingCommand">Executing command...</string>
-    <string name="common_msg_appExpired">Sorry, activity expired :(</string>
-    <string name="common_msg_noReplyFromProvider">No reply from provider. Retry again, maybe the provider has problem or is down...</string>
-    <string name="common_msg_cannotSaveProviderData">Cannot save provider data:\n%s\n\nPlease, report this error to the developer.</string>
-    <string name="common_msg_cannotLoadProviderData">Cannot load provider data:\n%s\n\nPlease, report this error to the developer.</string>
-    <string name="common_msg_communicationError">Generic communication error:\n%s\n\nNetwork issues, or maybe the provider has problem or is down...</string>
-    <string name="common_msg_architecturalError">Inner application error:\n%s\n\nPlease, report it to the developer.</string>
-    <string name="common_msg_noCredentials">No credentials supplied.\nInsert them in the settings of provider or service.</string>
+    <string name="common_msg_executingCommand">Esecuzione comando...</string>
+    <string name="common_msg_appExpired">Spiacente, il programma ha terminato la sua data di validita\' :(</string>
+    <string name="common_msg_noReplyFromProvider">Nessuna risposta. Riprova ancora potrebbe essere un problema intero al provider oppure il provider e\' down...</string>
+    <string name="common_msg_cannotSaveProviderData">Non posso salvare i dati del provider:\n%s\n\nSegnalalo questo errore allo sviluppatore.</string>
+    <string name="common_msg_cannotLoadProviderData">Non posso caricare i dati del provider:\n%s\n\nSegnalalo questo errore allo sviluppatore.</string>
+    <string name="common_msg_communicationError">Errore di comunicazione generico:\n%s\n\nPotrebbe essere un problema di connessione ad Internet oppure il provider non sta funzionanto...</string>
+    <string name="common_msg_architecturalError">Errore interno all\'applicazione:\n%s\n\nSegnalalo allo sviluppatore.</string>
+    <string name="common_msg_noCredentials">Le credenziali non sono state specificate.\nInseriscile nelle impostazioni del provider o del servizio.</string>
     
 
 
 
     <!-- ActSendSms -->
-    <string name="actsendsms_title">%s - Send SMS</string>
-    <string name="actsendsms_txtDestination">Destionation number</string>
-    <string name="actsendsms_txtBody">Message</string>
-    <string name="actsendsms_btnSend">Send</string>
-    <string name="actsendsms_lblProviderMulti">Choose a provider and one of it\'s services</string>
-    <string name="actsendsms_lblProviderSingle">Choose a provider</string>
-    <string name="actsendsms_spiProvidersPrompt">Choose a provider</string>
-    <string name="actsendsms_spiServicesPrompt">Choose a service</string>
-    <string name="actsendsms_dlgPickNumber">Choose service</string>
-    <string name="actsendsms_mnuSignature">Append signature</string>
-    <string name="actsendsms_mnuCompress">Compress Text</string>
-    <string name="actsendsms_mnuSettings">Settings</string>
-    <string name="actsendsms_mnuResetData">Empty fields</string>
-    <string name="actsendsms_mnuAbout">About</string>
-    <string name="actsendsms_menuExit">Exit</string>
-    <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
-    <string name="actsendsms_msg_noProviderSelected">Choose a provider...</string>
-    <string name="actsendsms_msg_noSubserviceSelected">Choose a provider\'s service...</string>
-    <string name="actsendsms_msg_noDestination">Enter a phone number as destination...</string>
-    <string name="actsendsms_msg_wrongDestination">Enter a valid phone number as destination...</string>
-    <string name="actsendsms_msg_noMessage">Enter a message...</string>
-    <string name="actsendsms_msg_messageTooLong">Message is too long...</string>
-    <string name="actsendsms_msg_providerNotConfigured">%s provider not correctly configured, configure it in the Settings...</string>
-    <string name="actsendsms_msg_subserviceNotConfigured">Service not configured, configure it in the Settings...</string>
-    <string name="actsendsms_msg_subservicesNotPresent">No services for %s provider. Add them in the Settings...</string>
-    <string name="actsendsms_msg_emptyCaptchaCode">Captcha code is empty.\nMessage sending aborted.</string>
-    <string name="actsendsms_msg_sendingMessage">Sending message...</string>
-    <string name="actsendsms_msg_sendingCaptcha">Sending captcha code...</string>
-    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the daily maximum number of allowed attempts to send SMS of this Lite version...\n\nWant unlimited SMS and no banner? Buy the full version in the Android Market!</string>
-    <string name="actsendsms_phoneType_home">Home</string>
+    <string name="actsendsms_title">%s - Invia SMS</string>
+    <string name="actsendsms_txtDestination">Numero destinatario</string>
+    <string name="actsendsms_txtBody">Messaggio</string>
+    <string name="actsendsms_btnSend">Invia</string>
+    <string name="actsendsms_lblProviderMulti">Scegli un provider SMS e uno dei suoi servizi</string>
+    <string name="actsendsms_lblProviderSingle">Scegli un provider SMS</string>
+    <string name="actsendsms_spiProvidersPrompt">Scegli un provider SMS</string>
+    <string name="actsendsms_spiServicesPrompt">Scegli un servizio</string>
+    <string name="actsendsms_dlgPickNumber">Scegli un servizio</string>
+    <string name="actsendsms_mnuSignature">Aggiungi firma</string>
+    <string name="actsendsms_mnuCompress">Comprimi testo</string>
+    <string name="actsendsms_mnuSettings">Impostazioni</string>
+    <string name="actsendsms_mnuResetData">Svuota campi</string>
+    <string name="actsendsms_mnuAbout">Informazioni su...</string>
+    <string name="actsendsms_msg_noPhoneNumber">Non ci sono numeri telefonici per il contatto selezionato...</string>
+    <string name="actsendsms_msg_noProviderSelected">Scegli prima un provider...</string>
+    <string name="actsendsms_msg_noSubserviceSelected">Scegli prima un servizio del provider...</string>
+    <string name="actsendsms_msg_noDestination">Inserisci prima il destinatario...</string>
+    <string name="actsendsms_msg_wrongDestination">Inserisci un numero destinatario valido...</string>
+    <string name="actsendsms_msg_noMessage">Inserisci prima un messaggio...</string>
+    <string name="actsendsms_msg_messageTooLong">Il messaggio e\' troppo lungo...</string>
+    <string name="actsendsms_msg_providerNotConfigured">Il provider %s non e\' correttamente configurato, configuralo nelle Impostazioni...</string>
+    <string name="actsendsms_msg_subserviceNotConfigured">Servizio non configurato, configuralo nelle Impostazioni...</string>
+    <string name="actsendsms_msg_subservicesNotPresent">Nessun servizio per il provider %s. Aggiungilo nelle Impostazioni...</string>
+    <string name="actsendsms_msg_emptyCaptchaCode">Il codice Captcha e\' vuoto.\nInvio messaggio interrotto.</string>
+    <string name="actsendsms_msg_sendingMessage">Invio messaggio...</string>
+    <string name="actsendsms_msg_sendingCaptcha">Invio del captcha...</string>
+    <string name="actsendsms_msg_smsLimitReach">Spiacente, hai raggiunto il numero massimo di SMS giornalieri permessi in questa versione Lite del programma...\n\nAcquista nell\'Android Market la versione di SmsForFree Full per non aver piu\' limiti e banner pubblicitari</string>
+    <string name="actsendsms_phoneType_home">Casa</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
-    <string name="actsendsms_phoneType_work">Work</string>
-    <string name="actsendsms_phoneType_workfax">Work fax</string>
-    <string name="actsendsms_phoneType_homefax">Home fax</string>
-    <string name="actsendsms_phoneType_other">Other</string>
+    <string name="actsendsms_phoneType_work">Lavoro</string>
+    <string name="actsendsms_phoneType_workfax">Lavoro fax</string>
+    <string name="actsendsms_phoneType_homefax">Casa fax</string>
+    <string name="actsendsms_phoneType_other">Altro</string>
 
     
 
 
     <!-- ActSettingsMain -->
-    <string name="actsettingsmain_title">%s - Settings</string>
-    <string name="actsettingsmain_lblApplicationCategory">Application</string>
-    <string name="actsettingsmain_lblProvidersCategory">Providers</string>
-    <string name="actsettingsmain_chkResetDataAfterSend">Reset after send</string>
-    <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
+    <string name="actsettingsmain_title">%s - Impostazioni</string>
+    <string name="actsettingsmain_lblApplicationCategory">Applicazione</string>
+    <string name="actsettingsmain_lblProvidersCategory">Provider</string>
+    <string name="actsettingsmain_chkResetDataAfterSend">Cancella dopo l\'invio</string>
+    <string name="actsettingsmain_chkResetDataAfterSendSummary">Cancella destinatario e messaggio dopo aver inviato il messaggio</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
-    <string name="actsettingsmain_lblProvidersList">Providers settings</string>
-    <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
-    <string name="actsettingsmain_txtSignature">Signature</string>
-    <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
-    <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>
-    <string name="actsettingsmain_txtDefaultInternationalPrefixSummary">Default international prefix to use when another prefix is not used</string>
+    <string name="actsettingsmain_lblProvidersList">Impostazioni dei provider SMS</string>
+    <string name="actsettingsmain_lblProvidersListSummary">Specifica le impostazioni per ogni provider (username, passowrd ecc)</string>
+    <string name="actsettingsmain_txtSignature">Firma</string>
+    <string name="actsettingsmain_txtSignatureSummary">Firma da aggiungere al messaggio</string>
+    <string name="actsettingsmain_txtDefaultInternationalPrefix">Prefisso di default</string>
+    <string name="actsettingsmain_txtDefaultInternationalPrefixSummary">Prefisso internazionale da usare quando un altro prefisso non e\' specificato</string>
 
 
 
 
     <!-- ActSettingsSmsService -->
-    <string name="actsettingssmsservice_title">%s - Settings for %s</string>
-    <string name="actsettingssmsservice_btnConfigureSubservices">Configure services</string>
-	<string name="actsettingssmsservice_lblServiceName">Service name</string>    
+    <string name="actsettingssmsservice_title">%s - Impostazioni per %s</string>
+    <string name="actsettingssmsservice_btnConfigureSubservices">Configura i servizi</string>
+	<string name="actsettingssmsservice_lblServiceName">Nome servizio</string>    
 
 
 
     <!-- ActProvidersList -->
-    <string name="actproviderslist_title">%s - Providers</string>
+    <string name="actproviderslist_title">%s - Provider SMS</string>
 
 
 
 
     <!-- ActTemplatesList -->
-    <string name="acttemplateslist_title">%s - Choose a template</string>
+    <string name="acttemplateslist_title">%s - Scegli un modello</string>
 
 
 
 
     <!-- ActSubservicesList -->
-    <string name="actsubserviceslist_title">%s - Services for %s</string>
-    <string name="actsubserviceslist_lblNoSubservices">You don\'t have any service to display.\n\n To add services, press Menu and select\n\"Add new service\"</string>
-    <string name="actsubserviceslist_mnuHeaderTitle">Choose action</string>
-    <string name="actsubserviceslist_mnuDeleteService">Delete</string>
-    <string name="actsubserviceslist_mnuAddService">Add new service</string>
-    <string name="actsubserviceslist_mnuEditService">Edit</string>
-    <string name="actsubserviceslist_msgNoTemplates">No templates available...\n\nYou should download them in order to add new services.</string>
+    <string name="actsubserviceslist_title">%s - Servizi per %s</string>
+    <string name="actsubserviceslist_lblNoSubservices">Non ci sono servizi configurati.\n\n Per aggiungere un servizio, usa il tasto Menu e seleziona\n\"Aggiungi servizio\"</string>
+    <string name="actsubserviceslist_mnuHeaderTitle">Scegli azione</string>
+    <string name="actsubserviceslist_mnuDeleteService">Elimina</string>
+    <string name="actsubserviceslist_mnuAddService">Aggiungi servizio</string>
+    <string name="actsubserviceslist_mnuEditService">Modifica</string>
+    <string name="actsubserviceslist_msgNoTemplates">Nessun modello disponibile...\n\nPrima di aggiungere nuovi servizi, scarica i modelli tramite la voce nel Menu.</string>
 
 
 
 
     <!-- ActAbout -->
-    <string name="actabout_title">%s - About</string>
+    <string name="actabout_title">%s - Informazioni su...</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">Suggestions, translations, graphics ideas? Send me an email at info (at) rainbowbreeze.it\n\nA special thanks to:\n -Ilaria Mauric for the logo</string>
-    <string name="actabout_lblSentSms">Attempts to send SMS today: %s</string>
+    <string name="actabout_lblDescription">Questa applicazione spedisce messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo molto basso rispetto ad un normale SMS. Acluni di questi gateway richiedono la registrazione per poter essere usati.\n\nSuggerimenti, traduzioni, idee grafice, nuovi gateway da supportare? Manda una email a devel (at) rainbowbreeze.it\n\nRingraziamenti: Ilaria Mauric per il logo</string>
+    <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
 
 
 
 
     <!-- ActExpired -->
-    <string name="actexpired_title">%s - Expired :(</string>
-    <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nSearch for a new version of the application.</string>
+    <string name="actexpired_title">%s - Scaduto :(</string>
+    <string name="actexpired_msgExpired">Spiacente, la versione dell\'applicazione e\' scaduta.\n\n\nAcquista nell\'Android Market la versione di SmsForFree Full per non aver piu\' limiti</string>
 
 
 
 
     <!-- ActInitializationError -->
-    <string name="actinitialization_title">%s - Initialization errors :(</string>
-    <string name="actinitialization_msgErrors">Sorry, some initialization errors block this application...\n\nIf the problem persists, send an email to the author.\n\nThank you!</string>
+    <string name="actinitialization_title">%s - Errori nell\'inizializzazione :(</string>
+    <string name="actinitialization_msgErrors">Spiacente, ci sono stati alcuni errori nell\'inizializzazione del programma...\n\nRiavvia l\'applicazione e, se il problema persiste, avvisa l\'autore.\n\nGrazie!</string>
 
 
 
 
     <!-- ActCompactMessage -->
-    <string name="actcompactmessage_title">%s - Compact message</string>
-    <string name="actcompactmessage_lblHelp">Choose compress ratio of the message</string>
-    <string name="actcompactmessage_lblStatus">Original length: %s - New: %s</string>
+    <string name="actcompactmessage_title">%s - Comprimi messaggio</string>
+    <string name="actcompactmessage_lblHelp">Scegli quanto comprimere il messaggio</string>
+    <string name="actcompactmessage_lblStatus">Lunghezza originale: %s - Nuova: %s</string>
 
 
 
 
     <!-- DlgCaptch -->
-    <string name="dlgcaptcha_title">Captcha request</string>
-    <string name="dlgcaptcha_txtCodeHint">Insert captcha code</string>
+    <string name="dlgcaptcha_title">Richiesta captcha</string>
+    <string name="dlgcaptcha_txtCodeHint">Inserisci il codice captcha</string>
 
 
 </resources>

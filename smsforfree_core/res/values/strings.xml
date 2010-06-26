@@ -10,7 +10,7 @@
     <string name="common_msg_genericError">Generic error: %s</string>
     <string name="common_msg_cannotsavepreferences">Sorry, cannot save data: </string>
     <string name="common_msg_executingCommand">Executing command...</string>
-    <string name="common_msg_appExpired">Sorry, activity expired :(</string>
+    <string name="common_msg_appExpired">Sorry, application expired :(</string>
     <string name="common_msg_noReplyFromProvider">No reply from provider. Retry again, maybe the provider has problem or is down...</string>
     <string name="common_msg_cannotSaveProviderData">Cannot save provider data:\n%s\n\nPlease, report this error to the developer.</string>
     <string name="common_msg_cannotLoadProviderData">Cannot load provider data:\n%s\n\nPlease, report this error to the developer.</string>
@@ -26,9 +26,9 @@
     <string name="actsendsms_txtDestination">Destionation number</string>
     <string name="actsendsms_txtBody">Message</string>
     <string name="actsendsms_btnSend">Send</string>
-    <string name="actsendsms_lblProviderMulti">Choose a provider and one of it\'s services</string>
-    <string name="actsendsms_lblProviderSingle">Choose a provider</string>
-    <string name="actsendsms_spiProvidersPrompt">Choose a provider</string>
+    <string name="actsendsms_lblProviderMulti">Choose an SMS provider and one of it\'s services</string>
+    <string name="actsendsms_lblProviderSingle">Choose an SMS provider</string>
+    <string name="actsendsms_spiProvidersPrompt">Choose an SMS provider</string>
     <string name="actsendsms_spiServicesPrompt">Choose a service</string>
     <string name="actsendsms_dlgPickNumber">Choose service</string>
     <string name="actsendsms_mnuSignature">Append signature</string>
@@ -36,7 +36,6 @@
     <string name="actsendsms_mnuSettings">Settings</string>
     <string name="actsendsms_mnuResetData">Empty fields</string>
     <string name="actsendsms_mnuAbout">About</string>
-    <string name="actsendsms_menuExit">Exit</string>
     <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
     <string name="actsendsms_msg_noProviderSelected">Choose a provider...</string>
     <string name="actsendsms_msg_noSubserviceSelected">Choose a provider\'s service...</string>
@@ -50,7 +49,7 @@
     <string name="actsendsms_msg_emptyCaptchaCode">Captcha code is empty.\nMessage sending aborted.</string>
     <string name="actsendsms_msg_sendingMessage">Sending message...</string>
     <string name="actsendsms_msg_sendingCaptcha">Sending captcha code...</string>
-    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the daily maximum number of allowed attempts to send SMS of this Lite version...\n\nWant unlimited SMS and no banner? Buy the full version in the Android Market!</string>
+    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the daily maximum number of allowed attempts to send SMS of this Lite version...\n\nWant unlimited SMS and no banner? Buy SmsForFree Full in the Android Market!</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>
@@ -64,13 +63,13 @@
     <!-- ActSettingsMain -->
     <string name="actsettingsmain_title">%s - Settings</string>
     <string name="actsettingsmain_lblApplicationCategory">Application</string>
-    <string name="actsettingsmain_lblProvidersCategory">Providers</string>
+    <string name="actsettingsmain_lblProvidersCategory">SMS Providers</string>
     <string name="actsettingsmain_chkResetDataAfterSend">Reset after send</string>
     <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
     <string name="actsettingsmain_lblProvidersList">Providers settings</string>
-    <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each provider</string>
+    <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each SMS provider</string>
     <string name="actsettingsmain_txtSignature">Signature</string>
     <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>
@@ -114,15 +113,15 @@
     <string name="actabout_title">%s - About</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">Suggestions, translations, graphics ideas? Send me an email at info (at) rainbowbreeze.it\n\nA special thanks to:\n -Ilaria Mauric for the logo</string>
-    <string name="actabout_lblSentSms">Attempts to send SMS today: %s</string>
+    <string name="actabout_lblDescription">This application sends SMS messages worldwide using online SMS gateways, with free o very low cost per message. Depends on gateway, you may need an account in order to use it.\n\nSuggestions, translations, graphics ideas, support for new providers? Email me: devel (at) rainbowbreeze.it\n\nSpecial thanks: Ilaria Mauric for the logo</string>
+    <string name="actabout_lblSentSms">SMS sent today: %s</string>
 
 
 
 
     <!-- ActExpired -->
     <string name="actexpired_title">%s - Expired :(</string>
-    <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nSearch for a new version of the application.</string>
+    <string name="actexpired_msgExpired">Sorry, this beta version of the application has expired.\n\n\nBuy SmsForFree Full in the Android Market!.</string>
 
 
 

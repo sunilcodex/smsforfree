@@ -108,17 +108,17 @@
 				style="@style/actsettingssmsservice_txtParameterValue"
 			/>
 			
-			<TextView
-				android:id="@+id/actsettingssmsservice_lblServiceDesc"
-				style="@style/actsettingssmsservice_lblServiceDesc"
-			/>
-			
 			<Button
 				android:id="@+id/actsettingssmsservice_btnConfigsubservices"
 				style="@style/actsettingssmsservice_btnCommon"
 				android:text="@string/actsettingssmsservice_btnConfigureSubservices"
 			/>
 				
+			<TextView
+				android:id="@+id/actsettingssmsservice_lblServiceDesc"
+				style="@style/actsettingssmsservice_lblServiceDesc"
+			/>
+			
 		</LinearLayout>
 	</ScrollView>
 

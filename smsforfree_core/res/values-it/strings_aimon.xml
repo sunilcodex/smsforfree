@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="aimon_username">Username (@aimon.it)</string>
-    <string name="aimon_password">Password</string>
-    <string name="aimon_sender">Sender</string>
-    <string name="aimon_description">Invia SMS verso numeri di tutto il mondo col mittente personalizzato usando il tuo credito su aimon.it.</string>
-    <string name="aimon_idapi">Id API (106:anonymous, 59:sender, 84:sender+report)</string>
-    <string name="aimon_commandCheckCredentials">Check credentials</string>
-    <string name="aimon_commandCheckCredits">Check credits</string>
-    <string name="aimon_commandRegister">Register to Aimon</string>
-    <string name="aimon_msg_invalidCredentials">Invalid Aimon credentials :(</string>
-    <string name="aimon_msg_validCredentials">Valid Aimon credentials</string>
-    <string name="aimon_msg_serverError">Aimon internal server error</string>
-    <string name="aimon_msg_remainingCredits">Remaining credits: %s</string>
-    <string name="aimon_msg_messageQueued">Message sent.\n %s</string>
-    <string name="aimon_msg_missingParameters">Error calling Aimon provider. Please, advice the developer of the software about this error. Doing this, a correction will be available soon.\n\n%s</string>
-    <string name="aimon_serviceNameFree">Free</string>
-    <string name="aimon_serviceNameAnonymous">Anonymous (1 credit)</string>
-    <string name="aimon_serviceNameNormal">Normal (1.5 credits)</string>
-    <string name="aimon_serviceNameReport">Report (1.6 credits)</string>
+    <string name="aimon_username_desc">Username (@aimon.it)</string>
+    <string name="aimon_password_desc">Password</string>
+    <string name="aimon_sender_desc">Numero mittente</string>
+    <string name="aimon_description">Invia SMS verso numeri di tutta italia col mittente personalizzato usando il tuo credito su aimon.it.</string>
+    <string name="aimon_commandCheckCredentials">Verifica credenziali</string>
+    <string name="aimon_commandCheckCredits">Verifica credito</string>
+    <string name="aimon_commandRegister">Registrati ad Aimon</string>
+    <string name="aimon_msg_invalidCredentials">Credenziali Aimon non valide :(</string>
+    <string name="aimon_msg_validCredentials">Credenziali Aimon corrette</string>
+    <string name="aimon_msg_serverError">Errore interno del server Aimon</string>
+    <string name="aimon_msg_remainingCredits">Credito residuo: %s</string>
+    <string name="aimon_msg_messageQueued">Messaggio spedito.\n %s</string>
+    <string name="aimon_msg_missingParameters">Errore nella chiamata al provider Aimon. Avvisa l\'autore dell\'applicazione di questo errore. Cosi\' facendo, un aggiornamento al programma sara\' disponibile al piu\' presto.\n\n%s</string>
+    <string name="aimon_serviceNameFree">Gratuito</string>
+    <string name="aimon_serviceNameAnonymous">Anonimo (1 credito)</string>
+    <string name="aimon_serviceNameNormal">Normale (1.5 crediti)</string>
+    <string name="aimon_serviceNameReport">Con report (1.6 crediti)</string>
     <string name="aimon_registerLink">http://aimon.it/new/89h</string>
 </resources>
