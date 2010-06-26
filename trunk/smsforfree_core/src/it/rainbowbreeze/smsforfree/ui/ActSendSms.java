@@ -910,8 +910,6 @@ public class ActSendSms
 		} else {
 			//display returning message of the provider
 			ActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
-			//update number of messages sent in the day
-			LogicManager.updateSmsCounter(1);
 			//check if the text should be deleted
 			if (AppPreferencesDao.instance().getAutoClearMessage()) {
 				cleanDataFields();

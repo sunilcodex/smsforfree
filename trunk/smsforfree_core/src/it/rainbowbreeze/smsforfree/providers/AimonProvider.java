@@ -18,6 +18,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 /**
@@ -33,10 +34,10 @@ public class AimonProvider
 	{
 		super(dao, PARAM_NUMBER);
 
-		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.aimon_username));
-		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password));
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.aimon_username_desc));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
-		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender));
+		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender_desc));
 		setDescription(context.getString(R.string.aimon_description));
 		
 		SmsServiceCommand command;
@@ -335,6 +336,8 @@ public class AimonProvider
 		if (res.getResult().startsWith(AimonDictionary.RESULT_SENDSMS_OK)) {
 			res.setResult(String.format(
 					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
+			//update number of messages sent in the day
+			LogicManager.updateSmsCounter(1);
 			
 			//TODO
 			//at this point, i can also read the remaining credits and append it to

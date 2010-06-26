@@ -2,6 +2,7 @@
 <resources>
     <string name="jacksms_username_desc">Username</string>
     <string name="jacksms_password_desc">Password</string>
+    <string name="jacksms_description">Con JackSMS puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
     <string name="jacksms_commandLoadTemplateServices">Download JackSMS templates</string>
     <string name="jacksms_commandLoadUserSubservices">Load your JackSMS saved services</string>
     <string name="jacksms_commandRegister">Register to JackSMS</string>

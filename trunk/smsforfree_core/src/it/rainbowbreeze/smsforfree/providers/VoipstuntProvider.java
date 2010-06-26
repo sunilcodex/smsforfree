@@ -14,6 +14,7 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
+import it.rainbowbreeze.smsforfree.logic.LogicManager;
 
 public class VoipstuntProvider
 	extends SmsSingleProvider
@@ -24,10 +25,10 @@ public class VoipstuntProvider
 		super(dao, PARAM_NUMBER);
 		mDictionary = new VoipstuntDictionary();
 		
-		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.voipstunt_username));
-		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.voipstunt_password));
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.voipstunt_username_desc));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.voipstunt_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
-		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.voipstunt_sender));
+		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.voipstunt_sender_desc));
 		setDescription(context.getString(R.string.voipstunt_description));
 
 		SmsServiceCommand command;
@@ -129,7 +130,9 @@ public class VoipstuntProvider
     	//examine it the return contains confirmation if the message was sent
     	if (mDictionary.messageWasSent(res.getResult())) {
     		res.setResult(mMessages[MSG_INDEX_MESSAGE_SENT]);
-    	} else {
+			//update number of messages sent in the day
+			LogicManager.updateSmsCounter(1);
+   	} else {
     		res.setResult(mMessages[MSG_INDEX_MESSAGE_NO_SENT]);
     	}
 		

@@ -58,7 +58,6 @@
 		style="@style/actabout_lblTitles"
 		android:layout_below="@id/actabout_imgLogo"
 		android:layout_alignParentLeft="true"
-		android:layout_marginTop="15dp"
 		android:text="@string/actabout_lblDescription"
 	/>
 	
