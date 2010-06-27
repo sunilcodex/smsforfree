@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="jacksms_username_desc">Username</string>
+    <string name="jacksms_password_desc">Password</string>
+    <string name="jacksms_description">Con JackSMS puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
+    <string name="jacksms_commandLoadTemplateServices">Scarica i template di JackSMS</string>
+    <string name="jacksms_commandLoadUserSubservices">Load your JackSMS saved services</string>
+    <string name="jacksms_commandRegister">Registrati a JackSMS</string>
+    <string name="jacksms_msg_invalidCredentials">Credenziali JackSMS non valide :(</string>
+    <string name="jacksms_msg_serverError">Error del server JackSMS:\n %s</string>
+    <string name="jacksms_msg_messageSent">Messaggio spedito.\n %s</string>
+    <string name="jacksms_msg_captchaOk">Messaggio spedito.</string>
+    <string name="jacksms_msg_noCaptchaSessionId">Errore: non riesco a trovare il captcha session id... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nContatta l\'autore dell\'applicazione se il problema persiste.</string>
+    <string name="jacksms_msg_noTemplates">Strano, non ci sono modelli disponibili... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nContatta l\'autore dell\'applicazione se il problema persiste.</string>
+    <string name="jacksms_msg_noCaptcha">Strano, no c\'e\' il captcha... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nContatta l\'autore dell\'applicazione se il problema persiste.</string>
+    <string name="jacksms_msg_TemplatesListUpdated">Lista dei modelli JackSMS aggiornata.</string>
+    <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
+</resources>
