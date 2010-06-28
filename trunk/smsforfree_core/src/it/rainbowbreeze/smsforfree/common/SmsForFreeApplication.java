@@ -68,6 +68,13 @@ public class SmsForFreeApplication
 	protected boolean mIsCorrectlyInitialized;
 	public boolean isCorrectlyInitialized()
 	{ return mIsCorrectlyInitialized; }
+
+	/** Show o don't show the ads */
+	protected boolean mAdEnables;
+	public boolean isAdEnables()
+	{ return mAdEnables; }
+	public void setAdEnables(boolean newValue)
+	{ mAdEnables = newValue; }
 	
 
 

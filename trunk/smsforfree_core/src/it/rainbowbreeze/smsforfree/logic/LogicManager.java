@@ -50,6 +50,10 @@ public class LogicManager
 		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
 		SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
 		
+		//find if ads should be enabled
+		String adEnabel = context.getString(R.string.config_ShowAd);
+		SmsForFreeApplication.instance().setAdEnables("true".equalsIgnoreCase(adEnabel));
+		
 		//load configurations
 		AppPreferencesDao.instance().load(context);
 		

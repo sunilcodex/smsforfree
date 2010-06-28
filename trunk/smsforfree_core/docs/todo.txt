@@ -1,11 +1,11 @@
 CONTROLLARE
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -icone mancanti credits aimon
--migliorare l'about
+-mettere changeslog nell'about
+-mettere ad per versione lite
 
 
 
-SmsForFree permette di spedire SMS utilizzando i gateway internet che permettono di ottenere tariffe convenienti o anche messaggi gratuiti. Generalmente ogni gateway
 
 
 
