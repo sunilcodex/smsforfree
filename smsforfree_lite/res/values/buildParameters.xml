@@ -10,6 +10,9 @@
 	<!-- Lite or Normal -->
 	<string name="config_AppType">Lite</string>
 	
+	<!-- With (true) or without (false) ads -->
+	<string name="config_ShowAd">true</string>
+
 	<!-- Number of sms allowed each day foe lite version of the software-->
 	<string name="config_MaxAllowedSmsForDay">5</string>
 </resources>

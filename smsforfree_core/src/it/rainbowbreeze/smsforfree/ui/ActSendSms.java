@@ -3,6 +3,8 @@ package it.rainbowbreeze.smsforfree.ui;
 import java.net.URLDecoder;
 import java.util.List;
 
+import com.admob.android.ads.AdView;
+
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
@@ -43,6 +45,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -136,6 +140,13 @@ public class ActSendSms
         mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
         mBtnSend = (Button) findViewById(R.id.actsendsms_btnSend);
         mBtnPickContact = (ImageButton) findViewById(R.id.actsendsms_btnPickContact);
+        
+        //eventually remove ad view
+        if (!SmsForFreeApplication.instance().isAdEnables()) {
+        	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
+        	LinearLayout parent = (LinearLayout) adView.getParent();
+        	parent.removeView(adView);
+        }
 
         //set listeners
         mSpiProviders.setOnItemSelectedListener(mSpiProvidersSelectedListener);

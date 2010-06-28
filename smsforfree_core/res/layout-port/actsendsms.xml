@@ -71,21 +71,19 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-		android:orientation="horizontal"
+		android:orientation="vertical"
 	>
 		<Button
 			android:id="@+id/actsendsms_btnSend"
 			style="@style/actsendsms_btnSend"
 			android:text="@string/actsendsms_btnSend"
 			android:drawableLeft="@drawable/ic_btn_sendmessage"
-			android:layout_weight="1"
 		/>
 		
 		<com.admob.android.ads.AdView
 			android:id="@+id/actsendsms_adview"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:layout_weight="1"
 		/>
 	</LinearLayout>
 	
