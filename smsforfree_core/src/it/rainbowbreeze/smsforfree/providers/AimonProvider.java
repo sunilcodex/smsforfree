@@ -95,9 +95,10 @@ public class AimonProvider
 	
 
 	//---------- Public fields
+	public final static String ID_API_FREE = "1";
 	public final static String ID_API_ANONYMOUS_SENDER = "106";
-	public final static String ID_API_FREE_SENDER_NO_REPORT = "59";
-	public final static String ID_API_FREE_SENDER_REPORT = "84";
+	public final static String ID_API_SELECTED_SENDER_NO_REPORT = "59";
+	public final static String ID_API_SELECTED_SENDER_REPORT = "84";
 	
 	
 	
@@ -234,19 +235,25 @@ public class AimonProvider
 		//create the list of subservices
 		mSubservices = new ArrayList<SmsService>();
 		
+//		service = new SmsConfigurableService(0);
+//		service.setId(ID_API_FREE);
+//		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE]);
+//		mSubservices.add(service);
+
 		service = new SmsConfigurableService(0);
 		service.setId(ID_API_ANONYMOUS_SENDER);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS]);
 		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
-		service.setId(ID_API_FREE_SENDER_NO_REPORT);
+		service.setId(ID_API_SELECTED_SENDER_NO_REPORT);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_NORMAL]);
 		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
-		service.setId(ID_API_FREE_SENDER_REPORT);
+		service.setId(ID_API_SELECTED_SENDER_REPORT);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_REPORT]);
+		service.setMaxMessageLenght(112);
 		mSubservices.add(service);
 		
 		return new ResultOperation<Void>();
@@ -271,6 +278,8 @@ public class AimonProvider
     	String okSender;
     	String okDestination;
     	String okBody;
+    	HashMap<String, String> params;
+    	String url;
     	
     	//sender is a phone number and starts with international prefix
     	if (sender.substring(0, 1).equals("+")) {
@@ -318,15 +327,30 @@ public class AimonProvider
 		okBody = Base64.encodeBytes(okBody.getBytes());
     	
     	
-    	HashMap<String, String> params = new HashMap<String, String>();
-    	appendCredential(params, username, password);
-    	params.put(AimonDictionary.PARAM_SENDER, okSender);
-    	params.put(AimonDictionary.PARAM_DESTINATION, okDestination);
-    	params.put(AimonDictionary.PARAM_BODY, okBody);
-    	params.put(AimonDictionary.PARAM_ID_API, idApi);
+    	params = new HashMap<String, String>();
+//    	//sms free
+//		if (ID_API_FREE.equalsIgnoreCase(idApi)) {
+//			url = AimonDictionary.URL_SEND_SMS_FREE;
+//			params.put("tiposms", "1");
+//			params.put("tipomittente", "1");
+//			params.put("prefisso_internazionale", "39 (Italy)");
+//			params.put("mittente", okSender);
+//			params.put("testo", okBody);
+//			params.put("destinatario", okDestination);
+//			params.put("caratteri", String.valueOf(okBody.length()));
+//			
+//		//other payed sms
+//		} else {
+			url = AimonDictionary.URL_SEND_SMS;
+	    	appendCredential(params, username, password);
+	    	params.put(AimonDictionary.PARAM_SENDER, okSender);
+	    	params.put(AimonDictionary.PARAM_DESTINATION, okDestination);
+	    	params.put(AimonDictionary.PARAM_BODY, okBody);
+	    	params.put(AimonDictionary.PARAM_ID_API, idApi);
+//		}
     	
     	//sends the sms
-    	ResultOperation<String> res = doRequest(AimonDictionary.URL_SEND_SMS, null, params);
+    	ResultOperation<String> res = doRequest(url, null, params);
     	//checks for applications errors
     	if (res.HasErrors()) return res;
     	//checks for aimon errors

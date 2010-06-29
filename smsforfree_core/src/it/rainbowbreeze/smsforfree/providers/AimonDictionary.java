@@ -14,6 +14,7 @@ public class AimonDictionary {
 	public final static String URL_BASE = "https://secure.apisms.it/";
 	public final static String URL_GET_CREDIT = URL_BASE + "http/get_credit";
 	public final static String URL_SEND_SMS = URL_BASE + "http/send_sms";
+	public static final String URL_SEND_SMS_FREE = "http://aimon.it/index.php?cmd=smsgratis&sez=smsgratis";
 
 	public final static String PARAM_USERNAME = "authlogin";
 	public final static String PARAM_PASSWORD = "authpasswd";
@@ -21,10 +22,6 @@ public class AimonDictionary {
 	public final static String PARAM_DESTINATION = "destination";
 	public final static String PARAM_BODY = "body";
 	public final static String PARAM_ID_API = "id_api";
-	
-	public static final String ID_API_MITTENTE_FISSO = "106"; 
-	public static final String ID_API_MITTENTE_LIBERO = "59"; 
-	public static final String ID_API_MITTENTE_LIBERO_REPORT = "84"; 
 	
 	public static final String RESULT_SENDSMS_OK = "+01 SMS Queued";
 	public static final String RESULT_ERROR_ACCESS_DENIED = "-3-";
