@@ -274,13 +274,13 @@ public class ActSendSms
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	super.onCreateOptionsMenu(menu);
+    	if (!super.onCreateOptionsMenu(menu)) return false;
     	
     	//errors on initialization
     	if (!SmsForFreeApplication.instance().isCorrectlyInitialized()) return true;
 
     	menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
-		.setIcon(android.R.drawable.ic_menu_info_details);
+    		.setIcon(android.R.drawable.ic_menu_info_details);
     	//menu ends here if the application is expired
     	if (SmsForFreeApplication.instance().isAppExpired()) return true;
 
