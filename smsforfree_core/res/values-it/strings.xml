@@ -115,6 +115,9 @@
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
     <string name="actabout_lblDescription">Questa applicazione spedisce messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo molto basso rispetto ad un normale SMS. Alcuni di questi gateway richiedono la registrazione per poter essere usati.\n\nSuggerimenti, traduzioni, idee grafice, nuovi gateway da supportare? Manda una email a devel (at) rainbowbreeze.it\n\nRingraziamenti: Ilaria Mauric per il logo</string>
     <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
+    <string name="actabout_mnuChangeslog">Changeslog</string>
+    <string name="actabout_msgChangeslogTitle">Changeslog</string>
+    <string name="actabout_msgChangeslog">v 1.2:\n -Fix per grandezza captcha\n\nv 1.0:\n -Prima release</string>
 
 
 

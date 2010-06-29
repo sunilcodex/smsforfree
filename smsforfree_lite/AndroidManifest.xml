@@ -2,7 +2,9 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="it.rainbowbreeze.smsforfree.lite"
-	android:versionName="1.1" android:versionCode="2">
+	android:versionName="1.1"
+	android:versionCode="2"
+>
     <application
     	android:icon="@drawable/ic_launcher_smsforfree"
     	android:label="@string/common_appName"
