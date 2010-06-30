@@ -4,11 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,7 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
+
 
 public class WebserviceClient
 {
@@ -34,6 +29,10 @@ public class WebserviceClient
 	{ }
 
 	//---------- Private fields
+	//indicate that a conversation is in progress
+	private boolean mIsConversationInProgress = false;
+	//client used during a conversation
+	private DefaultHttpClient mHttpClient;
 
 	
 	
@@ -141,71 +140,26 @@ public class WebserviceClient
 		
 		//update=2 login ok!
 	}
-	
-	
-	public String requestPostQuick(
-			String urlAddress,
-			HashMap<String, String> postValues
-		)
-		throws MalformedURLException, IOException
-	{
-		//http://blog.dahanne.net/2009/08/16/how-to-access-http-resources-from-android/
-		
-		StringBuilder data = new StringBuilder();
-		
-		// Construct data
-		if (postValues != null)
-		{
-			Iterator<String> it = postValues.keySet().iterator();
-			String k, v;
-			while (it.hasNext()) {
-				k = it.next();
-				v = postValues.get(k);
-				
-				data.append(URLEncoder.encode(k, HTTP.UTF_8));
-				data.append("=");
- 				//data.append(URLEncoder.encode(v, HTTP.UTF_8));
- 				data.append(v);
-				if (it.hasNext()) data.append("&");
-			}
-		}		
 
-		// Send data
-		URL url = new URL(urlAddress);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setReadTimeout(10000 /* milliseconds */);
-		conn.setConnectTimeout(15000 /* milliseconds */);
-		conn.setRequestMethod("POST");
-		conn.setDoInput(true);
-		conn.setDoOutput(true);
-		//conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-		
-//		conn.setUseCaches(false);
-		conn.setAllowUserInteraction(false);
-//		conn.setRequestProperty("Content-type", "text/xml; charset=" + "UTF-8");
-		conn.setRequestProperty("Content-type", "text/plain");
-		
-		OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-		wr.write(data.toString());
-		wr.flush();
-		
-		// Get the response
-		String result = convertStreamToString(conn.getInputStream());
-		//Field summary: http://java.sun.com/j2se/1.4.2/docs/api/java/net/HttpURLConnection.html
-		//int response = conn.getResponseCode();
-		wr.close();
-		
-		return result;
-		
-//		BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//		
-//		String line;
-//		while ((line = rd.readLine()) != null)
-//		{
-//			// Process line...
-//			
-//		}
-//		rd.close(); 		
+	
+
+	/**
+	 * Start a conversation, where cookies and other states are
+	 * preserver between a request (get or post) and the following
+	 * 
+	 * To stop a conversation, call stopConversation
+	 */
+	public void startConversation() {
+		mIsConversationInProgress = true;
+		mHttpClient = new DefaultHttpClient();
+	}
+
+	/**
+	 * End a conversation previously started
+	 */
+	public void endConversation() {
+		mIsConversationInProgress = false;
+		mHttpClient = null;
 	}
 
 
@@ -225,8 +179,12 @@ public class WebserviceClient
 		HttpResponse response;
 		String result;
 
-		// create the client
-		httpClient = new DefaultHttpClient();
+		if (mIsConversationInProgress) {
+			httpClient = mHttpClient;
+		} else {
+			// create the client
+			httpClient = new DefaultHttpClient();
+		}
 
 		result = "";
 	
