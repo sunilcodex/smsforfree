@@ -11,12 +11,11 @@
 	>
 		<ImageView
 			android:id="@+id/dlgcaptcha_imgCaptcha"
-			android:layout_width="150dp"
-			android:layout_height="75dp"
+			android:layout_width="220dp"
+			android:layout_height="100dp"
 			android:layout_alignParentTop="true"
 			android:layout_centerHorizontal="true"
 			android:scaleType="fitCenter"
-			android:layout_marginTop="10dp"
 		/>
 		
 		<EditText
