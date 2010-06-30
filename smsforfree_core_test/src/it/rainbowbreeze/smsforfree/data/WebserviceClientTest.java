@@ -49,7 +49,7 @@ public class WebserviceClientTest
         url = "http://aimon.it/?cmd=smsgratis";
         params = new HashMap<String, String>();
         params.put("inputUsername", "rainbowbreeze@aimon.it");
-        params.put("inputPassword", "7941m0n");
+        params.put("inputPassword", "XXXXXXXXXXX");
         params.put("submit", "procedi");
 		
 		
