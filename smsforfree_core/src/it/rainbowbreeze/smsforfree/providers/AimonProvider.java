@@ -238,6 +238,7 @@ public class AimonProvider
 //		service = new SmsConfigurableService(0);
 //		service.setId(ID_API_FREE);
 //		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE]);
+//		service.setMaxMessageLenght(124);
 //		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
@@ -464,15 +465,15 @@ public class AimonProvider
 		//no reply from server is already handled in doRequest method
 				
 		//access denied
-		if (reply.startsWith(AimonDictionary.RESULT_ERROR_ACCESS_DENIED)) {
+		if (reply.startsWith(AimonDictionary.RESULT_ERRORCODE_ACCESS_DENIED)) {
 			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 
 		//server error
-		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_INTERNAL_SERVER_ERROR)) {
+		} else if (reply.startsWith(AimonDictionary.RESULT_ERRORCODE_INTERNAL_SERVER_ERROR)) {
 			res = mMessages[MSG_INDEX_SERVER_ERROR];
 		
 		//missing parameters
-		} else if (reply.startsWith(AimonDictionary.RESULT_ERROR_MISSING_PARAMETERS)) {
+		} else if (reply.startsWith(AimonDictionary.RESULT_ERRORCODE_MISSING_PARAMETERS)) {
 			res = String.format(mMessages[MSG_INDEX_MISSING_PARAMETERS], reply);
 		}
 	

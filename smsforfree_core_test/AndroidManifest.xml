@@ -13,6 +13,10 @@
     </application>
 
     <uses-sdk android:minSdkVersion="4" />
+    
+    <!-- Cannot use a direct link to core project because it's a library
+         so the apk is not created and the instrumentation test needs this
+         apk in order to work :( -->
     <instrumentation
     	android:targetPackage="it.rainbowbreeze.smsforfree"
     	android:name="android.test.InstrumentationTestRunner"
