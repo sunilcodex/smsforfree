@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.data;
 
+import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -38,23 +40,37 @@ public class WebserviceClientTest
 	
 	/**
 	 * Test a conversation using aimon api
+	 * @throws IOException 
+	 * @throws ClientProtocolException 
 	 */
 	public void testAimonConversation()
+		throws ClientProtocolException, IOException
 	{
 		String url;
 		HashMap<String, String> params;
+		AimonDictionary dictionary = new AimonDictionary();
+		String resultMessage;
 		
 		mClient.startConversation();
 		
-        url = "http://aimon.it/?cmd=smsgratis";
+        url = AimonDictionary.URL_SEND_SMS_FREE_1;
         params = new HashMap<String, String>();
         params.put("inputUsername", "rainbowbreeze@aimon.it");
-        params.put("inputPassword", "XXXXXXXXXXX");
         params.put("submit", "procedi");
-		
+
+        //wrong password
+        params.put("inputPassword", "XXXXXXXXXXX");
+        resultMessage =  mClient.requestPost(url, null, params);
+        assertTrue(dictionary.isFreeSmsLoginInvalidCredentials(resultMessage));
+        
+        //good credentials
+        params.put("inputPassword", "XXXXX");
+        resultMessage =  mClient.requestPost(url, null, params);
+        assertTrue(dictionary.isFreeSmsLoginOk(resultMessage, "rainbowbreeze@aimon.it"));
+        
 		
 		String msg = "ciao è ora che ti Alzi!!! Per il resto, come stai?";
-		url = "http://aimon.it/index.php?cmd=smsgratis&sez=smsgratis";
+		url = AimonDictionary.URL_SEND_SMS_FREE_2;
 		params.clear();
 		params.put("tiposms", "1");
 		params.put("tipomittente", "1");
@@ -65,6 +81,10 @@ public class WebserviceClientTest
 		params.put("destinatario", "3927686894");
 		params.put("btnSubmit", "Invia SMS");		
 		
+		//logout
+		url = AimonDictionary.URL_SEND_SMS_FREE_3;
+		mClient.requestGet(url);
+
 		mClient.endConversation();
 	}
 
