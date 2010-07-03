@@ -25,7 +25,7 @@ public class AimonProviderTest
 	private static final String USERNAME = "f.martinelli@aimon.it";
 	private static final String PASSWORD = "smsf0rfr33";
 	private static final String SENDER = "+393912345678";
-	private static final String DESTINATION = "XXXXX";
+	private static final String DESTINATION = "3927686894";
 	private static final String USER_CREDITS = "65";
 
 	private SmsProvider mProvider;
@@ -108,7 +108,6 @@ public class AimonProviderTest
 	}
 
 
-
 	/**
 	 * Test the call for credit
 	 */
@@ -129,16 +128,16 @@ public class AimonProviderTest
 
 
 
-	public void _testFreeSmsWrongCredentials()
+	public void testFreeSmsWrongCredentials()
 	{
 		ResultOperation<String> res;
 		
 		//wrong password
 		mProvider.setParameterValue(1, "XXXXX");
-		res = mProvider.sendMessage(AimonProvider.ID_API_FREE, DESTINATION, "ciao da me");
+		res = mProvider.sendMessage("0", DESTINATION, "ciao da me");
 		
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
-		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_validCredentials), res.getResult());
+		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
 	}
 
 
