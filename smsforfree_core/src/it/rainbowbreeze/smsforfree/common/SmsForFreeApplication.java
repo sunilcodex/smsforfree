@@ -10,6 +10,16 @@ import android.app.Application;
 public class SmsForFreeApplication
 	extends Application
 {
+	//---------- Constructor
+	public SmsForFreeApplication()
+	{
+		super();
+		//this is the first instruction, so no fear that mInstance is null is following calls
+		mInstance = this;
+	}
+	
+	
+	
 	//---------- Private fields
 
 	
@@ -86,9 +96,6 @@ public class SmsForFreeApplication
 	public void onCreate()
 	{
 		super.onCreate();
-		
-		//this is the first instruction, so no fear that mInstance is null is following calls
-		mInstance = this;
 		
 		//execute begin task
 		ResultOperation<Void> res = LogicManager.executeBeginTask(this);

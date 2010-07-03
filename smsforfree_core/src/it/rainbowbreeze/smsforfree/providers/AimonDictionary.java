@@ -9,13 +9,19 @@ public class AimonDictionary
 	
 	
 	//---------- Private fields
-	private static final String RESULT_FREE_ERRORMSG_INVALID_CREDENTIALS = "Nome utente e/o password non riconosciute";
+	private static final String RESULT_FREE_ERROR_INVALID_CREDENTIALS = "Nome utente e/o password non riconosciute";
+	private static final String RESULT_FREE_ERROR_NOT_ENOUGH_CREDIT = "Credito non sufficiente per spedire altri messaggi";
+	private static final String RESULT_FREE_ERROR_INVALID_SENDER = "Mittente non valido";
+	private static final String RESULT_FREE_ERROR_INVALID_DESTINATION = "Il destinatario deve essere un numero di telefono" ;
+	private static final String RESULT_FREE_ERROR_EMPTY_DESTINATION = "Destinatario richiesto";
+	private static final String RESULT_FREE_ERROR_EMPTY_BODY = "Testo richiesto";
+	private static final String RESULT_FREE_ERROR_UNSUPPORTED_ENCODING = "Carattere GSM non supportato";
+	private static final String RESULT_FREE_ERROR_GENERIC_SERVER_ERROR = "Messaggio non inviato per errore di spedizione";
+	private static final String RESULT_FREE_ERROR_DAILY_LIMIT_REACHED = "limite massimo di sms inviabili gratis in 24 ore";
+	private static final String RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED = "limite massimo di sms inviabili gratis in 30 giorni";
 	private static final String RESULT_FREE_WELCOME_MESSAGE_FOR_THE_USER = "Ciao <b>%s</b>!";
-	private static final String RESULT_FREE_ERRORMSG_NOT_ENOUGH_CREDIT = "Credito non sufficiente per spedire altri messaggi";
 	private static final String RESULT_FREE_SENT_OK = "Messaggio inviato con successo";
-
 	
-
 
 	//---------- Public fields
 	public final static String URL_BASE = "https://secure.apisms.it/";
@@ -67,7 +73,7 @@ public class AimonDictionary
 	 * Checks if the login for free sms returns an invalid credential page
 	 */
 	public boolean isFreeSmsLoginInvalidCredentials(String message) {
-		return message.contains(RESULT_FREE_ERRORMSG_INVALID_CREDENTIALS);
+		return message.contains(RESULT_FREE_ERROR_INVALID_CREDENTIALS);
 	}
 	
 	/**
@@ -76,6 +82,54 @@ public class AimonDictionary
 	public boolean isFreeSmsSendMessageOk(String message) {
 		return message.contains(RESULT_FREE_SENT_OK);
 	}
+	
+	
+	public boolean isFreeSmsNotEnoughCredit(String message) {
+		return message.contains(RESULT_FREE_ERROR_NOT_ENOUGH_CREDIT);
+	}
+	
+	public boolean isFreeSmsInvalidSender(String message) {
+		return message.contains(RESULT_FREE_ERROR_INVALID_SENDER);
+	}
+	
+	public boolean isFreeSmsInvalidDestination(String message) {
+		return message.contains(RESULT_FREE_ERROR_INVALID_DESTINATION);
+	}
+	
+	public boolean isFreeSmsEmptyDestination(String message) {
+		return message.contains(RESULT_FREE_ERROR_EMPTY_DESTINATION);
+	}
+	
+	public boolean isFreeSmsEmptyBody(String message) {
+		return message.contains(RESULT_FREE_ERROR_EMPTY_BODY);
+	}
+	
+	public boolean isFreeSmsUnsupportedEncoding(String message) {
+		return message.contains(RESULT_FREE_ERROR_UNSUPPORTED_ENCODING);
+	}
+	
+	public boolean isFreeSmsGenericServerError(String message) {
+		return message.contains(RESULT_FREE_ERROR_GENERIC_SERVER_ERROR);
+	}
+	
+	public boolean isFreeSmsDailyLimitReached(String message) {
+		return message.contains(RESULT_FREE_ERROR_DAILY_LIMIT_REACHED);
+	}
+	
+	public boolean isFreeSmsMonthlyLimitReached(String message) {
+		return message.contains(RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED);
+	}
+
+	/**
+	 * Checks if sms was sent without errors
+	 * @param webserviceReply
+	 * @return
+	 */
+	public boolean isSmsCorrectlySent(String webserviceReply) {
+		if (null == webserviceReply ) return false;
+		return webserviceReply.startsWith(RESULT_SENDSMS_OK);
+	}
+
 	
 	
 	

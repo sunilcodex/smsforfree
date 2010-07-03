@@ -1,9 +1,8 @@
-CONTROLLARE
+TODOLIST
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -icone mancanti credits aimon
--mettere changeslog nell'about
--mettere ad per versione lite
-
+-mettere bottone che ripresenta ultimo messaggio di invio sms
+-mettere codice per invio sms, non solo generico codice di ok
 
 
 

@@ -18,7 +18,6 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
-import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 /**
@@ -30,41 +29,9 @@ public class AimonProvider
 	extends SmsMultiProvider
 {
 	//---------- Ctors
-	public AimonProvider(ProviderDao dao, Context context)
+	public AimonProvider(ProviderDao dao)
 	{
 		super(dao, PARAM_NUMBER);
-
-		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.aimon_username_desc));
-		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password_desc));
-		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
-		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender_desc));
-		setDescription(context.getString(R.string.aimon_description));
-		
-		SmsServiceCommand command;
-		//initializes the command list
-		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_REGISTER, context.getString(R.string.aimon_commandRegister), 1, R.drawable.ic_menu_invite); 
-		mProviderSettingsActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 2, R.drawable.ic_menu_login);
-		mProviderSettingsActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 3);
-		mProviderSettingsActivityCommands.add(command);
-		
-		//save some messages
-		mMessages = new String[10];
-		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
-		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
-		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
-		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.aimon_msg_remainingCredits);
-		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.aimon_msg_messageQueued);
-		mMessages[MSG_INDEX_MISSING_PARAMETERS] = context.getString(R.string.aimon_msg_missingParameters);
-		mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS] = context.getString(R.string.aimon_serviceNameAnonymous);
-		mMessages[MSG_INDEX_SERVICENANE_FREE] = context.getString(R.string.aimon_serviceNameFree);
-		mMessages[MSG_INDEX_SERVICENANE_NORMAL] = context.getString(R.string.aimon_serviceNameNormal);
-		mMessages[MSG_INDEX_SERVICENANE_REPORT] = context.getString(R.string.aimon_serviceNameReport);
 	}
 	
 	
@@ -85,12 +52,12 @@ public class AimonProvider
 	private final static int MSG_INDEX_SERVICENANE_NORMAL = 8;
 	private final static int MSG_INDEX_SERVICENANE_REPORT = 9;
 	
-	private final static int COMMAND_CHECKCREDENTIALS = 1000;
-	private final static int COMMAND_CHECKCREDITS = 1001;
+	public final static int COMMAND_CHECKCREDENTIALS = 1000;
+	public final static int COMMAND_CHECKCREDITS = 1001;
 	private final static int COMMAND_REGISTER = 1002;
 	
 	private String[] mMessages;
-	
+	private AimonDictionary mDictionary;
 	
 	
 
@@ -135,26 +102,134 @@ public class AimonProvider
     //---------- Public methods
 	
 	@Override
-	public ResultOperation<Void> initProvider(Context context) {
-		ResultOperation<Void> res;
+	public ResultOperation<Void> initProvider(Context context)
+	{
+		mDictionary = new AimonDictionary();
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.aimon_username_desc));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.aimon_password_desc));
+		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
+		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender_desc));
+		setDescription(context.getString(R.string.aimon_description));
 		
-		res = loadParameters(context);
-		if (res.HasErrors()) return res;
-		res = loadSubservices(context);
-		if (res.HasErrors()) return res;
+		SmsServiceCommand command;
+		//initializes the command list
+		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
+		command = new SmsServiceCommand(
+				COMMAND_REGISTER, context.getString(R.string.aimon_commandRegister), 1, R.drawable.ic_menu_invite); 
+		mProviderSettingsActivityCommands.add(command);
+		command = new SmsServiceCommand(
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 2, R.drawable.ic_menu_login);
+		mProviderSettingsActivityCommands.add(command);
+		command = new SmsServiceCommand(
+				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 3);
+		mProviderSettingsActivityCommands.add(command);
 		
-		return res;
+		//save some messages
+		mMessages = new String[10];
+		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
+		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
+		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
+		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.aimon_msg_remainingCredits);
+		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.aimon_msg_messageQueued);
+		mMessages[MSG_INDEX_MISSING_PARAMETERS] = context.getString(R.string.aimon_msg_missingParameters);
+		mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS] = context.getString(R.string.aimon_serviceNameAnonymous);
+		mMessages[MSG_INDEX_SERVICENANE_FREE] = context.getString(R.string.aimon_serviceNameFree);
+		mMessages[MSG_INDEX_SERVICENANE_NORMAL] = context.getString(R.string.aimon_serviceNameNormal);
+		mMessages[MSG_INDEX_SERVICENANE_REPORT] = context.getString(R.string.aimon_serviceNameReport);
+
+		//call other provider's initializations
+		return super.initProvider(context);
 	}
 	
     @Override
-	public ResultOperation<String> sendMessage(String serviceId, String destination, String body) {
-		return sendSms(
-				getParameterValue(PARAM_INDEX_USERNAME),
-				getParameterValue(PARAM_INDEX_PASSWORD),
-				getParameterValue(PARAM_INDEX_SENDER),
-				destination,
-				body,
-				serviceId);
+	public ResultOperation<String> sendMessage(String serviceId, String destination, String body)
+	{
+    	String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+		String sender = getParameterValue(PARAM_INDEX_SENDER);
+
+    	//arguments check
+    	if (!checkCredentialsValidity(username, password))
+    		return getExceptionForInvalidCredentials();
+
+    	//parameters correction
+    	String okSender;
+    	String okDestination;
+    	String okBody;
+    	
+    	//sender is a phone number and starts with international prefix
+    	if (sender.substring(0, 1).equals("+")) {
+    		//checks the length
+    		if (sender.length() > AimonDictionary.MAX_SENDER_LENGTH_NUMERIC) {
+    			okSender = sender.substring(0, AimonDictionary.MAX_SENDER_LENGTH_NUMERIC);
+    		} else {
+    			okSender = sender;
+    		}
+		//sender is a phone number, add international prefix
+    	} else {
+        	if (TextUtils.isDigitsOnly(sender)) {
+        		//find prefix to use
+        		String prefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+        		//append it to number
+        		okSender = prefix + sender;
+        		//and check length
+        		if (okSender.length() > AimonDictionary.MAX_SENDER_LENGTH_NUMERIC) {
+        			okSender = okSender.substring(0, AimonDictionary.MAX_SENDER_LENGTH_NUMERIC);
+        		}
+        	} else {
+        		//sender is a name, checks length and encodes it
+            	if (sender.length() > AimonDictionary.MAX_SENDER_LENGTH_ALPHANUMERIC){
+            		okSender = sender.substring(0, AimonDictionary.MAX_SENDER_LENGTH_ALPHANUMERIC);
+            	} else {
+            		okSender = sender;
+            	}
+        	}
+    	}
+    	okSender = Base64.encodeBytes(okSender.getBytes());
+
+    	//check the destination
+    	okDestination = transalteInInternationalFormat(destination);
+		//removes begin + char
+		okDestination = okDestination.substring(1);
+
+		//checks body length
+    	if (body.length() > AimonDictionary.MAX_BODY_LENGTH) {
+    		okBody = body.substring(0, AimonDictionary.MAX_BODY_LENGTH);
+    	} else {
+    		okBody = body;
+    	}
+    	//TODO : remove unsupported characters
+    	//encode the body
+		okBody = Base64.encodeBytes(okBody.getBytes());
+    	
+    	
+		//find how to send the sms (via httpform or via api)
+		ResultOperation<String> res;
+		if (ID_API_FREE.equalsIgnoreCase(serviceId)) {
+	    	//send free sms
+			res = sendSmsFree(username, password, serviceId, okSender, okDestination, okBody);
+		} else {
+			//other type of payed sms
+			res = sendSmsWithApi(username, password, serviceId, okSender, okDestination, okBody);
+		}
+    	
+    	//checks for applications errors
+    	if (res.HasErrors()) return res;
+    	//checks for aimon errors
+    	if (parseReplyForErrors(res)) return res;
+    	
+    	//examine it the return contains confirmation if the message was sent
+    	if (mDictionary.isSmsCorrectlySent(res.getResult())) {
+			res.setResult(String.format(
+					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
+			
+			//TODO
+			//at this point, i can also read the remaining credits and append it to
+			//the message
+		}
+		
+		return res;    	
+		
 	}
 
 	@Override
@@ -220,11 +295,11 @@ public class AimonProvider
 
 	@Override
 	protected ResultOperation<Void> loadTemplates(Context context)
-	{ return null; }
+	{ return new ResultOperation<Void>(); }
 
 	@Override
 	protected ResultOperation<Void> saveTemplates(Context context)
-	{ return null; }
+	{ return new ResultOperation<Void>(); }
 
 	@Override
 	protected ResultOperation<Void> loadSubservices(Context context)
@@ -235,11 +310,17 @@ public class AimonProvider
 		//create the list of subservices
 		mSubservices = new ArrayList<SmsService>();
 		
-//		service = new SmsConfigurableService(0);
-//		service.setId(ID_API_FREE);
-//		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE]);
-//		service.setMaxMessageLenght(124);
-//		mSubservices.add(service);
+		service = new SmsConfigurableService(0);
+		service.setId("0");
+		service.setName("Mittente Fisso");
+		service.setMaxMessageLenght(124);
+		mSubservices.add(service);
+
+		service = new SmsConfigurableService(0);
+		service.setId(ID_API_FREE);
+		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE]);
+		service.setMaxMessageLenght(124);
+		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
 		service.setId(ID_API_ANONYMOUS_SENDER);
@@ -259,118 +340,10 @@ public class AimonProvider
 		
 		return new ResultOperation<Void>();
 	}
-
-
-	/**
-	 * Sends an sms
-	 */
-	private ResultOperation<String> sendSms(
-    		String username,
-    		String password,
-    		String sender,
-    		String destination,
-    		String body,
-    		String idApi)
-    {
-    	//args check
-    	if (!checkCredentialsValidity(username, password))
-    		return getExceptionForInvalidCredentials();
-    	
-    	String okSender;
-    	String okDestination;
-    	String okBody;
-    	HashMap<String, String> params;
-    	String url;
-    	
-    	//sender is a phone number and starts with international prefix
-    	if (sender.substring(0, 1).equals("+")) {
-    		//checks the length
-    		if (sender.length() > AimonDictionary.MAX_SENDER_LENGTH_NUMERIC) {
-    			okSender = sender.substring(0, AimonDictionary.MAX_SENDER_LENGTH_NUMERIC);
-    		} else {
-    			okSender = sender;
-    		}
-		//sender is a phone number, add international prefix
-    	} else {
-        	if (TextUtils.isDigitsOnly(sender)) {
-        		//find prefix to use
-        		String prefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
-        		//append it to number
-        		okSender = prefix + sender;
-        		//and check length
-        		if (okSender.length() > AimonDictionary.MAX_SENDER_LENGTH_NUMERIC) {
-        			okSender = okSender.substring(0, AimonDictionary.MAX_SENDER_LENGTH_NUMERIC);
-        		}
-        	} else {
-        		//sender is a name, checks length and encodes it
-            	if (sender.length() > AimonDictionary.MAX_SENDER_LENGTH_ALPHANUMERIC){
-            		okSender = sender.substring(0, AimonDictionary.MAX_SENDER_LENGTH_ALPHANUMERIC);
-            	} else {
-            		okSender = sender;
-            	}
-        	}
-    	}
-    	okSender = Base64.encodeBytes(okSender.getBytes());
-
-    	//check the destination
-    	okDestination = transalteInInternationalFormat(destination);
-		//removes begin + char
-		okDestination = okDestination.substring(1);
-
-		//checks body length
-    	if (body.length() > AimonDictionary.MAX_BODY_LENGTH) {
-    		okBody = body.substring(0, AimonDictionary.MAX_BODY_LENGTH);
-    	} else {
-    		okBody = body;
-    	}
-    	//TODO : remove unsupported characters
-    	//encode the body
-		okBody = Base64.encodeBytes(okBody.getBytes());
-    	
-    	
-    	params = new HashMap<String, String>();
-//    	//sms free
-//		if (ID_API_FREE.equalsIgnoreCase(idApi)) {
-//			url = AimonDictionary.URL_SEND_SMS_FREE;
-//			params.put("tiposms", "1");
-//			params.put("tipomittente", "1");
-//			params.put("prefisso_internazionale", "39 (Italy)");
-//			params.put("mittente", okSender);
-//			params.put("testo", okBody);
-//			params.put("destinatario", okDestination);
-//			params.put("caratteri", String.valueOf(okBody.length()));
-//			
-//		//other payed sms
-//		} else {
-			url = AimonDictionary.URL_SEND_SMS;
-	    	appendCredential(params, username, password);
-	    	params.put(AimonDictionary.PARAM_SENDER, okSender);
-	    	params.put(AimonDictionary.PARAM_DESTINATION, okDestination);
-	    	params.put(AimonDictionary.PARAM_BODY, okBody);
-	    	params.put(AimonDictionary.PARAM_ID_API, idApi);
-//		}
-    	
-    	//sends the sms
-    	ResultOperation<String> res = doRequest(url, null, params);
-    	//checks for applications errors
-    	if (res.HasErrors()) return res;
-    	//checks for aimon errors
-    	if (parseReplyForErrors(res)) return res;
-    	
-    	//examine it the return contains confirmation if the message was sent
-		if (res.getResult().startsWith(AimonDictionary.RESULT_SENDSMS_OK)) {
-			res.setResult(String.format(
-					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
-			//update number of messages sent in the day
-			LogicManager.updateSmsCounter(1);
-			
-			//TODO
-			//at this point, i can also read the remaining credits and append it to
-			//the message
-		}
-		
-		return res;    	
-    }
+	
+	@Override
+	public ResultOperation<Void> saveSubservices(Context context)
+	{ return new ResultOperation<Void>(); }
 
 
 	/**
@@ -485,9 +458,66 @@ public class AimonProvider
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
     		resultToAnalyze.setResult(res);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     		return true;
     	} else {
     		return false;
     	}
 	}
+	private ResultOperation<String> sendSmsFree(
+			String username,
+			String password,
+			String idApi,
+			String sender,
+			String destination,
+			String body)
+	{
+		HashMap<String, String> params = new HashMap<String, String>();
+
+    	String url = AimonDictionary.URL_SEND_SMS_FREE_1;
+		appendCredential(params, username, password);
+		params.put(AimonDictionary.PARAM_SENDER, sender);
+		params.put(AimonDictionary.PARAM_DESTINATION, destination);
+		params.put(AimonDictionary.PARAM_BODY, body);
+		params.put(AimonDictionary.PARAM_ID_API, idApi);
+		
+		//send the sms
+		ResultOperation<String> res = doRequest(url, null, params);
+
+		return res;
+	}
+
+
+	/**
+	 * @param username
+	 * @param password
+	 * @param idApi
+	 * @param okSender
+	 * @param okDestination
+	 * @param okBody
+	 * @param params
+	 * @return
+	 */
+	private ResultOperation<String> sendSmsWithApi(
+			String username,
+			String password,
+			String idApi,
+			String sender,
+			String destination,
+			String body)
+	{
+		HashMap<String, String> params = new HashMap<String, String>();
+
+    	String url = AimonDictionary.URL_SEND_SMS;
+		appendCredential(params, username, password);
+		params.put(AimonDictionary.PARAM_SENDER, sender);
+		params.put(AimonDictionary.PARAM_DESTINATION, destination);
+		params.put(AimonDictionary.PARAM_BODY, body);
+		params.put(AimonDictionary.PARAM_ID_API, idApi);
+		
+		//send the sms
+		ResultOperation<String> res = doRequest(url, null, params);
+		return res;
+	}
+
 }

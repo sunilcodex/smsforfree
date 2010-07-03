@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.test.AndroidTestCase;
 
