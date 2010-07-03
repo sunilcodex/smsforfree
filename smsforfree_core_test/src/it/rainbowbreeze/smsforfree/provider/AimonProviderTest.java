@@ -2,11 +2,12 @@ package it.rainbowbreeze.smsforfree.provider;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.common.TestUtils;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
-import it.rainbowbreeze.smsforfree.util.TestUtils;
 import android.content.Context;
 import android.os.Bundle;
 import android.test.AndroidTestCase;
@@ -51,7 +52,10 @@ public class AimonProviderTest
 		mContext = getContext();
 		mProvider = new AimonProvider(mDao);
 		mProvider.initProvider(mContext);
-		
+
+		//mock some values of SmsForFreeApplication
+		TestUtils.loadAppPreferences(mContext);
+
 		//save provider parameters
 		mBackupParameters = TestUtils.backupServiceParameters(mProvider);
 		
@@ -134,7 +138,7 @@ public class AimonProviderTest
 		
 		//wrong password
 		mProvider.setParameterValue(1, "XXXXX");
-		res = mProvider.sendMessage("0", DESTINATION, "ciao da me");
+		res = mProvider.sendMessage(AimonProvider.ID_API_FREE, DESTINATION, "ciao da me");
 		
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
