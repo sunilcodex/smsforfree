@@ -5,7 +5,6 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
-import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
 import it.rainbowbreeze.smsforfree.util.TestUtils;
 import android.content.Context;
@@ -27,6 +26,7 @@ public class AimonProviderTest
 	private static final String PASSWORD = "smsf0rfr33";
 	private static final String SENDER = "+393912345678";
 	private static final String DESTINATION = "XXXXX";
+	private static final String USER_CREDITS = "65";
 
 	private SmsProvider mProvider;
 	private Context mContext;
@@ -85,6 +85,9 @@ public class AimonProviderTest
 	}
 	
 	
+	/**
+	 * Test the call for right credential
+	 */
 	public void testCheckCredential()
 	{
 		ResultOperation<String> res;
@@ -101,12 +104,32 @@ public class AimonProviderTest
 		bundle.putString("1", PASSWORD);
 		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
+		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_validCredentials), res.getResult());
 	}
 
 
 
-	public void _testFreeSmsWrongCredential()
+	/**
+	 * Test the call for credit
+	 */
+	public void testCheckCredit()
+	{
+		ResultOperation<String> res;
+		
+		//user with wrong password
+		Bundle bundle = new Bundle();
+		bundle.putString("0", USERNAME);
+		bundle.putString("1", PASSWORD);
+		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDITS, mContext, bundle);
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
+		String remainingCredits = String.format(
+    			mContext.getString(R.string.aimon_msg_remainingCredits), USER_CREDITS);
+		assertEquals("Wrong return message", remainingCredits, res.getResult());
+	}
+
+
+
+	public void _testFreeSmsWrongCredentials()
 	{
 		ResultOperation<String> res;
 		
@@ -122,7 +145,6 @@ public class AimonProviderTest
 
 
 	//---------- Private methods
-
 
 
 
