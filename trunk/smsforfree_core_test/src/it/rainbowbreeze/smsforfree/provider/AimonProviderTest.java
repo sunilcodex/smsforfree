@@ -1,6 +1,7 @@
 package it.rainbowbreeze.smsforfree.provider;
 
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.TestUtils;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
@@ -23,10 +24,6 @@ public class AimonProviderTest
 	extends AndroidTestCase
 {
 	//---------- Private fields
-	private static final String USERNAME = "f.martinelli@aimon.it";
-	private static final String PASSWORD = "smsf0rfr33";
-	private static final String SENDER = "+393912345678";
-	private static final String DESTINATION = "3927686894";
 	private static final String USER_CREDITS = "65";
 
 	private SmsProvider mProvider;
@@ -60,9 +57,9 @@ public class AimonProviderTest
 		mBackupParameters = TestUtils.backupServiceParameters(mProvider);
 		
 		//set test parameters
-		mProvider.setParameterValue(0, USERNAME);
-		mProvider.setParameterValue(1, PASSWORD);
-		mProvider.setParameterValue(2, SENDER);
+		mProvider.setParameterValue(0, Def.AIMON_USERNAME);
+		mProvider.setParameterValue(1, Def.AIMON_PASSWORD);
+		mProvider.setParameterValue(2, Def.AIMON_SENDER);
 	}
 	
 	@Override
@@ -84,8 +81,8 @@ public class AimonProviderTest
 		
 		//check if password and sender number was changed
 		//before running this test
-		assertFalse("You must change the password...", "XXXX".equals(PASSWORD));
-		assertFalse("You must change destination", "XXXX".equals(DESTINATION));
+		assertFalse("You must change the password...", "XXXX".equals(Def.AIMON_PASSWORD));
+		assertFalse("You must change destination", "XXXX".equals(Def.AIMON_DESTINATION));
 	}
 	
 	
@@ -98,14 +95,14 @@ public class AimonProviderTest
 		
 		//user with wrong password
 		Bundle bundle = new Bundle();
-		bundle.putString("0", USERNAME);
+		bundle.putString("0", Def.AIMON_USERNAME);
 		bundle.putString("1", "XXXXXXX");
 		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
 
 		//user with good password
-		bundle.putString("1", PASSWORD);
+		bundle.putString("1", Def.AIMON_PASSWORD);
 		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_validCredentials), res.getResult());
@@ -121,8 +118,8 @@ public class AimonProviderTest
 		
 		//user with wrong password
 		Bundle bundle = new Bundle();
-		bundle.putString("0", USERNAME);
-		bundle.putString("1", PASSWORD);
+		bundle.putString("0", Def.AIMON_USERNAME);
+		bundle.putString("1", Def.AIMON_PASSWORD);
 		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDITS, mContext, bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		String remainingCredits = String.format(
@@ -138,7 +135,7 @@ public class AimonProviderTest
 		
 		//wrong password
 		mProvider.setParameterValue(1, "XXXXX");
-		res = mProvider.sendMessage(AimonProvider.ID_API_FREE, DESTINATION, "ciao da me");
+		res = mProvider.sendMessage(AimonProvider.ID_API_FREE, Def.AIMON_DESTINATION, "ciao da me");
 		
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
