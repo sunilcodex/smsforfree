@@ -238,21 +238,21 @@ public class LogicManager
 		
 		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("JACKSMS")) {
 			//add JackSMS
-			JacksmsProvider prov = new JacksmsProvider(dao, context);
+			JacksmsProvider prov = new JacksmsProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 	
 		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("AIMON")) {
 			//add Aimon
-			AimonProvider prov = new AimonProvider(dao, context);
+			AimonProvider prov = new AimonProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 		
 		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("VOIPSTUNT")) {
 			//add Voipstunt
-			VoipstuntProvider prov = new VoipstuntProvider(dao, context);
+			VoipstuntProvider prov = new VoipstuntProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}

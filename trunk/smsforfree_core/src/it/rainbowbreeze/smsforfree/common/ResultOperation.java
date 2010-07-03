@@ -38,10 +38,16 @@ public class ResultOperation<T>
 
 	
 	//---------- Public fields
+	/** All done! */
 	public final static int RETURNCODE_OK = 200;
-	public final static int RETURNCODE_CAPTCHA_REQUEST = 1001;
-	public final static int RETURNCODE_APP_EXPIRED = 1002;
-	public final static int RETURNCODE_SMS_DAILY_LIMIT_OVERTAKED = 1003;
+	/** User should decode a captcha in order to send sms */
+	public final static int RETURNCODE_SMS_CAPTCHA_REQUEST = 1001;
+	/** Conversation with provider ends correctly, but SMS was not send for some reason */
+	public static final int RETURNCODE_INTERNAL_PROVIDER_ERROR = 1002;
+	/** Application is expired */
+	public final static int RETURNCODE_APP_EXPIRED = 1003;
+	/** SMS daily limit overtaked */
+	public final static int RETURNCODE_SMS_DAILY_LIMIT_OVERTAKED = 1004;
 
 	/** Errors code */
 	public final static int RETURNCODE_ERROR_GENERIC = 400;
@@ -51,6 +57,7 @@ public class ResultOperation<T>
 	public static final int RETURNCODE_ERROR_COMMUNICATION = 404;
 	public static final int RETURNCODE_ERROR_APPLICATION_ARCHITECTURE = 405;
 	public static final int RETURNCODE_ERROR_EMPTY_REPLY = 406;
+	
 
 	
 	
@@ -87,7 +94,7 @@ public class ResultOperation<T>
 	 * Return if the object contains error
 	 */
 	public boolean HasErrors()
-	{ return null != mException || mReturnCode == RETURNCODE_ERROR_GENERIC; }
+	{ return null != mException; }
 	
 	
 	

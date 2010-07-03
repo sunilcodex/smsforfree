@@ -16,7 +16,6 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
-import it.rainbowbreeze.smsforfree.logic.LogicManager;
 
 /**
  * 
@@ -27,42 +26,9 @@ public class JacksmsProvider
 	extends SmsMultiProvider
 {
 	//---------- Ctors
-	public JacksmsProvider(ProviderDao dao, Context context)
+	public JacksmsProvider(ProviderDao dao)
 	{
 		super(dao, PARAM_NUMBER);
-		mDictionary = new JacksmsDictionary();
-		
-		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
-		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
-		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
-		setDescription(context.getString(R.string.jacksms_description));
-		
-		SmsServiceCommand command;
-		//subservices commands list
-		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1, R.drawable.ic_menu_refresh);
-		mSubservicesListActivityCommands.add(command);
-//		command = new SmsServiceCommand(
-//				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 2, R.drawable.ic_menu_cloud);
-//		mSubservicesListActivityCommands.add(command);
-		//provider commands list
-		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_REGISTER, context.getString(R.string.jacksms_commandRegister), 1, R.drawable.ic_menu_invite); 
-		mProviderSettingsActivityCommands.add(command);
-		
-		
-		//save some messages
-		mMessages = new String[8];
-		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
-		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
-		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
-		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
-		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplates);
-		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
-		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_TemplatesListUpdated);
-		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.jacksms_msg_captchaOk);
 	}
 	
 	
@@ -121,6 +87,48 @@ public class JacksmsProvider
 	
 
 	//---------- Public methods
+	
+	@Override
+	public ResultOperation<Void> initProvider(Context context)
+	{
+		mDictionary = new JacksmsDictionary();
+
+		//provider parameters
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
+		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
+		setDescription(context.getString(R.string.jacksms_description));
+	
+		//subservices commands list
+		SmsServiceCommand command;
+		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
+		command = new SmsServiceCommand(
+				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1, R.drawable.ic_menu_refresh);
+		mSubservicesListActivityCommands.add(command);
+//		command = new SmsServiceCommand(
+//				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 2, R.drawable.ic_menu_cloud);
+//		mSubservicesListActivityCommands.add(command);
+		//provider commands list
+		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
+		command = new SmsServiceCommand(
+				COMMAND_REGISTER, context.getString(R.string.jacksms_commandRegister), 1, R.drawable.ic_menu_invite); 
+		mProviderSettingsActivityCommands.add(command);
+		
+		//save messages
+		mMessages = new String[8];
+		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
+		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
+		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
+		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
+		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplates);
+		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
+		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_TemplatesListUpdated);
+		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.jacksms_msg_captchaOk);
+		
+		return super.initProvider(context);
+	}
+	
+	
 	@Override
     public ResultOperation<String> sendMessage(
     		String serviceId,
@@ -263,12 +271,10 @@ public class JacksmsProvider
 			//breaks the reply and find the message
 			res.setResult(String.format(
 					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
-			//update number of messages sent in the day
-			LogicManager.updateSmsCounter(1);
 		//captcha request
 		} else {
 			//returns captcha, message contains all captcha information
-			res.setReturnCode(ResultOperation.RETURNCODE_CAPTCHA_REQUEST);
+			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
 		}
 		return res;    	
 	}
@@ -376,6 +382,7 @@ public class JacksmsProvider
 		//the JackSMS error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
     		resultToAnalyze.setResult(res);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     		return true;
     	} else {
     		return false;
