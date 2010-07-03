@@ -1,9 +1,10 @@
-package it.rainbowbreeze.smsforfree.util;
+package it.rainbowbreeze.smsforfree.common;
 
 import android.content.Context;
 import android.util.Log;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
@@ -92,6 +93,16 @@ public class TestUtils {
 		}
 		
 		return result;
+	}
+
+	
+	/**
+	 * Mock same values of the SmsForFreeApplication object
+	 */
+	public static void loadAppPreferences(Context context)
+	{
+		//load configurations
+		AppPreferencesDao.instance().load(context);
 	}
 
 	
