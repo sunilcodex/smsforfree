@@ -135,13 +135,39 @@ public class JacksmsProvider
     		String destination,
     		String message)
     {
-		return sendSms(
-				getParameterValue(PARAM_INDEX_USERNAME),
-				getParameterValue(PARAM_INDEX_PASSWORD),
-				serviceId,
-				destination,
-				message);
-    }
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+	
+		//credentials check
+		if (!checkCredentialsValidity(username, password))
+			return getExceptionForInvalidCredentials();
+		
+		//sends the sms
+		SmsService service = getSubservice(serviceId);
+		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
+		ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
+	
+		//checks for applications errors
+		if (res.HasErrors()) return res;
+		//checks for jacksms errors
+		if (parseReplyForErrors(res)) return res;
+		
+		//at this point, no error happened, so checks if the sms was sent or
+		//a captcha code is needed
+		String reply = res.getResult();
+		//message sent
+		if (mDictionary.isSmsCorrectlySend(reply)) {
+			//breaks the reply and find the message
+			res.setResult(String.format(
+					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
+		//captcha request
+		} else {
+			//returns captcha, message contains all captcha information
+			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
+		}
+		
+		return res;    	
+	}
 
 	@Override
 	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
@@ -230,54 +256,6 @@ public class JacksmsProvider
 	@Override
 	protected String getSubservicesFileName()
 	{ return GlobalDef.jacksmsSubservicesFileName; }
-
-	
-	/**
-	 * Send an sms via the service API
-	 * 
-	 * @param username
-	 * @param password
-	 * @param serviceId
-	 * @param destination
-	 * @param message
-	 * @return
-	 */
-	private ResultOperation<String> sendSms(
-    		String username,
-    		String password,
-    		String serviceId,
-    		String destination,
-    		String message)
-	{
-    	//credentials check
-    	if (!checkCredentialsValidity(username, password))
-    		return getExceptionForInvalidCredentials();
-    	
-    	//sends the sms
-    	SmsService service = getSubservice(serviceId);
-    	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
-    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
-
-    	//checks for applications errors
-    	if (res.HasErrors()) return res;
-    	//checks for jacksms errors
-    	if (parseReplyForErrors(res)) return res;
-    	
-    	//at this point, no error happened, so checks if the sms was sent or
-    	//a captcha code is needed
-    	String reply = res.getResult();
-    	//message sent
-		if (reply.startsWith(JacksmsDictionary.PREFIX_RESULT_OK)) {
-			//breaks the reply and find the message
-			res.setResult(String.format(
-					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
-		//captcha request
-		} else {
-			//returns captcha, message contains all captcha information
-			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
-		}
-		return res;    	
-	}
 
     
     /**
@@ -369,12 +347,8 @@ public class JacksmsProvider
 		//no reply from server is already handled in doRequest method
 				
 		//JackSMS internal error
-		for (String errSignature : JacksmsDictionary.PREFIX_RESULT_ERROR_ARRAY) {
-			if (reply.startsWith(errSignature)) {
-				res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], mDictionary.getTextPartFromReply(reply));
-				//error found, exit from cycle
-				break;
-			}
+		if (mDictionary.isErrorReply(reply)) {
+			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], mDictionary.getTextPartFromReply(reply));
 		}
 		
     	//errors are internal to JackSMS, not related to communication issues.

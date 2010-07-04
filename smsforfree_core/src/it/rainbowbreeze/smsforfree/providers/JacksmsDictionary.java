@@ -50,15 +50,18 @@ public class JacksmsDictionary
 	/** Max number of parameters a JackSMS service can have */
 	private static final int MAX_SERVICE_PARAMETERS = 4;
 	
+	//message sent
+	private static final String PREFIX_RESULT_OK = "1" + CSV_SEPARATOR;
+	//JackSMS has different error signatures
+	private static final String[] PREFIX_RESULT_ERROR_ARRAY = {
+		"error" + CSV_SEPARATOR,
+		"0" + CSV_SEPARATOR
+		};
 	
 	
 
+
 	//---------- Public properties
-	//message sent
-	public static final String PREFIX_RESULT_OK = "1" + CSV_SEPARATOR;
-	//JackSMS has different error signatures
-	public static final String[] PREFIX_RESULT_ERROR_ARRAY =
-		{ "error" + CSV_SEPARATOR, "0" + CSV_SEPARATOR };
 
 	
 	
@@ -241,6 +244,26 @@ public class JacksmsDictionary
 	}
 
 
+	public boolean isSmsCorrectlySend(String webserviceReply)
+	{ return webserviceReply.startsWith(JacksmsDictionary.PREFIX_RESULT_OK); }
+
+	/**
+	 * Checks if the reply for webservice contains errors or not
+	 * @param webserviceReply
+	 * @return
+	 */
+	public boolean isErrorReply(String webserviceReply)
+	{
+		for (String errSignature : PREFIX_RESULT_ERROR_ARRAY) {
+			if (webserviceReply.startsWith(errSignature)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
+	
 
 	//---------- Private methods
 	private String getUrlForCommand(String username, String password, String command)

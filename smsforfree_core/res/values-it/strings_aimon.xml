@@ -12,8 +12,16 @@
     <string name="aimon_msg_invalidDestination">Destinatione non valida.\nSolo i numeri italiani sono supportati</string>
     <string name="aimon_msg_validCredentials">Credenziali Aimon corrette</string>
     <string name="aimon_msg_serverError">Errore interno del server Aimon</string>
+    <string name="aimon_msg_unmanagedServerError">Errore interno del server Aimon:\n %s</string>
     <string name="aimon_msg_remainingCredits">Credito residuo: %s</string>
     <string name="aimon_msg_remainingFreeCredits">Credito gratuito residuo: %s</string>
+    <string name="aimon_msg_emptyMessage">Messaggio vuoto</string>
+    <string name="aimon_msg_invalidMessageEncoding">Caratteri del messaggio non validi, cambiare quelli strani</string>
+    <string name="aimon_msg_invalidMessageEncodingOrTooLong">Caratteri del messaggio non validi oppure il messaggio e\' troppo lungo</string>
+    <string name="aimon_msg_freeSmsDailyLimitReached">Il limite giornaliero di SMS gratuiti impostato da Aimon e\' stato raggiunto</string>
+    <string name="aimon_msg_freeSmsMonthlyLimitReached">Il limite mensile di SMS gratuiti impostato da Aimon e\' stato raggiunto</string>
+    <string name="aimon_msg_notEnoughFreeSmsCredit">Non hai abbastanza credito per spedire SMS gratuiti</string>
+    <string name="aimon_msg_notEnoughCredit">Non hai abbastanza credito per spedire SMS. Ricarica il tuo account su Aimon</string>
     <string name="aimon_msg_messageQueued">Messaggio spedito.\n %s</string>
     <string name="aimon_msg_missingParameters">Errore nella chiamata al provider Aimon. Avvisa l\'autore dell\'applicazione di questo errore. Cosi\' facendo, un aggiornamento al programma sara\' disponibile al piu\' presto.\n\n%s</string>
     <string name="aimon_serviceNameFreeAnonymous">Gratuito anonimo (3 giorno)</string>
