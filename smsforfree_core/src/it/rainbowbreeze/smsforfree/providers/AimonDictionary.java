@@ -47,11 +47,11 @@ public class AimonDictionary
 	private static final String RESULT_ERRORCODE_ACCESS_DENIED = "-3-";
 	private static final String RESULT_ERRORCODE_MISSING_PARAMETERS = "-5-";
 	private static final String RESULT_ERRORCODE_INTERNAL_SERVER_ERROR = "-32-";
-	public static final String RESULT_ERRORCODE_INVALID_DESTINATION = "-100-";
-	public static final String RESULT_ERRORCODE_DESTINATION_NOT_ALLOWED = "-101-";
-	public static final String RESULT_ERRORCODE_BODY_HAS_INVALID_CHARS = "-102-";
-	public static final String RESULT_ERRORCODE_NOT_ENOUGH_CREDIT = "-103-";
-	public static final String RESULT_ERRORCODE_INVALID_SENDER = "-105-";
+	private static final String RESULT_ERRORCODE_INVALID_DESTINATION = "-100-";
+	private static final String RESULT_ERRORCODE_DESTINATION_NOT_ALLOWED = "-101-";
+	private static final String RESULT_ERRORCODE_BODY_HAS_INVALID_CHARS_OR_TOO_LONG = "-102-";
+	private static final String RESULT_ERRORCODE_NOT_ENOUGH_CREDIT = "-103-";
+	private static final String RESULT_ERRORCODE_INVALID_SENDER = "-105-";
 	
 	public static final String FIELD_FREE_INPUT_USERNAME = "inputUsername";
 	public static final String FIELD_FREE_INPUT_PASSWORD = "inputPassword";
@@ -69,7 +69,7 @@ public class AimonDictionary
 	public final static int MAX_SENDER_LENGTH_NUMERIC = 21;
 	public final static int MAX_BODY_LENGTH = 612;
 	
-	public static final String ID_API_FREE_FIXED_SENDER = "0";
+	public static final String ID_API_FREE_ANONYMOUS_SENDER = "0";
 	public static final String ID_API_FREE_NORMAL = "1";
 	public static final String ID_API_ANONYMOUS_SENDER = "106";
 	public static final String ID_API_SELECTED_SENDER_NO_REPORT = "59";
@@ -102,71 +102,76 @@ public class AimonDictionary
 	/**
 	 * Checks if the send for free sms correctly sent the sms
 	 */
-	public boolean isFreeSmsSendMessageOk(String message) {
-		return message.contains(RESULT_FREE_SENT_OK);
+	public boolean isFreeSmsCorrectlySent(String message)
+	{ return message.contains(RESULT_FREE_SENT_OK); }
+	
+	public boolean isFreeSmsNotEnoughCredit(String message)
+	{ return message.contains(RESULT_FREE_ERROR_NOT_ENOUGH_CREDIT); }
+	
+	public boolean isFreeSmsInvalidSender(String message)
+	{ return message.contains(RESULT_FREE_ERROR_INVALID_SENDER); }
+	
+	public boolean isFreeSmsInvalidDestination(String message)
+	{ 
+		return message.contains(RESULT_FREE_ERROR_INVALID_DESTINATION) || 
+			message.contains(RESULT_FREE_ERROR_EMPTY_DESTINATION);
 	}
 	
+	public boolean isFreeSmsEmptyBody(String message)
+	{ return message.contains(RESULT_FREE_ERROR_EMPTY_BODY); }
 	
-	public boolean isFreeSmsNotEnoughCredit(String message) {
-		return message.contains(RESULT_FREE_ERROR_NOT_ENOUGH_CREDIT);
-	}
+	public boolean isFreeSmsUnsupportedMessageEncoding(String message)
+	{ return message.contains(RESULT_FREE_ERROR_UNSUPPORTED_ENCODING); }
 	
-	public boolean isFreeSmsInvalidSender(String message) {
-		return message.contains(RESULT_FREE_ERROR_INVALID_SENDER);
-	}
+	public boolean isFreeSmsGenericServerError(String message)
+	{ return message.contains(RESULT_FREE_ERROR_GENERIC_SERVER_ERROR); }
 	
-	public boolean isFreeSmsInvalidDestination(String message) {
-		return message.contains(RESULT_FREE_ERROR_INVALID_DESTINATION);
-	}
+	public boolean isFreeSmsDailyLimitReached(String message)
+	{ return message.contains(RESULT_FREE_ERROR_DAILY_LIMIT_REACHED); }
 	
-	public boolean isFreeSmsEmptyDestination(String message) {
-		return message.contains(RESULT_FREE_ERROR_EMPTY_DESTINATION);
-	}
-	
-	public boolean isFreeSmsEmptyBody(String message) {
-		return message.contains(RESULT_FREE_ERROR_EMPTY_BODY);
-	}
-	
-	public boolean isFreeSmsUnsupportedEncoding(String message) {
-		return message.contains(RESULT_FREE_ERROR_UNSUPPORTED_ENCODING);
-	}
-	
-	public boolean isFreeSmsGenericServerError(String message) {
-		return message.contains(RESULT_FREE_ERROR_GENERIC_SERVER_ERROR);
-	}
-	
-	public boolean isFreeSmsDailyLimitReached(String message) {
-		return message.contains(RESULT_FREE_ERROR_DAILY_LIMIT_REACHED);
-	}
-	
-	public boolean isFreeSmsMonthlyLimitReached(String message) {
-		return message.contains(RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED);
-	}
+	public boolean isFreeSmsMonthlyLimitReached(String message)
+	{ return message.contains(RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED); }
 	
 	
-	public boolean isLoginInvalidCredentials(String message) {
-		return message.startsWith(AimonDictionary.RESULT_ERRORCODE_ACCESS_DENIED);
+	public boolean isLoginInvalidCredentials(String webserviceReply)
+	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_ACCESS_DENIED); }
+
+	public boolean isInternalServerError(String webserviceReply)
+	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_INTERNAL_SERVER_ERROR); }
+	
+	public boolean isMissingParameters(String webserviceReply)
+	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_MISSING_PARAMETERS); }
+
+	public boolean isInvalidDestination(String webserviceReply)
+	{
+		return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_INVALID_DESTINATION) ||
+			webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_DESTINATION_NOT_ALLOWED);
 	}
 
-	public boolean isInternalServerError(String message) {
-		return message.startsWith(AimonDictionary.RESULT_ERRORCODE_INTERNAL_SERVER_ERROR);
-	}
+	public boolean isNotEnoughCredit(String webserviceReply)
+	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_NOT_ENOUGH_CREDIT); }
 	
-	public boolean isMissingParameters(String message) {
-		return message.startsWith(AimonDictionary.RESULT_ERRORCODE_MISSING_PARAMETERS);
-	}
+	public boolean isInvalidSender(String webserviceReply)
+	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_INVALID_SENDER); }
 
-	
+	public boolean isUnsupportedMessageEncodingOrTooLong(String webserviceReply)
+	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_BODY_HAS_INVALID_CHARS_OR_TOO_LONG); }
+
 	/**
-	 * Checks if sms was sent without errors
+	 * Checks if Aimon webservice return message indicates that
+	 * the request operation was correctly executed
+	 * 
 	 * @param webserviceReply
 	 * @return
 	 */
-	public boolean isSmsCorrectlySent(String webserviceReply) {
-		if (null == webserviceReply ) return false;
-		return webserviceReply.startsWith(RESULT_SENDSMS_OK);
+	public boolean isOperationCorrectlyExecuted(String webserviceReply)
+	{
+		if (isSmsCorrectlySent(webserviceReply)) return true;
+		
+		//generally, a wrong operation result starts with the - char
+		return !webserviceReply.startsWith("-");
 	}
-
+	
 	/**
 	 * Extract from the output of the html pages for sending free sms the remaining credits
 	 * What i need is in the string
@@ -189,5 +194,15 @@ public class AimonDictionary
 	
 	
 	//---------- Private methods
+	/**
+	 * Checks if sms was sent without errors
+	 * @param webserviceReply
+	 * @return
+	 */
+	private boolean isSmsCorrectlySent(String webserviceReply) {
+		if (null == webserviceReply ) return false;
+		return webserviceReply.startsWith(RESULT_SENDSMS_OK);
+	}
+
 
 }
