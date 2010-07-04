@@ -140,8 +140,12 @@ public class AimonProviderTest
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
 	}
+	
 
 
+	/**
+	 * Test the send of a free message using Aimon http form
+	 */
 	public void testFreeSmsSendMessage()
 	{
 		ResultOperation<String> res;
@@ -158,10 +162,32 @@ public class AimonProviderTest
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidDestination), res.getResult());
 
+		//empty message
+		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, "+4323242343", "");
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
+//		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidDestination), res.getResult());
+
+		//wrong message encoding
+		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, "+4323242343", "ciao da me@");
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
+//		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidDestination), res.getResult());
+
+		//TODO
+		//add the other tests
+		
 		//correct send a message
 		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.AIMON_DESTINATION, "ciao da me");
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		//assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_messageQueued), res.getResult());
+	}
+	
+	
+	/**
+	 * Test the send of a message using Aimon API
+	 */
+	public void testSendMessageViaApi()
+	{
+		
 	}
 
 
