@@ -117,7 +117,7 @@
     <string name="actabout_lblSentSms">SMS sent today: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.2:\n -Bigger captcha\n\nv 1.1:\n -Fix for captcha size\n\nv 1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v1.2:\n -Added free sms to Aimon provider\n -Bigger captcha\n\nv 1.1:\n -Fix for captcha size\n\nv 1.0:\n -First release</string>
 
 
 

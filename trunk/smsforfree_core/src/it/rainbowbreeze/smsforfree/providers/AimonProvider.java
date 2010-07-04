@@ -19,6 +19,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.util.Base64;
+import it.rainbowbreeze.smsforfree.util.ParserUtils;
 
 /**
  * 
@@ -55,6 +56,14 @@ public class AimonProvider
 	private static final int MSG_INDEX_SERVICENANE_FREE_ANONYMOUS = 11;
 	private static final int MSG_INDEX_INVALID_SENDER = 12;
 	private static final int MSG_INDEX_INVALID_DESTINATION = 13;
+	private static final int MSG_INDEX_EMPTY_MESSAGE = 14;
+	private static final int MSG_INDEX_INVALID_MESSAGE_ENCODING = 15;
+	private static final int MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED = 16;
+	private static final int MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED = 17;
+	private static final int MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT = 18;
+	private static final int MSG_INDEX_NOT_ENOUGH_CREDIT = 19;
+	private static final int MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG = 20;
+	private static final int MSG_INDEX_UNMANAGED_SERVER_ERROR = 21;
 	
 	public final static int COMMAND_CHECKCREDENTIALS = 1000;
 	public final static int COMMAND_CHECKCREDITS = 1001;
@@ -125,7 +134,7 @@ public class AimonProvider
 		mProviderSettingsActivityCommands.add(command);
 		
 		//save some messages
-		mMessages = new String[14];
+		mMessages = new String[22];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
 		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
@@ -140,7 +149,14 @@ public class AimonProvider
 		mMessages[MSG_INDEX_REMAINING_FREE_CREDITS] = context.getString(R.string.aimon_msg_remainingFreeCredits);
 		mMessages[MSG_INDEX_INVALID_SENDER] = context.getString(R.string.aimon_msg_invalidSender);
 		mMessages[MSG_INDEX_INVALID_DESTINATION] = context.getString(R.string.aimon_msg_invalidDestination);
-		
+		mMessages[MSG_INDEX_EMPTY_MESSAGE] = context.getString(R.string.aimon_msg_emptyMessage);
+		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING] = context.getString(R.string.aimon_msg_invalidMessageEncoding);
+		mMessages[MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED] = context.getString(R.string.aimon_msg_freeSmsDailyLimitReached);
+		mMessages[MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED] = context.getString(R.string.aimon_msg_freeSmsMonthlyLimitReached);
+		mMessages[MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT] = context.getString(R.string.aimon_msg_notEnoughFreeSmsCredit);
+		mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT] = context.getString(R.string.aimon_msg_notEnoughCredit);
+		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG] = context.getString(R.string.aimon_msg_invalidMessageEncodingOrTooLong);
+		mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR] = context.getString(R.string.aimon_msg_unmanagedServerError);
 		
 		//call other provider's initializations
 		return super.initProvider(context);
@@ -156,13 +172,22 @@ public class AimonProvider
     	//arguments check
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
-
+    	if (TextUtils.isEmpty(sender)) 
+    		return new ResultOperation<String>(
+					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
+    	if (TextUtils.isEmpty(destination)) 
+    		return new ResultOperation<String>(
+					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
+    	if (TextUtils.isEmpty(body)) 
+    		return new ResultOperation<String>(
+					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
+    	
+    	
     	//parameters correction
     	String okSender = "";
     	String okDestination;
     	String okBody;
 
-    	
     	//send free sms via http form
     	if (isFreeSmsCall(serviceId)) {
     		okSender = removeInternationalPrefix(sender);
@@ -329,7 +354,7 @@ public class AimonProvider
 		mSubservices = new ArrayList<SmsService>();
 		
 		service = new SmsConfigurableService(0);
-		service.setId(AimonDictionary.ID_API_FREE_FIXED_SENDER);
+		service.setId(AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE_ANONYMOUS]);
 		service.setMaxMessageLenght(124);
 		mSubservices.add(service);
@@ -414,10 +439,9 @@ public class AimonProvider
 		
 		//ok, i know it isn't the best way, but it works as a workaround
 		//for the presence of %s parameter in the source message string ;)
-		int pos = mMessages[MSG_INDEX_REMAINING_CREDITS].indexOf("%");
-		if (pos < 0) pos = mMessages[MSG_INDEX_REMAINING_CREDITS].length();
+		int pos = ParserUtils.getInvariableStringFinalBoundary(mMessages[MSG_INDEX_REMAINING_CREDITS]);
 		String returnMessage = res.getResult(); 
-		if (returnMessage.substring(0, pos).equals(mMessages[MSG_INDEX_REMAINING_CREDITS].substring(0, pos))) {
+		if (returnMessage.startsWith(mMessages[MSG_INDEX_REMAINING_CREDITS].substring(0, pos))) {
 			//credits, so credentials are correct
 			res = new ResultOperation<String>(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
 		}
@@ -465,15 +489,12 @@ public class AimonProvider
     	//checks for aimon errors
     	if (parseReplyForApiErrors(res)) return res;
     	
-    	//examine it the return contains confirmation if the message was sent
-    	if (mDictionary.isSmsCorrectlySent(res.getResult())) {
-			res.setResult(String.format(
-					mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
-			
-			//TODO
-			//at this point, i can also read the remaining credits and append it to
-			//the message
-		}
+    	//at this point, the operation was surely executed correctly
+		res.setResult(String.format(
+				mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
+		
+		//TODO
+		//read the remaining credits and append it to the message
 		
     	return res;
 	}
@@ -489,27 +510,34 @@ public class AimonProvider
 	 */
 	public boolean parseReplyForApiErrors(ResultOperation<String> resultToAnalyze)
 	{
-		String res = "";
+		String res;
 		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
-				
-		//access denied
-		if (mDictionary.isLoginInvalidCredentials(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 
-		//server error
+		//message correctly sent
+		if (mDictionary.isOperationCorrectlyExecuted(reply)) {
+			res = "";
+		//check for know errors
+		} else if (mDictionary.isLoginInvalidCredentials(reply)) {
+			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		} else if (mDictionary.isInternalServerError(reply)) {
 			res = mMessages[MSG_INDEX_SERVER_ERROR];
-		
-		//missing parameters
 		} else if (mDictionary.isMissingParameters(reply)) {
-			res = String.format(mMessages[MSG_INDEX_MISSING_PARAMETERS], reply);
+			res = mMessages[MSG_INDEX_MISSING_PARAMETERS];
+		} else if (mDictionary.isInvalidSender(reply)) {
+			res = mMessages[MSG_INDEX_INVALID_SENDER];
+		} else if (mDictionary.isInvalidDestination(reply)) {
+			res = mMessages[MSG_INDEX_INVALID_DESTINATION];
+		} else if (mDictionary.isNotEnoughCredit(reply)) {
+			res = mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT];
+		} else if (mDictionary.isUnsupportedMessageEncodingOrTooLong(reply)) {
+			res = mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG];
+		} else {
+			//other generic errors
+			res = String.format(mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR], reply);
 		}
 	
-		//TODO
-		//add other server errors
-		
     	//errors are internal to Aimon, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
@@ -570,7 +598,7 @@ public class AimonProvider
         res = doConversationHttpRequest(url, null, params);
         
         if (res.HasErrors()) return res;
-        if (parseRetryForHttpErrors(res)) return res;
+        if (parseRetryForHttpErrors(res, username)) return res;
         
         //check if login is really correct
         if (!mDictionary.isFreeSmsLoginOk(res.getResult(), username)) {
@@ -595,7 +623,7 @@ public class AimonProvider
         
         if (res.HasErrors()) return res;
         //examines results
-        parseRetryForHttpErrors(res);
+        parseRetryForHttpErrors(res, username);
         
 		//result returned is the result of URL_SEND_SMS_FREE_2 request
     	//examine it the return contains confirmation if the message was sent
@@ -624,33 +652,36 @@ public class AimonProvider
 	 * @param resultToAnalyze
 	 * @return
 	 */
-	private boolean parseRetryForHttpErrors(ResultOperation<String> resultToAnalyze)
+	private boolean parseRetryForHttpErrors(ResultOperation<String> resultToAnalyze, String username)
 	{
-		String res = "";
+		String res;
 		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
 				
-		//access denied
-		if (mDictionary.isFreeSmsLoginInvalidCredentials(reply)) {
+		//message sent
+		if (mDictionary.isFreeSmsCorrectlySent(reply) || mDictionary.isFreeSmsLoginOk(reply, username)) {
+			res = "";
+		//other possible errors
+		} else if (mDictionary.isFreeSmsLoginInvalidCredentials(reply)) {
 			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
-
-		} else if (mDictionary.isFreeSmsInvalidDestination(reply) || mDictionary.isFreeSmsEmptyDestination(reply)) {
+		} else if (mDictionary.isFreeSmsInvalidDestination(reply)) {
 			res = mMessages[MSG_INDEX_INVALID_DESTINATION];
-			
 		} else if (mDictionary.isFreeSmsInvalidSender(reply)) {
 			res = mMessages[MSG_INDEX_INVALID_SENDER];
-			
-		}
-			
-		//TODO
-		//add other server errors
-		else if (mDictionary.isFreeSmsDailyLimitReached(reply) || 
-				mDictionary.isFreeSmsEmptyBody(reply) ||
-				mDictionary.isFreeSmsGenericServerError(reply) ||
-				mDictionary.isFreeSmsMonthlyLimitReached(reply) ||
-				mDictionary.isFreeSmsNotEnoughCredit(reply) ||
-				mDictionary.isFreeSmsUnsupportedEncoding(reply)) {
+		} else if (mDictionary.isFreeSmsDailyLimitReached(reply)) {
+			res = mMessages[MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED];
+		} else if (mDictionary.isFreeSmsEmptyBody(reply)) {
+			res = mMessages[MSG_INDEX_EMPTY_MESSAGE];
+		} else if (mDictionary.isFreeSmsGenericServerError(reply)) {
+			res = mMessages[MSG_INDEX_SERVER_ERROR];
+		} else if (mDictionary.isFreeSmsMonthlyLimitReached(reply)) {
+			res = mMessages[MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED];
+		} else if (mDictionary.isFreeSmsNotEnoughCredit(reply)) {
+			res = mMessages[MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT];
+		} else if (mDictionary.isFreeSmsUnsupportedMessageEncoding(reply)) {
+			res = mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING];
+		} else {
 			res = mMessages[MSG_INDEX_SERVER_ERROR];
 		}
 		
@@ -668,7 +699,7 @@ public class AimonProvider
 	
 	
 	private boolean isFreeSmsCall(String serviceId) {
-		return AimonDictionary.ID_API_FREE_FIXED_SENDER == serviceId || AimonDictionary.ID_API_FREE_NORMAL == serviceId;
+		return AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER == serviceId || AimonDictionary.ID_API_FREE_NORMAL == serviceId;
 	}
 
 }

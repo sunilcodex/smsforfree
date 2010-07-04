@@ -896,7 +896,7 @@ public class ActSendSms
 			showDialog(DIALOG_CAPTCHA_REQUEST);
 		
 		//return with errors or message sent
-		} else if (result.HasErrors() || ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
+		} else  {
 			displayMessageSendResult(result, false);
 		}
 	}
