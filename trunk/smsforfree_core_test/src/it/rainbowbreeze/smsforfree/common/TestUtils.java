@@ -1,6 +1,7 @@
 package it.rainbowbreeze.smsforfree.common;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
@@ -104,7 +105,7 @@ public class TestUtils {
 		//load configurations
 		AppPreferencesDao.instance().load(context);
 	}
-
+	
 	
 	//---------- Private methods
 
