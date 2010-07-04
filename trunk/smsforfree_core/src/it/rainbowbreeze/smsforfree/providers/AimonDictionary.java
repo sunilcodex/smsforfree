@@ -21,6 +21,11 @@ public class AimonDictionary
 	private static final String RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED = "limite massimo di sms inviabili gratis in 30 giorni";
 	private static final String RESULT_FREE_WELCOME_MESSAGE_FOR_THE_USER = "Ciao <b>%s</b>!";
 	private static final String RESULT_FREE_SENT_OK = "Messaggio inviato con successo";
+
+	private static final String SEARCH_CREDITI_SMS_START = "Credito residuo giornaliero: ";
+	private static final String SEARCH_CREDITI_SMS_END = "crediti/sms";
+
+	
 	
 
 	//---------- Public fields
@@ -38,20 +43,38 @@ public class AimonDictionary
 	public final static String PARAM_BODY = "body";
 	public final static String PARAM_ID_API = "id_api";
 	
-	public static final String RESULT_SENDSMS_OK = "+01 SMS Queued";
-	public static final String RESULT_ERRORCODE_ACCESS_DENIED = "-3-";
-	public static final String RESULT_ERRORCODE_MISSING_PARAMETERS = "-5-";
-	public static final String RESULT_ERRORCODE_INTERNAL_SERVER_ERROR = "-32-";
+	private static final String RESULT_SENDSMS_OK = "+01 SMS Queued";
+	private static final String RESULT_ERRORCODE_ACCESS_DENIED = "-3-";
+	private static final String RESULT_ERRORCODE_MISSING_PARAMETERS = "-5-";
+	private static final String RESULT_ERRORCODE_INTERNAL_SERVER_ERROR = "-32-";
 	public static final String RESULT_ERRORCODE_INVALID_DESTINATION = "-100-";
 	public static final String RESULT_ERRORCODE_DESTINATION_NOT_ALLOWED = "-101-";
 	public static final String RESULT_ERRORCODE_BODY_HAS_INVALID_CHARS = "-102-";
 	public static final String RESULT_ERRORCODE_NOT_ENOUGH_CREDIT = "-103-";
 	public static final String RESULT_ERRORCODE_INVALID_SENDER = "-105-";
 	
+	public static final String FIELD_FREE_INPUT_USERNAME = "inputUsername";
+	public static final String FIELD_FREE_INPUT_PASSWORD = "inputPassword";
+	public static final String FIELD_FREE_SUBMIT_BUTTON = "submit";
+	public static final String FIELD_FREE_DESTINATION = "destinatario";
+	public static final String FIELD_FREE_MESSAGE_LENGTH = "caratteri";
+	public static final String FIELD_FREE_MESSAGE = "testo";
+	public static final String FIELD_FREE_SENDER = "mittente";
+	public static final String FIELD_FREE_INTERNATIONAL_PREFIX = "prefisso_internazionale";
+	public static final String FIELD_FREE_SENDER_TYPE = "tipomittente";
+	public static final String FIELD_FREE_SMS_TYPE = "tiposms";
+	public static final String FIELD_FREE_SUBMIT_BUTTON2 = "btnSubmit";
+
 	public final static int MAX_SENDER_LENGTH_ALPHANUMERIC = 11;
 	public final static int MAX_SENDER_LENGTH_NUMERIC = 21;
 	public final static int MAX_BODY_LENGTH = 612;
 	
+	public static final String ID_API_FREE_FIXED_SENDER = "0";
+	public static final String ID_API_FREE_NORMAL = "1";
+	public static final String ID_API_ANONYMOUS_SENDER = "106";
+	public static final String ID_API_SELECTED_SENDER_NO_REPORT = "59";
+	public static final String ID_API_SELECTED_SENDER_REPORT = "84";
+
 	
 	
 	
@@ -119,7 +142,21 @@ public class AimonDictionary
 	public boolean isFreeSmsMonthlyLimitReached(String message) {
 		return message.contains(RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED);
 	}
+	
+	
+	public boolean isLoginInvalidCredentials(String message) {
+		return message.startsWith(AimonDictionary.RESULT_ERRORCODE_ACCESS_DENIED);
+	}
 
+	public boolean isInternalServerError(String message) {
+		return message.startsWith(AimonDictionary.RESULT_ERRORCODE_INTERNAL_SERVER_ERROR);
+	}
+	
+	public boolean isMissingParameters(String message) {
+		return message.startsWith(AimonDictionary.RESULT_ERRORCODE_MISSING_PARAMETERS);
+	}
+
+	
 	/**
 	 * Checks if sms was sent without errors
 	 * @param webserviceReply
@@ -128,6 +165,24 @@ public class AimonDictionary
 	public boolean isSmsCorrectlySent(String webserviceReply) {
 		if (null == webserviceReply ) return false;
 		return webserviceReply.startsWith(RESULT_SENDSMS_OK);
+	}
+
+	/**
+	 * Extract from the output of the html pages for sending free sms the remaining credits
+	 * What i need is in the string
+	 *   Credito residuo giornaliero: 3 crediti/sms
+	 *   
+	 * @param message
+	 * @return
+	 */
+	public String findRemainingCreditsForFreeSms(String message) {
+		int intBeginPos = message.indexOf(SEARCH_CREDITI_SMS_START);
+		if (-1 == intBeginPos) return "0";
+		
+		int intEndPos = message.indexOf(SEARCH_CREDITI_SMS_END, intBeginPos);
+		if (-1 == intEndPos) return "0";
+		
+		return message.substring(intBeginPos + SEARCH_CREDITI_SMS_START.length(), intEndPos).trim();
 	}
 
 	

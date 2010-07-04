@@ -129,7 +129,7 @@ public class VoipstuntProvider
 				okDestination,
 				okBody);		
 			
-		ResultOperation<String> res = doRequest(urlToSend, null, null);
+		ResultOperation<String> res = doSingleHttpRequest(urlToSend, null, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;

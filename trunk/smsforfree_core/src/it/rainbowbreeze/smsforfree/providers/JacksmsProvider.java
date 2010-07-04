@@ -173,7 +173,7 @@ public class JacksmsProvider
 
     	//sends the captcha code
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
-    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers, null);
+    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -256,7 +256,7 @@ public class JacksmsProvider
     	//sends the sms
     	SmsService service = getSubservice(serviceId);
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
-    	ResultOperation<String> res = doRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
+    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -293,7 +293,7 @@ public class JacksmsProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
 
-    	ResultOperation<String> res = doRequest(mDictionary.getUrlForDownloadTemplates(username, password), null, null);
+    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForDownloadTemplates(username, password), null, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;

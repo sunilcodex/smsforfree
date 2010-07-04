@@ -40,6 +40,7 @@ public abstract class SmsProvider
 	
 	//---------- Private fields
 	protected ProviderDao mDao;
+	protected WebserviceClient mWebserviceClient;
 	
 	
 	
@@ -244,22 +245,89 @@ public abstract class SmsProvider
     
 
 	/**
-	 * Execute the http request
+	 * Execute the http request as single request, without past state
+	 * 
 	 * @param url
 	 * @param headers
 	 * @param parameters
 	 * @return
 	 */
-    protected ResultOperation<String> doRequest(
+    protected ResultOperation<String> doSingleHttpRequest(
     		String url,
     		HashMap<String, String> headers,
     		HashMap<String, String> parameters
 		)
     {
-    	String reply = "";
     	WebserviceClient client = new WebserviceClient();
+    	return doHttpRequest(url, headers, parameters, client);
+    }
+    
+    
+    /**
+     * Start a new http conversation 
+     * 
+     * @return host for the conversation
+     */
+    protected WebserviceClient startConversation()
+    {
+    	//close a previous conversation, if it exists;
+    	if (null != mWebserviceClient) {
+    		endConversation();
+    	}
     	
-    	try {
+    	mWebserviceClient = new WebserviceClient();
+    	mWebserviceClient.startConversation();
+    	return mWebserviceClient;
+    }
+
+	/**
+	 * Add a new http request in the current conversation
+	 * 
+	 * @param url
+	 * @param headers
+	 * @param parameters
+	 * @return
+	 */
+    protected ResultOperation<String> doConversationHttpRequest(
+    		String url,
+    		HashMap<String, String> headers,
+    		HashMap<String, String> parameters
+		)
+    {
+    	if (null == mWebserviceClient) startConversation();
+    	return doHttpRequest(url, headers, parameters, mWebserviceClient);
+    }
+
+    
+    /**
+     * End an http conversation
+     */
+	protected void endConversation()
+	{
+		mWebserviceClient.endConversation();
+		mWebserviceClient = null;
+	}
+
+	
+	/**
+     * Execute single or conversation http request, depends on the kind of
+     * WebserviceClient used as parameter
+     * 
+     * @param url
+     * @param headers
+     * @param parameters
+     * @param client
+     * @return
+     */
+	private ResultOperation<String> doHttpRequest(
+			String url,
+			HashMap<String, String> headers,
+			HashMap<String, String> parameters,
+			WebserviceClient client)
+	{
+    	String reply = "";
+		
+		try {
     		reply = client.requestPost(url, headers, parameters);
 		} catch (ClientProtocolException e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
@@ -274,7 +342,7 @@ public abstract class SmsProvider
 
     	//return the reply
     	return new ResultOperation<String>(reply);
-    }
+	}    
     
     
     /**
@@ -293,6 +361,7 @@ public abstract class SmsProvider
      * Append to destination number the specified international prefix
      * 
      * @param number
+     * @param internationalPrefix
      * @return
      */
     protected String transalteInInternationalFormat(String number, String internationalPrefix)
@@ -309,6 +378,43 @@ public abstract class SmsProvider
     	
     	return finalNumber;
     }
+
+
+    /**
+     * Remove the international prefix from a phone number, if it's present
+     * @param number
+     * @return
+     */
+	protected String removeInternationalPrefix(String number)
+	{
+    	String defaultPrefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+    	return removeInternationalPrefix(number, defaultPrefix);
+	}
+
+	/**
+     * Remove the international prefix from a phone number, if it's present
+     * @param number
+     * @return
+     */
+	protected String removeInternationalPrefix(String number, String internationalPrefix)
+	{
+		if (TextUtils.isEmpty(number)) return number;
+		
+		String finalNumber = number;
+
+		//sender number starts with international prefix
+		if (number.substring(0, 1).equals("+")) {
+			//check if number match with international default prefix
+    		if (number.startsWith(internationalPrefix)) {
+    			//crop international prefix
+    			finalNumber = number.substring(internationalPrefix.length());
+			}
+		}
+    	
+    	return finalNumber;
+	}
+
+
 
 	
 	/**
