@@ -367,9 +367,8 @@ public abstract class SmsProvider
     protected String transalteInInternationalFormat(String number, String internationalPrefix)
     {
     	String finalNumber;
-    	if (!TextUtils.isEmpty(number) &&
-    			TextUtils.isDigitsOnly(number) &&
-    			!number.substring(0, 1).equals("+")) {
+    	if (TextUtils.isDigitsOnly(number) &&
+			!number.substring(0, 1).equals("+")) {
     		//append prefix to number
     		finalNumber = internationalPrefix + number;
     	} else {
@@ -398,8 +397,6 @@ public abstract class SmsProvider
      */
 	protected String removeInternationalPrefix(String number, String internationalPrefix)
 	{
-		if (TextUtils.isEmpty(number)) return number;
-		
 		String finalNumber = number;
 
 		//sender number starts with international prefix
