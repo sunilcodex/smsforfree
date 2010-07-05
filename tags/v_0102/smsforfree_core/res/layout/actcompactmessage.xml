@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/common_layoutBackground"
+>
+	<TextView
+		android:id="@+id/actcompactmessage_lblStatus"
+		style="@style/common_TextView"
+		android:text="@string/actcompactmessage_lblStatus"
+		android:layout_alignParentTop="true"
+		android:gravity="center_horizontal"
+		android:layout_margin="10dp"
+	/>
+
+	<TextView
+		android:id="@+id/actcompactmessage_lblHelp"
+		style="@style/common_TextView"
+		android:text="@string/actcompactmessage_lblHelp"
+		android:layout_alignParentBottom="true"
+		android:gravity="center_horizontal"
+		android:layout_marginBottom="20dp"
+	/>
+	
+	<SeekBar
+		android:id="@+id/actcompactmessage_barCompressRatio"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_above="@id/actcompactmessage_lblHelp"
+		android:layout_centerHorizontal="true"
+		android:layout_marginLeft="30dp"
+		android:layout_marginRight="30dp"
+		android:layout_marginTop="10dp"
+		android:max="2"
+	/>
+	
+	<EditText
+		android:id="@+id/actcompactmessage_txtMessage"
+		style="@style/common_TextView"
+		android:layout_below="@id/actcompactmessage_lblStatus"
+		android:layout_above="@id/actcompactmessage_barCompressRatio"
+		android:editable="false"
+		android:gravity="top|left"
+	/>
+	
+	
+</RelativeLayout>

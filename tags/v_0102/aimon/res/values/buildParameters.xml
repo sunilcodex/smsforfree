@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Application name -->
+    <string name="common_appName">Aimon</string>
+    <string name="common_appNameForDisplay">Aimon</string>
+
+
+	<!-- Allowed providers -->
+	<string name="config_AllowedProviders">Aimon</string>
+	
+	<!-- Lite or Normal -->
+	<string name="config_AppType">Normal</string>
+	
+	<!-- With (true) or without (false) ads -->
+	<string name="config_ShowAd">true</string>
+
+	<!-- Number of sms allowed each day foe lite version of the software-->
+	<string name="config_MaxAllowedSmsForDay">0</string>
+</resources>

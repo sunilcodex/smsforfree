@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/common_layoutBackground"
+>
+
+	<TextView
+		android:id="@+id/actsendsms_lblProvider"
+		style="@style/common_TextView"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+	/>
+	
+	
+	<LinearLayout
+		android:id="@+id/actsendsms_layoutProvider"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/actsendsms_lblProvider"
+		android:orientation="horizontal"
+	>
+		<Spinner
+			android:id="@+id/actsendsms_spiProviders"
+			style="@style/common_Spinner"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@id/actsendsms_lblProvider"
+			android:prompt="@string/actsendsms_spiProvidersPrompt"
+			android:layout_weight="0.2"
+		/>			
+	
+		<Spinner
+			android:id="@+id/actsendsms_spiServices"
+			style="@style/common_Spinner"
+			android:layout_toRightOf="@id/actsendsms_spiProviders"
+			android:layout_alignTop="@id/actsendsms_spiProviders"
+			android:prompt="@string/actsendsms_spiServicesPrompt"
+			android:layout_weight="0.8"
+		/>			
+
+	</LinearLayout>
+	
+
+	<ImageButton
+		android:id="@+id/actsendsms_btnPickContact"
+		style="@style/common_ImageView"
+		android:layout_alignParentRight="true"
+		android:layout_below="@id/actsendsms_layoutProvider"
+		android:src="@drawable/ic_menu_invite"
+	/>
+
+	<EditText
+		android:id="@+id/actsendsms_txtDestination"
+		style="@style/common_EditText"
+		android:layout_below="@id/actsendsms_layoutProvider"
+		android:layout_alignParentLeft="true"
+		android:layout_toLeftOf="@id/actsendsms_btnPickContact"
+		android:hint="@string/actsendsms_txtDestination"
+	/>
+
+	<TextView
+		android:id="@+id/actsendsms_lblMessageLength"
+		style="@style/common_TextView"
+		android:layout_alignLeft="@id/actsendsms_txtDestination"
+		android:layout_below="@id/actsendsms_txtDestination"
+		android:text="@string/actsendsms_btnSend"
+	/>
+	
+	<LinearLayout
+		android:id="@+id/actsendsms_layoutSend"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:orientation="vertical"
+	>
+		<Button
+			android:id="@+id/actsendsms_btnSend"
+			style="@style/actsendsms_btnSend"
+			android:text="@string/actsendsms_btnSend"
+			android:drawableLeft="@drawable/ic_btn_sendmessage"
+		/>
+		
+		<com.admob.android.ads.AdView
+			android:id="@+id/actsendsms_adview"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+		/>
+	</LinearLayout>
+	
+	<EditText
+		android:id="@+id/actsendsms_txtMessage"
+		style="@style/common_EditText"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@id/actsendsms_btnPickContact"
+		android:layout_above="@id/actsendsms_layoutSend"
+		android:hint="@string/actsendsms_txtBody"
+		android:gravity="top|left"
+	/>
+
+</RelativeLayout>

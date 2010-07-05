@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Application name -->
+	<string name="common_appName">SmsForFree Lite</string>
+    <string name="common_appNameForDisplay">SmsForFree</string>
+
+	<!-- Restrict to providers -->
+	<string name="config_RestrictToProviders"></string>
+	
+	<!-- Lite or Normal -->
+	<string name="config_AppType">Lite</string>
+	
+	<!-- With (true) or without (false) ads -->
+	<string name="config_ShowAd">true</string>
+
+	<!-- Number of sms allowed each day foe lite version of the software-->
+	<string name="config_MaxAllowedSmsForDay">5</string>
+</resources>

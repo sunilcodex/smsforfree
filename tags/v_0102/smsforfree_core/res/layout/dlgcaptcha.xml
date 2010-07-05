@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/common_scrollActivityArea"
+>
+	<RelativeLayout
+		android:id="@+id/dlgcaptcha_layoutroot"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+	>
+		<ImageView
+			android:id="@+id/dlgcaptcha_imgCaptcha"
+			android:layout_width="220dp"
+			android:layout_height="100dp"
+			android:layout_alignParentTop="true"
+			android:layout_centerHorizontal="true"
+			android:scaleType="fitCenter"
+		/>
+		
+		<EditText
+			android:id="@+id/dlgcaptcha_txtCode"
+			style="@style/common_EditText"
+			android:layout_below="@id/dlgcaptcha_imgCaptcha"
+			android:layout_margin="10dp"
+			android:hint="@string/dlgcaptcha_txtCodeHint"
+		/>
+		
+		<Button
+			android:id="@+id/dlgcaptcha_btnOk"
+			style="@style/common_btnAction"
+			android:text="@string/common_btnOk"
+			android:layout_marginLeft="10dp"
+			android:layout_below="@id/dlgcaptcha_txtCode"
+			android:layout_alignParentLeft="true"
+		/>
+	
+		<Button
+			android:id="@+id/dlgcaptcha_btnCancel"
+			style="@style/common_btnAction"
+			android:text="@string/common_btnCancel"
+			android:layout_marginRight="10dp"
+			android:layout_alignBaseline="@id/dlgcaptcha_btnOk"
+			android:layout_alignParentRight="true"
+		/>
+	
+	</RelativeLayout>
+
+</ScrollView>
