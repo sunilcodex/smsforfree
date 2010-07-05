@@ -13,6 +13,8 @@ FUTURE IMPLEMENTAZIONI
 -gestione servizi salvati di jacksms
 
 
+per creare nuovo tag
+svn copy https://smsforfree.googlecode.com/svn/trunk https://smsforfree.googlecode.com/svn/tags/v_0102 -m "Creating a v_0102 release" --username alfredo.morresi
 
 
 
