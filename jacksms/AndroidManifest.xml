@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="it.rainbowbreeze.jacksms"
-	android:versionName="1.2"
-	android:versionCode="3"
+	android:versionCode="1"
+	android:versionName="1.0"
 >
     <application
     	android:icon="@drawable/ic_launcher_smsforfree"
@@ -79,9 +79,6 @@
         	android:label="@string/common_appNameForDisplay"
        	/>
        	
-		<!-- The application's publisher ID assigned by AdMob -->
-		<meta-data android:value="a14c28c5ac8b719" android:name="ADMOB_PUBLISHER_ID" />
-		
     </application>
     
 	<!-- API support: min 1.6, target 2.0 -->

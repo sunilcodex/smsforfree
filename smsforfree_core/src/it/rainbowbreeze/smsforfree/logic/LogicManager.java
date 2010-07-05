@@ -50,10 +50,6 @@ public class LogicManager
 		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
 		SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
 		
-		//find if ads should be enabled
-		String adEnabel = context.getString(R.string.config_ShowAd);
-		SmsForFreeApplication.instance().setAdEnables("true".equalsIgnoreCase(adEnabel));
-		
 		//load configurations
 		AppPreferencesDao.instance().load(context);
 		
@@ -130,9 +126,6 @@ public class LogicManager
 	{
 		//unlimited sms for normal app
 		if (!SmsForFreeApplication.instance().isLiteVersionApp()) return true;
-		
-		//0: no send limit
-		if (0 == SmsForFreeApplication.instance().getAllowedSmsForDay()) return true;
 		
 		return getSmsSentToday() <= SmsForFreeApplication.instance().getAllowedSmsForDay();
 	}
@@ -233,26 +226,26 @@ public class LogicManager
 		
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
-		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
+		String allowedProviders = context.getString(R.string.config_AllowedProviders);
 		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
 		
-		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("JACKSMS")) {
+		if (allowedProviders.toUpperCase().contains("JACKSMS")) {
 			//add JackSMS
-			JacksmsProvider prov = new JacksmsProvider(dao);
+			JacksmsProvider prov = new JacksmsProvider(dao, context);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 	
-		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("AIMON")) {
+		if (allowedProviders.toUpperCase().contains("AIMON")) {
 			//add Aimon
-			AimonProvider prov = new AimonProvider(dao);
+			AimonProvider prov = new AimonProvider(dao, context);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 		
-		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("VOIPSTUNT")) {
+		if (allowedProviders.toUpperCase().contains("VOIPSTUNT")) {
 			//add Voipstunt
-			VoipstuntProvider prov = new VoipstuntProvider(dao);
+			VoipstuntProvider prov = new VoipstuntProvider(dao, context);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}

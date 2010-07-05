@@ -1,10 +1,11 @@
-TODOLIST
+CONTROLLARE
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -icone mancanti credits aimon
--mettere bottone che ripresenta ultimo messaggio di invio sms
--mettere codice per invio sms, non solo generico codice di ok
--controllare come mai non viene aggiornato il numero di caratteri per messaggio
+-migliorare l'about
 
+
+
+SmsForFree permette di spedire SMS utilizzando i gateway internet che permettono di ottenere tariffe convenienti o anche messaggi gratuiti. Generalmente ogni gateway
 
 
 

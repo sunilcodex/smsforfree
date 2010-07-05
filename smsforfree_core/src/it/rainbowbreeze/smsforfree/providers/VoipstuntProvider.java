@@ -14,14 +14,34 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
+import it.rainbowbreeze.smsforfree.logic.LogicManager;
 
 public class VoipstuntProvider
 	extends SmsSingleProvider
 {
 	//---------- Ctors
-	public VoipstuntProvider(ProviderDao dao)
+	public VoipstuntProvider(ProviderDao dao, Context context)
 	{
 		super(dao, PARAM_NUMBER);
+		mDictionary = new VoipstuntDictionary();
+		
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.voipstunt_username_desc));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.voipstunt_password_desc));
+		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
+		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.voipstunt_sender_desc));
+		setDescription(context.getString(R.string.voipstunt_description));
+
+		SmsServiceCommand command;
+		//initializes the command list
+		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
+		command = new SmsServiceCommand(
+				COMMAND_REGISTER, context.getString(R.string.voipstunt_commandRegister), 1, R.drawable.ic_menu_invite); 
+		mProviderSettingsActivityCommands.add(command);
+
+		//save some messages
+		mMessages = new String[2];
+		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.voipstunt_msg_messageSent);
+		mMessages[MSG_INDEX_MESSAGE_NO_SENT] = context.getString(R.string.voipstunt_msg_messageNotSent);
 	}
 
 
@@ -71,33 +91,6 @@ public class VoipstuntProvider
 
 	
 	//---------- Public methods
-	
-	@Override
-	public ResultOperation<Void> initProvider(Context context)
-	{
-		mDictionary = new VoipstuntDictionary();
-		
-		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.voipstunt_username_desc));
-		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.voipstunt_password_desc));
-		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
-		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.voipstunt_sender_desc));
-		setDescription(context.getString(R.string.voipstunt_description));
-
-		SmsServiceCommand command;
-		//initializes the command list
-		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_REGISTER, context.getString(R.string.voipstunt_commandRegister), 1, R.drawable.ic_menu_invite); 
-		mProviderSettingsActivityCommands.add(command);
-
-		//save some messages
-		mMessages = new String[2];
-		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.voipstunt_msg_messageSent);
-		mMessages[MSG_INDEX_MESSAGE_NO_SENT] = context.getString(R.string.voipstunt_msg_messageNotSent);
-
-		return super.initProvider(context);
-	}
-	
 	@Override
 	public ResultOperation<String> sendMessage(String serviceId, String destination, String body)
 	{
@@ -129,7 +122,7 @@ public class VoipstuntProvider
 				okDestination,
 				okBody);		
 			
-		ResultOperation<String> res = doSingleHttpRequest(urlToSend, null, null);
+		ResultOperation<String> res = doRequest(urlToSend, null, null);
 
     	//checks for applications errors
     	if (res.HasErrors()) return res;
@@ -137,9 +130,10 @@ public class VoipstuntProvider
     	//examine it the return contains confirmation if the message was sent
     	if (mDictionary.messageWasSent(res.getResult())) {
     		res.setResult(mMessages[MSG_INDEX_MESSAGE_SENT]);
-		} else {
+			//update number of messages sent in the day
+			LogicManager.updateSmsCounter(1);
+   	} else {
     		res.setResult(mMessages[MSG_INDEX_MESSAGE_NO_SENT]);
-    		res.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     	}
 		
 		return res;    	

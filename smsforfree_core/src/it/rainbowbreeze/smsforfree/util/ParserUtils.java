@@ -33,22 +33,6 @@ public class ParserUtils {
 		
 		return result;
 	}
-
-	
-	/**
-	 * Return the latest char of the string before the variable part
-	 * @param stringToCheck
-	 * @return
-	 */
-	
-	public static int getInvariableStringFinalBoundary(String stringToCheck)
-	{
-		if (TextUtils.isEmpty(stringToCheck)) return -1;
-		//ok, i know it isn't the best way, but it works as a workaround
-		//for the presence of %s parameter in the source message string ;)
-		int pos = stringToCheck.indexOf("%");
-		return (pos >= 0) ? pos : stringToCheck.length();
-	}
 	
 
 	//---------- Private methods

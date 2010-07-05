@@ -3,8 +3,6 @@ package it.rainbowbreeze.smsforfree.ui;
 import java.net.URLDecoder;
 import java.util.List;
 
-import com.admob.android.ads.AdView;
-
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
@@ -45,7 +43,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -139,13 +136,6 @@ public class ActSendSms
         mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
         mBtnSend = (Button) findViewById(R.id.actsendsms_btnSend);
         mBtnPickContact = (ImageButton) findViewById(R.id.actsendsms_btnPickContact);
-        
-        //eventually remove ad view
-        if (!SmsForFreeApplication.instance().isAdEnables()) {
-        	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
-        	LinearLayout parent = (LinearLayout) adView.getParent();
-        	parent.removeView(adView);
-        }
 
         //set listeners
         mSpiProviders.setOnItemSelectedListener(mSpiProvidersSelectedListener);
@@ -273,13 +263,13 @@ public class ActSendSms
 	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	if (!super.onCreateOptionsMenu(menu)) return false;
+    	super.onCreateOptionsMenu(menu);
     	
     	//errors on initialization
     	if (!SmsForFreeApplication.instance().isCorrectlyInitialized()) return true;
 
     	menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
-    		.setIcon(android.R.drawable.ic_menu_info_details);
+		.setIcon(android.R.drawable.ic_menu_info_details);
     	//menu ends here if the application is expired
     	if (SmsForFreeApplication.instance().isAppExpired()) return true;
 
@@ -889,14 +879,14 @@ public class ActSendSms
 		removeDialog(DIALOG_SENDING_MESSAGE);
 		
 		//captcha required
-		if (ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST == result.getReturnCode()) {
+		if (ResultOperation.RETURNCODE_CAPTCHA_REQUEST == result.getReturnCode()) {
 			//save captcha data
 			mCaptchaStorage = result.getResult();
 			//launch captcha request
 			showDialog(DIALOG_CAPTCHA_REQUEST);
 		
 		//return with errors or message sent
-		} else  {
+		} else if (result.HasErrors() || ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
 			displayMessageSendResult(result, false);
 		}
 	}
@@ -920,15 +910,9 @@ public class ActSendSms
 		} else {
 			//display returning message of the provider
 			ActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
-
-			//only if sms was sent
-			if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
-				//update number of messages sent in the day
-				LogicManager.updateSmsCounter(1);
-				//check if the text should be deleted
-				if (AppPreferencesDao.instance().getAutoClearMessage()) {
-					cleanDataFields();
-				}
+			//check if the text should be deleted
+			if (AppPreferencesDao.instance().getAutoClearMessage()) {
+				cleanDataFields();
 			}
 		}
 	}
