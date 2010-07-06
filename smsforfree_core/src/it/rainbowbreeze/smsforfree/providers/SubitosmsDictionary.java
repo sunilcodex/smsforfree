@@ -3,6 +3,8 @@
  */
 package it.rainbowbreeze.smsforfree.providers;
 
+import it.rainbowbreeze.smsforfree.util.ParserUtils;
+
 import java.util.HashMap;
 
 /**
@@ -14,10 +16,22 @@ public class SubitosmsDictionary
 
 	//---------- Ctors
 
+	
+	
+	
 	//---------- Private fields
 	private static final String BASE_URL = "http://www.subitosms.it/gateway.php";
 	private static final String PARAM_USERNAME = "username";
 	private static final String PARAM_PASSWORD = "password";
+	private static final String PARAM_MESSAGE = "testo";
+	private static final String PARAM_DESTINATION = "dest";
+	private static final String PARAM_SENDER = "mitt";
+
+	private static final String SEARCH_CREDITI_SMS_START = "credito:";
+	private static final String SEARCH_CREDITI_SMS_END = "";
+
+	private static final String RESULT_ERRORMSG_ACCESS_DENIED = "non autorizzato";
+	private static final String RESULT_ERRORMSG_NOT_ENOUGH_CREDIT = "credito insufficiente";
 
 
 
@@ -43,7 +57,49 @@ public class SubitosmsDictionary
 		return params;
 	}
 	
+	/**
+	 * Prepares parameters for the call for sending sms
+	 * @param username
+	 * @param password
+	 * @param sender
+	 * @param destination
+	 * @param body
+	 * @return
+	 */
+	public HashMap<String, String> getParametersForApiSend(
+			String username,
+			String password,
+			String sender,
+			String destination,
+			String message)
+	{
+		HashMap<String, String> params =  new HashMap<String, String>();
+		getParametersForApiLogin(username, password, params);
+		params.put(PARAM_SENDER, sender);
+		params.put(PARAM_DESTINATION, destination);
+		params.put(PARAM_MESSAGE, message);
+		return params;
+	}
+
 	
+	/**
+	 * Extract from the output of the html pages for sending free sms the remaining credits
+	 * What i need is in the string
+	 *   Credito residuo giornaliero: 3 crediti/sms
+	 *   
+	 * @param message
+	 * @return
+	 */
+	public String findRemainingCredit(String message)
+	{
+		return ParserUtils.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END);
+	}
+	
+	public boolean isLoginInvalidCredentials(String webserviceReply)
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_ACCESS_DENIED); }
+
+	public boolean isNotEnoughCredit(String webserviceReply)
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_NOT_ENOUGH_CREDIT); }	
 	
 	
 	//---------- Private methods
