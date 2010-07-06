@@ -87,7 +87,7 @@ public class AimonProviderTest
 		//check if password and sender number was changed
 		//before running this test
 		assertFalse("You must change the password...", "XXXX".equals(Def.AIMON_PASSWORD));
-		assertFalse("You must change destination", "XXXX".equals(Def.AIMON_DESTINATION));
+		assertFalse("You must change destination", "XXXX".equals(Def.TEST_DESTINATION));
 	}
 	
 	
@@ -153,7 +153,7 @@ public class AimonProviderTest
 		
 		//wrong sender
 		mProvider.setParameterValue(2, "");
-		res = mProvider.sendMessage(AimonDictionary.ID_API_ANONYMOUS_SENDER, Def.AIMON_DESTINATION, "ciao da me");
+		res = mProvider.sendMessage(AimonDictionary.ID_API_ANONYMOUS_SENDER, Def.TEST_DESTINATION, "ciao da me");
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidSender), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		mProvider.setParameterValue(2, Def.AIMON_SENDER);
@@ -174,7 +174,7 @@ public class AimonProviderTest
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 
 		//wrong message encoding
-		res = mProvider.sendMessage(AimonDictionary.ID_API_ANONYMOUS_SENDER, Def.AIMON_DESTINATION, "ciao da me\t\tciao!\n");
+		res = mProvider.sendMessage(AimonDictionary.ID_API_ANONYMOUS_SENDER, Def.TEST_DESTINATION, "ciao da me\t\tciao!\n");
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidMessageEncodingOrTooLong), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 
@@ -206,14 +206,14 @@ public class AimonProviderTest
 		
 		//wrong username
 		mProvider.setParameterValue(0, "XXXXX");
-		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.AIMON_DESTINATION, "ciao da me");
+		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me");
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
 		mProvider.setParameterValue(0, Def.AIMON_USERNAME);
 
 		//wrong password
 		mProvider.setParameterValue(1, "XXXXX");
-		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.AIMON_DESTINATION, "ciao da me");
+		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me");
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
 		mProvider.setParameterValue(1, Def.AIMON_PASSWORD);
@@ -230,7 +230,7 @@ public class AimonProviderTest
 		
 		//wrong sender
 		mProvider.setParameterValue(2, "+4323242343");
-		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER, Def.AIMON_DESTINATION, "ciao da me");
+		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER, Def.TEST_DESTINATION, "ciao da me");
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidSender), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 		mProvider.setParameterValue(2, Def.AIMON_SENDER);
@@ -271,7 +271,7 @@ public class AimonProviderTest
 	 */
 	public void testFreeSmsSendMessageOk()
 	{
-		ResultOperation<String> res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.AIMON_DESTINATION, "ciao da me - free sms");
+		ResultOperation<String> res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me - free sms");
 		//the final part of the message is variable, so cut it!
 		Log.e(TAG, res.getResult());
 		int pos = ParserUtils.getInvariableStringFinalBoundary(getContext().getString(R.string.aimon_msg_messageQueued));
@@ -279,7 +279,7 @@ public class AimonProviderTest
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		
 		//if i resend the same message again, i get an error
-		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.AIMON_DESTINATION, "ciao da me - free sms");
+		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me - free sms");
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_freeSmsDailyLimitReached), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 	}
