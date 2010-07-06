@@ -430,19 +430,10 @@ public class AimonProvider
 		//are correct.
 		res = verifyCredit(username, password);
 		//checks for application errors
-		if (res.HasErrors()) return res;
+		if (res.HasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
 		
-		//at this point reply can only contains the remaining credits or
-		//aimon internal errors
-		
-		//ok, i know it isn't the best way, but it works as a workaround
-		//for the presence of %s parameter in the source message string ;)
-		int pos = ParserUtils.getInvariableStringFinalBoundary(mMessages[MSG_INDEX_REMAINING_CREDITS]);
-		String returnMessage = res.getResult(); 
-		if (returnMessage.startsWith(mMessages[MSG_INDEX_REMAINING_CREDITS].substring(0, pos))) {
-			//credits, so credentials are correct
-			res = new ResultOperation<String>(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
-		}
+		//at this point reply can only contains the remaining credits, so credential are correct
+		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
 		
 		return res;
 	}
@@ -468,7 +459,7 @@ public class AimonProvider
 			String destination,
 			String body)
 	{
-		HashMap<String, String> params = new HashMap<String, String>();
+		HashMap<String, String> params;
 
     	String url = AimonDictionary.URL_SEND_SMS;
 		params = mDictionary.getParametersForApiSend(username, password, idApi, sender, destination, body);
@@ -484,9 +475,6 @@ public class AimonProvider
     	//at this point, the operation was surely executed correctly
 		res.setResult(String.format(
 				mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
-		
-		//TODO
-		//read the remaining credits and append it to the message
 		
     	return res;
 	}
