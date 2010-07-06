@@ -23,7 +23,7 @@ public class SubitosmsProviderTest
 	extends AndroidTestCase
 {
 	//---------- Private fields
-	private static final String TAG = "SmsForFree-SubitoSMSProviderTest";
+	private static final String TAG = "SmsForFree-SubitosmsProviderTest";
 	
 	private SmsProvider mProvider;
 	private Context mContext;
@@ -59,7 +59,6 @@ public class SubitosmsProviderTest
 		//set test parameters
 		mProvider.setParameterValue(0, Def.SUBITOSMS_USERNAME);
 		mProvider.setParameterValue(1, Def.SUBITOSMS_PASSWORD);
-		mProvider.setParameterValue(2, Def.SUBITOSMS_SENDER);
 	}
 	
 	@Override
@@ -73,6 +72,25 @@ public class SubitosmsProviderTest
 
 
 	//---------- Tests methods
+
+	@Override
+	public void testAndroidTestCaseSetupProperly()
+	{
+		super.testAndroidTestCaseSetupProperly();
+		
+		//check if password and sender number was changed
+		//before running this test
+		assertFalse("You must change the password...", "XXXX".equals(Def.AIMON_PASSWORD));
+		assertFalse("You must change destination", "XXXX".equals(Def.TEST_DESTINATION));
+	}
+
+
+
+	public void testSubitosmsCheckCredits()
+	{
+		
+	}
+
 
 	//---------- Private methods
 

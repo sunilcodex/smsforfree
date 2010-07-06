@@ -54,33 +54,21 @@ public class WebserviceClientTest
 		mClient.startConversation();
 		
         url = AimonDictionary.URL_SEND_SMS_FREE_1;
-        params = new HashMap<String, String>();
-        params.put(AimonDictionary.FIELD_FREE_INPUT_USERNAME, Def.AIMON_USERNAME);
-        params.put(AimonDictionary.FIELD_FREE_SUBMIT_BUTTON, "procedi");
-
         //wrong password
-        params.put(AimonDictionary.FIELD_FREE_INPUT_PASSWORD, "XXXX");
+        params = dictionary.getParametersForFreeSmsLogin(Def.AIMON_USERNAME, "XXXXX");
         resultMessage =  mClient.requestPost(url, null, params);
         assertTrue(dictionary.isFreeSmsLoginInvalidCredentials(resultMessage));
         
         //good credential
-        params.put(AimonDictionary.FIELD_FREE_INPUT_PASSWORD, Def.AIMON_PASSWORD);
+        params = dictionary.getParametersForFreeSmsLogin(Def.AIMON_USERNAME, Def.AIMON_PASSWORD);
         resultMessage =  mClient.requestPost(url, null, params);
         assertTrue(dictionary.isFreeSmsLoginOk(resultMessage, Def.AIMON_USERNAME));
 
         //go next step, send SMS with an invalid sender
         //if the invalid sender message is returned, the conversation works!
-		String msg = "ciao è ora che ti Alzi!!! Per il resto, come stai?";
+		String msg = "messaggio di test mandato da aimon con sender sbagliato";
 		url = AimonDictionary.URL_SEND_SMS_FREE_2;
-		params.clear();
-		params.put(AimonDictionary.FIELD_FREE_SMS_TYPE, "0");  //1 credit sms, fixed sender
-		params.put(AimonDictionary.FIELD_FREE_SENDER_TYPE, "1");
-		params.put(AimonDictionary.FIELD_FREE_INTERNATIONAL_PREFIX, "39 (Italy)");
-		params.put(AimonDictionary.FIELD_FREE_SENDER, "XXXXX");
-		params.put(AimonDictionary.FIELD_FREE_MESSAGE, msg);
-		params.put(AimonDictionary.FIELD_FREE_MESSAGE_LENGTH, String.valueOf(msg.length()));
-		params.put(AimonDictionary.FIELD_FREE_DESTINATION, Def.AIMON_DESTINATION);
-		params.put(AimonDictionary.FIELD_FREE_SUBMIT_BUTTON2, "Invia SMS");		
+		params = dictionary.getParametersForFreeSmsSend("0", "XXXXX", Def.TEST_DESTINATION, msg);
         resultMessage =  mClient.requestPost(url, null, params);
         assertTrue(dictionary.isFreeSmsInvalidSender(resultMessage));
 		
