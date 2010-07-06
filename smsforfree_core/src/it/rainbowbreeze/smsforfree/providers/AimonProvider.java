@@ -93,10 +93,6 @@ public class AimonProvider
 	{ return PARAM_NUMBER; }
 
 	@Override
-	public int getMaxMessageLenght()
-	{ return 160; }
-	
-	@Override
 	public boolean hasSubServicesToConfigure()
 	{ return false; }
     
@@ -249,8 +245,8 @@ public class AimonProvider
     	}
 
 		//checks body length
-    	if (body.length() > AimonDictionary.MAX_BODY_LENGTH) {
-    		okBody = body.substring(0, AimonDictionary.MAX_BODY_LENGTH);
+    	if (body.length() > AimonDictionary.MAX_BODY_API_LENGTH) {
+    		okBody = body.substring(0, AimonDictionary.MAX_BODY_API_LENGTH);
     	} else {
     		okBody = body;
     	}
@@ -273,7 +269,6 @@ public class AimonProvider
 		return res;    	
 		
 	}
-
 
     @Override
     public ResultOperation<String> executeCommand(int commandId, Context context, Bundle extraData)
@@ -311,6 +306,20 @@ public class AimonProvider
 		return res;
 	}
 
+	
+	@Override
+	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
+	{ return null; }
+
+	@Override
+	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode)
+	{ return null; }
+
+	@Override
+	public ResultOperation<Void> saveSubservices(Context context)
+	{ return new ResultOperation<Void>(); }
+
+
 
 	
 
@@ -326,14 +335,6 @@ public class AimonProvider
 
 	@Override
 	protected String getSubservicesFileName()
-	{ return null; }
-
-	@Override
-	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
-	{ return null; }
-
-	@Override
-	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode)
 	{ return null; }
 
 	@Override
@@ -356,39 +357,37 @@ public class AimonProvider
 		service = new SmsConfigurableService(0);
 		service.setId(AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE_ANONYMOUS]);
-		service.setMaxMessageLenght(124);
+		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_FREE_LENGTH);
 		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
 		service.setId(AimonDictionary.ID_API_FREE_NORMAL);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE_NORMAL]);
-		service.setMaxMessageLenght(124);
+		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_FREE_LENGTH);
 		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
 		service.setId(AimonDictionary.ID_API_ANONYMOUS_SENDER);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS]);
+		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_API_LENGTH);
 		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
 		service.setId(AimonDictionary.ID_API_SELECTED_SENDER_NO_REPORT);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_NORMAL]);
+		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_API_LENGTH);
 		mSubservices.add(service);
 
 		service = new SmsConfigurableService(0);
 		service.setId(AimonDictionary.ID_API_SELECTED_SENDER_REPORT);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_REPORT]);
-		service.setMaxMessageLenght(112);
+		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_API_LENGTH);
 		mSubservices.add(service);
 		
 		return new ResultOperation<Void>();
 	}
+
 	
-	@Override
-	public ResultOperation<Void> saveSubservices(Context context)
-	{ return new ResultOperation<Void>(); }
-
-
 	/**
 	 * Verifies remaining credits for the user
 	 * @param username
@@ -401,8 +400,7 @@ public class AimonProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
     	
-		HashMap<String, String> params = new HashMap<String, String>();
-    	appendCredential(params, username, password);
+		HashMap<String, String> params = mDictionary.getParametersForApiCreditCheck(username, password);
     	
     	//call the api that gets the credit
     	ResultOperation<String> res = doSingleHttpRequest(AimonDictionary.URL_GET_CREDIT, null, params);
@@ -448,8 +446,6 @@ public class AimonProvider
 		
 		return res;
 	}
-	
-	
 
 
 	/**
@@ -475,11 +471,7 @@ public class AimonProvider
 		HashMap<String, String> params = new HashMap<String, String>();
 
     	String url = AimonDictionary.URL_SEND_SMS;
-		appendCredential(params, username, password);
-		params.put(AimonDictionary.PARAM_SENDER, sender);
-		params.put(AimonDictionary.PARAM_DESTINATION, destination);
-		params.put(AimonDictionary.PARAM_BODY, body);
-		params.put(AimonDictionary.PARAM_ID_API, idApi);
+		params = mDictionary.getParametersForApiSend(username, password, idApi, sender, destination, body);
 		
 		//send the sms
 		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
@@ -499,6 +491,7 @@ public class AimonProvider
     	return res;
 	}
 
+
     
 	/**
 	 * Parse the webservice reply searching for know errors code.
@@ -508,7 +501,7 @@ public class AimonProvider
 	 * @param resultToAnalyze
 	 * @return true if an aimon error is found, otherwise false
 	 */
-	public boolean parseReplyForApiErrors(ResultOperation<String> resultToAnalyze)
+	private boolean parseReplyForApiErrors(ResultOperation<String> resultToAnalyze)
 	{
 		String res;
 		String reply = resultToAnalyze.getResult();
@@ -550,18 +543,6 @@ public class AimonProvider
     	}
 	}
 
-	
-	/**
-     * Append username and password on headers map
-     * @param data
-     * @param username
-     * @param password
-     */
-	private void appendCredential(HashMap<String, String> data, String username, String password)
-    {
-    	data.put(AimonDictionary.PARAM_USERNAME, username);
-    	data.put(AimonDictionary.PARAM_PASSWORD, password);
-    }
 
 	
 	/**
@@ -584,17 +565,14 @@ public class AimonProvider
 			String body)
 	{
         ResultOperation<String> res;
-		HashMap<String, String> params = new HashMap<String, String>();
+		HashMap<String, String> params;
 		String url;
 		
 		startConversation();
 
 		//login to the service
         url = AimonDictionary.URL_SEND_SMS_FREE_1;
-        params = new HashMap<String, String>();
-        params.put(AimonDictionary.FIELD_FREE_INPUT_USERNAME, username);
-        params.put(AimonDictionary.FIELD_FREE_INPUT_PASSWORD, password);
-        params.put(AimonDictionary.FIELD_FREE_SUBMIT_BUTTON, "procedi");
+        params = mDictionary.getParametersForFreeSmsLogin(username, password);
         res = doConversationHttpRequest(url, null, params);
         
         if (res.HasErrors()) return res;
@@ -610,15 +588,7 @@ public class AimonProvider
 
         //no errors, continue with the second page
 		url = AimonDictionary.URL_SEND_SMS_FREE_2;
-		params.clear();
-		params.put(AimonDictionary.FIELD_FREE_SMS_TYPE, idApi);  //1 credit sms, fixed sender
-		params.put(AimonDictionary.FIELD_FREE_SENDER_TYPE , "1"); //1 numeric 2 alphanumeric
-		params.put(AimonDictionary.FIELD_FREE_INTERNATIONAL_PREFIX, "39 (Italy)");
-		params.put(AimonDictionary.FIELD_FREE_SENDER, sender);
-		params.put(AimonDictionary.FIELD_FREE_MESSAGE, body);
-		params.put(AimonDictionary.FIELD_FREE_MESSAGE_LENGTH, String.valueOf(body.length()));
-		params.put(AimonDictionary.FIELD_FREE_DESTINATION, destination);
-		params.put(AimonDictionary.FIELD_FREE_SUBMIT_BUTTON2, "Invia SMS");		
+		params = mDictionary.getParametersForFreeSmsSend(idApi, sender, destination, body);		
         res = doConversationHttpRequest(url, null, params);
         
         if (res.HasErrors()) return res;
@@ -645,7 +615,7 @@ public class AimonProvider
 		
 		return res;
 	}
-        
+
 
 	/**
 	 * Analyzes returns of http conversation request for finding errors
