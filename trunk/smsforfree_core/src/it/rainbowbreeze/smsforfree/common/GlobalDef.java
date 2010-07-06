@@ -23,6 +23,8 @@ public class GlobalDef {
 	/** file name for providers preferences */
 	public static String voipstuntParametersFileName = "voipstunt_parameters.xml";
 
+	public static String subitosmsParametersFileName = "subitosms_parameters.xml";
+
 	/** international prefix for Italy */
 	public static final String italyInternationalPrefix = "+39";
 	

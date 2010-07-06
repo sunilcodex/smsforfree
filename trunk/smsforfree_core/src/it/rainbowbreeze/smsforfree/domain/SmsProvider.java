@@ -45,13 +45,10 @@ public abstract class SmsProvider
 	
 	
 	//---------- Public fields
-	public static final String ERROR_NO_CREDENTIALS = "NO_CREDENTIALS";
-	public static final String ERROR_NO_REPLY_FROM_SITE = "NO_REPLY";
-	
-	public static final String CAPTCHAREQUEST = "captcharequest";
 	
 
-	
+
+
 	//---------- Public properties
 	
 	/** Has this provider sub-services? */

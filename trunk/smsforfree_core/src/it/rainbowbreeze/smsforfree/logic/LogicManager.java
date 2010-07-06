@@ -19,6 +19,7 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
+import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
 import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
 
 /**
@@ -236,23 +237,31 @@ public class LogicManager
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
 		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
 		
+		SmsProvider prov;
 		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("JACKSMS")) {
 			//add JackSMS
-			JacksmsProvider prov = new JacksmsProvider(dao);
+			prov = new JacksmsProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 	
-		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("AIMON")) {
+		if (!res.HasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("AIMON"))) {
 			//add Aimon
-			AimonProvider prov = new AimonProvider(dao);
+			prov = new AimonProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 		
-		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("VOIPSTUNT")) {
+		if (!res.HasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("VOIPSTUNT"))) {
 			//add Voipstunt
-			VoipstuntProvider prov = new VoipstuntProvider(dao);
+			prov = new VoipstuntProvider(dao);
+			res = prov.initProvider(context);
+			SmsForFreeApplication.instance().getProviderList().add(prov);
+		}
+		
+		if (!res.HasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("SUBITOSMS"))) {
+			//add Subitosms
+			prov = new SubitosmsProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}

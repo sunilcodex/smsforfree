@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subitosms_username_desc">Username</string>
+    <string name="subitosms_password_desc">Password</string>
+    <string name="subitosms_sender_desc">Sender</string>
+    <string name="subitosms_description">Send SMS to Italy numbers with custom sender at less that 7 eurocents. 2 free sms every day. www.subitosms.it.</string>
+    <string name="subitosms_commandCheckCredentials">Check credentials</string>
+    <string name="subitosms_commandCheckCredits">Get credit</string>
+    <string name="subitosms_commandRegister">Register to SubitoSMS</string>
+    <string name="subitosms_msg_invalidCredentials">Invalid SubitoSMS credentials :(</string>
+    <string name="subitosms_msg_invalidDestination">Invalid destination.\nOnly italian mobile numbers are supported</string>
+    <string name="subitosms_msg_validCredentials">Valid SubitoSMS credentials</string>
+    <string name="subitosms_msg_serverError">SubitoSMS internal server error</string>
+    <string name="subitosms_msg_unmanagedServerError">SubitoSMS internal server error:\n %s</string>
+    <string name="subitosms_msg_remainingCredits">Remaining credits: %s</string>
+    <string name="subitosms_msg_emptyMessage">Empty messagge</string>
+    <string name="subitosms_msg_invalidMessageEncoding">Invalid message encoding, change strange characters</string>
+    <string name="subitosms_msg_invalidMessageEncodingOrTooLong">Invalid message encoding or message is too long</string>
+    <string name="subitosms_msg_notEnoughCredit">Not enough credit for sending SMS. Recharge our account on SubitoSMS</string>
+    <string name="subitosms_msg_messageQueued">Message sent.\n %s</string>
+    <string name="subitosms_msg_missingParameters">Error calling SubitoSMS provider. Please, advice the developer of the software about this error. Doing this, a correction will be available soon.\n\n%s</string>
+    <string name="subitosms_registerLink">http://www.subitosms.it/registrazione_step1.php</string>
+</resources>

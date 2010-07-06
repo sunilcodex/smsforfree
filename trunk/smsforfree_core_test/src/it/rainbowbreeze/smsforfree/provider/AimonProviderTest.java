@@ -280,7 +280,10 @@ public class AimonProviderTest
 		
 		//if i resend the same message again, i get an error
 		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me - free sms");
-		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_freeSmsDailyLimitReached), res.getResult());
+		Log.e(TAG, res.getResult());
+		assertTrue("Wrong return message",
+				getContext().getString(R.string.aimon_msg_freeSmsDailyLimitReached).equals(res.getResult()) ||
+				getContext().getString(R.string.aimon_msg_freeSmsMonthlyLimitReached).equals(res.getResult()));
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 	}
 

@@ -3,15 +3,20 @@
  */
 package it.rainbowbreeze.smsforfree.provider;
 
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.TestUtils;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
+import it.rainbowbreeze.smsforfree.providers.AimonProvider;
 import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
 import android.content.Context;
+import android.os.Bundle;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 /**
  * Test class for SubitoSMS provider
@@ -24,6 +29,8 @@ public class SubitosmsProviderTest
 {
 	//---------- Private fields
 	private static final String TAG = "SmsForFree-SubitosmsProviderTest";
+
+	private static final String USER_CREDITS = "3";
 	
 	private SmsProvider mProvider;
 	private Context mContext;
@@ -88,7 +95,18 @@ public class SubitosmsProviderTest
 
 	public void testSubitosmsCheckCredits()
 	{
+		ResultOperation<String> res;
 		
+		//user with wrong password
+		Bundle bundle = new Bundle();
+		bundle.putString("0", Def.SUBITOSMS_USERNAME);
+		bundle.putString("1", Def.SUBITOSMS_PASSWORD);
+		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDITS, mContext, bundle);
+		String remainingCredits = String.format(
+    			mContext.getString(R.string.aimon_msg_remainingCredits), USER_CREDITS);
+		Log.i(TAG, "Remaining credits: " + res.getResult());
+		assertEquals("Wrong return message", remainingCredits, res.getResult());
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 	}
 
 

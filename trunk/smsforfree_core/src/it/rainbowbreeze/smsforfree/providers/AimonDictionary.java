@@ -1,5 +1,7 @@
 package it.rainbowbreeze.smsforfree.providers;
 
+import java.util.HashMap;
+
 
 public class AimonDictionary
 {
@@ -25,24 +27,6 @@ public class AimonDictionary
 	private static final String SEARCH_CREDITI_SMS_START = "Credito residuo giornaliero: ";
 	private static final String SEARCH_CREDITI_SMS_END = "crediti/sms";
 
-	
-	
-
-	//---------- Public fields
-	public final static String URL_BASE = "https://secure.apisms.it/";
-	public final static String URL_GET_CREDIT = URL_BASE + "http/get_credit";
-	public final static String URL_SEND_SMS = URL_BASE + "http/send_sms";
-	public final static String URL_SEND_SMS_FREE_1 = "http://aimon.it/?cmd=smsgratis";
-	public static final String URL_SEND_SMS_FREE_2 = "http://aimon.it/index.php?cmd=smsgratis&sez=smsgratis";
-	public static final String URL_SEND_SMS_FREE_3 = "http://aimon.it/index.php?cmd=smsgratis&sez=smsgratis&azione=logout";
-
-	public final static String PARAM_USERNAME = "authlogin";
-	public final static String PARAM_PASSWORD = "authpasswd";
-	public final static String PARAM_SENDER = "sender";
-	public final static String PARAM_DESTINATION = "destination";
-	public final static String PARAM_BODY = "body";
-	public final static String PARAM_ID_API = "id_api";
-	
 	private static final String RESULT_SENDSMS_OK = "+01 SMS Queued";
 	private static final String RESULT_ERRORCODE_ACCESS_DENIED = "-3-";
 	private static final String RESULT_ERRORCODE_MISSING_PARAMETERS = "-5-";
@@ -53,21 +37,39 @@ public class AimonDictionary
 	private static final String RESULT_ERRORCODE_NOT_ENOUGH_CREDIT = "-103-";
 	private static final String RESULT_ERRORCODE_INVALID_SENDER = "-105-";
 	
-	public static final String FIELD_FREE_INPUT_USERNAME = "inputUsername";
-	public static final String FIELD_FREE_INPUT_PASSWORD = "inputPassword";
-	public static final String FIELD_FREE_SUBMIT_BUTTON = "submit";
-	public static final String FIELD_FREE_DESTINATION = "destinatario";
-	public static final String FIELD_FREE_MESSAGE_LENGTH = "caratteri";
-	public static final String FIELD_FREE_MESSAGE = "testo";
-	public static final String FIELD_FREE_SENDER = "mittente";
-	public static final String FIELD_FREE_INTERNATIONAL_PREFIX = "prefisso_internazionale";
-	public static final String FIELD_FREE_SENDER_TYPE = "tipomittente";
-	public static final String FIELD_FREE_SMS_TYPE = "tiposms";
-	public static final String FIELD_FREE_SUBMIT_BUTTON2 = "btnSubmit";
+	private static final String FIELD_FREE_INPUT_USERNAME = "inputUsername";
+	private static final String FIELD_FREE_INPUT_PASSWORD = "inputPassword";
+	private static final String FIELD_FREE_SUBMIT_BUTTON = "submit";
+	private static final String FIELD_FREE_DESTINATION = "destinatario";
+	private static final String FIELD_FREE_MESSAGE_LENGTH = "caratteri";
+	private static final String FIELD_FREE_MESSAGE = "testo";
+	private static final String FIELD_FREE_SENDER = "mittente";
+	private static final String FIELD_FREE_INTERNATIONAL_PREFIX = "prefisso_internazionale";
+	private static final String FIELD_FREE_SENDER_TYPE = "tipomittente";
+	private static final String FIELD_FREE_SMS_TYPE = "tiposms";
+	private static final String FIELD_FREE_SUBMIT_BUTTON2 = "btnSubmit";
+	
+	private static final String PARAM_USERNAME = "authlogin";
+	private static final String PARAM_PASSWORD = "authpasswd";
+	private static final String PARAM_SENDER = "sender";
+	private static final String PARAM_DESTINATION = "destination";
+	private static final String PARAM_BODY = "body";
+	private static final String PARAM_ID_API = "id_api";
+
+	
+
+	//---------- Public fields
+	public final static String URL_BASE = "https://secure.apisms.it/";
+	public final static String URL_GET_CREDIT = URL_BASE + "http/get_credit";
+	public final static String URL_SEND_SMS = URL_BASE + "http/send_sms";
+	public final static String URL_SEND_SMS_FREE_1 = "http://aimon.it/?cmd=smsgratis";
+	public static final String URL_SEND_SMS_FREE_2 = "http://aimon.it/index.php?cmd=smsgratis&sez=smsgratis";
+	public static final String URL_SEND_SMS_FREE_3 = "http://aimon.it/index.php?cmd=smsgratis&sez=smsgratis&azione=logout";
 
 	public final static int MAX_SENDER_LENGTH_ALPHANUMERIC = 11;
 	public final static int MAX_SENDER_LENGTH_NUMERIC = 21;
-	public final static int MAX_BODY_LENGTH = 612;
+	public final static int MAX_BODY_API_LENGTH = 612;
+	public final static int MAX_BODY_FREE_LENGTH = 124;
 	
 	public static final String ID_API_FREE_ANONYMOUS_SENDER = "0";
 	public static final String ID_API_FREE_NORMAL = "1";
@@ -166,7 +168,8 @@ public class AimonDictionary
 	 */
 	public boolean isOperationCorrectlyExecuted(String webserviceReply)
 	{
-		if (isSmsCorrectlySent(webserviceReply)) return true;
+		if (null == webserviceReply ) return false;
+		if (webserviceReply.startsWith(RESULT_SENDSMS_OK)) return true;
 		
 		//generally, a wrong operation result starts with the - char
 		return !webserviceReply.startsWith("-");
@@ -191,18 +194,114 @@ public class AimonDictionary
 	}
 
 	
+	/**
+     * Prepares parameters for the call for checking user credit
+     * @param data
+     * @param username
+     * @param password
+     */
+	public HashMap<String, String> getParametersForApiCreditCheck(String username, String password)
+    {
+		HashMap<String, String> params = new HashMap<String, String>();
+		getParametersForApiLogin(username, password, params);
+		return params;
+    }
+
+	/**
+	 * Prepares parameters for the call for sending sms via api
+	 * 
+	 * @param username
+	 * @param password
+	 * @param idApi
+	 * @param sender
+	 * @param destination
+	 * @param body
+	 * @return
+	 */
+	public HashMap<String, String> getParametersForApiSend(
+			String username,
+			String password,
+			String idApi,
+			String sender,
+			String destination,
+			String body)
+	{
+		HashMap<String, String> params = new HashMap<String, String>();
+		getParametersForApiLogin(username, password, params);
+		params.put(PARAM_SENDER, sender);
+		params.put(PARAM_DESTINATION, destination);
+		params.put(PARAM_BODY, body);
+		params.put(PARAM_ID_API, idApi);
+		return params;
+	}
+	
+	
+	/**
+	 * Prepares parameters to use when login to free sms site
+	 * 
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	public HashMap<String, String> getParametersForFreeSmsLogin(
+			String username,
+			String password)
+	{
+		HashMap<String, String> params = new HashMap<String, String>();
+
+		params.put(FIELD_FREE_INPUT_USERNAME, username);
+        params.put(FIELD_FREE_INPUT_PASSWORD, password);
+        params.put(FIELD_FREE_SUBMIT_BUTTON, "procedi");
+		return params;
+	}
+	
+
+	/**
+	 * Prepares parameter to use when sending a free sms
+	 * 
+	 * @param idApi
+	 * @param sender
+	 * @param destination
+	 * @param body
+	 * @param params
+	 */
+	public  HashMap<String, String> getParametersForFreeSmsSend(
+			String idApi,
+			String sender,
+			String destination,
+			String body)
+	{
+		HashMap<String, String> params = new HashMap<String, String>();
+
+		params.put(FIELD_FREE_SMS_TYPE, idApi);  //1 credit sms, fixed sender
+		params.put(FIELD_FREE_SENDER_TYPE , "1"); //1 numeric 2 alphanumeric
+		params.put(FIELD_FREE_INTERNATIONAL_PREFIX, "39 (Italy)");
+		params.put(FIELD_FREE_SENDER, sender);
+		params.put(FIELD_FREE_MESSAGE, body);
+		params.put(FIELD_FREE_MESSAGE_LENGTH, String.valueOf(body.length()));
+		params.put(FIELD_FREE_DESTINATION, destination);
+		params.put(FIELD_FREE_SUBMIT_BUTTON2, "Invia SMS");
+		
+		return params;
+	}
+
+
 	
 	
 	//---------- Private methods
 	/**
-	 * Checks if sms was sent without errors
-	 * @param webserviceReply
+	 * Append username and password to the parameters
+	 * @param username
+	 * @param password
 	 * @return
 	 */
-	private boolean isSmsCorrectlySent(String webserviceReply) {
-		if (null == webserviceReply ) return false;
-		return webserviceReply.startsWith(RESULT_SENDSMS_OK);
+	private void getParametersForApiLogin(
+			String username,
+			String password,
+			HashMap<String, String> params)
+	{
+		params.put(PARAM_USERNAME, username);
+    	params.put(PARAM_PASSWORD, password);
 	}
-
 
 }
