@@ -9,6 +9,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
@@ -35,16 +36,24 @@ public class SubitosmsProvider
 	
 
 	//---------- Private fields
-	private final static int PARAM_NUMBER = 2;
+	private final static int PARAM_NUMBER = 3;
 
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
+	private final static int PARAM_INDEX_SENDER = 2;
 
 	public static final int COMMAND_CHECKCREDENTIALS = 1000;
 	public static final int COMMAND_CHECKCREDITS = 1001;
 	private static final int COMMAND_REGISTER = 1002;
 
 	private static final int MSG_INDEX_REMAINING_CREDITS = 0;
+	private static final int MSG_INDEX_VALID_CREDENTIALS = 1;
+	private static final int MSG_INDEX_INVALID_CREDENTIALS = 2;
+	private static final int MSG_INDEX_EMPTY_MESSAGE = 3;
+	private static final int MSG_INDEX_INVALID_DESTINATION = 4;
+	private static final int MSG_INDEX_INVALID_SENDER = 5;
+	private static final int MSG_INDEX_MESSAGE_SENT = 6;
+	private static final int MSG_INDEX_NOT_ENOUGH_CREDIT = 7;
 
 	private String[] mMessages;
 	private SubitosmsDictionary mDictionary;
@@ -84,6 +93,7 @@ public class SubitosmsProvider
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.subitosms_username_desc));
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.subitosms_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
+		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.subitosms_sender_desc));
 		setDescription(context.getString(R.string.subitosms_description));
 		
 		SmsServiceCommand command;
@@ -99,27 +109,18 @@ public class SubitosmsProvider
 				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 3);
 		mProviderSettingsActivityCommands.add(command);
 		
-		mMessages = new String[1];
-//		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
-//		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
-//		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
+		mMessages = new String[8];
 		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.subitosms_msg_remainingCredits);
-//		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.aimon_msg_messageQueued);
+		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.subitosms_msg_validCredentials);
+		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.subitosms_msg_invalidCredentials);
+		mMessages[MSG_INDEX_EMPTY_MESSAGE] = context.getString(R.string.subitosms_msg_emptyMessage);
+		mMessages[MSG_INDEX_INVALID_DESTINATION] = context.getString(R.string.subitosms_msg_invalidDestination);
+		mMessages[MSG_INDEX_INVALID_SENDER] = context.getString(R.string.subitosms_msg_invalidSender);
+		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.subitosms_msg_messageQueued);
+		mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT] = context.getString(R.string.subitosms_msg_notEnoughCredit);
+//		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
 //		mMessages[MSG_INDEX_MISSING_PARAMETERS] = context.getString(R.string.aimon_msg_missingParameters);
-//		mMessages[MSG_INDEX_SERVICENANE_FREE_ANONYMOUS] = context.getString(R.string.aimon_serviceNameFreeAnonymous);
-//		mMessages[MSG_INDEX_SERVICENANE_FREE_NORMAL] = context.getString(R.string.aimon_serviceNameFreeNormal);
-//		mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS] = context.getString(R.string.aimon_serviceNameAnonymous);
-//		mMessages[MSG_INDEX_SERVICENANE_NORMAL] = context.getString(R.string.aimon_serviceNameNormal);
-//		mMessages[MSG_INDEX_SERVICENANE_REPORT] = context.getString(R.string.aimon_serviceNameReport);
-//		mMessages[MSG_INDEX_REMAINING_FREE_CREDITS] = context.getString(R.string.aimon_msg_remainingFreeCredits);
-//		mMessages[MSG_INDEX_INVALID_SENDER] = context.getString(R.string.aimon_msg_invalidSender);
-//		mMessages[MSG_INDEX_INVALID_DESTINATION] = context.getString(R.string.aimon_msg_invalidDestination);
-//		mMessages[MSG_INDEX_EMPTY_MESSAGE] = context.getString(R.string.aimon_msg_emptyMessage);
 //		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING] = context.getString(R.string.aimon_msg_invalidMessageEncoding);
-//		mMessages[MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED] = context.getString(R.string.aimon_msg_freeSmsDailyLimitReached);
-//		mMessages[MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED] = context.getString(R.string.aimon_msg_freeSmsMonthlyLimitReached);
-//		mMessages[MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT] = context.getString(R.string.aimon_msg_notEnoughFreeSmsCredit);
-//		mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT] = context.getString(R.string.aimon_msg_notEnoughCredit);
 //		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG] = context.getString(R.string.aimon_msg_invalidMessageEncodingOrTooLong);
 //		mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR] = context.getString(R.string.aimon_msg_unmanagedServerError);
 
@@ -133,7 +134,41 @@ public class SubitosmsProvider
 			String destination,
 			String body)
 	{
-		return null;
+    	String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+		String sender = getParameterValue(PARAM_INDEX_SENDER);
+
+    	//arguments check
+    	if (!checkCredentialsValidity(username, password))
+    		return getExceptionForInvalidCredentials();
+    	if (TextUtils.isEmpty(sender)) 
+    		return new ResultOperation<String>(
+					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
+    	if (TextUtils.isEmpty(destination)) 
+    		return new ResultOperation<String>(
+					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
+    	if (TextUtils.isEmpty(body)) 
+    		return new ResultOperation<String>(
+					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
+
+		HashMap<String, String> params;
+
+    	String url = mDictionary.getBaseUrl();
+		params = mDictionary.getParametersForApiSend(username, password, sender, destination, body);
+		
+		//send the sms
+		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
+
+    	//checks for applications errors
+    	if (res.HasErrors()) return res;
+    	//checks for aimon errors
+    	if (parseReplyForErrors(res)) return res;
+    	
+    	//at this point, the operation was surely executed correctly
+		res.setResult(String.format(
+				mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
+		
+    	return res;
 	}
 	
 	
@@ -154,9 +189,9 @@ public class SubitosmsProvider
 		
 		//execute commands
 		switch (commandId) {
-//		case COMMAND_CHECKCREDENTIALS:
-//			res = verifyCredentials(currentUsername, currentPassword);
-//			break;
+		case COMMAND_CHECKCREDENTIALS:
+			res = verifyCredentials(currentUsername, currentPassword);
+			break;
 
 		case COMMAND_CHECKCREDITS:
 			res = verifyCredit(currentUsername, currentPassword);
@@ -209,19 +244,65 @@ public class SubitosmsProvider
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getBaseUrl(), null, params);
     	//checks for application errors
     	if (res.HasErrors()) return res;
-    	//checks for aimon errors
+    	//checks for subitosms errors
     	if (parseReplyForErrors(res)) return res;
     	
     	//at this point reply can only contains the remaining credits
-    	//append the message to credit amount
+    	String credit = mDictionary.findRemainingCredit(res.getResult());
+    	//append the credit amount to the message
     	res.setResult(String.format(
-    			mMessages[MSG_INDEX_REMAINING_CREDITS], res.getResult()));
+    			mMessages[MSG_INDEX_REMAINING_CREDITS], credit));
 		return res;
     }
+    
+    /**
+     * Verifies if username and password are correct
+     * @return an error if the user is not authenticated, otherwise the message to show
+     */
+	private ResultOperation<String> verifyCredentials(String username, String password)
+	{
+		ResultOperation<String> res;
+		
+		//calls the verify credits and, if the user has credits,
+		//this means that the user can authenticate and the credentials
+		//are correct.
+		res = verifyCredit(username, password);
+		//checks for application errors
+		if (res.HasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
+		
+		//at this point reply can only contains the remaining credits, so credential are correct
+		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
+		
+		return res;
+	}
+    
 
-	private boolean parseReplyForErrors(ResultOperation<String> res) {
-		// TODO Auto-generated method stub
-		return true;
+	private boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze) {
+		String reply = resultToAnalyze.getResult();
+		String res;
+
+		//no reply from server is already handled in doRequest method
+
+		//check for know errors
+		if (mDictionary.isLoginInvalidCredentials(reply)) {
+			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
+		} else if (mDictionary.isNotEnoughCredit(reply)) {
+			res = mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT];
+		} else {
+			//at this point, no errors
+			res = "";
+		}
+	
+    	//errors are internal to provider, not related to communication issues.
+    	//so no application errors (like network issues) should be returned, but
+		//the provider error must stops the execution of the calling method
+    	if (!TextUtils.isEmpty(res)) {
+    		resultToAnalyze.setResult(res);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+    		return true;
+    	} else {
+    		return false;
+    	}
 	}
 
 

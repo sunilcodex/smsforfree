@@ -41,13 +41,13 @@ public class ParserUtils {
 	 * @return
 	 */
 	
-	public static int getInvariableStringFinalBoundary(String stringToCheck)
+	public static String getInvariableStringFinalBoundary(String stringToCheck)
 	{
-		if (TextUtils.isEmpty(stringToCheck)) return -1;
+		if (TextUtils.isEmpty(stringToCheck)) return stringToCheck;
 		//ok, i know it isn't the best way, but it works as a workaround
 		//for the presence of %s parameter in the source message string ;)
 		int pos = stringToCheck.indexOf("%");
-		return (pos >= 0) ? pos : stringToCheck.length();
+		return (pos >= 0) ? stringToCheck.substring(0, pos) : stringToCheck;
 	}
 	
 
