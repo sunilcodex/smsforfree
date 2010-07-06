@@ -4,7 +4,7 @@ TODOLIST
 -mettere bottone che ripresenta ultimo messaggio di invio sms
 -mettere codice per invio sms, non solo generico codice di ok
 -controllare come mai non viene aggiornato il numero di caratteri per messaggio
-
+-mettere il register a livello di smsprovider e non di singolo provider
 
 
 

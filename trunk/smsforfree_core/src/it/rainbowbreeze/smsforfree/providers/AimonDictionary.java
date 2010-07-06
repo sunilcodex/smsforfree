@@ -1,6 +1,10 @@
 package it.rainbowbreeze.smsforfree.providers;
 
+import it.rainbowbreeze.smsforfree.util.ParserUtils;
+
 import java.util.HashMap;
+
+import android.text.TextUtils;
 
 
 public class AimonDictionary
@@ -28,14 +32,15 @@ public class AimonDictionary
 	private static final String SEARCH_CREDITI_SMS_END = "crediti/sms";
 
 	private static final String RESULT_SENDSMS_OK = "+01 SMS Queued";
-	private static final String RESULT_ERRORCODE_ACCESS_DENIED = "-3-";
-	private static final String RESULT_ERRORCODE_MISSING_PARAMETERS = "-5-";
-	private static final String RESULT_ERRORCODE_INTERNAL_SERVER_ERROR = "-32-";
-	private static final String RESULT_ERRORCODE_INVALID_DESTINATION = "-100-";
-	private static final String RESULT_ERRORCODE_DESTINATION_NOT_ALLOWED = "-101-";
-	private static final String RESULT_ERRORCODE_BODY_HAS_INVALID_CHARS_OR_TOO_LONG = "-102-";
-	private static final String RESULT_ERRORCODE_NOT_ENOUGH_CREDIT = "-103-";
-	private static final String RESULT_ERRORCODE_INVALID_SENDER = "-105-";
+	private static final String RESULT_ERRORMSG_ACCESS_DENIED = "-3-";
+	private static final String RESULT_ERRORMSG_MISSING_PARAMETERS = "-5-";
+	private static final String RESULT_ERRORMSG_INTERNAL_SERVER_ERROR = "-32-";
+	private static final String RESULT_ERRORMSG_INVALID_DESTINATION = "-100-";
+	private static final String RESULT_ERRORMSG_INVALID_DESTINATION2 = "-13-";
+	private static final String RESULT_ERRORMSG_DESTINATION_NOT_ALLOWED = "-101-";
+	private static final String RESULT_ERRORMSG_BODY_HAS_INVALID_CHARS_OR_TOO_LONG = "-102-";
+	private static final String RESULT_ERRORMSG_NOT_ENOUGH_CREDIT = "-103-";
+	private static final String RESULT_ERRORMSG_INVALID_SENDER = "-105-";
 	
 	private static final String FIELD_FREE_INPUT_USERNAME = "inputUsername";
 	private static final String FIELD_FREE_INPUT_PASSWORD = "inputPassword";
@@ -136,28 +141,29 @@ public class AimonDictionary
 	
 	
 	public boolean isLoginInvalidCredentials(String webserviceReply)
-	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_ACCESS_DENIED); }
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_ACCESS_DENIED); }
 
 	public boolean isInternalServerError(String webserviceReply)
-	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_INTERNAL_SERVER_ERROR); }
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_INTERNAL_SERVER_ERROR); }
 	
 	public boolean isMissingParameters(String webserviceReply)
-	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_MISSING_PARAMETERS); }
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_MISSING_PARAMETERS); }
 
 	public boolean isInvalidDestination(String webserviceReply)
 	{
-		return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_INVALID_DESTINATION) ||
-			webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_DESTINATION_NOT_ALLOWED);
+		return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORMSG_INVALID_DESTINATION) ||
+			webserviceReply.startsWith(RESULT_ERRORMSG_INVALID_DESTINATION2) ||
+			webserviceReply.startsWith(RESULT_ERRORMSG_DESTINATION_NOT_ALLOWED);
 	}
 
 	public boolean isNotEnoughCredit(String webserviceReply)
-	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_NOT_ENOUGH_CREDIT); }
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_NOT_ENOUGH_CREDIT); }
 	
 	public boolean isInvalidSender(String webserviceReply)
-	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_INVALID_SENDER); }
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_INVALID_SENDER); }
 
 	public boolean isUnsupportedMessageEncodingOrTooLong(String webserviceReply)
-	{ return webserviceReply.startsWith(AimonDictionary.RESULT_ERRORCODE_BODY_HAS_INVALID_CHARS_OR_TOO_LONG); }
+	{ return webserviceReply.startsWith(RESULT_ERRORMSG_BODY_HAS_INVALID_CHARS_OR_TOO_LONG); }
 
 	/**
 	 * Checks if Aimon webservice return message indicates that
@@ -183,14 +189,16 @@ public class AimonDictionary
 	 * @param message
 	 * @return
 	 */
-	public String findRemainingCreditsForFreeSms(String message) {
-		int intBeginPos = message.indexOf(SEARCH_CREDITI_SMS_START);
-		if (-1 == intBeginPos) return "0";
-		
-		int intEndPos = message.indexOf(SEARCH_CREDITI_SMS_END, intBeginPos);
-		if (-1 == intEndPos) return "0";
-		
-		return message.substring(intBeginPos + SEARCH_CREDITI_SMS_START.length(), intEndPos).trim();
+	public String findRemainingCreditsForFreeSms(String message)
+	{
+//		int intBeginPos = message.indexOf(SEARCH_CREDITI_SMS_START);
+//		if (-1 == intBeginPos) return "0";
+//		
+//		int intEndPos = message.indexOf(SEARCH_CREDITI_SMS_END, intBeginPos);
+//		if (-1 == intEndPos) return "0";
+//		
+//		return message.substring(intBeginPos + SEARCH_CREDITI_SMS_START.length(), intEndPos).trim();
+		return ParserUtils.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END);
 	}
 
 	
