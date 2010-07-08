@@ -113,7 +113,7 @@
     <string name="actabout_title">%s - Informazioni su...</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">Questa applicazione spedisce messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo molto basso rispetto ad un normale SMS. Alcuni di questi gateway richiedono la registrazione per poter essere usati.\n\nSuggerimenti, traduzioni, idee grafice, nuovi gateway da supportare? Manda una email a devel (at) rainbowbreeze.it\n\nRingraziamenti: Ilaria Mauric per il logo</string>
+    <string name="actabout_lblDescription">Questa applicazione spedisce messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo molto basso rispetto ad un normale SMS. Alcuni di questi gateway richiedono la registrazione per poter essere usati.\n\nSuggerimenti, traduzioni, idee grafice, nuovi gateway da supportare? Manda una email a devel (at) rainbowbreeze.it\n\nRingraziamenti: Ilaria Mauric per il logo, Robert Harder per il Base64</string>
     <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
