@@ -105,7 +105,7 @@ public class TestUtils {
 		
 		//executes begin task
 		ResultOperation<Void> res = LogicManager.executeBeginTask(context);
-		if (res.HasErrors()) {
+		if (res.hasErrors()) {
 			Log.e("SmsForFreeTest", String.valueOf(res.getReturnCode()));
 			result = false;
 		} else {

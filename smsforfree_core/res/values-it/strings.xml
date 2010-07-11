@@ -36,6 +36,9 @@
     <string name="common_msg_communicationError">Errore di comunicazione generico:\n%s\n\nPotrebbe essere un problema di connessione ad Internet oppure il provider non sta funzionanto...</string>
     <string name="common_msg_architecturalError">Errore interno all\'applicazione:\n%s\n\nSegnalalo allo sviluppatore.</string>
     <string name="common_msg_noCredentials">Le credenziali non sono state specificate.\nInseriscile nelle impostazioni del provider o del servizio.</string>
+    <string name="common_sendlogSubject">Log %s</string>
+    <string name="common_sendlogBody">Ciao Alfredo, ti mando i log dell\'applicazione perche\' (aggiungi qui il motivo della segnalazione)\n\n\n%s</string>
+    <string name="common_sendEmailChooser">Scegli l\'applicazione per l\'email</string>
     
 
 
@@ -83,12 +86,15 @@
     <string name="actsettingsmain_title">%s - Impostazioni</string>
     <string name="actsettingsmain_lblApplicationCategory">Applicazione</string>
     <string name="actsettingsmain_lblProvidersCategory">Provider</string>
+    <string name="actsettingsmain_lblDebugCategory">Debug</string>
+    <string name="actsettingsmain_lblProvidersList">Impostazioni dei provider SMS</string>
+    <string name="actsettingsmain_lblProvidersListSummary">Specifica le impostazioni per ogni provider (username, passowrd ecc)</string>
+    <string name="actsettingsmain_lblSendLog">Invia log</string>
+    <string name="actsettingsmain_lblSendLogSummary">Invia i log dell\'applicazione, utile per scoprire le cause dei malfunzionamenti</string>
     <string name="actsettingsmain_chkResetDataAfterSend">Cancella dopo l\'invio</string>
     <string name="actsettingsmain_chkResetDataAfterSendSummary">Cancella destinatario e messaggio dopo aver inviato il messaggio</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
-    <string name="actsettingsmain_lblProvidersList">Impostazioni dei provider SMS</string>
-    <string name="actsettingsmain_lblProvidersListSummary">Specifica le impostazioni per ogni provider (username, passowrd ecc)</string>
     <string name="actsettingsmain_txtSignature">Firma</string>
     <string name="actsettingsmain_txtSignatureSummary">Firma da aggiungere al messaggio</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Prefisso di default</string>
@@ -136,7 +142,7 @@
     <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.3\n -Aggiunto SubitoSMS \n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon\n -Captcha piu\' grande\n\nv 1.1:\n -Fix per grandezza captcha\n\nv 1.0:\n -Prima release</string>
+    <string name="actabout_msgChangeslog">v1.3\n -Aggiunto SubitoSMS \n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv 1.1:\n -Fix per grandezza captcha\n\nv 1.0:\n -Prima release</string>
 
 
 

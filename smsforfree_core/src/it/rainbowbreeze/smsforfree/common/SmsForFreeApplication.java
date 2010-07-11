@@ -118,7 +118,7 @@ public class SmsForFreeApplication
 		
 		//execute begin task
 		ResultOperation<Void> res = LogicManager.executeBeginTask(this);
-		if (res.HasErrors()) {
+		if (res.hasErrors()) {
 			mIsCorrectlyInitialized = false;
 			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 		} else {
@@ -133,7 +133,7 @@ public class SmsForFreeApplication
 	{
 		//execute end tasks
 		ResultOperation<Void> res = LogicManager.executeEndTast(this);
-		if (res.HasErrors()) {
+		if (res.hasErrors()) {
 			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 		}
 		super.onTerminate();

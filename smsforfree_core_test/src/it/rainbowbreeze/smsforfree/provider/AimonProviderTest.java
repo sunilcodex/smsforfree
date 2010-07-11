@@ -72,7 +72,7 @@ public class AimonProviderTest
 		mContext = getContext();
 		mProvider = new AimonProvider(mDao);
 		ResultOperation<Void> res = mProvider.initProvider(mContext);
-		assertFalse("provider initialization with errors", res.HasErrors());
+		assertFalse("provider initialization with errors", res.hasErrors());
 
 		//mock some values of SmsForFreeApplication
 		TestUtils.loadAppPreferences(mContext);

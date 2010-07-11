@@ -5,6 +5,12 @@ TODOLIST
 -mettere codice per invio sms, non solo generico codice di ok
 -controllare come mai non viene aggiornato il numero di caratteri per messaggio
 -mettere il register a livello di smsprovider e non di singolo provider
+-mettere bottone per mandare email allo sviluppatore nell'about
+
+-separare about in modo tale da poter mettere descrizione e tutto il resto
+-box iniziale che spiega i programma e quello che c'e' da fare
+-controllare come mai i crediti di aimon free sono sballati
+ 
 
 
 

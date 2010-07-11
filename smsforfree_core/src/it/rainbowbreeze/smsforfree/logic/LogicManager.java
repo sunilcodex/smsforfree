@@ -28,6 +28,7 @@ import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -63,6 +64,9 @@ public class LogicManager
 	{
 		ResultOperation<Void> res = new ResultOperation<Void>();
 		
+		//init log facility
+		LogFacility.init(GlobalDef.LOG_TAG);
+		
 		//set application name
 		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
 		SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
@@ -96,9 +100,9 @@ public class LogicManager
 		
 		//checks for application upgrade
 		res = performAppVersionUpgrade(context);
-		if (res.HasErrors()) return res;
+		if (res.hasErrors()) return res;
 		res = addProvidersToList(context);
-		if (res.HasErrors()) return res;
+		if (res.hasErrors()) return res;
 
 		return res;
 	}
@@ -170,9 +174,20 @@ public class LogicManager
 		
 		return sentSms;
 	}
-
-
 	
+	
+	/**
+	 * Check if the current application is new compared to the last time
+	 * the application run
+	 * 
+	 * @return
+	 */
+	public static boolean isNewAppVersion() {
+		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
+		return GlobalDef.appVersion.compareToIgnoreCase(currentAppVersion) > 0;
+	}
+
+
 	
 	
 	//---------- Private methods
@@ -209,9 +224,7 @@ public class LogicManager
 	 */
 	private static ResultOperation<Void> performAppVersionUpgrade(Context context)
 	{
-		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
-		
-		if (!GlobalDef.appVersion.equals(currentAppVersion)) {
+		if (isNewAppVersion()) {
 			//perform upgrade
 			
 			//update expiration date
@@ -261,21 +274,21 @@ public class LogicManager
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 	
-		if (!res.HasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("AIMON"))) {
+		if (!res.hasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("AIMON"))) {
 			//add Aimon
 			prov = new AimonProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 		
-		if (!res.HasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("VOIPSTUNT"))) {
+		if (!res.hasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("VOIPSTUNT"))) {
 			//add Voipstunt
 			prov = new VoipstuntProvider(dao);
 			res = prov.initProvider(context);
 			SmsForFreeApplication.instance().getProviderList().add(prov);
 		}
 		
-		if (!res.HasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("SUBITOSMS"))) {
+		if (!res.hasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("SUBITOSMS"))) {
 			//add Subitosms
 			prov = new SubitosmsProvider(dao);
 			res = prov.initProvider(context);

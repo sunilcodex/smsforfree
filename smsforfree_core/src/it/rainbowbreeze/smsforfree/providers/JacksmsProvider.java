@@ -167,7 +167,7 @@ public class JacksmsProvider
 		ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
 	
 		//checks for applications errors
-		if (res.HasErrors()) return res;
+		if (res.hasErrors()) return res;
 		//checks for jacksms errors
 		if (parseReplyForErrors(res)) return res;
 		
@@ -221,7 +221,7 @@ public class JacksmsProvider
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers, null);
 
     	//checks for applications errors
-    	if (res.HasErrors()) return res;
+    	if (res.hasErrors()) return res;
     	//checks for jacksms errors
     	if (parseReplyForErrors(res)) return res;
     	
@@ -293,7 +293,7 @@ public class JacksmsProvider
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForDownloadTemplates(username, password), null, null);
 
     	//checks for applications errors
-    	if (res.HasErrors()) return res;
+    	if (res.hasErrors()) return res;
     	//checks for jacksms errors
     	if (parseReplyForErrors(res)) return res;
 
@@ -322,7 +322,7 @@ public class JacksmsProvider
     	//save the template list
     	ResultOperation<Void> saveResult = saveTemplates(context);
     	//and checks for errors in saving
-    	if (saveResult.HasErrors()) {
+    	if (saveResult.hasErrors()) {
     		res.setException(saveResult.getException(), saveResult.getReturnCode());
     		return res;
     	}

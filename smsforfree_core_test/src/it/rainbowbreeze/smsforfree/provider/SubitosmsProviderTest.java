@@ -41,8 +41,6 @@ public class SubitosmsProviderTest
 	extends AndroidTestCase
 {
 	//---------- Private fields
-	private static final String TAG = "SmsForFree-SubitosmsProviderTest";
-
 	private static final String USER_CREDITS = "0";
 	
 	private SmsProvider mProvider;
@@ -68,7 +66,7 @@ public class SubitosmsProviderTest
 		mContext = getContext();
 		mProvider = new SubitosmsProvider(mDao);
 		ResultOperation<Void> res = mProvider.initProvider(mContext);
-		assertFalse("provider initialization with errors", res.HasErrors());
+		assertFalse("provider initialization with errors", res.hasErrors());
 
 		//mock some values of SmsForFreeApplication
 		TestUtils.loadAppPreferences(mContext);
