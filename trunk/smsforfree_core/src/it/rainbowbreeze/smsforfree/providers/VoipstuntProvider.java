@@ -151,7 +151,7 @@ public class VoipstuntProvider
 		ResultOperation<String> res = doSingleHttpRequest(urlToSend, null, null);
 
     	//checks for applications errors
-    	if (res.HasErrors()) return res;
+    	if (res.hasErrors()) return res;
     	
     	//examine it the return contains confirmation if the message was sent
     	if (mDictionary.messageWasSent(res.getResult())) {

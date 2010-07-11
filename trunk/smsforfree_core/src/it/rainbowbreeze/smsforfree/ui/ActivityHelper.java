@@ -175,6 +175,17 @@ public class ActivityHelper {
 		context.startActivity(intent); 		
 	}
 	
+	public static void sendEmail(Context context, String to, String subject, String body)
+	{
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain"); //use this line for testing in the emulator
+        //intent.setType("message/rfc822") ; // use from live device
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{to});        
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.common_sendEmailChooser)));
+	}
+	
 	/**
 	 * Notify an error to the user 
 	 * @param context
@@ -268,7 +279,7 @@ public class ActivityHelper {
 	public static void showCommandExecutionResult(Context context, ResultOperation<String> result)
 	{
 		//show command results
-		if (result.HasErrors()) {
+		if (result.hasErrors()) {
 			ActivityHelper.reportError(context, result);
 		} else {
 			if (!TextUtils.isEmpty(result.getResult())){

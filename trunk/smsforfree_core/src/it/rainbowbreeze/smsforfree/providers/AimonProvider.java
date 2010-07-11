@@ -423,7 +423,7 @@ public class AimonProvider
     	//call the api that gets the credit
     	ResultOperation<String> res = doSingleHttpRequest(AimonDictionary.URL_GET_CREDIT, null, params);
     	//checks for application errors
-    	if (res.HasErrors()) return res;
+    	if (res.hasErrors()) return res;
     	//checks for aimon errors
     	if (parseReplyForApiErrors(res)) return res;
     	
@@ -448,7 +448,7 @@ public class AimonProvider
 		//are correct.
 		res = verifyCredit(username, password);
 		//checks for application errors
-		if (res.HasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
+		if (res.hasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
 		
 		//at this point reply can only contains the remaining credits, so credential are correct
 		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
@@ -486,7 +486,7 @@ public class AimonProvider
 		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
 
     	//checks for applications errors
-    	if (res.HasErrors()) return res;
+    	if (res.hasErrors()) return res;
     	//checks for aimon errors
     	if (parseReplyForApiErrors(res)) return res;
     	
@@ -581,7 +581,7 @@ public class AimonProvider
         params = mDictionary.getParametersForFreeSmsLogin(username, password);
         res = doConversationHttpRequest(url, null, params);
         
-        if (res.HasErrors()) return res;
+        if (res.hasErrors()) return res;
         if (parseRetryForHttpErrors(res, username)) return res;
         
         //check if login is really correct
@@ -597,7 +597,7 @@ public class AimonProvider
 		params = mDictionary.getParametersForFreeSmsSend(idApi, sender, destination, body);		
         res = doConversationHttpRequest(url, null, params);
         
-        if (res.HasErrors()) return res;
+        if (res.hasErrors()) return res;
         //examines results
         parseRetryForHttpErrors(res, username);
         

@@ -94,7 +94,7 @@ public abstract class SmsSingleProvider
 		ResultOperation<Void> res;
 		
 		res = loadParameters(context);
-		if (res.HasErrors()) return res;
+		if (res.hasErrors()) return res;
 		
 		return res;
 	}

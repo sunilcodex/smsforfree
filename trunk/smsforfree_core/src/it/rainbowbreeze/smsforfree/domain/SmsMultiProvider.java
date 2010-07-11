@@ -119,11 +119,11 @@ public abstract class SmsMultiProvider
 		ResultOperation<Void> res;
 		
 		res = loadParameters(context);
-		if (res.HasErrors()) return res;
+		if (res.hasErrors()) return res;
 		res = loadTemplates(context);
-		if (res.HasErrors()) return res;
+		if (res.hasErrors()) return res;
 		res = loadSubservices(context);
-		if (res.HasErrors()) return res;
+		if (res.hasErrors()) return res;
 		
 		return res;
 	}

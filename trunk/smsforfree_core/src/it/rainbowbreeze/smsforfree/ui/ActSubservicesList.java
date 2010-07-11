@@ -212,7 +212,7 @@ public class ActSubservicesList
 			mProvider.getAllSubservices().remove(service);
 			mListAdapter.notifyDataSetChanged();
 			ResultOperation<Void> res = mProvider.saveSubservices(this);
-			if (res.HasErrors()) {
+			if (res.hasErrors()) {
 				ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 				return false;
 			}

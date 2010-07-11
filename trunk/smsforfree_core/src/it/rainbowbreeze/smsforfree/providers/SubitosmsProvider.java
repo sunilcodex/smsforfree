@@ -176,7 +176,7 @@ public class SubitosmsProvider
 		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
 
     	//checks for applications errors
-    	if (res.HasErrors()) return res;
+    	if (res.hasErrors()) return res;
     	//checks for aimon errors
     	if (parseReplyForErrors(res)) return res;
     	
@@ -259,7 +259,7 @@ public class SubitosmsProvider
     	//call the api that gets the credit
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getBaseUrl(), null, params);
     	//checks for application errors
-    	if (res.HasErrors()) return res;
+    	if (res.hasErrors()) return res;
     	//checks for subitosms errors
     	if (parseReplyForErrors(res)) return res;
     	
@@ -284,7 +284,7 @@ public class SubitosmsProvider
 		//are correct.
 		res = verifyCredit(username, password);
 		//checks for application errors
-		if (res.HasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
+		if (res.hasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
 		
 		//at this point reply can only contains the remaining credits, so credential are correct
 		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);

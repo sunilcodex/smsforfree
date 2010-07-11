@@ -109,7 +109,7 @@ public class ResultOperation<T>
 	/**
 	 * Return if the object contains error
 	 */
-	public boolean HasErrors()
+	public boolean hasErrors()
 	{ return null != mException; }
 	
 	

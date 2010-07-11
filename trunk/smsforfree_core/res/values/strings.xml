@@ -36,7 +36,10 @@
     <string name="common_msg_communicationError">Generic communication error:\n%s\n\nNetwork issues, or maybe the provider has problem or is down...</string>
     <string name="common_msg_architecturalError">Inner application error:\n%s\n\nPlease, report it to the developer.</string>
     <string name="common_msg_noCredentials">No credentials supplied.\nInsert them in the settings of provider or service.</string>
-    
+    <string name="common_sendlogSubject">Log %s</string>
+    <string name="common_sendlogBody">Dear Alfredo,\n I\'m sending application log because (add here report cause / problem encontered)\n\n\n%s</string>
+    <string name="common_sendEmailChooser">Select email application</string>
+
 
 
 
@@ -83,12 +86,15 @@
     <string name="actsettingsmain_title">%s - Settings</string>
     <string name="actsettingsmain_lblApplicationCategory">Application</string>
     <string name="actsettingsmain_lblProvidersCategory">SMS Providers</string>
+    <string name="actsettingsmain_lblDebugCategory">Debug</string>
+    <string name="actsettingsmain_lblProvidersList">Providers settings</string>
+    <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each SMS provider</string>
+    <string name="actsettingsmain_lblSendLog">Send log</string>
+    <string name="actsettingsmain_lblSendLogSummary">Send application log to developer, useful to discover failure causes</string>
     <string name="actsettingsmain_chkResetDataAfterSend">Reset after send</string>
     <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS to phone list</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Insert the SMS into the list of phone sent sms</string>
-    <string name="actsettingsmain_lblProvidersList">Providers settings</string>
-    <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each SMS provider</string>
     <string name="actsettingsmain_txtSignature">Signature</string>
     <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>
@@ -136,7 +142,7 @@
     <string name="actabout_lblSentSms">SMS sent today: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.3\n -Added SubitoSMS \n\nv1.2:\n -Added free sms to Aimon provider\n -Bigger captcha\n\nv 1.1:\n -Fix for captcha size\n\nv 1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v1.3\n -Added SubitoSMS \n\nv1.2:\n -Added free sms to Aimon provider, Bigger captcha\n\nv 1.1:\n -Fix for captcha size\n\nv 1.0:\n -First release</string>
 
 
 

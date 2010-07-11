@@ -50,4 +50,12 @@
 		/>
 	</PreferenceCategory>
 	
+	<PreferenceCategory android:title="@string/actsettingsmain_lblDebugCategory">
+		<Preference
+			android:key="actsettingsmain_sendLog"
+			android:title="@string/actsettingsmain_lblSendLog"
+			android:summary="@string/actsettingsmain_lblSendLogSummary"
+		/>
+	</PreferenceCategory>
+	
 </PreferenceScreen>

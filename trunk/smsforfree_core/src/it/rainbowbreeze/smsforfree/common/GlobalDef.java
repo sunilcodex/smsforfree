@@ -21,36 +21,44 @@ package it.rainbowbreeze.smsforfree.common;
 
 public class GlobalDef {
 	/** keys for application preferences */
-	public static final String appPreferencesKeys = "SmsForFreePrefs"; 
+	public final static String appPreferencesKeys = "SmsForFreePrefs"; 
 	
 	/** Application version, displayed to the user */
-	public static final String appVersionDescription = "1.3";
+	public final static String appVersionDescription = "1.3";
 
 	/** Application version, for internal use */
-	public static final String appVersion = "01.03.00";
+	public final static String appVersion = "01.03.00";
 
 	/** file name for providers preferences */
-	public static final String jacksmsParametersFileName = "jacksms_parameters.xml"; 
+	public final static String jacksmsParametersFileName = "jacksms_parameters.xml"; 
 	/** file name for providers templates list */
-	public static final String jacksmsmTemplatesFileName = "jascksms_templates.xml";
+	public final static String jacksmsmTemplatesFileName = "jascksms_templates.xml";
 	/** file name for providers subservices list */
-	public static final String jacksmsSubservicesFileName = "jacksms_subservices.xml"; 
+	public final static String jacksmsSubservicesFileName = "jacksms_subservices.xml"; 
 
 	/** file name for providers preferences */
-	public static final String aimonParametersFileName = "aimon_parameters.xml"; 
+	public final static String aimonParametersFileName = "aimon_parameters.xml"; 
 	
 	/** file name for providers preferences */
-	public static String voipstuntParametersFileName = "voipstunt_parameters.xml";
+	public final static String voipstuntParametersFileName = "voipstunt_parameters.xml";
 
-	public static String subitosmsParametersFileName = "subitosms_parameters.xml";
+	public final static String subitosmsParametersFileName = "subitosms_parameters.xml";
 
 	/** international prefix for Italy */
-	public static final String italyInternationalPrefix = "+39";
+	public final static String italyInternationalPrefix = "+39";
 	
 	/** url where send statistics about device */
-	public static final String statisticsUrl = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
+	public final static String statisticsUrl = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
 	
 	/** string for lite version */
-	public static final String lite_description = "Lite";
+	public final static String lite_description = "Lite";
 
+	/** address where send log */
+	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
+	
+	/** tag used in the log */
+	public final static String LOG_TAG = "SmsForFree";
+
+	/** platform - dependent newline char */
+	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
 }

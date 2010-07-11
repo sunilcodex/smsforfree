@@ -308,7 +308,7 @@ public class ActSettingsSmsService
 			res = mProvider.saveSubservices(this);
 		}
 		
-		if (res.HasErrors()) {
+		if (res.hasErrors()) {
 			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 			return false;
 		}

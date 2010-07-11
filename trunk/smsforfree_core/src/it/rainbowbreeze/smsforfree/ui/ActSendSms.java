@@ -25,6 +25,7 @@ import java.util.List;
 import com.admob.android.ads.AdView;
 
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -327,7 +328,8 @@ public class ActSendSms
 			break;
 			
 		case OPTIONMENU_ABOUT:
-			ActivityHelper.openAbout(this);
+			LogFacility.getLogData();
+//			ActivityHelper.openAbout(this);
 			break;
 
 		case OPTIONMENU_SIGNATURE:
@@ -667,7 +669,7 @@ public class ActSendSms
 	private Dialog createCaptchaDialog(final String providerReply)
 	{
 		ResultOperation<Object> res = mSelectedProvider.getCaptchaContentFromProviderReply(providerReply);
-		if (res.HasErrors()) {
+		if (res.hasErrors()) {
 			//show errors
 			ActivityHelper.showInfo(this, res.getResult().toString());
 			//and returns with no dialog created
@@ -934,7 +936,7 @@ public class ActSendSms
 		}
 
 		//return with errors
-		if (result.HasErrors()) {
+		if (result.hasErrors()) {
 			ActivityHelper.reportError(ActSendSms.this, result);
 		} else {
 			//display returning message of the provider
