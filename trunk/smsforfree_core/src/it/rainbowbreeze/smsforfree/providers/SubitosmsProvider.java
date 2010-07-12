@@ -70,6 +70,8 @@ public class SubitosmsProvider
 	private static final int MSG_INDEX_INVALID_SENDER = 5;
 	private static final int MSG_INDEX_MESSAGE_SENT = 6;
 	private static final int MSG_INDEX_NOT_ENOUGH_CREDIT = 7;
+	private static final int MSG_INDEX_SERVER_ERROR = 8;
+
 
 	private String[] mMessages;
 	private SubitosmsDictionary mDictionary;
@@ -125,7 +127,7 @@ public class SubitosmsProvider
 				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 3);
 		mProviderSettingsActivityCommands.add(command);
 		
-		mMessages = new String[8];
+		mMessages = new String[9];
 		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.subitosms_msg_remainingCredits);
 		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.subitosms_msg_validCredentials);
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.subitosms_msg_invalidCredentials);
@@ -134,11 +136,7 @@ public class SubitosmsProvider
 		mMessages[MSG_INDEX_INVALID_SENDER] = context.getString(R.string.subitosms_msg_invalidSender);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.subitosms_msg_messageQueued);
 		mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT] = context.getString(R.string.subitosms_msg_notEnoughCredit);
-//		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
-//		mMessages[MSG_INDEX_MISSING_PARAMETERS] = context.getString(R.string.aimon_msg_missingParameters);
-//		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING] = context.getString(R.string.aimon_msg_invalidMessageEncoding);
-//		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG] = context.getString(R.string.aimon_msg_invalidMessageEncodingOrTooLong);
-//		mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR] = context.getString(R.string.aimon_msg_unmanagedServerError);
+		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.subitosms_msg_serverError);
 
 		return super.initProvider(context);
 	}
@@ -299,14 +297,17 @@ public class SubitosmsProvider
 
 		//no reply from server is already handled in doRequest method
 
-		//check for know errors
-		if (mDictionary.isLoginInvalidCredentials(reply)) {
+		//check for know errors		if (mDictionary.isLoginInvalidCredentials(reply)) {
+		if (mDictionary.isValidReplyForCreditRequest(reply) || 
+				mDictionary.isValidReplyForSmsQueued(reply)) {
+			res = "";
+		} else if (mDictionary.isLoginInvalidCredentials(reply)) {
 			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		} else if (mDictionary.isNotEnoughCredit(reply)) {
 			res = mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT];
 		} else {
-			//at this point, no errors
-			res = "";
+			//at this point, unknown errors
+			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], reply);
 		}
 	
     	//errors are internal to provider, not related to communication issues.

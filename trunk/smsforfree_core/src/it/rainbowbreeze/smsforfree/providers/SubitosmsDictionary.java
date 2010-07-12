@@ -48,6 +48,7 @@ public class SubitosmsDictionary
 
 	private static final String RESULT_ERRORMSG_ACCESS_DENIED = "non autorizzato";
 	private static final String RESULT_ERRORMSG_NOT_ENOUGH_CREDIT = "credito insufficiente";
+	private static final String RESULT_MSG_SMSQUEUED = "id:";
 
 
 
@@ -116,6 +117,20 @@ public class SubitosmsDictionary
 
 	public boolean isNotEnoughCredit(String webserviceReply)
 	{ return webserviceReply.startsWith(RESULT_ERRORMSG_NOT_ENOUGH_CREDIT); }	
+	
+	public boolean isValidReplyForSmsQueued(String webserviceReply)
+	{ return webserviceReply.startsWith(RESULT_MSG_SMSQUEUED); }	
+	
+	public boolean isValidReplyForCreditRequest(String webserviceReply)
+	{
+		//if the result could be parsed to an int, the reply is valid
+		try {
+			Integer.parseInt(webserviceReply);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}	
 	
 	
 	//---------- Private methods

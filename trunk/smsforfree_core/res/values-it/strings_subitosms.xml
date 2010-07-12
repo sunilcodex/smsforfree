@@ -30,7 +30,7 @@
     <string name="subitosms_msg_invalidSender">Mittente del messaggio non valido.\nCambialo nelle impostazioni del provider subitosms</string>
     <string name="subitosms_msg_invalidDestination">Destinatione non valida.\nSolo i numeri italiani sono supportati</string>
     <string name="subitosms_msg_validCredentials">Credenziali subitosms corrette</string>
-    <string name="subitosms_msg_serverError">Errore interno del server subitosms</string>
+    <string name="subitosms_msg_serverError">Errore interno del server SubitoSMS:\n %s</string>
     <string name="subitosms_msg_remainingCredits">Credito residuo: %s</string>
     <string name="subitosms_msg_emptyMessage">Messaggio vuoto</string>
     <string name="subitosms_msg_notEnoughCredit">Non hai abbastanza credito per spedire SMS. Ricarica il tuo account su subitosms</string>

@@ -604,14 +604,20 @@ public class AimonProvider
 		//result returned is the result of URL_SEND_SMS_FREE_2 request
     	//examine it the return contains confirmation if the message was sent
     	if (ResultOperation.RETURNCODE_OK == res.getReturnCode()) {
-    		String remainingCredits = mDictionary.findRemainingCreditsForFreeSms(res.getResult());
+    		
+    		//at this point, if i want to retrieve the remaining free credits, i
+    		//must call the same page used for sending message and analyze it
+    		url = AimonDictionary.URL_SEND_SMS_FREE_1;
+            ResultOperation<String> res2 = doConversationHttpRequest(url, null, null);
+            String remainingCredits = "--";
+            if (!res2.hasErrors()) {
+            	//parse reply, no matter of other errors
+            	remainingCredits = mDictionary.findRemainingCreditsForFreeSms(res2.getResult());
+            }
 			res.setResult(String.format(
 					mMessages[MSG_INDEX_MESSAGE_SENT], 
 					String.format(mMessages[MSG_INDEX_REMAINING_FREE_CREDITS], remainingCredits)));
-			
-			//TODO
-			//at this point, i can also read the remaining credits and append it to
-			//the message
+    		
 		}
 		
         //logout from the site and close the conversation

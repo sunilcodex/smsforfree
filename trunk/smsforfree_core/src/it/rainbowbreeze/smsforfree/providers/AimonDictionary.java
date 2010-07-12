@@ -23,6 +23,8 @@ import it.rainbowbreeze.smsforfree.util.ParserUtils;
 
 import java.util.HashMap;
 
+import android.text.TextUtils;
+
 
 public class AimonDictionary
 {
@@ -208,14 +210,9 @@ public class AimonDictionary
 	 */
 	public String findRemainingCreditsForFreeSms(String message)
 	{
-//		int intBeginPos = message.indexOf(SEARCH_CREDITI_SMS_START);
-//		if (-1 == intBeginPos) return "0";
-//		
-//		int intEndPos = message.indexOf(SEARCH_CREDITI_SMS_END, intBeginPos);
-//		if (-1 == intEndPos) return "0";
-//		
-//		return message.substring(intBeginPos + SEARCH_CREDITI_SMS_START.length(), intEndPos).trim();
-		return ParserUtils.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END);
+		String result = ParserUtils.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END).trim();
+		return TextUtils.isEmpty(result) ? "--" : result;
+		
 	}
 
 	
