@@ -317,6 +317,20 @@ public class AimonProviderTest
 				getContext().getString(R.string.aimon_msg_freeSmsMonthlyLimitReached).equals(res.getResult()));
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 	}
+	
+	
+	public void testFreeSmsRemainigCredits()
+	{
+		String credits;
+		
+		AimonDictionary mDictionary = new AimonDictionary();
+		//no credit info in the message
+		credits = mDictionary.findRemainingCreditsForFreeSms("Credito residuo giornali");
+		assertEquals("Wrong credits", "--", credits);
+		//credit info in the message
+		credits = mDictionary.findRemainingCreditsForFreeSms("Credito residuo giornaliero: 3 crediti/sms");
+		assertEquals("Wrong credits", "3", credits);
+	}
 
 
 
