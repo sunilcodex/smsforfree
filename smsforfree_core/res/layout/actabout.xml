@@ -80,18 +80,17 @@
 	/>
 	
 	<TextView
-		android:id="@+id/actabout_lblDescription2"
+		android:id="@+id/actabout_lblSentSms"
 		style="@style/actabout_lblTitles"
 		android:layout_below="@id/actabout_lblDescription"
 		android:layout_alignParentLeft="true"
 		android:layout_marginTop="10dp"
-		android:text="@string/actabout_lblDescription2"
 	/>
 	
 	<TextView
-		android:id="@+id/actabout_lblSentSms"
+		android:id="@+id/actabout_lblDescription2"
 		style="@style/actabout_lblTitles"
-		android:layout_below="@id/actabout_lblDescription2"
+		android:layout_below="@id/actabout_lblSentSms"
 		android:layout_alignParentLeft="true"
 		android:layout_marginTop="10dp"
 	/>

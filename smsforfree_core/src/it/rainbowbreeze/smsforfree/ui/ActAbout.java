@@ -35,6 +35,7 @@ public class ActAbout
 {
 	//---------- Private fields
 	private final static int OPTIONMENU_CHANGESLOG = 1;
+	private final static int OPTIONMENU_EMAIL = 2;
 	private final static int DIALOG_CHANGESLOG = 1;
 
 	
@@ -64,6 +65,9 @@ public class ActAbout
         if (SmsForFreeApplication.instance().isLiteVersionApp()) sentSms = sentSms + "/" + SmsForFreeApplication.instance().getAllowedSmsForDay();
         lblSentSms.setText(String.format(
         		getString(R.string.actabout_lblSentSms), sentSms));
+        
+        TextView lblDescription2 = (TextView) findViewById(R.id.actabout_lblDescription2);
+        lblDescription2.setText(String.format(getString(R.string.actabout_lblDescription2), GlobalDef.EMAIL_FOR_LOG));
 	}
 	
 	
@@ -73,6 +77,8 @@ public class ActAbout
 		
     	menu.add(0, OPTIONMENU_CHANGESLOG, 4, R.string.actabout_mnuChangeslog)
 			.setIcon(R.drawable.ic_menu_archive);
+    	menu.add(0, OPTIONMENU_EMAIL, 5, R.string.actabout_mnuEmail)
+			.setIcon(android.R.drawable.ic_menu_send);
 		
 		return true;
 	}
@@ -83,7 +89,15 @@ public class ActAbout
 		case OPTIONMENU_CHANGESLOG:
 			showDialog(DIALOG_CHANGESLOG);
 			break;
+		
+		case OPTIONMENU_EMAIL:
+			ActivityHelper.sendEmail(this,
+					GlobalDef.EMAIL_FOR_LOG,
+					String.format(getString(R.string.actabout_msgEmailSubject), SmsForFreeApplication.instance().getAppName()),
+					getString(R.string.actabout_msgEmailBody));
+			break;
 		}
+		
 		
 		return true;
 	}

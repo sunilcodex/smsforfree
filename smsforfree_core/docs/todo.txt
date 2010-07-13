@@ -4,10 +4,6 @@ TODOLIST
 -mettere bottone che ripresenta ultimo messaggio di invio sms
 -mettere codice per invio sms, non solo generico codice di ok
 -mettere il register a livello di smsprovider e non di singolo provider
--mettere bottone per mandare email allo sviluppatore nell'about
-
--box iniziale che spiega i programma e quello che c'e' da fare
- 
 
 
 
