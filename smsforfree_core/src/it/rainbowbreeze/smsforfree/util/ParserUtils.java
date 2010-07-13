@@ -29,22 +29,22 @@ public class ParserUtils {
 	//---------- Public properties
 
 	//---------- Public methods
-	public static String getStringBetween(String source, String paramValue, String paramsSeparator)
+	public static String getStringBetween(String source, String tokenBefore, String tokenAfter)
 	{
 		String result = "";
 		
-		if (TextUtils.isEmpty(source) || TextUtils.isEmpty(paramValue))
+		if (TextUtils.isEmpty(source) || TextUtils.isEmpty(tokenBefore))
 			return result;
 		
-		int posInit = source.indexOf(paramValue);
+		int posInit = source.indexOf(tokenBefore);
 		if (-1 == posInit) return result;
-		posInit = posInit += paramValue.length();
+		posInit = posInit += tokenBefore.length();
 		
 		int posEnd;
-		if (TextUtils.isEmpty(paramsSeparator)) {
+		if (TextUtils.isEmpty(tokenAfter)) {
 			posEnd = source.length();
 		} else {
-			posEnd = source.indexOf(paramsSeparator, posInit);
+			posEnd = source.indexOf(tokenAfter, posInit);
 			if (-1 == posEnd) posEnd = source.length(); 
 		}
 		

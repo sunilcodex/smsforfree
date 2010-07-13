@@ -25,7 +25,6 @@ import java.util.List;
 import com.admob.android.ads.AdView;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -79,14 +78,11 @@ public class ActSendSms
 	private final static int DIALOG_CAPTCHA_REQUEST = 11;
 	private final static int DIALOG_SENDING_MESSAGE = 12;
 	private final static int DIALOG_SENDING_CAPTCHA = 13;
+	private static final int DIALOG_STARTUP_INFOBOX = 14;
 	
 	private final static String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	private final static String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
 
-
-
-
-	//---------- Private fields
 	private final static int OPTIONMENU_EXIT = 1;
 	private final static int OPTIONMENU_SETTINGS = 2;
 	private final static int OPTIONMENU_SIGNATURE = 3;
@@ -184,8 +180,11 @@ public class ActSendSms
 	        statsTask.execute(this);
             //load values of view from previous application execution
         	restoreLastRunViewValues();
-
+        	//check if the application was called as intent action
         	processIntentData(getIntent());
+        	//show info dialog, if needed
+        	if (SmsForFreeApplication.instance().isStartupInfoboxRequired())
+        		showDialog(DIALOG_STARTUP_INFOBOX);
         }
 
     }
@@ -200,14 +199,12 @@ public class ActSendSms
 	
 		//saved object is a SendMessageThread
 		if (savedThread instanceof SendMessageThread) {
-//			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
 			mSendMessageThread = (SendMessageThread) savedThread;
 			//register new handler
 			mSendMessageThread.registerCallerHandler(mActivityHandler);
 		
 		//saved object is a SendCaptchaThread
 		} else {
-//			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
 			mSendCaptchaThread = (SendCaptchaThread) savedThread;
 			//register new handler
 			mSendCaptchaThread.registerCallerHandler(mActivityHandler);
@@ -328,8 +325,7 @@ public class ActSendSms
 			break;
 			
 		case OPTIONMENU_ABOUT:
-			LogFacility.getLogData();
-//			ActivityHelper.openAbout(this);
+			ActivityHelper.openAbout(this);
 			break;
 
 		case OPTIONMENU_SIGNATURE:
@@ -407,6 +403,13 @@ public class ActSendSms
     		
     	case DIALOG_SENDING_CAPTCHA:
     		retDialog = ActivityHelper.createProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
+    		break;
+    		
+    	case DIALOG_STARTUP_INFOBOX:
+    		retDialog = ActivityHelper.createInformativeDialog(this,
+    				this.getString(R.string.actsendsms_msg_infobox_title),
+    				this.getString(R.string.actabout_lblDescription) + "\n\n" + this.getString(R.string.actabout_msgChangeslog),
+    				this.getString(R.string.common_btnOk));
     		break;
     		
 		default:

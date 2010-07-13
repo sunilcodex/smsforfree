@@ -24,7 +24,6 @@ import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.Menu;
@@ -97,12 +96,8 @@ public class ActAbout
 		
 		switch (id) {
 		case DIALOG_CHANGESLOG:
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.actabout_msgChangeslogTitle)
-				.setMessage(R.string.actabout_msgChangeslog)
-				.setNeutralButton(R.string.common_btnOk, null)
-				.setCancelable(false);
-			returnDialog = builder.create();			
+			returnDialog = ActivityHelper.createInformativeDialog(this,
+					R.string.actabout_msgChangeslogTitle, R.string.actabout_msgChangeslog, R.string.common_btnOk);
 			break;
 
 		default:

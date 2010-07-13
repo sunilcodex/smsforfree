@@ -98,6 +98,10 @@ public class LogicManager
 		//update the daily number of sms
 		updateSmsCounter(0);
 		
+		//check if startup infobox is required
+		if (isNewAppVersion())
+			SmsForFreeApplication.instance().setStartupInfoboxRequired(true);
+		
 		//checks for application upgrade
 		res = performAppVersionUpgrade(context);
 		if (res.hasErrors()) return res;

@@ -25,7 +25,7 @@ public class LogicManagerTest extends AndroidTestCase {
 	/**
 	 * Test when the application should be upgraded or not
 	 */
-	public void textApplicationUpgrade() {
+	public void testApplicationUpgrade() {
 		
 		String saveSwVersion = AppPreferencesDao.instance().getAppVersion();
 		
@@ -35,9 +35,11 @@ public class LogicManagerTest extends AndroidTestCase {
 		
 		//upgrade needed
 		AppPreferencesDao.instance().setAppVersion("00.00.00");
+		AppPreferencesDao.instance().save();
 		assertTrue("The app must be upgraded", LogicManager.isNewAppVersion());
 		
 		AppPreferencesDao.instance().setAppVersion(saveSwVersion);
+		AppPreferencesDao.instance().save();
 	}
 
 	//---------- Private methods
