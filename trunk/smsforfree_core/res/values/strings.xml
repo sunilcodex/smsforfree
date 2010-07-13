@@ -139,12 +139,15 @@
     <string name="actabout_title">%s - About</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">This application sends SMS messages worldwide using online SMS gateways, with free o very low cost per message. Depends on gateway, you may need an account in order to use it.</string>
-    <string name="actabout_lblDescription2">Suggestions, translations, graphics ideas, support for new providers? Email me: devel (at) rainbowbreeze.it\n\nSpecial thanks: Ilaria Mauric for the logo, Robert Harder for Base64</string>
+    <string name="actabout_lblDescription">Send SMS text messages worldwide using online SMS gateways, with free o very low cost. You need to configure at least one provider and each provider need its own account. To configure, from main screen, press \'Menu\', then \'Settings\' and select \'Providers settings\'.</string>
+    <string name="actabout_lblDescription2">Suggestions, translations, graphics, new providers? %s\n\nSpecial thanks: Ilaria Mauric (logo), Robert Harder (code)</string>
     <string name="actabout_lblSentSms">SMS sent today: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
+    <string name="actabout_mnuEmail">Email to developer</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.3\n -Added SubitoSMS, send error report to developer, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v1.3\n -Added SubitoSMS, send error via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
+    <string name="actabout_msgEmailSubject">About your %s application...</string>
+    <string name="actabout_msgEmailBody">Hi Alfredo,\n\n</string>
 
 
 

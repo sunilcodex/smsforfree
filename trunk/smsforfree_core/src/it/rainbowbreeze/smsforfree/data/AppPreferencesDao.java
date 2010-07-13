@@ -85,18 +85,7 @@ public class AppPreferencesDao
     { mEditor.putString(PROP_DEFAULT_INTERNATIONAL_PREFIX, newValue); }
 
     public String getAppVersion()
-    {
-    	String appVersion = mSettings.getString(PROP_APPVERSION, "");
-    	//very first load of application
-    	if (TextUtils.isEmpty(appVersion)) {
-    		//set the app version
-    		appVersion = GlobalDef.appVersion;
-    		//and store it
-    		setAppVersion(appVersion);
-    		save();
-    	}
-    	return appVersion;
-	}
+    { return mSettings.getString(PROP_APPVERSION, "00.00.00"); }
     public void setAppVersion(String newValue)
     { mEditor.putString(PROP_APPVERSION, newValue); }
     
