@@ -72,6 +72,7 @@
     <string name="actsendsms_msg_sendingMessage">Invio messaggio...</string>
     <string name="actsendsms_msg_sendingCaptcha">Invio del captcha...</string>
     <string name="actsendsms_msg_smsLimitReach">Spiacente, hai raggiunto il numero massimo di SMS giornalieri permessi in questa versione Lite del programma...\n\nAcquista nell\'Android Market la versione di SmsForFree Full per non aver piu\' limiti e banner pubblicitari</string>
+    <string name="actsendsms_msg_infobox_title">Benvenuto</string>
     <string name="actsendsms_phoneType_home">Casa</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Lavoro</string>
@@ -138,11 +139,12 @@
     <string name="actabout_title">%s - Informazioni su...</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">Questa applicazione spedisce messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo molto basso rispetto ad un normale SMS. Alcuni di questi gateway richiedono la registrazione per poter essere usati.\n\nSuggerimenti, traduzioni, idee grafice, nuovi gateway da supportare? Manda una email a devel (at) rainbowbreeze.it\n\nRingraziamenti: Ilaria Mauric per il logo, Robert Harder per il Base64</string>
+    <string name="actabout_lblDescription">Questa applicazione spedisce messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo molto basso rispetto ad un normale SMS. Alcuni di questi gateway richiedono la registrazione per poter essere usati.</string>
+    <string name="actabout_lblDescription2">Suggerimenti, traduzioni, idee grafice, nuovi gateway da supportare? Manda una email a devel (at) rainbowbreeze.it\n\nRingraziamenti: Ilaria Mauric per il logo, Robert Harder per il Base64</string>
     <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.3\n -Aggiunto SubitoSMS \n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv 1.1:\n -Fix per grandezza captcha\n\nv 1.0:\n -Prima release</string>
+    <string name="actabout_msgChangeslog">v1.3\n -Aggiunto SubitoSMS, invio dei log per email, bugfixes \n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
 
 
 

@@ -349,6 +349,56 @@ public class ActivityHelper {
 		progressDialog.setMessage(message);
 		return progressDialog;
 	}
+	
+	
+	/**
+	 * Create a simple dialog with text and ok button
+	 * 
+	 * @param context
+	 * @param title
+	 * @param message
+	 * @param okButtonLabel
+	 * @return
+	 */
+	public static Dialog createInformativeDialog(
+			Context context,
+			String title,
+			String message,
+			String okButtonLabel)
+	{
+		Dialog returnDialog;
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle(title)
+			.setMessage(message)
+			.setNeutralButton(okButtonLabel, null)
+			.setCancelable(true);
+		returnDialog = builder.create();
+		
+		return returnDialog;
+	}
+	
+	/**
+	 * Create a simple dialog with text and ok button
+	 * 
+	 * @param context
+	 * @param titleId
+	 * @param messageId
+	 * @param okButtonLabelId
+	 * @return
+	 */
+	public static Dialog createInformativeDialog(
+			Context context,
+			int titleId,
+			int messageId,
+			int okButtonLabelId)
+	{
+		return createInformativeDialog(context,
+				context.getString(titleId),
+				context.getString(messageId),
+				context.getString(okButtonLabelId));
+	}
+	
 
 
 	/**

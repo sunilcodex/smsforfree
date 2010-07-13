@@ -106,6 +106,12 @@ public class SmsForFreeApplication
 	{ mAdEnables = newValue; }
 	
 
+	protected boolean mStartupInfoboxREquired;
+	public void setStartupInfoboxRequired(boolean newValue)
+	{ mStartupInfoboxREquired = newValue; }
+	public boolean isStartupInfoboxRequired()
+	{ return mStartupInfoboxREquired; }
+
 
 
 	
@@ -138,9 +144,9 @@ public class SmsForFreeApplication
 		}
 		super.onTerminate();
 	}
+	
+	
 
-	
-	
 	
 	//---------- Public methods
 
