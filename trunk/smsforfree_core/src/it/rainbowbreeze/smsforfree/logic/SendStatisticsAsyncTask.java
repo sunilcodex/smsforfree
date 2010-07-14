@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
@@ -49,6 +50,7 @@ public class SendStatisticsAsyncTask
 	@Override
 	protected Void doInBackground(Activity... params)
 	{
+		LogFacility.i("Collecting statistic information about the application");
 		Activity activity = params[0];
 		String screenres = ActivityHelper.getScreenWidth(activity) + "x" + ActivityHelper.getScreenHeight(activity);
 		String appName = SmsForFreeApplication.instance().getAppName();
@@ -77,11 +79,9 @@ public class SendStatisticsAsyncTask
 		try {
 			client.requestGet(url.toString());
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogFacility.e(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LogFacility.e(e);
 		}
 
 		//doen't care about results or other

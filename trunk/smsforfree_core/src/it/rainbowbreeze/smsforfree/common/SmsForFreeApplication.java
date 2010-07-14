@@ -122,6 +122,9 @@ public class SmsForFreeApplication
 	{
 		super.onCreate();
 		
+		//register crash reporter
+		CrashReporter.instance().init(this);
+		
 		//execute begin task
 		ResultOperation<Void> res = LogicManager.executeBeginTask(this);
 		if (res.hasErrors()) {

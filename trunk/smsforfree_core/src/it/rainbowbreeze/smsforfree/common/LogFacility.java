@@ -22,9 +22,11 @@ package it.rainbowbreeze.smsforfree.common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.util.Log;
 
 /**
@@ -94,7 +96,16 @@ public class LogFacility {
 	
 	//---------- Public methods
 	public static void e(Exception e)
-	{ log(Log.ERROR, e.getMessage()); }
+	{
+		//log the message
+		log(Log.ERROR, e.getMessage());
+		//and the stack trace
+		final Writer result = new StringWriter();
+		final PrintWriter printWriter = new PrintWriter(result);
+		e.printStackTrace(printWriter);
+		String stacktrace = result.toString();		
+		log(Log.ERROR, stacktrace);
+	}
 
 	public static void e(String message)
 	{ log(Log.ERROR, message); }
