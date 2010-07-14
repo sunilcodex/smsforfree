@@ -20,7 +20,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
@@ -55,7 +55,7 @@ public class ActTemplatesList
 	{
 		super.onCreate(savedInstanceState);
         setTitle(String.format(
-        		getString(R.string.acttemplateslist_title), SmsForFreeApplication.instance().getAppName()));
+        		getString(R.string.acttemplateslist_title), App.instance().getAppName()));
 
 		setContentView(R.layout.acttemplateslist);
 		getDataFromIntent(getIntent());
@@ -91,7 +91,7 @@ public class ActTemplatesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(SmsForFreeApplication.instance().getProviderList(), id);
+			mProvider = GlobalUtils.findProviderInList(App.instance().getProviderList(), id);
 		} else {
 			mProvider = null;
 		}

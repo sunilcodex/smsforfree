@@ -20,7 +20,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -53,7 +53,7 @@ public class ActCompactMessage
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setTitle(String.format(
-        		getString(R.string.actcompactmessage_title), SmsForFreeApplication.instance().getAppName()));
+        		getString(R.string.actcompactmessage_title), App.instance().getAppName()));
         setContentView(R.layout.actcompactmessage);
         
 		//retrieve the message to compact

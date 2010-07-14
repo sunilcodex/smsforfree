@@ -25,15 +25,15 @@ import java.util.List;
 import com.admob.android.ads.AdView;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.CrashReporter;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.logic.CrashReporter;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.logic.SendCaptchaThread;
 import it.rainbowbreeze.smsforfree.logic.SendMessageThread;
@@ -129,28 +129,28 @@ public class ActSendSms
         super.onCreate(savedInstanceState);
 
         //checks for app was correctly initialized
-    	if (!SmsForFreeApplication.instance().isCorrectlyInitialized()) {
+    	if (!App.instance().isCorrectlyInitialized()) {
     		//application is expired
             setContentView(R.layout.actinitializationerror);
             setTitle(String.format(
-            		getString(R.string.actinitialization_title), SmsForFreeApplication.instance().getAppName()));
+            		getString(R.string.actinitialization_title), App.instance().getAppName()));
     		return;
     	}
     	
         //checks for app validity
-    	if (SmsForFreeApplication.instance().isAppExpired()) {
+    	if (App.instance().isAppExpired()) {
     		LogFacility.i("App expired");
     		//application is expired
             setContentView(R.layout.actexpired);
             setTitle(String.format(
-            		getString(R.string.actexpired_title), SmsForFreeApplication.instance().getAppName()));
+            		getString(R.string.actexpired_title), App.instance().getAppName()));
     		ActivityHelper.showInfo(this, R.string.common_msg_appExpired);
     		return;
     	}
     	
         setContentView(R.layout.actsendsms);
         setTitle(String.format(
-        		getString(R.string.actsendsms_title), SmsForFreeApplication.instance().getAppName()));
+        		getString(R.string.actsendsms_title), App.instance().getAppName()));
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
@@ -162,7 +162,7 @@ public class ActSendSms
         mBtnPickContact = (ImageButton) findViewById(R.id.actsendsms_btnPickContact);
         
         //eventually remove ad view
-        if (!SmsForFreeApplication.instance().isAdEnables()) {
+        if (!App.instance().isAdEnables()) {
         	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
         	LinearLayout parent = (LinearLayout) adView.getParent();
         	parent.removeView(adView);
@@ -180,7 +180,7 @@ public class ActSendSms
 
     	//executed when the application first runs
         if (null == savedInstanceState) {
-    		LogFacility.i("App started: " + SmsForFreeApplication.instance().getAppName());
+    		LogFacility.i("App started: " + App.instance().getAppName());
         	//send statistics data first time the app runs
 	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
 	        statsTask.execute(this);
@@ -189,7 +189,7 @@ public class ActSendSms
         	//check if the application was called as intent action
         	processIntentData(getIntent());
         	//show info dialog, if needed
-        	if (SmsForFreeApplication.instance().isStartupInfoboxRequired())
+        	if (App.instance().isStartupInfoboxRequired())
         		showDialog(DIALOG_STARTUP_INFOBOX);
         	
         	//checks for previous crash reports
@@ -304,12 +304,12 @@ public class ActSendSms
     	if (!super.onCreateOptionsMenu(menu)) return false;
     	
     	//errors on initialization
-    	if (!SmsForFreeApplication.instance().isCorrectlyInitialized()) return true;
+    	if (!App.instance().isCorrectlyInitialized()) return true;
 
     	menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
     		.setIcon(android.R.drawable.ic_menu_info_details);
     	//menu ends here if the application is expired
-    	if (SmsForFreeApplication.instance().isAppExpired()) return true;
+    	if (App.instance().isAppExpired()) return true;
 
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
@@ -383,8 +383,8 @@ public class ActSendSms
     		
     		case (ActivityHelper.REQUESTCODE_SETTINGS):
     			//refresh subservices list if subservices of a provider was edited
-    			if (SmsForFreeApplication.instance().getForceSubserviceRefresh()) {
-    				SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
+    			if (App.instance().getForceSubserviceRefresh()) {
+    				App.instance().setForceSubserviceRefresh(false);
     				changeProvider(mSelectedProvider, true);
     			}
     		break;  
@@ -525,7 +525,7 @@ public class ActSendSms
 	private void bindProvidersSpinner()
 	{
 		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
-				android.R.layout.simple_spinner_item, SmsForFreeApplication.instance().getProviderList());
+				android.R.layout.simple_spinner_item, App.instance().getProviderList());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpiProviders.setAdapter(adapter);
 	}
@@ -774,7 +774,7 @@ public class ActSendSms
 	 */
 	private void restoreLastRunViewValues()
 	{
-		if (SmsForFreeApplication.instance().isAppExpired()) return;
+		if (App.instance().isAppExpired()) return;
 		
 		//text and message
 		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
@@ -785,12 +785,12 @@ public class ActSendSms
 		String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
 
 		//assign provider
-		SmsProvider provider = GlobalUtils.findProviderInList(SmsForFreeApplication.instance().getProviderList(), providerId);
+		SmsProvider provider = GlobalUtils.findProviderInList(App.instance().getProviderList(), providerId);
 		changeProvider(provider, false);
 		//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
 		//in the provider spinner, because is execute at the end of this method, but i need it
 		//before assign subservice
-		int providerPos = GlobalUtils.findProviderPositionInList(SmsForFreeApplication.instance().getProviderList(), providerId);
+		int providerPos = GlobalUtils.findProviderPositionInList(App.instance().getProviderList(), providerId);
 		if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
 		
 		if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){

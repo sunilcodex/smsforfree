@@ -20,7 +20,7 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
@@ -85,7 +85,7 @@ public class ActSubservicesList
 		//update title
         setTitle(String.format(
         		getString(R.string.actsubserviceslist_title),
-        		SmsForFreeApplication.instance().getAppName(),
+        		App.instance().getAppName(),
         		mProvider.getName()));
 
         mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);
@@ -292,7 +292,7 @@ public class ActSubservicesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(SmsForFreeApplication.instance().getProviderList(), id);
+			mProvider = GlobalUtils.findProviderInList(App.instance().getProviderList(), id);
 		} else {
 			mProvider = null;
 		}

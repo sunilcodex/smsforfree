@@ -21,7 +21,7 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
@@ -206,7 +206,7 @@ public class ActSettingsSmsService
 			}
 			
 			//store that at least one of the providers' subservices list was accessed
-			SmsForFreeApplication.instance().setForceSubserviceRefresh(true);
+			App.instance().setForceSubserviceRefresh(true);
 			
 			//open the subservice configuration activity
 			ActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
@@ -249,7 +249,7 @@ public class ActSettingsSmsService
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_title),
-        		SmsForFreeApplication.instance().getAppName(),
+        		App.instance().getAppName(),
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice
@@ -325,7 +325,7 @@ public class ActSettingsSmsService
 		//checks if current editing is for a provider or a subservice
 		if(extras != null) {
 			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(SmsForFreeApplication.instance().getProviderList(), providerId);
+			mProvider = GlobalUtils.findProviderInList(App.instance().getProviderList(), providerId);
 			String subserviceId = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
 			if (TextUtils.isEmpty(subserviceId)) {
 				//edit a provider preferences

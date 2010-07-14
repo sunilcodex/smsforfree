@@ -30,7 +30,7 @@ import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -70,22 +70,22 @@ public class LogicManager
 		LogFacility.i("App started");
 		
 		//set application name
-		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
-		SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
-		LogFacility.i("App name: " + SmsForFreeApplication.instance().getAppName());
+		App.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
+		App.instance().setForceSubserviceRefresh(false);
+		LogFacility.i("App name: " + App.instance().getAppName());
 		
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);
-		SmsForFreeApplication.instance().setAdEnables("true".equalsIgnoreCase(adEnabel));
+		App.instance().setAdEnables("true".equalsIgnoreCase(adEnabel));
 		
 		//load configurations
 		AppPreferencesDao.instance().load(context);
 		LogFacility.i("Preferences loaded");
 		
 		//load some application license setting
-		SmsForFreeApplication.instance().setLiteVersionApp(
+		App.instance().setLiteVersionApp(
 				GlobalDef.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType)));
-		SmsForFreeApplication.instance().setAllowedSmsForDay(
+		App.instance().setAllowedSmsForDay(
 				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
 
 //		//check if the application expired
@@ -96,7 +96,7 @@ public class LogicManager
 //				return res;
 //			}
 //		} else {
-			SmsForFreeApplication.instance().setAppExpired(false);
+			App.instance().setAppExpired(false);
 //		}
 		
 		//update the daily number of sms
@@ -104,7 +104,7 @@ public class LogicManager
 		
 		//check if startup infobox is required
 		if (isNewAppVersion())
-			SmsForFreeApplication.instance().setStartupInfoboxRequired(true);
+			App.instance().setStartupInfoboxRequired(true);
 		
 		//checks for application upgrade
 		res = performAppVersionUpgrade(context);
@@ -158,12 +158,12 @@ public class LogicManager
 	public static boolean checkIfCanSendSms()
 	{
 		//unlimited sms for normal app
-		if (!SmsForFreeApplication.instance().isLiteVersionApp()) return true;
+		if (!App.instance().isLiteVersionApp()) return true;
 		
 		//0: no send limit
-		if (0 == SmsForFreeApplication.instance().getAllowedSmsForDay()) return true;
+		if (0 == App.instance().getAllowedSmsForDay()) return true;
 		
-		return getSmsSentToday() <= SmsForFreeApplication.instance().getAllowedSmsForDay();
+		return getSmsSentToday() <= App.instance().getAllowedSmsForDay();
 	}
 	
 	/**
@@ -277,7 +277,7 @@ public class LogicManager
 		//initialize provider list
 		ProviderDao dao = new ProviderDao();
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
-		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
+		App.instance().setProviderList(new ArrayList<SmsProvider>());
 		
 		//cycles thru all providers and initializes only the required providers
 		String[] allSupportedProviders = "AIMON,JACKSMS,SUBITOSMS,VOIPSTUNT".split(",");
@@ -293,14 +293,14 @@ public class LogicManager
 				if (null != provider) {
 					LogFacility.i("Inizializing provider " + providerName);
 					res = provider.initProvider(context);
-					SmsForFreeApplication.instance().getProviderList().add(provider);
+					App.instance().getProviderList().add(provider);
 				}
 				if (res.hasErrors()) break;
 			}
 		}
 		
 		//sort the collection of provider
-		Collections.sort(SmsForFreeApplication.instance().getProviderList());
+		Collections.sort(App.instance().getProviderList());
 		return res;
 	}
 	
