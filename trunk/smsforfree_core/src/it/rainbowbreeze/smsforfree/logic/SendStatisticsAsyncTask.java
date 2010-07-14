@@ -25,7 +25,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
@@ -53,8 +53,8 @@ public class SendStatisticsAsyncTask
 		LogFacility.i("Collecting statistic information about the application");
 		Activity activity = params[0];
 		String screenres = ActivityHelper.getScreenWidth(activity) + "x" + ActivityHelper.getScreenHeight(activity);
-		String appName = SmsForFreeApplication.instance().getAppName();
-		if (SmsForFreeApplication.instance().isLiteVersionApp()) appName = appName + "-" + GlobalDef.lite_description;
+		String appName = App.instance().getAppName();
+		if (App.instance().isLiteVersionApp()) appName = appName + "-" + GlobalDef.lite_description;
 		
 		//prepare data to send
 		StringBuilder url = new StringBuilder();

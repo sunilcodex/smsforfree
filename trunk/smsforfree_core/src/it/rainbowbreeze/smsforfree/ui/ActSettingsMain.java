@@ -22,7 +22,7 @@ package it.rainbowbreeze.smsforfree.ui;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.logic.PrepareLogToSendThread;
 import android.app.Activity;
@@ -67,7 +67,7 @@ public class ActSettingsMain
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setTitle(String.format(
-        		getString(R.string.actsettingsmain_title), SmsForFreeApplication.instance().getAppName()));
+        		getString(R.string.actsettingsmain_title), App.instance().getAppName()));
 		
 		addPreferencesFromResource(R.layout.actsettingsmain);
 		
@@ -129,9 +129,9 @@ public class ActSettingsMain
 		public boolean onPreferenceClick(Preference preference) {
 			//checks if only on provider is configured
 			
-			if (1 == SmsForFreeApplication.instance().getProviderList().size()) {
+			if (1 == App.instance().getProviderList().size()) {
 				//open directly the setting for the only provider present
-				ActivityHelper.openSettingsSmsService(ActSettingsMain.this, SmsForFreeApplication.instance().getProviderList().get(0).getId());
+				ActivityHelper.openSettingsSmsService(ActSettingsMain.this, App.instance().getProviderList().get(0).getId());
 			} else {
 				//open providers list
 				ActivityHelper.openProvidersList(ActSettingsMain.this);
@@ -209,7 +209,7 @@ public class ActSettingsMain
 				ActivityHelper.sendEmail(
 						ActSettingsMain.this,
 						GlobalDef.EMAIL_FOR_LOG,
-						String.format(getString(R.string.common_sendlogSubject), SmsForFreeApplication.instance().getAppName()),
+						String.format(getString(R.string.common_sendlogSubject), App.instance().getAppName()),
 						String.format(getString(R.string.common_sendlogBody), res.getResult()));
 			}
 			//free the thread

@@ -22,15 +22,16 @@ package it.rainbowbreeze.smsforfree.common;
 import java.util.List;
 
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.logic.CrashReporter;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import android.app.Application;
 
-public class SmsForFreeApplication
+public class App
 	extends Application
 {
 	//---------- Constructor
-	public SmsForFreeApplication()
+	public App()
 	{
 		super();
 		//this is the first instruction, so no fear that mInstance is null is following calls
@@ -47,8 +48,8 @@ public class SmsForFreeApplication
 	//---------- Public properties
 
 	//singleton
-    private static SmsForFreeApplication mInstance;
-    public static SmsForFreeApplication instance()
+    private static App mInstance;
+    public static App instance()
     { return mInstance; }
 	
     /** List of providers */

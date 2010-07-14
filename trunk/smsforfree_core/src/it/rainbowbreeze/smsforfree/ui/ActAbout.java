@@ -21,7 +21,7 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import android.app.Activity;
 import android.app.Dialog;
@@ -53,16 +53,16 @@ public class ActAbout
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.actabout);
         setTitle(String.format(
-        		getString(R.string.actabout_title), SmsForFreeApplication.instance().getAppName()));
+        		getString(R.string.actabout_title), App.instance().getAppName()));
         
         TextView lblVersion = (TextView)findViewById(R.id.actabout_lblAppVersion);
         String version = GlobalDef.appVersionDescription;
-        if (SmsForFreeApplication.instance().isLiteVersionApp()) version = version + " " + GlobalDef.lite_description;
+        if (App.instance().isLiteVersionApp()) version = version + " " + GlobalDef.lite_description;
         lblVersion.setText(version);
 
         TextView lblSentSms = (TextView)findViewById(R.id.actabout_lblSentSms);
         String sentSms = String.valueOf(LogicManager.getSmsSentToday());
-        if (SmsForFreeApplication.instance().isLiteVersionApp()) sentSms = sentSms + "/" + SmsForFreeApplication.instance().getAllowedSmsForDay();
+        if (App.instance().isLiteVersionApp()) sentSms = sentSms + "/" + App.instance().getAllowedSmsForDay();
         lblSentSms.setText(String.format(
         		getString(R.string.actabout_lblSentSms), sentSms));
         
@@ -93,7 +93,7 @@ public class ActAbout
 		case OPTIONMENU_EMAIL:
 			ActivityHelper.sendEmail(this,
 					GlobalDef.EMAIL_FOR_LOG,
-					String.format(getString(R.string.actabout_msgEmailSubject), SmsForFreeApplication.instance().getAppName()),
+					String.format(getString(R.string.actabout_msgEmailSubject), App.instance().getAppName()),
 					getString(R.string.actabout_msgEmailBody));
 			break;
 		}

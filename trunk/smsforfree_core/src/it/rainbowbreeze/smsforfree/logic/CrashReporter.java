@@ -17,7 +17,9 @@
  * this program; If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.rainbowbreeze.smsforfree.common;
+package it.rainbowbreeze.smsforfree.logic;
+
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 
 import java.io.BufferedReader;
 import java.io.File;
