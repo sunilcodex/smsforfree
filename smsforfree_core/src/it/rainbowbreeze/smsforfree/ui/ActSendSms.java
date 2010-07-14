@@ -25,6 +25,8 @@ import java.util.List;
 import com.admob.android.ads.AdView;
 
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.CrashReporter;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -37,6 +39,7 @@ import it.rainbowbreeze.smsforfree.logic.SendCaptchaThread;
 import it.rainbowbreeze.smsforfree.logic.SendMessageThread;
 import it.rainbowbreeze.smsforfree.logic.SendStatisticsAsyncTask;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
+import it.rainbowbreeze.smsforfree.util.ParserUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -79,6 +82,7 @@ public class ActSendSms
 	private final static int DIALOG_SENDING_MESSAGE = 12;
 	private final static int DIALOG_SENDING_CAPTCHA = 13;
 	private static final int DIALOG_STARTUP_INFOBOX = 14;
+	private static final int DIALOG_SEND_CRASH_REPORTS = 15;
 	
 	private final static String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	private final static String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
@@ -135,6 +139,7 @@ public class ActSendSms
     	
         //checks for app validity
     	if (SmsForFreeApplication.instance().isAppExpired()) {
+    		LogFacility.i("App expired");
     		//application is expired
             setContentView(R.layout.actexpired);
             setTitle(String.format(
@@ -175,6 +180,7 @@ public class ActSendSms
 
     	//executed when the application first runs
         if (null == savedInstanceState) {
+    		LogFacility.i("App started: " + SmsForFreeApplication.instance().getAppName());
         	//send statistics data first time the app runs
 	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
 	        statsTask.execute(this);
@@ -185,6 +191,11 @@ public class ActSendSms
         	//show info dialog, if needed
         	if (SmsForFreeApplication.instance().isStartupInfoboxRequired())
         		showDialog(DIALOG_STARTUP_INFOBOX);
+        	
+        	//checks for previous crash reports
+        	if (CrashReporter.instance().isCrashReportPresent(this)) {
+        		showDialog(DIALOG_SEND_CRASH_REPORTS);
+        	}
         }
 
     }
@@ -476,6 +487,7 @@ public class ActSendSms
 	private Handler mActivityHandler = new Handler() {
 		public void handleMessage(Message msg)
 		{
+			LogFacility.i("Returned to ActSendSms from external thread");
 			//check if the message is for this handler
 			if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
 					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
@@ -858,6 +870,7 @@ public class ActSendSms
 		//preparing the background task for sending message
 		String destination = mTxtDestination.getText().toString();
 		String message = mTxtBody.getText().toString();
+		LogFacility.i("Sending message to " + ParserUtils.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId() + " and service " + mSelectedServiceId);
 		mSendMessageThread = new SendMessageThread(
 				this, mActivityHandler,
 				mSelectedProvider, mSelectedServiceId,
@@ -874,6 +887,8 @@ public class ActSendSms
 	 */
 	private void sendCaptcha(String providerReply, String captchaCode)
 	{
+		LogFacility.i("Captcha request - provider reply: " + providerReply);
+		LogFacility.i("Captcha request - captchaCode: " + captchaCode);
 		if (TextUtils.isEmpty(captchaCode)) {
 			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
 			return;
@@ -942,11 +957,13 @@ public class ActSendSms
 		if (result.hasErrors()) {
 			ActivityHelper.reportError(ActSendSms.this, result);
 		} else {
+			LogFacility.i(result.getResult());
 			//display returning message of the provider
 			ActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
 
 			//only if sms was sent
 			if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
+				LogFacility.i("Sms correctly sent");
 				//update number of messages sent in the day
 				LogicManager.updateSmsCounter(1);
 				//check if the text should be deleted
@@ -977,11 +994,13 @@ public class ActSendSms
 				.replace("smsto:", "")
 				.replace("sms:", "");
 			//and set fields
+			LogFacility.i("Application called for sending number to " + ParserUtils.scrambleNumber(destionationNumber));
 			mTxtDestination.setText(destionationNumber);
 			
 		} else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
 			//in the data i'll find the content of the message
 			String message = intent.getStringExtra(Intent.EXTRA_TEXT);
+			LogFacility.i("Application called for sending message " + (message.length() < 200 ? message : message.substring(0, 200)));
 			//clear the string
 			mTxtBody.setText(message);
 		}

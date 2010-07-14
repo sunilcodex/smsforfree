@@ -69,6 +69,21 @@ public class ParserUtils {
 		return (pos >= 0) ? stringToCheck.substring(0, pos) : stringToCheck;
 	}
 	
+	
+	/**
+	 * Hides the last digits of the telephone number
+	 * @param numberToScramble
+	 * @return
+	 */
+	public static String scrambleNumber(String numberToScramble)
+	{
+		if (TextUtils.isEmpty(numberToScramble) || numberToScramble.length() < 3) {
+			return numberToScramble;
+		} else {
+			return numberToScramble.substring(0, numberToScramble.length() - 3) + "***";
+		}
+	}
+	
 
 	//---------- Private methods
 

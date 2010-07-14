@@ -67,9 +67,12 @@ public class LogicManager
 		//init log facility
 		LogFacility.init(GlobalDef.LOG_TAG);
 		
+		LogFacility.i("App started");
+		
 		//set application name
 		SmsForFreeApplication.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
 		SmsForFreeApplication.instance().setForceSubserviceRefresh(false);
+		LogFacility.i("App name: " + SmsForFreeApplication.instance().getAppName());
 		
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);
@@ -77,6 +80,7 @@ public class LogicManager
 		
 		//load configurations
 		AppPreferencesDao.instance().load(context);
+		LogFacility.i("Preferences loaded");
 		
 		//load some application license setting
 		SmsForFreeApplication.instance().setLiteVersionApp(
@@ -229,6 +233,7 @@ public class LogicManager
 	private static ResultOperation<Void> performAppVersionUpgrade(Context context)
 	{
 		if (isNewAppVersion()) {
+			LogFacility.i("Upgrading from " + AppPreferencesDao.instance().getAppVersion() + " to " + GlobalDef.appVersion);
 			//perform upgrade
 			
 			//update expiration date
@@ -240,6 +245,8 @@ public class LogicManager
 			
 			//and save updates
 			AppPreferencesDao.instance().save();
+			
+			LogFacility.i("Upgrading complete");
 		}
 		
 		return new ResultOperation<Void>();
@@ -250,9 +257,11 @@ public class LogicManager
 	{
         final Calendar c = Calendar.getInstance();
         StringBuilder dateHash = new StringBuilder();
-        dateHash.append(c.get(Calendar.YEAR));
-        dateHash.append(c.get(Calendar.MONTH));
-        dateHash.append(c.get(Calendar.DAY_OF_MONTH));
+        dateHash.append(c.get(Calendar.YEAR))
+        	.append("-")
+        	.append(c.get(Calendar.MONTH))
+        	.append("-")
+        	.append(c.get(Calendar.DAY_OF_MONTH));
         return dateHash.toString();
 	}
 
@@ -270,33 +279,24 @@ public class LogicManager
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
 		SmsForFreeApplication.instance().setProviderList(new ArrayList<SmsProvider>());
 		
-		SmsProvider prov;
-		if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("JACKSMS")) {
-			//add JackSMS
-			prov = new JacksmsProvider(dao);
-			res = prov.initProvider(context);
-			SmsForFreeApplication.instance().getProviderList().add(prov);
-		}
-	
-		if (!res.hasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("AIMON"))) {
-			//add Aimon
-			prov = new AimonProvider(dao);
-			res = prov.initProvider(context);
-			SmsForFreeApplication.instance().getProviderList().add(prov);
-		}
-		
-		if (!res.hasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("VOIPSTUNT"))) {
-			//add Voipstunt
-			prov = new VoipstuntProvider(dao);
-			res = prov.initProvider(context);
-			SmsForFreeApplication.instance().getProviderList().add(prov);
-		}
-		
-		if (!res.hasErrors() && (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains("SUBITOSMS"))) {
-			//add Subitosms
-			prov = new SubitosmsProvider(dao);
-			res = prov.initProvider(context);
-			SmsForFreeApplication.instance().getProviderList().add(prov);
+		//cycles thru all providers and initializes only the required providers
+		String[] allSupportedProviders = "AIMON,JACKSMS,SUBITOSMS,VOIPSTUNT".split(",");
+		for (String providerName : allSupportedProviders) {
+			SmsProvider provider = null;
+			if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains(providerName)) {
+				
+				if ("AIMON".equals(providerName)) provider = new AimonProvider(dao);
+				else if ("JACKSMS".equals(providerName)) provider = new JacksmsProvider(dao);
+				else if ("SUBITOSMS".equals(providerName)) provider = new SubitosmsProvider(dao);
+				else if ("VOIPSTUNT".equals(providerName)) provider = new VoipstuntProvider(dao);
+				
+				if (null != provider) {
+					LogFacility.i("Inizializing provider " + providerName);
+					res = provider.initProvider(context);
+					SmsForFreeApplication.instance().getProviderList().add(provider);
+				}
+				if (res.hasErrors()) break;
+			}
 		}
 		
 		//sort the collection of provider

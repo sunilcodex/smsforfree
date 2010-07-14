@@ -22,6 +22,7 @@ package it.rainbowbreeze.smsforfree.ui;
 import java.util.Map;
 
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
 import android.app.Activity;
@@ -88,6 +89,7 @@ public class ActivityHelper {
 	 */
 	public static void openSettingsSmsService(Activity callerActivity, String providerId, String templateId, String serviceId)
 	{
+		LogFacility.i("Launching activity SettingSmsService for provider " + providerId + " template " + templateId + " service " + serviceId);
         Intent intent = new Intent(callerActivity, ActSettingsSmsService.class);
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		intent.putExtra(INTENTKEY_SMSTEMPLATEID, templateId);
@@ -112,6 +114,7 @@ public class ActivityHelper {
 	 */
 	public static void openProvidersList(Activity callerActivity)
 	{
+		LogFacility.i("Launching activity ProvidersList");
 		openActivity(callerActivity, ActProvidersList.class, null, false, REQUESTCODE_NONE);
 	}
 	
@@ -120,6 +123,7 @@ public class ActivityHelper {
 	 */
 	public static void openAbout(Activity callerActivity)
 	{
+		LogFacility.i("Launching activity About");
 		openActivity(callerActivity, ActAbout.class, null, false, REQUESTCODE_NONE);
 	}
 	
@@ -130,6 +134,7 @@ public class ActivityHelper {
 	 */
 	public static void openCompactMessage(Activity callerActivity, String message)
 	{
+		LogFacility.i("Launching activity CompactMessage");
         Intent intent = new Intent(callerActivity, ActCompactMessage.class);
 		intent.putExtra(INTENTKEY_MESSAGE, message);
 		openActivity(intent, callerActivity, true, REQUESTCODE_COMPACTMESSAGE);
@@ -140,6 +145,7 @@ public class ActivityHelper {
 	 */
 	public static void openTemplatesList(Activity callerActivity, String providerId)
 	{
+		LogFacility.i("Launching activity TemplatesList");
         Intent intent = new Intent(callerActivity, ActTemplatesList.class);
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		openActivity(intent, callerActivity, true, REQUESTCODE_PICKTEMPLATE);
@@ -149,6 +155,7 @@ public class ActivityHelper {
 	 */
 	public static void openSubservicesList(Activity callerActivity, String providerId)
 	{
+		LogFacility.i("Launching activity SubservicesList");
         Intent intent = new Intent(callerActivity, ActSubservicesList.class);
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
@@ -160,6 +167,7 @@ public class ActivityHelper {
 	 */
 	public static void openPickContact(Activity callerActivity)
 	{
+		LogFacility.i("Launching activity PickContact");
 		Intent intent = ContactDao.instance().getPickContactIntent();
 		openActivity(intent, callerActivity, true, REQUESTCODE_PICKCONTACT);
 	}
@@ -167,6 +175,7 @@ public class ActivityHelper {
 	
 	public static void openBrowser(Context context, String urlToOpen, boolean openInNewTask)
 	{
+		LogFacility.i("Launching intent for opening a browser");
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_VIEW);
 		intent.addCategory(Intent.CATEGORY_BROWSABLE);
@@ -177,7 +186,9 @@ public class ActivityHelper {
 	
 	public static void sendEmail(Context context, String to, String subject, String body)
 	{
+		LogFacility.i("Launching activity for sending email");
         Intent intent = new Intent(Intent.ACTION_SEND);
+        //TODO
         intent.setType("text/plain"); //use this line for testing in the emulator
         //intent.setType("message/rfc822") ; // use from live device
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{to});        
@@ -192,7 +203,10 @@ public class ActivityHelper {
 	 * @param errorMessage
 	 */
 	public static void reportError(Context context, String errorMessage)
-	{ Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show(); }
+	{
+		LogFacility.e("Error: " + errorMessage);
+		Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+	}
 	
 	public static void reportError(Context context, int errorMessageId)
 	{ reportError(context, context.getString(errorMessageId)); }
@@ -239,10 +253,8 @@ public class ActivityHelper {
 		
 		//display the error to the user
 		reportError(context, userMessage);
-		
-		//and log it
-		//TODO
-		exception.printStackTrace();
+		//and log the error
+		LogFacility.e(exception);
 	}
 	
 
@@ -284,6 +296,7 @@ public class ActivityHelper {
 		} else {
 			if (!TextUtils.isEmpty(result.getResult())){
 				//shows the output of the command
+				LogFacility.i(result.getResult());
 				ActivityHelper.showInfo(context, result.getResult());
 			}
 		}		
