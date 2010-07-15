@@ -73,6 +73,8 @@
     <string name="actsendsms_msg_sendingCaptcha">Sending captcha code...</string>
     <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the daily maximum number of allowed attempts to send SMS of this Lite version...\n\nWant unlimited SMS and no banner? Buy SmsForFree Full in the Android Market!</string>
     <string name="actsendsms_msg_infobox_title">Welcome</string>
+    <string name="actsendsms_msg_askForCrashReportEmailTitle">Error reporting</string>
+    <string name="actsendsms_msg_askForCrashReportEmail">A previous run of the application crashed with errors.\nDo you want to send an email to the developer with crash information?</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>

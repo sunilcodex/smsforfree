@@ -21,7 +21,7 @@ package it.rainbowbreeze.smsforfree.logic;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
-import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import android.content.Context;
 import android.os.Handler;
 
@@ -60,7 +60,23 @@ public class PrepareLogToSendThread
 	@Override
 	public void run() {
 		//collect all the log
-		mResultOperation = LogFacility.getLogData(new String[]{ GlobalDef.LOG_TAG, "AndroidRuntime"});
+//		mResultOperation = LogFacility.getLogData(new String[]{ GlobalDef.LOG_TAG, "AndroidRuntime"});
+		ResultOperation<String> resLog = LogFacility.getLogData(new String[]{ GlobalDef.LOG_TAG});
+		
+		ResultOperation<String> resCrash = null;
+		if (CrashReporter.instance().isCrashReportPresent(getContext())) {
+			resCrash = CrashReporter.instance().getPreviousCrashReports(getContext());
+		}
+		
+		//merge two results
+		if (!resLog.hasErrors() && !resCrash.hasErrors()) {
+			mResultOperation = new ResultOperation<String>(resCrash.getResult() + resCrash.getResult());
+		} else if (resLog.hasErrors()) {
+			mResultOperation = resLog;
+		} else {
+			mResultOperation = resCrash;
+		}
+		
 		callHandlerAndRetry(mCallerHandler.obtainMessage(WHAT_PREPARELOGTOSEND));
 	}
 	

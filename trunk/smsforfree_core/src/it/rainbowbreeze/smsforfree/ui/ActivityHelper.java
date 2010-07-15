@@ -19,7 +19,9 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
@@ -39,7 +41,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 public class ActivityHelper {
@@ -61,6 +62,7 @@ public class ActivityHelper {
 	public final static String INTENTKEY_SMSTEMPLATEID = "SmsTemplate";
 	public final static String INTENTKEY_PICKTEMPLATE = "PickTemplate";
 	public final static String INTENTKEY_MESSAGE = "Message";
+	public final static String INTENTKEY_SENDLOGREPORT = "SendLogReport";
 
 	
 	
@@ -74,7 +76,21 @@ public class ActivityHelper {
 	 */
 	public static void openSettingsMain(Activity callerActivity)
 	{
-		openActivity(callerActivity, ActSettingsMain.class, null, true, REQUESTCODE_SETTINGS);
+		openSettingsMain(callerActivity, false);
+	}
+	
+	/**
+	 * Open Settings activity and call error report
+	 * 
+	 * @param callerActivity caller activity
+	 */
+	public static void openSettingsMain(Activity callerActivity, boolean callErrorReport)
+	{
+		Map<String, String> extraData = new HashMap<String, String>();
+		if (callErrorReport) {
+			extraData.put(INTENTKEY_SENDLOGREPORT, "true");
+		}
+		openActivity(callerActivity, ActSettingsMain.class, extraData, true, REQUESTCODE_SETTINGS);
 	}
 	
 	/**
@@ -313,9 +329,10 @@ public class ActivityHelper {
 	 */
 	public static Dialog createYesNoDialog(
 			Activity callerActivity,
+			int titleId,
 			int infoMessageId,
-			OnClickListener yesListner,
-			OnClickListener noListener
+			DialogInterface.OnClickListener yesListner,
+			DialogInterface.OnClickListener noListener
 		)
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(callerActivity);
@@ -323,17 +340,20 @@ public class ActivityHelper {
 		String noMessage = callerActivity.getString(R.string.common_btnNo);
 
 		builder.setMessage(infoMessageId)
-		       .setCancelable(false)
-		       .setPositiveButton(yesMessage, new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                //MyActivity.this.finish();
-		           }
-		       })
-		       .setNegativeButton(noMessage, new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
+		       .setCancelable(true)
+		       .setTitle(titleId)
+		       .setPositiveButton(yesMessage, yesListner)
+//		       new DialogInterface.OnClickListener() {
+//		           public void onClick(DialogInterface dialog, int id) {
+//		                //MyActivity.this.finish();
+//		           }
+//		       })
+		       .setNegativeButton(noMessage, noListener);
+//		    		   new DialogInterface.OnClickListener() {
+//		           public void onClick(DialogInterface dialog, int id) {
+//		                dialog.cancel();
+//		           }
+//		       });
 		AlertDialog alert = builder.create();
 		return alert;
 	}
@@ -549,7 +569,7 @@ public class ActivityHelper {
 	private static void openActivity(
 		Activity callerActivity,
 		Class<?> cls,
-		Map<String, Object> extraData,
+		Map<String, String> extraData,
 		boolean mustReturn,
 		int requestCode
 	)
@@ -558,9 +578,9 @@ public class ActivityHelper {
 
 		//put the data in the intent
 		if (null != extraData) {
-//			for (Entry<String, Object> entry : extraData.entrySet()) {
-//				i.putExtra(entry.getKey(), entry.getValue());
-//			}
+			for (Entry<String, String> entry : extraData.entrySet()) {
+				i.putExtra(entry.getKey(), entry.getValue());
+			}
 		}
 
 		openActivity(i, callerActivity, mustReturn, requestCode);
