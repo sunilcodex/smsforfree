@@ -27,6 +27,7 @@ import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.logic.PrepareLogToSendThread;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +37,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.text.TextUtils;
 
 /**
  * Application main settings
@@ -54,6 +56,8 @@ public class ActSettingsMain
 	
 	private PrepareLogToSendThread mPrepareLogThread;
 	
+	private boolean mMustSendLog;
+	
 	
 	
 	
@@ -68,8 +72,8 @@ public class ActSettingsMain
 		super.onCreate(savedInstanceState);
         setTitle(String.format(
         		getString(R.string.actsettingsmain_title), App.instance().getAppName()));
-		
 		addPreferencesFromResource(R.layout.actsettingsmain);
+		getDataFromIntent(getIntent());
 		
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
 		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
@@ -92,6 +96,9 @@ public class ActSettingsMain
 		mChkResetData.setOnPreferenceChangeListener(mChkResetDataChangeListener);
 		mTxtSignature.setOnPreferenceChangeListener(mTxtSignatureChangeListener);
 		mTxtPrefix.setOnPreferenceChangeListener(mTxtPrefixChangeListener);
+		
+		//can send the log only when the activity is called for the first time
+		if(null != savedInstanceState) mMustSendLog = false;
 	}
 	
 	@Override
@@ -103,6 +110,12 @@ public class ActSettingsMain
 			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
 			//register new handler
 			mPrepareLogThread.registerCallerHandler(mPrepareLogHandler);
+		}
+		
+		if (mMustSendLog) {
+			//create the log email
+			sendLogClickListener.onPreferenceClick(null);
+			mMustSendLog = false;
 		}
 	}
 
@@ -226,4 +239,17 @@ public class ActSettingsMain
 	
 	
 	//---------- Private methods
+	/**
+	 * Get data from intent and configured internal fields
+	 * @param intent
+	 */
+	private void getDataFromIntent(Intent intent) {
+		Bundle extras = intent.getExtras();
+		//check if a direct call to send log preference is needed
+		if(extras != null && !TextUtils.isEmpty(extras.getString(ActivityHelper.INTENTKEY_SENDLOGREPORT))) {
+			mMustSendLog = true;
+		} else {
+			mMustSendLog = false;
+		}
+	}
 }

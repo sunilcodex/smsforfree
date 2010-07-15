@@ -163,7 +163,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 			cause = cause.getCause();
 		}
 		printWriter.close();
-		report.append("****  End of current Report ***");
+		report.append("****  End of current crash report ***");
 		saveAsFile(report.toString());
 		
 		//call previous handler
@@ -223,6 +223,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 				File curFile = new File(baseFilePath + File.pathSeparator + errorFile);
 				curFile.delete();
 			}
+			wholeErrorText.append(LINE_SEPARATOR);
 			return new ResultOperation<String>(wholeErrorText.toString());
 			
 		} catch(Exception e) {

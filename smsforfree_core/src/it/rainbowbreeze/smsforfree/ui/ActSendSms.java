@@ -422,6 +422,21 @@ public class ActSendSms
     				this.getString(R.string.actabout_lblDescription) + "\n\n" + this.getString(R.string.actabout_msgChangeslog),
     				this.getString(R.string.common_btnOk));
     		break;
+    	
+    	case DIALOG_SEND_CRASH_REPORTS:
+    		retDialog = ActivityHelper.createYesNoDialog(this,
+    				R.string.actsendsms_msg_askForCrashReportEmailTitle,
+    				R.string.actsendsms_msg_askForCrashReportEmail,
+    				new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							ActivityHelper.openSettingsMain(ActSendSms.this, true);
+						}
+					},
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();							
+						}
+					});
     		
 		default:
 			retDialog = super.onCreateDialog(id);

@@ -20,10 +20,9 @@
 package it.rainbowbreeze.smsforfree.common;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.SmsForFreeApplication;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
@@ -101,7 +100,7 @@ public class TestUtils {
 		boolean result;
 
 		//initializes the application (needs for global variables)
-		SmsForFreeApplication app = new SmsForFreeApplication();
+		App app = new App();
 		
 		//executes begin task
 		ResultOperation<Void> res = LogicManager.executeBeginTask(context);
