@@ -113,6 +113,8 @@ public class ActSendSms
 	private SendMessageThread mSendMessageThread;
 	private SendCaptchaThread mSendCaptchaThread;
 	
+	private boolean mSendCrashReport;
+	
 
 	
 	
@@ -193,9 +195,7 @@ public class ActSendSms
         		showDialog(DIALOG_STARTUP_INFOBOX);
         	
         	//checks for previous crash reports
-        	if (CrashReporter.instance().isCrashReportPresent(this)) {
-        		showDialog(DIALOG_SEND_CRASH_REPORTS);
-        	}
+        	mSendCrashReport = CrashReporter.instance().isCrashReportPresent(this); 
         }
 
     }
@@ -203,6 +203,11 @@ public class ActSendSms
 	@Override
 	protected void onStart() {
 		super.onStart();
+		
+    	if (mSendCrashReport) {
+    		showDialog(DIALOG_SEND_CRASH_REPORTS);
+    	}
+
 		
 		Object savedThread = getLastNonConfigurationInstance();
 		//nothing saved
@@ -434,9 +439,12 @@ public class ActSendSms
 					},
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
+							//delete all previous crash error files
+							CrashReporter.instance().deleteCrashFiles(ActSendSms.this);
 							dialog.cancel();							
 						}
 					});
+    		break;
     		
 		default:
 			retDialog = super.onCreateDialog(id);
@@ -716,6 +724,7 @@ public class ActSendSms
 		//load the image
 		ImageView mImgCaptcha = (ImageView) layout.findViewById(R.id.dlgcaptcha_imgCaptcha);
 		byte[] imageData = (byte[]) res.getResult();
+		LogFacility.i("Captcha lenght: " + imageData.length);
 		BitmapFactory.Options options = new BitmapFactory.Options();
         //options.inSampleSize = 1;
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
@@ -902,8 +911,7 @@ public class ActSendSms
 	 */
 	private void sendCaptcha(String providerReply, String captchaCode)
 	{
-		LogFacility.i("Captcha request - provider reply: " + providerReply);
-		LogFacility.i("Captcha request - captchaCode: " + captchaCode);
+		LogFacility.i("Captcha code: " + captchaCode);
 		if (TextUtils.isEmpty(captchaCode)) {
 			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
 			return;
@@ -946,6 +954,7 @@ public class ActSendSms
 		if (ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST == result.getReturnCode()) {
 			//save captcha data
 			mCaptchaStorage = result.getResult();
+			LogFacility.i("Captcha request from provider: " + mCaptchaStorage);
 			//launch captcha request
 			showDialog(DIALOG_CAPTCHA_REQUEST);
 		

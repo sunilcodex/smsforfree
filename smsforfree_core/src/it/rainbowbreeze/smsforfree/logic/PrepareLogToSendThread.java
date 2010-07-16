@@ -59,22 +59,20 @@ public class PrepareLogToSendThread
 	//---------- Public methods
 	@Override
 	public void run() {
-		//collect all the log
+		//collect all the log (normal log + crash report)
 //		mResultOperation = LogFacility.getLogData(new String[]{ GlobalDef.LOG_TAG, "AndroidRuntime"});
 		ResultOperation<String> resLog = LogFacility.getLogData(new String[]{ GlobalDef.LOG_TAG});
-		
-		ResultOperation<String> resCrash = null;
-		if (CrashReporter.instance().isCrashReportPresent(getContext())) {
-			resCrash = CrashReporter.instance().getPreviousCrashReports(getContext());
-		}
+		ResultOperation<String> resCrash = CrashReporter.instance().getPreviousCrashReports(getContext());
 		
 		//merge two results
 		if (!resLog.hasErrors() && !resCrash.hasErrors()) {
-			mResultOperation = new ResultOperation<String>(resCrash.getResult() + resCrash.getResult());
-		} else if (resLog.hasErrors()) {
+			mResultOperation = new ResultOperation<String>(resCrash.getResult() + resLog.getResult());
+		} else if (!resLog.hasErrors()) {
 			mResultOperation = resLog;
-		} else {
+		} else if (!resCrash.hasErrors()) {
 			mResultOperation = resCrash;
+		} else {
+			mResultOperation = new ResultOperation<String>();
 		}
 		
 		callHandlerAndRetry(mCallerHandler.obtainMessage(WHAT_PREPARELOGTOSEND));

@@ -5,7 +5,6 @@ TODOLIST
 -mettere codice per invio sms, non solo generico codice di ok
 -mettere il register a livello di smsprovider e non di singolo provider
 -scrivere test per ParserUtils
--mettere getversion di sistema invece che costante in GlobalDef
 
 
 
