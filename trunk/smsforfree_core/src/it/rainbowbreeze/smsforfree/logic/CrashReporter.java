@@ -163,7 +163,9 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 			cause = cause.getCause();
 		}
 		printWriter.close();
-		report.append("****  End of current crash report ***");
+		report.append("****  End of current crash report ***")
+			.append(LINE_SEPARATOR)
+			.append(LINE_SEPARATOR);
 		saveAsFile(report.toString());
 		
 		//call previous handler
@@ -178,7 +180,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 	public boolean isCrashReportPresent(Context context) {
 		try {
 			String baseFilePath = getBaseFilePath(context);
-			String[] errorFilesList = getErrorFilesList(baseFilePath);
+			String[] errorFilesList = getCrashFilesList(baseFilePath);
 			return errorFilesList.length > 0;
 			
 		} catch (Exception e){
@@ -192,22 +194,25 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 	 */
 	public ResultOperation<String> getPreviousCrashReports(Context context)
 	{
+		//return an empty string if no crash reports are present
+		if (!isCrashReportPresent(context))
+			return new ResultOperation<String>("No crash report to submit" + LINE_SEPARATOR + LINE_SEPARATOR);
 		
 		try {
 			String baseFilePath = getBaseFilePath(context);
-			String[] errorFilesList = getErrorFilesList(baseFilePath);
+			String[] crashFilesList = getCrashFilesList(baseFilePath);
 			
 			int curIndex = 0;
 			StringBuffer wholeErrorText = new StringBuffer();
 
-			for (String errorFile : errorFilesList) {
+			for (String crashFile : crashFilesList) {
 				if (curIndex++ <= MAX_REPORTS_TO_COLLECT) {
 					wholeErrorText.append("New Trace collected:")
 							.append(LINE_SEPARATOR)
 							.append("=====================")
 							.append(LINE_SEPARATOR);
 
-					String filePath = baseFilePath + File.pathSeparator + errorFile;
+					String filePath = baseFilePath + File.separator + crashFile;
 					
 					//read file content
 					BufferedReader input =  new BufferedReader(new FileReader(filePath));
@@ -218,16 +223,35 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 					}
 					input.close();
 				}
-
-				//delete all reports files
-				File curFile = new File(baseFilePath + File.pathSeparator + errorFile);
-				curFile.delete();
 			}
 			wholeErrorText.append(LINE_SEPARATOR);
+			
+			//delete all crash files
+			deleteCrashFiles(context);
+			
 			return new ResultOperation<String>(wholeErrorText.toString());
 			
 		} catch(Exception e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_GENERIC);
+		}
+	}
+	
+	/**
+	 * Delete all crash report files
+	 * @param context
+	 */
+	public void deleteCrashFiles(Context context) {
+		try {
+			String baseFilePath = getBaseFilePath(context);
+			String[] crashFilesList = getCrashFilesList(baseFilePath);
+	
+			for (String crashFile : crashFilesList) {
+				//delete all reports files
+				File curFile = new File(baseFilePath + File.separator + crashFile);
+				curFile.delete();
+			}
+		} catch (Exception e) {
+			//...
 		}
 	}
 
@@ -289,41 +313,41 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 		}
 		
 		StringBuffer returnMsg = new StringBuffer();
-		returnMsg.append("Version : " + versionName)
+		returnMsg.append("Version: " + versionName)
 			.append(LINE_SEPARATOR)
-			.append("Package : " + packageName)
+			.append("Package: " + packageName)
 			.append(LINE_SEPARATOR)
-			.append("FilePath : " + getBaseFilePath(mContext))
+			.append("FilePath: " + getBaseFilePath(mContext))
 			.append(LINE_SEPARATOR)
-			.append("Phone Model" + phoneModel)
+			.append("Phone Model: " + phoneModel)
 			.append(LINE_SEPARATOR)
-			.append("Android Version : " + androidVersion)
+			.append("Android Version: " + androidVersion)
 			.append(LINE_SEPARATOR)
-			.append("Board : " + board)
+			.append("Board: " + board)
 			.append(LINE_SEPARATOR)
-			.append("Brand : " + brand)
+			.append("Brand: " + brand)
 			.append(LINE_SEPARATOR)
-			.append("Device : " + device)
+			.append("Device: " + device)
 			.append(LINE_SEPARATOR)
-			.append("Display : " + display)
+			.append("Display: " + display)
 			.append(LINE_SEPARATOR)
-			.append("Finger Print : " + fingerPrint)
+			.append("Finger Print: " + fingerPrint)
 			.append(LINE_SEPARATOR)
-			.append("Host : " + host)
+			.append("Host: " + host)
 			.append(LINE_SEPARATOR)
-			.append("ID : " + id)
+			.append("ID: " + id)
 			.append(LINE_SEPARATOR)
-			.append("Model : " + model)
+			.append("Model: " + model)
 			.append(LINE_SEPARATOR)
-			.append("Product : " + product)
+			.append("Product: " + product)
 			.append(LINE_SEPARATOR)
-			.append("Tags : " + tags)
+			.append("Tags: " + tags)
 			.append(LINE_SEPARATOR)
-			.append("Time : " + time)
+			.append("Time: " + time)
 			.append(LINE_SEPARATOR)
-			.append("Type : " + type)
+			.append("Type: " + type)
 			.append(LINE_SEPARATOR)
-			.append("User : " + user)
+			.append("User: " + user)
 			.append(LINE_SEPARATOR)
 			.append("Total Internal memory: " + getTotalInternalMemorySize())
 			.append(LINE_SEPARATOR)
@@ -374,9 +398,9 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler
 	 * @param baseSearchPath
 	 * @return
 	 */
-	private String[] getErrorFilesList(String baseSearchPath)
+	private String[] getCrashFilesList(String baseSearchPath)
 	{
-		File dir = new File(baseSearchPath + File.pathSeparator);
+		File dir = new File(baseSearchPath + File.separator);
 		// Try to create the files folder if it doesn't exist
 		dir.mkdir();
 		// Filter for ".stacktrace" files
