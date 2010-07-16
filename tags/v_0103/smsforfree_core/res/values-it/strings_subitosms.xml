@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  
+ Copyright (C) 2010 Alfredo Morresi
+ This file is part of SmsForFree project.
+   
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 3 of the License, or (at your option) any later
+ version.
+   
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<resources>
+    <string name="subitosms_username_desc">Username (including @subitosms.it)</string>
+    <string name="subitosms_password_desc">Password</string>
+    <string name="subitosms_sender_desc">Numero mittente</string>
+    <string name="subitosms_description">Invia SMS in Italia e altri 178 paesi a medo di 7 eurocent. www.subitosms.it.</string>
+    <string name="subitosms_commandCheckCredentials">Verifica credenziali</string>
+    <string name="subitosms_commandCheckCredits">Credito disponibile</string>
+    <string name="subitosms_commandRegister">Registrati ad subitosms</string>
+    <string name="subitosms_msg_invalidCredentials">Credenziali subitosms non valide :(</string>
+    <string name="subitosms_msg_invalidSender">Mittente del messaggio non valido.\nCambialo nelle impostazioni del provider subitosms</string>
+    <string name="subitosms_msg_invalidDestination">Destinatione non valida.\nSolo i numeri italiani sono supportati</string>
+    <string name="subitosms_msg_validCredentials">Credenziali subitosms corrette</string>
+    <string name="subitosms_msg_serverError">Errore interno del server SubitoSMS:\n %s</string>
+    <string name="subitosms_msg_remainingCredits">Credito residuo: %s</string>
+    <string name="subitosms_msg_emptyMessage">Messaggio vuoto</string>
+    <string name="subitosms_msg_notEnoughCredit">Non hai abbastanza credito per spedire SMS. Ricarica il tuo account su subitosms</string>
+    <string name="subitosms_msg_messageQueued">Messaggio spedito.\n %s</string>
+    <string name="subitosms_registerLink">http://subitosms.it/new/89h</string>
+</resources>

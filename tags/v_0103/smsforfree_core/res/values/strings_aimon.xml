@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  
+ Copyright (C) 2010 Alfredo Morresi
+ This file is part of SmsForFree project.
+   
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 3 of the License, or (at your option) any later
+ version.
+   
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<resources>
+    <string name="aimon_username_desc">Username (compreso di @aimon.it)</string>
+    <string name="aimon_password_desc">Password</string>
+    <string name="aimon_sender_desc">Sender</string>
+    <string name="aimon_description">Send SMS to Italy numbers with custom sender at less that 7 eurocents. 2 free sms every day. www.aimon.it.</string>
+    <string name="aimon_commandCheckCredentials">Check credentials</string>
+    <string name="aimon_commandCheckCredits">Get credit</string>
+    <string name="aimon_commandRegister">Register to Aimon</string>
+    <string name="aimon_msg_invalidCredentials">Invalid Aimon credentials :(</string>
+    <string name="aimon_msg_invalidSender">Invalid sender.\nChange it in the Aimon provider settings</string>
+    <string name="aimon_msg_invalidDestination">Invalid destination.\nOnly italian mobile numbers are supported</string>
+    <string name="aimon_msg_validCredentials">Valid Aimon credentials</string>
+    <string name="aimon_msg_serverError">Aimon internal server error</string>
+    <string name="aimon_msg_unmanagedServerError">Aimon internal server error:\n %s</string>
+    <string name="aimon_msg_remainingCredits">Remaining credits: %s</string>
+    <string name="aimon_msg_remainingFreeCredits">Remaining free credits: %s</string>
+    <string name="aimon_msg_emptyMessage">Empty messagge</string>
+    <string name="aimon_msg_invalidMessageEncoding">Invalid message encoding, change strange characters</string>
+    <string name="aimon_msg_invalidMessageEncodingOrTooLong">Invalid message encoding or message is too long</string>
+    <string name="aimon_msg_freeSmsDailyLimitReached">Aimon daily limit of free SMS to same number reached, wait until tomorrow</string>
+    <string name="aimon_msg_freeSmsMonthlyLimitReached">Aimon monthly limit of free SMS reached to same number, sorry</string>
+    <string name="aimon_msg_notEnoughFreeSmsCredit">Not enough credit for sending free SMS</string>
+    <string name="aimon_msg_notEnoughCredit">Not enough credit for sending SMS. Recharge our account on Aimon</string>
+    <string name="aimon_msg_messageQueued">Message sent.\n %s</string>
+    <string name="aimon_msg_missingParameters">Error calling Aimon provider. Please, advice the developer of the software about this error. Doing this, a correction will be available soon.\n\n%s</string>
+    <string name="aimon_serviceNameFreeAnonymous">Free anonym. (3/day)</string>
+    <string name="aimon_serviceNameFreeNormal">Free (2/day)</string>
+    <string name="aimon_serviceNameAnonymous">Anonymous (1 credit)</string>
+    <string name="aimon_serviceNameNormal">Normal (1.5 credits)</string>
+    <string name="aimon_serviceNameReport">Report (1.6 credits)</string>
+    <string name="aimon_registerLink">http://aimon.it/new/89h</string>
+</resources>
