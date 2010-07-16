@@ -141,13 +141,13 @@
     <string name="actabout_title">%s - Informazioni su...</string>
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">Spedisci messaggi di test SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo inferiore rispetto ad un normale SMS. Occore configurare almeno un provider e ogni provider ha bisogno di un suo account. Per configurarlo, dalla schermata principale, \'Menu\', \'Impostazioni\' e \'Impostazioni provider SMS\'.</string>
+    <string name="actabout_lblDescription">Spedisci messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo inferiore rispetto ad un normale SMS. Occore configurare almeno un provider e ogni provider ha bisogno di un suo account. Per configurarlo, dalla schermata principale, \'Menu\', \'Impostazioni\' e \'Impostazioni provider SMS\'.</string>
     <string name="actabout_lblDescription2">Suggerimenti, traduzioni, grafica, nuovi provider? %s\n\nRingraziamenti: Ilaria Mauric (logo), Robert Harder (library)</string>
     <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email allo sviluppatore</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.3\n -Aggiunto SubitoSMS, invio dei log per email, bugfixes \n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
+    <string name="actabout_msgChangeslog">v1.3\n -Aggiunto SubitoSMS, invio dei log per email, bugfixes\n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
     <string name="actabout_msgEmailSubject">Informazioni sull\'applicazione %s...</string>
     <string name="actabout_msgEmailBody">Ciao Alfredo,\n\n</string>
 
