@@ -19,5 +19,5 @@
  -->
 
 <resources>
-    <string name="actabout_msgChangeslog">v1.2:\n -Bigger captcha\n\nv 1.1:\n -Fix for captcha size\n\nv 1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v1.3\n -Send error via email, bugfixes\n\nv1.2:\n -Bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
 </resources>
