@@ -892,7 +892,7 @@ public class ActSendSms
 		showDialog(DIALOG_SENDING_MESSAGE);
 
 		//preparing the background task for sending message
-		String destination = mTxtDestination.getText().toString();
+		String destination = mTxtDestination.getText().toString().trim();
 		String message = mTxtBody.getText().toString();
 		LogFacility.i("Sending message to " + ParserUtils.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId() + " and service " + mSelectedServiceId);
 		mSendMessageThread = new SendMessageThread(

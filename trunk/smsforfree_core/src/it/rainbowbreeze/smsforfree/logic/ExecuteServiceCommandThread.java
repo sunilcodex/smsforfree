@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Context;
 import android.os.Bundle;
@@ -67,6 +68,7 @@ public class ExecuteServiceCommandThread
 	//---------- Public methods
 	@Override
 	public void run() {
+		LogFacility.i("Execute command " + mCommandToExecute + " for service " + mService.getId());
 		//execute the command
 		mResultOperation = mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
 		//and call the caller activity handler when the execution is terminated

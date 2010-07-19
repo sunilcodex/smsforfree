@@ -27,6 +27,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -98,13 +99,13 @@ public class LogFacility {
 	public static void e(Exception e)
 	{
 		//log the message
-		log(Log.ERROR, e.getMessage());
+		e(e.getMessage());
 		//and the stack trace
 		final Writer result = new StringWriter();
 		final PrintWriter printWriter = new PrintWriter(result);
 		e.printStackTrace(printWriter);
 		String stacktrace = result.toString();		
-		log(Log.ERROR, stacktrace);
+		e(stacktrace);
 	}
 
 	public static void e(String message)
@@ -235,18 +236,17 @@ public class LogFacility {
 
 	private static void log(int level, String tag, String msg)
 	{
+		String msgToLog = TextUtils.isEmpty(msg) ? "Empty message to log" : msg;
+		
 		switch (level){
-
 		case Log.ERROR:
-			Log.e(tag, msg);
+			Log.e(tag, msgToLog);
 			break;
-
 		case Log.INFO:
-			Log.i(tag, msg);
+			Log.i(tag, msgToLog);
 			break;
-
 		case Log.VERBOSE:
-			Log.v(tag, msg);
+			Log.v(tag, msgToLog);
 			break;
 		}
 	}

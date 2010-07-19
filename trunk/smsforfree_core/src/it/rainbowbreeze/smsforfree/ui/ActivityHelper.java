@@ -270,7 +270,10 @@ public class ActivityHelper {
 		//display the error to the user
 		reportError(context, userMessage);
 		//and log the error
-		LogFacility.e(exception);
+		if (ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL != returnCode &&
+				ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY != returnCode) {
+			LogFacility.e(exception);
+		}
 	}
 	
 
