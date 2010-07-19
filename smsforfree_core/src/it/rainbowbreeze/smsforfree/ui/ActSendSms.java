@@ -113,10 +113,7 @@ public class ActSendSms
 	private SendMessageThread mSendMessageThread;
 	private SendCaptchaThread mSendCaptchaThread;
 	
-	private boolean mSendCrashReport;
-	
 
-	
 	
 	
 	//---------- Public properties
@@ -195,7 +192,9 @@ public class ActSendSms
         		showDialog(DIALOG_STARTUP_INFOBOX);
         	
         	//checks for previous crash reports
-        	mSendCrashReport = CrashReporter.instance().isCrashReportPresent(this); 
+        	if (CrashReporter.instance().isCrashReportPresent(this)) {
+        		showDialog(DIALOG_SEND_CRASH_REPORTS);
+        	}
         }
 
     }
@@ -204,9 +203,9 @@ public class ActSendSms
 	protected void onStart() {
 		super.onStart();
 		
-    	if (mSendCrashReport) {
-    		showDialog(DIALOG_SEND_CRASH_REPORTS);
-    	}
+//    	if (mSendCrashReport) {
+//    		showDialog(DIALOG_SEND_CRASH_REPORTS);
+//    	}
 
 		
 		Object savedThread = getLastNonConfigurationInstance();

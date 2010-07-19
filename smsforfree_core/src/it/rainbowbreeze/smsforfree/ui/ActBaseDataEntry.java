@@ -195,9 +195,6 @@ public abstract class ActBaseDataEntry
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK
-//                && event.getRepeatCount() == 0) {
-            event.startTracking();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -211,8 +208,7 @@ public abstract class ActBaseDataEntry
 	 * @return
 	 */
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.isTracking()
-                && !event.isCanceled()) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
             confirmEdit();
             return true;
         }
