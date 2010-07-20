@@ -36,4 +36,8 @@ public interface Def
 	public String SUBITOSMS_USERNAME = "fmartinelli";
 	public String SUBITOSMS_PASSWORD = "XXXX";
 	public String SUBITOSMS_SENDER = "3912345678";
+	
+	public String JACKSMS_USERNAME = "smsforfree-test";
+	public String JACKSMS_PASSWORD = "XXXX";
+	
 }
