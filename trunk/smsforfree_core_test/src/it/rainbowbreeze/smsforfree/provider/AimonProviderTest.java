@@ -22,16 +22,11 @@ package it.rainbowbreeze.smsforfree.provider;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.TestUtils;
-import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
 import it.rainbowbreeze.smsforfree.util.ParserUtils;
-import android.content.Context;
 import android.os.Bundle;
-import android.test.AndroidTestCase;
 import android.util.Log;
 
 
@@ -42,59 +37,25 @@ import android.util.Log;
  *
  */
 public class AimonProviderTest
-	extends AndroidTestCase
+	extends BaseProviderTest
 {
 	//---------- Private fields
 	private static final String TAG = "SmsForFree-AimonProviderTest";
 	
 	private static final String USER_CREDITS = "60.0000";
 
-	private SmsProvider mProvider;
-	private Context mContext;
-	private ProviderDao mDao;
-	private SmsServiceParameter[] mBackupParameters;
 	
 	
 
 	//---------- Constructor
-	public AimonProviderTest() {
-		super();
-		
-		mDao = new ProviderDao();
-	}
+
 	
-	
+
+
 	//---------- SetUp and TearDown
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		mContext = getContext();
-		mProvider = new AimonProvider(mDao);
-		ResultOperation<Void> res = mProvider.initProvider(mContext);
-		assertFalse("provider initialization with errors", res.hasErrors());
-
-		//mock some values of SmsForFreeApplication
-		TestUtils.loadAppPreferences(mContext);
-
-		//save provider parameters
-		mBackupParameters = TestUtils.backupServiceParameters(mProvider);
-		
-		//set test parameters
-		mProvider.setParameterValue(0, Def.AIMON_USERNAME);
-		mProvider.setParameterValue(1, Def.AIMON_PASSWORD);
-		mProvider.setParameterValue(2, Def.AIMON_SENDER);
-	}
 	
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		
-		//restore modified parameters.
-		TestUtils.restoreServiceParameters(mProvider, mBackupParameters);
-	}
-
-
+	
+	
 
 	//---------- Tests methods
 	
@@ -121,7 +82,7 @@ public class AimonProviderTest
 		//wrong username and password
 		bundle.putString("0", "XXXX");
 		bundle.putString("1", "XXXX");
-		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
+		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 
@@ -129,7 +90,7 @@ public class AimonProviderTest
 		bundle.clear();
 		bundle.putString("0", Def.AIMON_USERNAME);
 		bundle.putString("1", "XXXXXXX");
-		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
+		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_invalidCredentials), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 
@@ -137,7 +98,7 @@ public class AimonProviderTest
 		bundle.clear();
 		bundle.putString("0", Def.AIMON_USERNAME);
 		bundle.putString("1", Def.AIMON_PASSWORD);
-		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
+		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.aimon_msg_validCredentials), res.getResult());
 	}
@@ -154,9 +115,9 @@ public class AimonProviderTest
 		Bundle bundle = new Bundle();
 		bundle.putString("0", Def.AIMON_USERNAME);
 		bundle.putString("1", Def.AIMON_PASSWORD);
-		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDITS, mContext, bundle);
+		res = mProvider.executeCommand(AimonProvider.COMMAND_CHECKCREDITS, getContext(), bundle);
 		String remainingCredits = String.format(
-    			mContext.getString(R.string.aimon_msg_remainingCredits), USER_CREDITS);
+    			getContext().getString(R.string.aimon_msg_remainingCredits), USER_CREDITS);
 		Log.i(TAG, "Remaining credits: " + res.getResult());
 		assertEquals("Wrong return message", remainingCredits, res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
@@ -337,6 +298,18 @@ public class AimonProviderTest
 
 	//---------- Private methods
 
+	@Override
+	protected void initProviderParams() {
+		//set test parameters
+		mProvider.setParameterValue(0, Def.AIMON_USERNAME);
+		mProvider.setParameterValue(1, Def.AIMON_PASSWORD);
+		mProvider.setParameterValue(2, Def.AIMON_SENDER);
+	}
+	
+	@Override
+	protected SmsProvider createProvider() {
+		return new AimonProvider(mDao);
+	}
 
 
 }

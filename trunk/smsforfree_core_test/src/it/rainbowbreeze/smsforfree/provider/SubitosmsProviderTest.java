@@ -22,14 +22,9 @@ package it.rainbowbreeze.smsforfree.provider;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.TestUtils;
-import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
-import android.content.Context;
 import android.os.Bundle;
-import android.test.AndroidTestCase;
 
 /**
  * Test class for SubitoSMS provider
@@ -38,54 +33,21 @@ import android.test.AndroidTestCase;
  *
  */
 public class SubitosmsProviderTest
-	extends AndroidTestCase
+	extends BaseProviderTest
 {
 	//---------- Private fields
 	private static final String USER_CREDITS = "0";
 	
-	private SmsProvider mProvider;
-	private Context mContext;
-	private ProviderDao mDao;
-	private SmsServiceParameter[] mBackupParameters;
 	
 	
 
 	//---------- Constructor
-	public SubitosmsProviderTest() {
-		super();
-		
-		mDao = new ProviderDao();
-	}
-	
-	
+
+
+
+
 	//---------- SetUp and TearDown
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		mContext = getContext();
-		mProvider = new SubitosmsProvider(mDao);
-		ResultOperation<Void> res = mProvider.initProvider(mContext);
-		assertFalse("provider initialization with errors", res.hasErrors());
 
-		//mock some values of SmsForFreeApplication
-		TestUtils.loadAppPreferences(mContext);
-
-		//save provider parameters
-		mBackupParameters = TestUtils.backupServiceParameters(mProvider);
-		
-		//set test parameters
-		mProvider.setParameterValue(0, Def.SUBITOSMS_USERNAME);
-		mProvider.setParameterValue(1, Def.SUBITOSMS_PASSWORD);
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		
-		//restore modified parameters.
-		TestUtils.restoreServiceParameters(mProvider, mBackupParameters);
-	}
 
 
 
@@ -114,7 +76,7 @@ public class SubitosmsProviderTest
 		//wrong username and password
 		bundle.putString("0", "XXXX");
 		bundle.putString("1", "XXXX");
-		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
+		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
 		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidCredentials), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 
@@ -122,7 +84,7 @@ public class SubitosmsProviderTest
 		bundle.clear();
 		bundle.putString("0", Def.SUBITOSMS_USERNAME);
 		bundle.putString("1", "XXXX");
-		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
+		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
 		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidCredentials), res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
 
@@ -130,7 +92,7 @@ public class SubitosmsProviderTest
 		bundle.clear();
 		bundle.putString("0", Def.SUBITOSMS_USERNAME);
 		bundle.putString("1", Def.SUBITOSMS_PASSWORD);
-		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, mContext, bundle);
+		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_validCredentials), res.getResult());
 	}	
@@ -140,20 +102,20 @@ public class SubitosmsProviderTest
 	{
 		ResultOperation<String> res;
 		
-		//user with wrong password
+		//user with right password
 		Bundle bundle = new Bundle();
 		bundle.putString("0", Def.SUBITOSMS_USERNAME);
 		bundle.putString("1", Def.SUBITOSMS_PASSWORD);
-		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDITS, mContext, bundle);
+		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDITS, getContext(), bundle);
 		String remainingCredits = String.format(
-    			mContext.getString(R.string.subitosms_msg_remainingCredits), USER_CREDITS);
+    			getContext().getString(R.string.subitosms_msg_remainingCredits), USER_CREDITS);
 		assertEquals("Wrong return message", remainingCredits, res.getResult());
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 	}
 
 	
 	/**
-	 * Test the send of a message using Aimon API
+	 * Test the send of a message using SubitoSMS API
 	 */
 	public void testApiSendMessageErrors()
 	{
@@ -207,5 +169,17 @@ public class SubitosmsProviderTest
 	}	
 
 	//---------- Private methods
+	
+	@Override
+	protected void initProviderParams() {
+		//set test parameters
+		mProvider.setParameterValue(0, Def.SUBITOSMS_USERNAME);
+		mProvider.setParameterValue(1, Def.SUBITOSMS_PASSWORD);
+	}
+	
+	@Override
+	protected SmsProvider createProvider() {
+		return new SubitosmsProvider(mDao);
+	}
 
 }

@@ -58,6 +58,7 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "sendMessage";
 	private static final String ACTION_SEND_CAPTCHA = "continueSend";
+	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
 	
 	private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
 	private static final String PARAM_CLIENTVERSION = "clientVersion=";
@@ -100,6 +101,9 @@ public class JacksmsDictionary
 		return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES);
 	}
 
+	public String getUrlForDownloadUserServices(String username, String password) {
+		return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES);
+	}
 	
 	/**
 	 * Builds headers used in send sms api
@@ -322,4 +326,5 @@ public class JacksmsDictionary
 	{
 		return TextUtils.isEmpty(parameter) ? "" : parameter;
 	}
+
 }
