@@ -58,10 +58,6 @@ public class JacksmsProvider
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
 
-	private final static int COMMAND_LOADTEMPLATESERVICES = 1000;
-	private final static int COMMAND_LOADUSERSERVICES = 1001;
-	private final static int COMMAND_REGISTER = 1002;
-	
 	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
 	private final static int MSG_INDEX_SERVER_ERROR = 1;
 	private final static int MSG_INDEX_MESSAGE_SENT = 2;
@@ -79,6 +75,10 @@ public class JacksmsProvider
 	
 
 	//---------- Public properties
+	public final static int COMMAND_LOADTEMPLATESERVICES = 1000;
+	public final static int COMMAND_LOADUSERSERVICES = 1001;
+	public final static int COMMAND_REGISTER = 1002;
+	
 	@Override
 	public String getId()
 	{ return "JackSMS"; }
@@ -345,6 +345,25 @@ public class JacksmsProvider
     	//credentials check
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
+    	
+    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForDownloadUserServices(username, password), null, null);
+
+    	//checks for applications errors
+    	if (res.hasErrors()) return res;
+    	//checks for jacksms errors
+    	if (parseReplyForErrors(res)) return res;
+
+    	//at this point, the provider reply should contains the list of templates
+    	String servicesReply = res.getResult();
+    	
+    	//transform the reply in the list of templates
+    	List<SmsService> newTemplates = mDictionary.extractTemplates(servicesReply);
+    	
+    	if (newTemplates.size() <= 0) {
+    		//retain old templates
+    		res.setResult(mMessages[MSG_INDEX_NO_TEMPLATES_PARSED]);
+    		return res;
+    	}
     	
     	return null;
     }

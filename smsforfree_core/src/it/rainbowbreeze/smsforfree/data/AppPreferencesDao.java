@@ -23,7 +23,6 @@ import java.util.Calendar;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
 
 public class AppPreferencesDao
 	extends BasePreferencesDao
@@ -153,7 +152,8 @@ public class AppPreferencesDao
     { return mSettings.getInt(PROP_SMSCOUNTER_TOTAL, 0); }
     public void setSmsTotalNumber(int newValue)
     { mEditor.putInt(PROP_SMSCOUNTER_TOTAL, newValue); }
-    
+
+
     
 
     //---------- Protected Methods
