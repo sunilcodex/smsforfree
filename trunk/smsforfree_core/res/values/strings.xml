@@ -147,7 +147,7 @@
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email to developer</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.4\nFixed issues with Android 1.6\nv1.3\n -Added SubitoSMS, send errors via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v1.4\nFixed issues with Android 1.6\n\nv1.3\n -Added SubitoSMS, send errors via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
     <string name="actabout_msgEmailSubject">About your %s application...</string>
     <string name="actabout_msgEmailBody">Hi Alfredo,\n\n</string>
 

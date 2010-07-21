@@ -147,7 +147,7 @@
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email allo sviluppatore</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.4\nFissate incompatibilita\' con Android 1.6\nv1.3\n -Aggiunto SubitoSMS, invio dei log per email, bugfixes\n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
+    <string name="actabout_msgChangeslog">v1.4\nFissate incompatibilita\' con Android 1.6\n\nv1.3\n -Aggiunto SubitoSMS, invio dei log per email, bugfixes\n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
     <string name="actabout_msgEmailSubject">Informazioni sull\'applicazione %s...</string>
     <string name="actabout_msgEmailBody">Ciao Alfredo,\n\n</string>
 

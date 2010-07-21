@@ -53,7 +53,7 @@ public class JacksmsProviderTest
 	/**
 	 * Test if translation of user saved account works
 	 */
-	public void testTranslateStoredUserAccount()
+	public void testTranslateSingleStoredUserAccount()
 	{
 		JacksmsDictionary dictionary = new JacksmsDictionary();
 		
@@ -70,6 +70,21 @@ public class JacksmsProviderTest
 		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
 		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
 		assertEquals("Wrong service parameters 3 value", "dddd", service.getParameterValue(3));
+		
+	}
+	
+	/**
+	 * Test if translation of user saved account works
+	 */
+	public void testTranslateMultipleStoredUserAccounts()
+	{
+		JacksmsDictionary dictionary = new JacksmsDictionary();
+		
+		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==\n" +
+						"57727	40	JackSMS Messenger	Zi5tYXJ0aW5lbGxp	c21zZjByZnIzMw==\n" +		
+						"57922	61	Aimon	Zi5tYXJ0aW5lbGxp	dGVzdHB3ZA==	dGVzdHB3ZA==";
+		List<SmsService> services = dictionary.extractUserServices(providerReply);
+		assertEquals("Wrong service number", 3, services.size());
 	}
 	
 	
