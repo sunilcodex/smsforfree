@@ -60,10 +60,10 @@ public class SubitosmsProviderTest
 		
 		//check if password and sender number was changed
 		//before running this test
-		assertFalse("You must change the password...", "XXXX".equals(Def.AIMON_PASSWORD));
+		assertFalse("You must change the password...", "XXXX".equals(Def.SUBITOSMS_PASSWORD));
 		assertFalse("You must change destination", "XXXX".equals(Def.TEST_DESTINATION));
 	}
-
+	
 	
 	/**
 	 * Test the call for right credential
