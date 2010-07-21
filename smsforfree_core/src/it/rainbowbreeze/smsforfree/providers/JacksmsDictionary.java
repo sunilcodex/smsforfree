@@ -20,10 +20,14 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
+import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.util.Base64;
+import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -249,14 +253,11 @@ public class JacksmsDictionary
 					if (TextUtils.isEmpty(parametersDesc[i])) numberOfParameters--;
 				}
 				//create new service
-				SmsService newService = new SmsConfigurableService(serviceId, serviceName, maxChar, numberOfParameters);
-				templates.add(newService);
-				for (int i = 0; i < numberOfParameters; i++) {
-					newService.setParameterDesc(i, parametersDesc[i]);
-				}
+				SmsService newTemplate = new SmsConfigurableService(serviceId, serviceName, maxChar, parametersDesc);
 				//sometimes the service description could be unavailable
 				if (pieces.length > 7)
-					newService.setDescription(pieces[7]);
+					newTemplate.setDescription(pieces[7]);
+				templates.add(newTemplate);
 			} catch (Exception e) {
 				//do nothing, simply skips to next service
 			}
@@ -264,6 +265,40 @@ public class JacksmsDictionary
 		
 		Collections.sort(templates);
 		return templates;
+	}
+	
+	
+	public List<SmsService> extractUserServices(String providerReply)
+	{
+		List<SmsService> services = new ArrayList<SmsService>();
+		
+		//examine the reply, line by line
+		String[] lines = providerReply.split(String.valueOf((char) 10));
+		
+		for(String templateLine : lines) {
+			String[] pieces = templateLine.split(CSV_SEPARATOR);
+			try {
+				String serviceId = pieces[0];
+				String templateId = pieces[1];
+				String serviceName = pieces[2];
+				String[] parametersValue = new String[MAX_SERVICE_PARAMETERS];
+
+				int numberOfParameters = MAX_SERVICE_PARAMETERS;
+				for(int i = 0; i < MAX_SERVICE_PARAMETERS; i++) {
+					parametersValue[i] = new String(Base64.decode(pieces[3+i]));
+					//find the total number of parameter
+					if (TextUtils.isEmpty(parametersValue[i])) numberOfParameters--;
+				}
+				//create new service
+				SmsService newService = new SmsConfigurableService(serviceId, templateId, serviceName, parametersValue);
+				services.add(newService);
+			} catch (Exception e) {
+				//do nothing, simply skips to next service
+			}
+		}
+		
+		Collections.sort(services);
+		return services;
 	}
 
 

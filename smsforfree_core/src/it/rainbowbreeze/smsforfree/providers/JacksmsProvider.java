@@ -354,10 +354,10 @@ public class JacksmsProvider
     	if (parseReplyForErrors(res)) return res;
 
     	//at this point, the provider reply should contains the list of templates
-    	String servicesReply = res.getResult();
+    	String providerReply = res.getResult();
     	
     	//transform the reply in the list of templates
-    	List<SmsService> newTemplates = mDictionary.extractTemplates(servicesReply);
+    	List<SmsService> newTemplates = mDictionary.extractUserServices(providerReply);
     	
     	if (newTemplates.size() <= 0) {
     		//retain old templates
