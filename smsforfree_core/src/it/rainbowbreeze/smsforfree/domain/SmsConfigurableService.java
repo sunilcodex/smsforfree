@@ -28,19 +28,24 @@ public class SmsConfigurableService
 		mNumberOfParameters = numberOfParameters;
 	}
 	
-	public SmsConfigurableService(String id, String name, int maxLen, int numberOfParameters) {
-		this(numberOfParameters);
+	public SmsConfigurableService(String id, String name, int maxLen, String[] parametersDesc) {
+		this(parametersDesc.length);
 		setId(id);
 		setName(name);
 		setMaxMessageLenght(maxLen);
+		for (int i = 0; i < parametersDesc.length; i++) {
+			setParameterDesc(i, parametersDesc[i]);
+		}
 	}
 	
-	public SmsConfigurableService(String id, String templateId, String name, int maxLen, int numberOfParameters) {
-		this(numberOfParameters);
+	public SmsConfigurableService(String id, String templateId, String name, String[] parametersValue){
+		this(parametersValue.length);
 		setId(id);
 		setTemplateId(templateId);
 		setName(name);
-		setMaxMessageLenght(maxLen);
+		for (int i = 0; i < parametersValue.length; i++) {
+			setParameterValue(i, parametersValue[i]);
+		}
 	}
 	
 
