@@ -11,7 +11,6 @@ import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
-import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 
@@ -70,7 +69,6 @@ public class JacksmsProviderTest
 		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
 		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
 		assertEquals("Wrong service parameters 3 value", "dddd", service.getParameterValue(3));
-		
 	}
 	
 	/**
@@ -80,11 +78,31 @@ public class JacksmsProviderTest
 	{
 		JacksmsDictionary dictionary = new JacksmsDictionary();
 		
-		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==\n" +
-						"57727	40	JackSMS Messenger	Zi5tYXJ0aW5lbGxp	c21zZjByZnIzMw==\n" +		
-						"57922	61	Aimon	Zi5tYXJ0aW5lbGxp	dGVzdHB3ZA==	dGVzdHB3ZA==";
+		String returnChar = String.valueOf((char) 10);
+		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==" + returnChar +
+						"57922	61	AimonTest	YWFhYQ==	YmJiYg==	Y2NjYw==	";
 		List<SmsService> services = dictionary.extractUserServices(providerReply);
-		assertEquals("Wrong service number", 3, services.size());
+		assertEquals("Wrong service number", 2, services.size());
+
+		SmsService service = services.get(0);
+		assertEquals("Wrong service id", "57922", service.getId());
+		assertEquals("Wrong number of service parameters", new Integer(3), new Integer(service.getParametersNumber()));
+		assertEquals("Wrong service template id", "61", service.getTemplateId());
+		assertEquals("Wrong service name", "AimonTest", service.getName());
+		assertEquals("Wrong service parameters number", 3, service.getParametersNumber());
+		assertEquals("Wrong service parameters 0 value", "aaaa", service.getParameterValue(0));
+		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
+		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
+
+		service = services.get(1);
+		assertEquals("Wrong service id", "57926", service.getId());
+		assertEquals("Wrong service template id", "2", service.getTemplateId());
+		assertEquals("Wrong service name", "Rossoalice", service.getName());
+		assertEquals("Wrong service parameters number", 4, service.getParametersNumber());
+		assertEquals("Wrong service parameters 0 value", "aaaa", service.getParameterValue(0));
+		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
+		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
+		assertEquals("Wrong service parameters 3 value", "dddd", service.getParameterValue(3));
 	}
 	
 	
