@@ -20,14 +20,11 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
-import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.util.Base64;
 import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -253,6 +250,7 @@ public class JacksmsDictionary
 					if (TextUtils.isEmpty(parametersDesc[i])) numberOfParameters--;
 				}
 				//create new service
+				parametersDesc = (String[]) GlobalUtils.resizeArray(parametersDesc, numberOfParameters);
 				SmsService newTemplate = new SmsConfigurableService(serviceId, serviceName, maxChar, parametersDesc);
 				//sometimes the service description could be unavailable
 				if (pieces.length > 7)
@@ -275,8 +273,8 @@ public class JacksmsDictionary
 		//examine the reply, line by line
 		String[] lines = providerReply.split(String.valueOf((char) 10));
 		
-		for(String templateLine : lines) {
-			String[] pieces = templateLine.split(CSV_SEPARATOR);
+		for(String serviceLine : lines) {
+			String[] pieces = serviceLine.split(CSV_SEPARATOR);
 			try {
 				String serviceId = pieces[0];
 				String templateId = pieces[1];
@@ -285,11 +283,15 @@ public class JacksmsDictionary
 
 				int numberOfParameters = MAX_SERVICE_PARAMETERS;
 				for(int i = 0; i < MAX_SERVICE_PARAMETERS; i++) {
-					parametersValue[i] = new String(Base64.decode(pieces[3+i]));
+					if (pieces.length > 3+i)
+						parametersValue[i] = new String(Base64.decode(pieces[3+i]));
+					else
+						parametersValue[i] = "";
 					//find the total number of parameter
 					if (TextUtils.isEmpty(parametersValue[i])) numberOfParameters--;
 				}
 				//create new service
+				parametersValue = (String[]) GlobalUtils.resizeArray(parametersValue, numberOfParameters);
 				SmsService newService = new SmsConfigurableService(serviceId, templateId, serviceName, parametersValue);
 				services.add(newService);
 			} catch (Exception e) {
