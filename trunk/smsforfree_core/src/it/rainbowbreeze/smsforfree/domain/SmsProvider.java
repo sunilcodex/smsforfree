@@ -345,6 +345,8 @@ public abstract class SmsProvider
 		
 		try {
     		reply = client.requestPost(url, headers, parameters);
+		} catch (IllegalArgumentException e) {
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		} catch (ClientProtocolException e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
 		} catch (IOException e) {

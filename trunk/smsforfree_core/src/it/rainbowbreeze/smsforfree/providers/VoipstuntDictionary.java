@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -71,20 +72,20 @@ public class VoipstuntDictionary
 		sb.append(VOIPSTUNT_BASE_URL)
 			.append("?")
 			.append("username=")
-			.append(username)
+			.append(urlEncode(username))
 			.append("&")
 			.append("password=")
-			.append(password)
+			.append(urlEncode(password))
 			.append("&")
 			.append("from=")
-			.append(sender)
+			.append(urlEncode(sender))
 			.append("&")
 			.append("to=")
-			.append(destination)
+			.append(urlEncode(destination))
 			.append("&")
 			.append("text=")
-			.append(body);		
-		
+			.append(urlEncode(body));		
+
 		return sb.toString();
 	}
 	
@@ -99,7 +100,6 @@ public class VoipstuntDictionary
 	{
 		if (TextUtils.isEmpty(providerReply))
 			return false;
-		
 	
 		String providerResult = null;
 		InputStream is;
@@ -162,6 +162,16 @@ public class VoipstuntDictionary
 		}
 		
 		return resultString;
+	}
+	
+	private String urlEncode(String stringToEncode) {
+		String result;
 		
+		try {
+			result = URLEncoder.encode(stringToEncode, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			result = stringToEncode;
+		}
+		return result;
 	}
 }

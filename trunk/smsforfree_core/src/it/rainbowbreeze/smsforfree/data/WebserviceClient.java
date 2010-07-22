@@ -112,7 +112,7 @@ public class WebserviceClient
 			HashMap<String, String> headers,
 			HashMap<String, String> parameters
 		)
-		throws ClientProtocolException, IOException
+		throws ClientProtocolException, IOException, IllegalArgumentException
 	{
 		// reference here:
 		// http://www.androidsnippets.org/snippets/36/
