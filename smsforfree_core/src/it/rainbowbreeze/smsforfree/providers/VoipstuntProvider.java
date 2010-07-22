@@ -19,8 +19,6 @@
 
 package it.rainbowbreeze.smsforfree.providers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,21 +130,15 @@ public class VoipstuntProvider
 		 */
 		//build url
 		
-		//check for destination number and, eventually, add internation prefix
+		//check for destination number and, eventually, add international prefix
     	String okDestination = transalteInInternationalFormat(destination);
-    	String okBody;
-    	try {
-			okBody = URLEncoder.encode(body, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			okBody = body;
-		}
 		
 		String urlToSend = mDictionary.getUrlForMessage(
 				getParameterValue(PARAM_INDEX_USERNAME),
 				getParameterValue(PARAM_INDEX_PASSWORD),
 				getParameterValue(PARAM_INDEX_SENDER),
 				okDestination,
-				okBody);		
+				body);
 			
 		ResultOperation<String> res = doSingleHttpRequest(urlToSend, null, null);
 
