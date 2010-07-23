@@ -29,6 +29,7 @@ import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
@@ -180,9 +181,15 @@ public class JacksmsProvider
 			res.setResult(String.format(
 					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
 		//captcha request
-		} else {
+		} else if (mDictionary.isCaptchaRequest(reply)) {
 			//returns captcha, message contains all captcha information
 			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
+		} else {
+			//other generic error not handled by the parseReplyForErrors() method
+			res.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+			res.setResult(mMessages[MSG_INDEX_SERVER_ERROR]);
+			LogFacility.e("Send error message in Jacksms Provider");
+			LogFacility.e(reply);
 		}
 		
 		return res;    	
@@ -393,6 +400,8 @@ public class JacksmsProvider
     	//so no application errors (like network issues) should be returned, but
 		//the JackSMS error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
+			LogFacility.e("JacksmsProvider error reply");
+			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     		return true;
