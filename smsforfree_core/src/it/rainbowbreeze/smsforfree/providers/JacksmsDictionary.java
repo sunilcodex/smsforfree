@@ -76,7 +76,8 @@ public class JacksmsDictionary
 	//JackSMS has different error signatures
 	private static final String[] PREFIX_RESULT_ERROR_ARRAY = {
 		"error" + CSV_SEPARATOR,
-		"0" + CSV_SEPARATOR
+		"0" + CSV_SEPARATOR,
+		"<!DOCTYPE HTML PUBLIC"
 		};
 	
 	
@@ -305,7 +306,29 @@ public class JacksmsDictionary
 
 
 	public boolean isSmsCorrectlySend(String webserviceReply)
-	{ return webserviceReply.startsWith(JacksmsDictionary.PREFIX_RESULT_OK); }
+	{
+		if (TextUtils.isEmpty(webserviceReply)) return false;
+		return webserviceReply.startsWith(JacksmsDictionary.PREFIX_RESULT_OK);
+	}
+
+	public boolean isCaptchaRequest(String webserviceReply) {
+		if (TextUtils.isEmpty(webserviceReply)) return false;
+		
+		//find first part of the message
+		int pos = webserviceReply.indexOf(CSV_SEPARATOR);
+		if (pos < 0) return false;
+		
+		//find the number at the start of the message
+		String token = webserviceReply.substring(0, pos);
+
+		int number = 1;
+		try {
+			number = Integer.parseInt(token);
+		} catch (Exception e) {
+			return false;
+		}
+		return 1 != number; 
+	}
 
 	/**
 	 * Checks if the reply for webservice contains errors or not
@@ -314,11 +337,15 @@ public class JacksmsDictionary
 	 */
 	public boolean isErrorReply(String webserviceReply)
 	{
+		if (TextUtils.isEmpty(webserviceReply)) return true;
+		
+		//explicit error return string
 		for (String errSignature : PREFIX_RESULT_ERROR_ARRAY) {
 			if (webserviceReply.startsWith(errSignature)) {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 

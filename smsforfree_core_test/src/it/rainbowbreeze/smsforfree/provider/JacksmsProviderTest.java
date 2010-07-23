@@ -125,6 +125,45 @@ public class JacksmsProviderTest
 		assertEquals("Wrong number of services", new Integer(3), new Integer(mProvider.getAllSubservices().size()));
 	}
 
+	/**
+	 * Test if code for find if the sms was sent, a captcha is needed or there was another
+	 * error works
+	 */
+	public void testWebserviceReplyRecognition() {
+		String serverReply;
+		JacksmsDictionary dictionary = new JacksmsDictionary();
+
+		//empty
+		serverReply = "";
+		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
+		assertTrue("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		
+		//captcha
+		serverReply = "3617	iVBORw0KGgoAAAANSUhEUgAAAFUAAAAWCAIAAAA+W0fPAAABHklEQVRYhe1YXQ/DIAgcy/7/X2YPTRqjcIcU23TdPVZEPg7Eiqq+HowPXhaR7sser3HJRBtfsMVMQyc/yuwCYAlreHsGeQi6XaIWc7PEEpL/l59Az7iIjKlTREZ5VcUC5inblgj1pvOPsYIdqtoVnYgA5k+B558WoYl1bZXya0w+sIf7P2qPMB+vJqq9LYRCcP5rg+2LaUdLSFqlo0yEL4ktFDX1n6vG4NXoyZTQYc5/s9MeaUWzISjHnP8gA2k20srqlmpDxv2XBq0FtWwEIcAUO3iu28xDmyvynz7CC4p5/7n603Yn5v+DR8Tn/3gIpu//M0Ed2IaC+DxiRHDpoHbh43rV+y+OW/xZuDJFJ4A2gh/3n2Ih/2+Bv//PxhfjgdscfiyFSwAAAABJRU5ErkJggg==	1";
+		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
+		assertTrue("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
+		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+
+		//sent sms
+		serverReply = "1	messaggio spedito con successo";
+		assertTrue("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
+		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		
+		//strange reply from service
+		serverReply = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">" + "\n" +
+			"<html><head>" + "\n" +
+			"<title>400 Bad Request</title>" + "\n" +
+			"</head><body>" + "\n" +
+			"<h1>Bad Request</h1>" + "\n" +
+			"<p>Your browser sent a request that this server could not understand.<br />" + "\n" +
+			"</p>" + "\n" +
+			"</body></html>";
+		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
+		assertTrue("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+	}
 
 
 
