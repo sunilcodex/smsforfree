@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
@@ -314,6 +315,8 @@ public class SubitosmsProvider
     	//so no application errors (like network issues) should be returned, but
 		//the provider error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
+			LogFacility.e("SubitosmsProvider error reply");
+			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     		return true;

@@ -67,6 +67,7 @@ public class JacksmsProvider
 	private final static int MSG_INDEX_NO_CAPTCHA_PARSED = 5;
 	private final static int MSG_INDEX_TEMPLATES_UPDATED = 6;
 	private final static int MSG_INDEX_CAPTCHA_OK = 7;
+	private final static int MSG_INDEX_NO_TEMPLATES_TO_USE = 8;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -135,15 +136,16 @@ public class JacksmsProvider
 		mProviderSettingsActivityCommands.add(command);
 		
 		//save messages
-		mMessages = new String[8];
+		mMessages = new String[9];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
 		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
-		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplates);
+		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplatesParsed);
 		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
 		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_TemplatesListUpdated);
 		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.jacksms_msg_captchaOk);
+		mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE] = context.getString(R.string.jacksms_msg_NoTemplatesToUse);
 		
 		return super.initProvider(context);
 	}
@@ -188,7 +190,7 @@ public class JacksmsProvider
 			//other generic error not handled by the parseReplyForErrors() method
 			res.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
 			res.setResult(mMessages[MSG_INDEX_SERVER_ERROR]);
-			LogFacility.e("Send error message in Jacksms Provider");
+			LogFacility.e("Error sending message in Jacksms Provider");
 			LogFacility.e(reply);
 		}
 		
@@ -353,6 +355,10 @@ public class JacksmsProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
     	
+    	//checks for templates
+    	if (!hasTemplatesConfigured())
+    		return new ResultOperation<String>(mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
+    	
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForDownloadUserServices(username, password), null, null);
 
     	//checks for applications errors
@@ -394,6 +400,11 @@ public class JacksmsProvider
 		//JackSMS internal error
 		if (mDictionary.isErrorReply(reply)) {
 			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], mDictionary.getTextPartFromReply(reply));
+		}
+		
+		//JackSMS internal error
+		if (mDictionary.isUnmanagedErrorReply(reply)) {
+			res = reply;
 		}
 		
     	//errors are internal to JackSMS, not related to communication issues.

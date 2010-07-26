@@ -132,7 +132,7 @@
     <string name="actsubserviceslist_mnuDeleteService">Elimina</string>
     <string name="actsubserviceslist_mnuAddService">Aggiungi servizio</string>
     <string name="actsubserviceslist_mnuEditService">Modifica</string>
-    <string name="actsubserviceslist_msgNoTemplates">Nessun modello disponibile...\n\nPrima di aggiungere nuovi servizi, scarica i modelli tramite la voce nel Menu.</string>
+    <string name="actsubserviceslist_msgNoTemplates">Nessun template disponibile...\n\nPrima di aggiungere nuovi servizi, scarica i template tramite la voce nel Menu.</string>
 
 
 

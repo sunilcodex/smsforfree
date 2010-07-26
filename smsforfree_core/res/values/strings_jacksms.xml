@@ -26,12 +26,13 @@
     <string name="jacksms_commandLoadUserSubservices">Load your JackSMS saved services</string>
     <string name="jacksms_commandRegister">Register to JackSMS</string>
     <string name="jacksms_msg_invalidCredentials">Invalid JackSMS credentials :(</string>
-    <string name="jacksms_msg_serverError">JackSMS internal server error:\n %s</string>
+    <string name="jacksms_msg_serverError">JackSMS internal server error. Send log to developer (in the Preferences) to alert him about the problem.\n %s</string>
     <string name="jacksms_msg_messageSent">Message sent.\n %s</string>
     <string name="jacksms_msg_captchaOk">Message sent.</string>
-    <string name="jacksms_msg_noCaptchaSessionId">Error: cannot find captcha session id... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
-    <string name="jacksms_msg_noTemplates">Strange, no templates... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
-    <string name="jacksms_msg_noCaptcha">Strange, no captcha... Maybe a JackSMS server error?\n\nContact the author of this software if the problem persists.</string>
+    <string name="jacksms_msg_noCaptchaSessionId">Error: cannot find captcha session id... Maybe a JackSMS server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
+    <string name="jacksms_msg_noTemplatesParsed">Strange, no templates... Maybe a JackSMS server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
+    <string name="jacksms_msg_noCaptcha">Strange, no captcha... Maybe a JackSMS server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="jacksms_msg_TemplatesListUpdated">JackSMS Templates list updated.</string>
+    <string name="jacksms_msg_NoTemplatesToUse">No templates to use. First download templates list and then relaunch the command.</string>
     <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
 </resources>

@@ -30,8 +30,8 @@
     <string name="aimon_msg_invalidSender">Mittente del messaggio non valido.\nCambialo nelle impostazioni del provider Aimon</string>
     <string name="aimon_msg_invalidDestination">Destinatione non valida.\nSolo i numeri italiani sono supportati</string>
     <string name="aimon_msg_validCredentials">Credenziali Aimon corrette</string>
-    <string name="aimon_msg_serverError">Errore interno del server Aimon</string>
-    <string name="aimon_msg_unmanagedServerError">Errore interno del server Aimon:\n %s</string>
+    <string name="aimon_msg_serverError">Errore interno del server Aimon.</string>
+    <string name="aimon_msg_unmanagedServerError">Errore interno del server Aimon. Invia i log allo sviluppatore (nelle Preferenze) per avvisarlo del problema.\n %s</string>
     <string name="aimon_msg_remainingCredits">Credito residuo: %s</string>
     <string name="aimon_msg_remainingFreeCredits">Credito gratuito residuo: %s</string>
     <string name="aimon_msg_emptyMessage">Messaggio vuoto</string>

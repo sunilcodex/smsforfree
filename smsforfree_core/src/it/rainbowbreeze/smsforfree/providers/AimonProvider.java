@@ -29,6 +29,7 @@ import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
@@ -541,6 +542,8 @@ public class AimonProvider
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
+			LogFacility.e("AimonProvider api error reply");
+			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     		return true;
@@ -671,6 +674,8 @@ public class AimonProvider
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
+			LogFacility.e("AimonProvider http error reply");
+			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     		return true;

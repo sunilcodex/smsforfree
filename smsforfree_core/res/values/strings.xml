@@ -132,7 +132,7 @@
     <string name="actsubserviceslist_mnuDeleteService">Delete</string>
     <string name="actsubserviceslist_mnuAddService">Add new service</string>
     <string name="actsubserviceslist_mnuEditService">Edit</string>
-    <string name="actsubserviceslist_msgNoTemplates">No templates available...\n\nYou should download them in order to add new services.</string>
+    <string name="actsubserviceslist_msgNoTemplates">No templates available...\n\nYou should first download them (in the Menu) in order to add new services.</string>
 
 
 
