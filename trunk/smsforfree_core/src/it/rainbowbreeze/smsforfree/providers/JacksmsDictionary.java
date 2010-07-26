@@ -76,8 +76,7 @@ public class JacksmsDictionary
 	//JackSMS has different error signatures
 	private static final String[] PREFIX_RESULT_ERROR_ARRAY = {
 		"error" + CSV_SEPARATOR,
-		"0" + CSV_SEPARATOR,
-		"<!DOCTYPE HTML PUBLIC"
+		"0" + CSV_SEPARATOR
 		};
 	
 	
@@ -349,6 +348,18 @@ public class JacksmsDictionary
 		return false;
 	}
 
+	/**
+	 * Checks if the reply for webservice contains some strange strings
+	 * that are not recognized as errors, but don't allow the app to work
+	 * @param webserviceReply
+	 * @return
+	 */
+	public boolean isUnmanagedErrorReply(String webserviceReply)
+	{
+		if (TextUtils.isEmpty(webserviceReply)) return true;
+
+		return (webserviceReply.startsWith("<!DOCTYPE HTML PUBLIC"));
+	}
 	
 	
 

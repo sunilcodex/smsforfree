@@ -5,8 +5,7 @@ TODOLIST
 -mettere codice per invio sms, non solo generico codice di ok
 -mettere il register a livello di smsprovider e non di singolo provider
 -scrivere test per ParserUtils
--far si che nei singoli metodi di check dell'errore dei provider venga loggato l'errore con risposta dal provider
-
+-rinominare RETURNCODE_INTERNAL_PROVIDER_ERROR e metterlo dove l'operazione non e' stata completata, anche per errori non del server
 
 FUTURE IMPLEMENTAZIONI
 

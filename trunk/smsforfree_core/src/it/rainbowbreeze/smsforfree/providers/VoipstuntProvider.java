@@ -26,6 +26,7 @@ import android.content.Context;
 import android.os.Bundle;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
@@ -149,6 +150,8 @@ public class VoipstuntProvider
     	if (mDictionary.messageWasSent(res.getResult())) {
     		res.setResult(mMessages[MSG_INDEX_MESSAGE_SENT]);
 		} else {
+			LogFacility.e("VoipstuntProvider error reply");
+			LogFacility.e(res.getResult());
     		res.setResult(mMessages[MSG_INDEX_MESSAGE_NO_SENT]);
     		res.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
     	}

@@ -30,7 +30,7 @@
     <string name="subitosms_msg_invalidSender">Invalid sender.\nChange it in the SubitoSMS provider settings</string>
     <string name="subitosms_msg_invalidDestination">Invalid destination.\n</string>
     <string name="subitosms_msg_validCredentials">Valid SubitoSMS credentials</string>
-    <string name="subitosms_msg_serverError">SubitoSMS internal server error:\n %s</string>
+    <string name="subitosms_msg_serverError">SubitoSMS internal server error. Send log to developer (in the Preferences) to alert it about the problem.\n %s</string>
     <string name="subitosms_msg_remainingCredits">Remaining credits: %s</string>
     <string name="subitosms_msg_emptyMessage">Empty messagge</string>
     <string name="subitosms_msg_notEnoughCredit">Not enough credit for sending SMS. Recharge our account on SubitoSMS</string>

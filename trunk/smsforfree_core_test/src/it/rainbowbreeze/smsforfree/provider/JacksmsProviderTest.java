@@ -7,6 +7,7 @@ package it.rainbowbreeze.smsforfree.provider;
 import java.util.List;
 
 import android.os.Bundle;
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -109,20 +110,34 @@ public class JacksmsProviderTest
 	/**
 	 * Test if the command for retrieving JackSMS stored user account works
 	 */
-	public void testImportStoredAccount()
+	public void testImportStoredAccount_noWrongCredentials()
 	{
 		ResultOperation<String> res;
 		
-		//user with right password
-		Bundle bundle = new Bundle();
-		bundle.putString("0", Def.JACKSMS_USERNAME);
-		bundle.putString("1", Def.JACKSMS_PASSWORD);
-		//clear the list of provider's services
-		mProvider.getAllSubservices().clear();
+		Bundle bundle = putCredentialsInBundle();
+		mProvider.setParameterValue(1, "XXXX");
+		//clear the list of provider's templages
+		mProvider.getAllTemplates().clear();
+		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
+		//return a string with all user services
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_invalidCredentials), res.getResult());
+	}
+
+	/**
+	 * Test if the command for retrieving JackSMS stored user account works
+	 */
+	public void testImportStoredAccount_noTemplates()
+	{
+		ResultOperation<String> res;
+		
+		Bundle bundle = putCredentialsInBundle();
+		//clear the list of provider's templages
+		mProvider.getAllTemplates().clear();
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		//return a string with all user services
-		assertEquals("Wrong number of services", new Integer(3), new Integer(mProvider.getAllSubservices().size()));
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_NoTemplatesToUse), res.getResult());
 	}
 
 	/**
@@ -138,18 +153,28 @@ public class JacksmsProviderTest
 		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
 		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
 		assertTrue("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		assertTrue("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
 		
 		//captcha
 		serverReply = "3617	iVBORw0KGgoAAAANSUhEUgAAAFUAAAAWCAIAAAA+W0fPAAABHklEQVRYhe1YXQ/DIAgcy/7/X2YPTRqjcIcU23TdPVZEPg7Eiqq+HowPXhaR7sser3HJRBtfsMVMQyc/yuwCYAlreHsGeQi6XaIWc7PEEpL/l59Az7iIjKlTREZ5VcUC5inblgj1pvOPsYIdqtoVnYgA5k+B558WoYl1bZXya0w+sIf7P2qPMB+vJqq9LYRCcP5rg+2LaUdLSFqlo0yEL4ktFDX1n6vG4NXoyZTQYc5/s9MeaUWzISjHnP8gA2k20srqlmpDxv2XBq0FtWwEIcAUO3iu28xDmyvynz7CC4p5/7n603Yn5v+DR8Tn/3gIpu//M0Ed2IaC+DxiRHDpoHbh43rV+y+OW/xZuDJFJ4A2gh/3n2Ih/2+Bv//PxhfjgdscfiyFSwAAAABJRU5ErkJggg==	1";
 		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
 		assertTrue("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
 		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		assertFalse("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
 
 		//sent sms
 		serverReply = "1	messaggio spedito con successo";
 		assertTrue("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
 		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
 		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		assertFalse("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
+		
+		//generic error
+		serverReply = "error	generic error message";
+		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
+		assertTrue("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		assertFalse("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
 		
 		//strange reply from service
 		serverReply = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">" + "\n" +
@@ -162,13 +187,25 @@ public class JacksmsProviderTest
 			"</body></html>";
 		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
 		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
-		assertTrue("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
+		assertTrue("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
 	}
 
 
 
 	//---------- Private methods
 	
+	/**
+	 * @return
+	 */
+	private Bundle putCredentialsInBundle() {
+		//user with right password
+		Bundle bundle = new Bundle();
+		bundle.putString("0", Def.JACKSMS_USERNAME);
+		bundle.putString("1", Def.JACKSMS_PASSWORD);
+		return bundle;
+	}
+
 	@Override
 	protected SmsProvider createProvider() {
 		return new JacksmsProvider(mDao);
