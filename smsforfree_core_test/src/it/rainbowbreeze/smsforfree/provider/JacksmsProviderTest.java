@@ -23,7 +23,10 @@ public class JacksmsProviderTest
 	extends BaseProviderTest
 {
 	//---------- Private fields
+	private static final String newLine = String.valueOf((char) 10);
 
+	private String providers = "1	Vodafone-SMS	360	username	password	sim		Invia 10 SMS al giorno tramite il sito Vodafone. È possibile inviare SMS solo verso numeri Vodafone, occorre un numero registrato sul sito." + newLine + 
+							   "3	Communicator	141	username	password	domain		Invia 10 SMS al giorno tramite il sito di Virgilio. Richiede un abbonamento Tin.it";
 	
 	
 	
@@ -110,24 +113,26 @@ public class JacksmsProviderTest
 	/**
 	 * Test if the command for retrieving JackSMS stored user account works
 	 */
-	public void testImportStoredAccount_noWrongCredentials()
+	public void testImportStoredAccount_WrongCredentials()
 	{
 		ResultOperation<String> res;
 		
 		Bundle bundle = putCredentialsInBundle();
 		mProvider.setParameterValue(1, "XXXX");
-		//clear the list of provider's templages
-		mProvider.getAllTemplates().clear();
+		//inject some templates into the code
+		injectTemplates(mProvider);
+		
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, res.getReturnCode());
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
 		//return a string with all user services
 		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_invalidCredentials), res.getResult());
 	}
 
 	/**
 	 * Test if the command for retrieving JackSMS stored user account works
+	 * No templates, so no user services can be added
 	 */
-	public void testImportStoredAccount_noTemplates()
+	public void testImportStoredAccount_NoTemplates()
 	{
 		ResultOperation<String> res;
 		
@@ -135,10 +140,62 @@ public class JacksmsProviderTest
 		//clear the list of provider's templages
 		mProvider.getAllTemplates().clear();
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		//return a string with all user services
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
 		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_NoTemplatesToUse), res.getResult());
 	}
+	
+	/**
+	 * Test if the command for retrieving JackSMS stored user account works
+	 * No previous user services, so all stored services are added
+	 */
+	public void testImportStoreAccount_NoPreviousServices()
+	{
+		ResultOperation<String> res;
+		
+		injectTemplates(mProvider);
+		Bundle bundle = putCredentialsInBundle();
+		//clear the list of provider's services
+		mProvider.getAllSubservices().clear();
+		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
+		//check results messages
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		//checks results
+		List<SmsService> services = mProvider.getAllSubservices();
+		assertEquals("Wrong number of user services", new Integer(3), new Integer(services.size()));
+		assertEquals("Wrong id of user service 1", "58302", services.get(0).getId());
+		assertEquals("Wrong id of user service 2", "57727", services.get(1).getId());
+		assertEquals("Wrong id of user service 3", "57926", services.get(2).getId());
+	}
+	
+	/**
+	 * Test if the command for retrieving JackSMS stored user account works
+	 * Add same stored user services twice
+	 */
+	public void testImportStoreAccount_AllTwins()
+	{
+		ResultOperation<String> res;
+		
+		injectTemplates(mProvider);
+		Bundle bundle = putCredentialsInBundle();
+		//clear the list of provider's services
+		mProvider.getAllSubservices().clear();
+		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
+		//check results messages
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		//re-execute the request
+		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		//checks results
+		List<SmsService> services = mProvider.getAllSubservices();
+		assertEquals("Wrong number of user services", new Integer(3), new Integer(services.size()));
+		assertEquals("Wrong id of user service 1", "58302", services.get(0).getId());
+		assertEquals("Wrong id of user service 2", "57727", services.get(1).getId());
+		assertEquals("Wrong id of user service 3", "57926", services.get(2).getId());
+	}
+	
 
 	/**
 	 * Test if code for find if the sms was sent, a captcha is needed or there was another
@@ -195,17 +252,6 @@ public class JacksmsProviderTest
 
 	//---------- Private methods
 	
-	/**
-	 * @return
-	 */
-	private Bundle putCredentialsInBundle() {
-		//user with right password
-		Bundle bundle = new Bundle();
-		bundle.putString("0", Def.JACKSMS_USERNAME);
-		bundle.putString("1", Def.JACKSMS_PASSWORD);
-		return bundle;
-	}
-
 	@Override
 	protected SmsProvider createProvider() {
 		return new JacksmsProvider(mDao);
@@ -218,4 +264,29 @@ public class JacksmsProviderTest
 		mProvider.setParameterValue(1, Def.JACKSMS_PASSWORD);
 	}
 
+	/**
+	 * @return
+	 */
+	private Bundle putCredentialsInBundle() {
+		//user with right password
+		Bundle bundle = new Bundle();
+		bundle.putString("0", Def.JACKSMS_USERNAME);
+		bundle.putString("1", Def.JACKSMS_PASSWORD);
+		return bundle;
+	}
+
+
+	private void injectTemplates(SmsProvider provider) {
+
+		List<SmsService> templates = provider.getAllTemplates();
+		JacksmsDictionary dictionary = new JacksmsDictionary();
+
+		List<SmsService> newTemplates = dictionary.extractTemplates(providers);
+		assertEquals("Wrong extracted templates", new Integer(2), new Integer(newTemplates.size()));
+
+		//copy extracted templates into provider templates
+		templates.clear();
+		for (SmsService template : newTemplates)
+			templates.add(template);
+	}
 }

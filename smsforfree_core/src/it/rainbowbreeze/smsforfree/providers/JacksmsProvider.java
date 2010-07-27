@@ -20,6 +20,7 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,6 +69,8 @@ public class JacksmsProvider
 	private final static int MSG_INDEX_TEMPLATES_UPDATED = 6;
 	private final static int MSG_INDEX_CAPTCHA_OK = 7;
 	private final static int MSG_INDEX_NO_TEMPLATES_TO_USE = 8;
+	private final static int MSG_INDEX_USERSERVICES_UPDATED = 9;
+	private final static int MSG_INDEX_NO_USERSERVICES_TO_USE = 10;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -136,7 +139,7 @@ public class JacksmsProvider
 		mProviderSettingsActivityCommands.add(command);
 		
 		//save messages
-		mMessages = new String[9];
+		mMessages = new String[11];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
@@ -146,6 +149,8 @@ public class JacksmsProvider
 		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_TemplatesListUpdated);
 		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.jacksms_msg_captchaOk);
 		mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE] = context.getString(R.string.jacksms_msg_NoTemplatesToUse);
+		mMessages[MSG_INDEX_USERSERVICES_UPDATED] = context.getString(R.string.jacksms_msg_UserServicesListUpdated);
+		mMessages[MSG_INDEX_NO_USERSERVICES_TO_USE] = context.getString(R.string.jacksms_msg_NoUserServices);
 		
 		return super.initProvider(context);
 	}
@@ -169,9 +174,7 @@ public class JacksmsProvider
 		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
 		ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
 	
-		//checks for applications errors
-		if (res.hasErrors()) return res;
-		//checks for jacksms errors
+		//checks for errors
 		if (parseReplyForErrors(res)) return res;
 		
 		//at this point, no error happened, so checks if the sms was sent or
@@ -188,7 +191,7 @@ public class JacksmsProvider
 			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
 		} else {
 			//other generic error not handled by the parseReplyForErrors() method
-			res.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+			res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
 			res.setResult(mMessages[MSG_INDEX_SERVER_ERROR]);
 			LogFacility.e("Error sending message in Jacksms Provider");
 			LogFacility.e(reply);
@@ -229,9 +232,7 @@ public class JacksmsProvider
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers, null);
 
-    	//checks for applications errors
-    	if (res.hasErrors()) return res;
-    	//checks for jacksms errors
+    	//checks for errors
     	if (parseReplyForErrors(res)) return res;
     	
     	//at this point, no error happened, so the reply contains captcha submission result
@@ -357,28 +358,35 @@ public class JacksmsProvider
     	
     	//checks for templates
     	if (!hasTemplatesConfigured())
-    		return new ResultOperation<String>(mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
+    		return new ResultOperation<String>(ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
     	
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForDownloadUserServices(username, password), null, null);
 
     	//checks for applications errors
-    	if (res.hasErrors()) return res;
     	//checks for jacksms errors
     	if (parseReplyForErrors(res)) return res;
 
     	//at this point, the provider reply should contains the list of templates
     	String providerReply = res.getResult();
     	
-    	//transform the reply in the list of templates
-    	List<SmsService> newTemplates = mDictionary.extractUserServices(providerReply);
+    	//transform the reply in the list of user services
+    	List<SmsService> newServices = mDictionary.extractUserServices(providerReply);
     	
-    	if (newTemplates.size() <= 0) {
-    		//retain old templates
-    		res.setResult(mMessages[MSG_INDEX_NO_TEMPLATES_PARSED]);
+    	//no stored user services
+    	if (newServices.size() <= 0) {
+    		res.setResult(mMessages[MSG_INDEX_NO_USERSERVICES_TO_USE]);
     		return res;
     	}
     	
-    	return null;
+    	//search for twin
+    	for (SmsService service : newServices) {
+    		searchForServicesTwinAndAdd(service);
+    	}
+    	//sort subservices
+    	Collections.sort(getAllSubservices());
+    	
+    	res.setResult(mMessages[MSG_INDEX_USERSERVICES_UPDATED]);
+    	return res;
     }
 
     
@@ -392,13 +400,18 @@ public class JacksmsProvider
 	 */
 	public boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze)
 	{
+    	if (resultToAnalyze.hasErrors()) return true;
+		
 		String res = "";
 		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
-				
-		//JackSMS internal error
-		if (mDictionary.isErrorReply(reply)) {
+		
+		//invalid credentials
+		if (mDictionary.isInvalidCredetials(reply)) {
+			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
+		//generic JackSMS internal error
+		} else if (mDictionary.isErrorReply(reply)) {
 			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], mDictionary.getTextPartFromReply(reply));
 		}
 		
@@ -414,10 +427,51 @@ public class JacksmsProvider
 			LogFacility.e("JacksmsProvider error reply");
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;
     	} else {
     		return false;
     	}
 	}
+
+	/**
+	 * Search for service twins in the list of provider services and check also if the
+	 * services has the corresponding template
+	 * @param newServiceToAdd
+	 */
+	private void searchForServicesTwinAndAdd(SmsService newServiceToAdd)
+	{
+		boolean canAdd = true;
+		
+		//twin search
+		if (canAdd) {
+			for (SmsService service : mSubservices) {
+				//already loaded service
+				if (service.getId().equalsIgnoreCase(newServiceToAdd.getId())) canAdd = false;
+			
+				//exit if the new service cannot be added to the list of services
+				if (!canAdd) break;
+			}
+		}
+
+		//checks if the template for given service exists
+		if (canAdd) {
+			boolean existsTemplate = false;
+			for (SmsService template : mTemplates) {
+				if (template.getId().equalsIgnoreCase(newServiceToAdd.getTemplateId())) {
+					existsTemplate = true;
+					break;
+				}
+			}
+			if (!existsTemplate) {
+				canAdd = false;
+				//log the error, because is not normal that the template doesn't exist
+				LogFacility.e("Template " + newServiceToAdd.getTemplateId() + " for JackSMS doesn't exist in the provider's templates");
+			}
+		}
+		
+		if (canAdd) mSubservices.add(newServiceToAdd);
+	}
+
+	
 }

@@ -153,7 +153,7 @@ public class VoipstuntProvider
 			LogFacility.e("VoipstuntProvider error reply");
 			LogFacility.e(res.getResult());
     		res.setResult(mMessages[MSG_INDEX_MESSAGE_NO_SENT]);
-    		res.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+    		res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     	}
 		
 		return res;    	

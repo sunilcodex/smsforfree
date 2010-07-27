@@ -58,8 +58,8 @@ public class ResultOperation<T>
 	public final static int RETURNCODE_OK = 200;
 	/** User should decode a captcha in order to send sms */
 	public final static int RETURNCODE_SMS_CAPTCHA_REQUEST = 1001;
-	/** Conversation with provider ends correctly, but SMS was not send for some reason */
-	public static final int RETURNCODE_INTERNAL_PROVIDER_ERROR = 1002;
+	/** Conversation with provider ends correctly, but SMS was not send or command doesn't complete for some reason*/
+	public static final int RETURNCODE_PROVIDER_ERROR = 1002;
 	/** Application is expired */
 	public final static int RETURNCODE_APP_EXPIRED = 1003;
 	/** SMS daily limit overtaked */

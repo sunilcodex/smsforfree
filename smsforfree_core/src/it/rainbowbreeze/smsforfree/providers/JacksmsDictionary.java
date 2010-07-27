@@ -347,6 +347,13 @@ public class JacksmsDictionary
 		
 		return false;
 	}
+	
+	public boolean isInvalidCredetials(String webserviceReply)
+	{
+		if (TextUtils.isEmpty(webserviceReply)) return false;
+		
+		return ("error	Dati di accesso JackSMS non validi").equals(webserviceReply);
+	}
 
 	/**
 	 * Checks if the reply for webservice contains some strange strings

@@ -34,5 +34,7 @@
     <string name="jacksms_msg_noCaptcha">Strange, no captcha... Maybe a JackSMS server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="jacksms_msg_TemplatesListUpdated">JackSMS Templates list updated.</string>
     <string name="jacksms_msg_NoTemplatesToUse">No templates to use. First download templates list and then relaunch the command.</string>
+    <string name="jacksms_msg_UserServicesListUpdated">User services stored in the JackSMS site added to the list.</string>
+    <string name="jacksms_msg_NoUserServices">No user services stored in the JackSMS found.</string>
     <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
 </resources>
