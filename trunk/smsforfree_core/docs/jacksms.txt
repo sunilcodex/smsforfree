@@ -29,3 +29,89 @@ http://q.jacksms.it/cmFpbmJvd2JyZWV6ZQ==/XXXXXXXXXX/getProviders?clientVersion=a
 57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==
 57727	40	JackSMS Messenger	Zi5tYXJ0aW5lbGxp	c21zZjBxZnIzMt==		
 58302	61	AimonFree	YWFhYQ==	YmJiYg==	Y2NjYw==	
+
+
+
+
+1	Vodafone-SMS	360	username	password	sim		Invia 10 SMS al giorno tramite il sito Vodafone. È possibile inviare SMS solo verso numeri Vodafone, occorre un numero registrato sul sito.
+3	Communicator	141	username	password	domain		Invia 10 SMS al giorno tramite il sito di Virgilio. Richiede un abbonamento Tin.it
+2	Rossoalice	146	username	password	login_account	spc	Invia 10 SMS al giorno tramite il sito di Alice. Richiede un abbonamento flat Alice Adsl per registrarsi al sito.
+6	Vodafone-MMS	1000	mittente				Invia MMS testuali tramite il sito Vodafone, solo verso numeri Vodafone.
+40	JackSMS-Messenger	8000	username	password			Invia messaggi gratuiti ad utenti di JackSMS
+9	SMSByMail	140	mittente	email	smtp	porta	Invia 10 SMS al giorno con SMSbyMail, solo verso numeri Vodafone.
+20	CentroEmilia	135	username	password			Invia 10 SMS al giorno tramite CentroEmilia
+21	FotoExpo	160	username	password	mittente		Invia SMS avendo crediti a sufficienza con Fotoexpo.
+47	Tizioandcaio	120	username	password	mittente		Invia 3 SMS per ogni pacchetto acquistato con i crediti su TizioandCaio
+30	Tim	640	username	password	Correzione		Invia 5 SMS al giorno verso i numeri Tim Italia
+28	SMSHosting	130	mittente				Invia SMS tramite SmsHosting in base a quanti ne rimangono disponibili giornalmente
+19	InBanca	141	username	password			Invia 5 o 25 SMS al giorno tramite InBanca
+32	EuroSMS	96	username	password			Invia SMS tramite Eurosms avendo crediti disponibili
+31	Callwave	160	cellulare	pin	email		Invia SMS verso numeri USA e Canada con Callwave
+7	YesMMS	128	username	password			Invia a partire da 3 SMS al giorno offerti da Yes!MMS 
+4	SMScity	1530	natcode	mittente	password		Invia SMS tramite il sito di SMScity acquistando crediti sul portale.
+24	O2-Ireland	1000	phonenumber	password			Invia 250 SMS al mese con O2 Ireland
+16	VoipWise	160	username	password	mittente		Acquista ed invia sms tramite VoipWise
+17	VoipCheap	160	username	password	mittente		Acquista ed invia sms tramite VoipCheap
+92	Vodafone-Aziende	360	username	password	sim		Invia 10 SMS al giorno verso Vodafone tramite il sito Vodafone Business, solo per chi ha sim aziendali.
+893	SMS.ge	160	username	password			Invia SMS ai numeri GeoCell
+23	Vyke	765	username	password			Acquista ed invia sms tramite Vyke
+26	Fido	160	mittente				Invia SMS  verso numeri cellulari canadesi Fido.
+29	VoipStunt	160	username	password	mittente		Acquista ed invia sms tramite VoipStunt
+37	Poivy	640	username	password	mittente		Acquista ed invia sms tramite Poivy
+38	Internetcalls	160	username	password	mittente		Acquista ed invia sms tramite Internetcalls
+39	VoipRaider	640	username	password	mittente		Acquista ed invia sms tramite VoipRaider
+50	Smslisto	160	username	password	mittente		Acquista ed invia sms tramite SMSlisto
+501	Cosmote	140	username	password	correzione		Invia 10 SMS al giorno con Cosmote
+89	JustVoip	160	username	password	mittente		Acquista ed invia sms tramite JustVoip
+51	Chawt	80	username	password			Invia SMS tramite Chawt verso numerazioni internazionali
+52	FishText	459	username	password	mittente		Acquista ed invia sms tramite FishText
+512	SwissCom	454	usr	pwd			Invia 500 SMS al mese verso i numeri svizzeri
+41	VoipBuster	160	username	password	mittente		Acquista ed invia sms tramite VoipBuster
+42	SmsBG	160	usr				Invia SMS verso numeri di cellulare bulgari Mtel.
+99	Freecall	160	username	password	mittente		Acquista ed invia sms tramite Freecall
+53	1188	60	email				Invia SMS verso numeri di cellulare O2 della Repubblica Ceca
+54	Intervoip	160	username	password	mittente		Acquista ed invia sms tramite InterVoip
+55	dodoText	100	username	password			Invia 200 SMS verso Singapore e 1 SMS ogni 17 giorni verso altre numerazioni internazionali.
+57	SMSdiscount	640	username	password	mittente		Acquista ed invia sms tramite SMSdiscount
+58	DialNow	640	username	password	mittente		Acquista ed invia sms tramite DialNow
+61	Aimon	612	username	password	mittente		Invia gli SMS che hai acquistato o guadagnato con Aimon.
+62	Aimon-Free	112	username	password	mittente		Invia 2 SMS al giorno con mittente personalizzato tramite www.aimon.it
+63	Sms-Kostenlos-Free	129	username	password			Invia 5 SMS al giorno verso numeri di Germania ed Austira tramite il sito di Sms-Kostenlos. Occorre essere registrati.
+64	Sms-Kostenlos-Premium	800	username	password	mittente		Invia SMS internazionali con mittente personalizzabile avendo credito a sufficienza tramite il sito di Sms-Kostenlos.
+65	VoipDiscount	160	username	password	mittente		Acquista ed invia sms tramite VoipDiscount
+18	Wadja	160	username	password	mittente		Invia SMS tramite Wadja accumulando dei crediti sul sito
+71	TalkSMS	612	username	password			Invia 1 sms al giorno con mittente personalizzato oppure sottoscrivi un abbonamento per inviare più sms al giorno.
+73	Vopium	960	username	password			Acquista ed invia sms tramite Vopium
+75	TitiSMS	160	username	password	sender		Acquista ed invia sms tramite TitiSMS
+79	WebCallDirect	160	username	password	Correzione		Acquista ed invia sms tramite WebCallDirect.com
+77	Telbo	640	username	password	mittente		Acquista ed invia sms tramite Telbo
+82	BeSMS-Mittente	612	username	password	mittente		Acquista ed invia sms con mittente personalizzabile tramite la piattaforma BeSMS di EhiWeb.it
+83	BeSMS-LowCost	612	username	password			Acquista ed invia sms con mittente fisso tramite la piattaforma BeSMS di EhiWeb.it
+85	VoipBlast	160	username	password	mittente		Acquista ed invia sms tramite VoipBlast
+45	SmsViaInternet	612	username	password	mittente		Acquista ed invia sms tramite Smsviainternet
+86	MJoy	460	username	password			Invia sms da mjoy.com
+87	SmSteroid	160	username	password			Acquista ed invia sms tramite Smsteroid
+88	KoolSMS	612	username	password	numero		Acquista ed invia sms tramite KoolSMS
+90	12voip	640	username	password	mittente		Acquista ed invia sms tramite 12Voip
+8	Vodafone-Ireland	470	username	password			Invia 600 SMS al mese con Vodafone Ireland
+10	Jajah	123	username	password	mittente		Acquista ed invia sms tramite Jajah
+15	RomagnaEst	144	username	password			Invia 1 SMS al giorno con RomagnaEst
+340	Facebook	400	ind_mail				Aggiorna il tuo stato di Facebook tramite il tuo indirizzo mail personalizzato.
+302	Redoxygen	640	username	password			Acquista ed invia sms tramite Redoxygen
+22	Cellularmagazine	139	username	password			Invia SMS tramite Cellularmagazine avendo CMeuri disponibili.
+223	Twitter	140	user	psw			Aggiorna il tuo stato di Twitter
+5	KalaSMS	318	username	password			Acquista ed invia sms tramite KalaSMS
+27	Rynga	160	username	password	mittente		Acquista ed invia sms tramite Rynga
+59	SmartVoip	640	username	password	mittente		Acquista ed invia sms tramite SmartVoip
+93	Cheasy	120	username	password			Invia SMS tramite cheasy  accumulando dei crediti sul sito.
+95	SmsPerty	160	login	password	mittente		Invia 2 sms a settimana verso tutti.
+97	CheapVoip-SMS	160	username	password	mittente		Acquista ed invia sms tramite CheapVoip
+98	SMScity-Free	120	natcode	mittente	password		Invia sms verso tutti utilizzando i punti sms gratuiti del tuo account.
+100	Vola	160	username	password			Invia 1 SMS al giorno con Vola, inoltre è possibile acquistare pacchetti sms
+102	CherrySMS-Mittente	1530	prefisso	numero	password		Acquista ed invia sms tramite CherrySMS
+712	Vodafone-Turkey	160	username	password			Invia 10 SMS al giorno tramite il sito Vodafone. È possibile inviare SMS solo verso numeri Vodafone Turkey, occorre un numero registrato sul sito.
+103	CherrySMS-LowCost	1530	prefisso	numero	password		Acquista ed invia sms tramite CherrySMS
+104	Meteor-Ireland	160	username	password			Invia 300 SMS al mese con Meteor Ireland
+105	Vodafone-Widget	360	username	password	sim		Invia 10 SMS al giorno emulando il Widget Desktop Vodafone. È possibile inviare SMS solo verso numeri Vodafone, occorre un numero registrato sul sito.
+106	Smsjive	100	user				Invia sms verso tutti
+107	Comviq	160	username	password			Invia da 1 a 5 SMS al giorno verso i numeri svedesi

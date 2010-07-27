@@ -189,13 +189,13 @@ public class AimonProvider
     		return getExceptionForInvalidCredentials();
     	if (TextUtils.isEmpty(sender)) 
     		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
+					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
     	if (TextUtils.isEmpty(destination)) 
     		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
+					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
     	if (TextUtils.isEmpty(body)) 
     		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
+					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
     	
     	
     	//parameters correction
@@ -210,7 +210,7 @@ public class AimonProvider
     		if (okSender.substring(0, 1).equals("+")) {
 				//no way, error is generated
 				ResultOperation<String> res = new ResultOperation<String>(
-						ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
+						ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
 				return res;
 			}
         		
@@ -253,7 +253,7 @@ public class AimonProvider
     		if (okDestination.substring(0, 1).equals("+")) {
 				//no way, error is generated
 				ResultOperation<String> res = new ResultOperation<String>(
-						ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
+						ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
 				return res;
 			}
     	} else {
@@ -423,9 +423,7 @@ public class AimonProvider
     	
     	//call the api that gets the credit
     	ResultOperation<String> res = doSingleHttpRequest(AimonDictionary.URL_GET_CREDIT, null, params);
-    	//checks for application errors
-    	if (res.hasErrors()) return res;
-    	//checks for aimon errors
+    	//checks for errors
     	if (parseReplyForApiErrors(res)) return res;
     	
     	//at this point reply can only contains the remaining credits
@@ -449,7 +447,7 @@ public class AimonProvider
 		//are correct.
 		res = verifyCredit(username, password);
 		//checks for application errors
-		if (res.hasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
+		if (res.hasErrors() || ResultOperation.RETURNCODE_PROVIDER_ERROR == res.getReturnCode()) return res;
 		
 		//at this point reply can only contains the remaining credits, so credential are correct
 		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
@@ -486,9 +484,7 @@ public class AimonProvider
 		//send the sms
 		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
 
-    	//checks for applications errors
-    	if (res.hasErrors()) return res;
-    	//checks for aimon errors
+    	//checks for errors
     	if (parseReplyForApiErrors(res)) return res;
     	
     	//at this point, the operation was surely executed correctly
@@ -510,6 +506,8 @@ public class AimonProvider
 	 */
 	private boolean parseReplyForApiErrors(ResultOperation<String> resultToAnalyze)
 	{
+		if (resultToAnalyze.hasErrors()) return true;
+
 		String res;
 		String reply = resultToAnalyze.getResult();
 
@@ -545,7 +543,7 @@ public class AimonProvider
 			LogFacility.e("AimonProvider api error reply");
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;
     	} else {
     		return false;
@@ -584,13 +582,12 @@ public class AimonProvider
         params = mDictionary.getParametersForFreeSmsLogin(username, password);
         res = doConversationHttpRequest(url, null, params);
         
-        if (res.hasErrors()) return res;
         if (parseRetryForHttpErrors(res, username)) return res;
         
         //check if login is really correct
         if (!mDictionary.isFreeSmsLoginOk(res.getResult(), username)) {
         	//set invalid credentials
-        	res.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+        	res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
         	res.setResult(mMessages[MSG_INDEX_INVALID_CREDENTIALS]);
         	return res;
         }
@@ -600,7 +597,6 @@ public class AimonProvider
 		params = mDictionary.getParametersForFreeSmsSend(idApi, sender, destination, body);		
         res = doConversationHttpRequest(url, null, params);
         
-        if (res.hasErrors()) return res;
         //examines results
         parseRetryForHttpErrors(res, username);
         
@@ -639,6 +635,8 @@ public class AimonProvider
 	 */
 	private boolean parseRetryForHttpErrors(ResultOperation<String> resultToAnalyze, String username)
 	{
+		if (resultToAnalyze.hasErrors()) return true;
+		
 		String res;
 		String reply = resultToAnalyze.getResult();
 
@@ -677,7 +675,7 @@ public class AimonProvider
 			LogFacility.e("AimonProvider http error reply");
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;
     	} else {
     		return false;

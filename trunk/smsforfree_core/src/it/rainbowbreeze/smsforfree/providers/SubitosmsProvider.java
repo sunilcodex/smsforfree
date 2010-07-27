@@ -158,13 +158,13 @@ public class SubitosmsProvider
     		return getExceptionForInvalidCredentials();
     	if (TextUtils.isEmpty(sender)) 
     		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
+					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
     	if (TextUtils.isEmpty(destination)) 
     		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
+					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
     	if (TextUtils.isEmpty(body)) 
     		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
+					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
 
 		HashMap<String, String> params;
 
@@ -174,9 +174,7 @@ public class SubitosmsProvider
 		//send the sms
 		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
 
-    	//checks for applications errors
-    	if (res.hasErrors()) return res;
-    	//checks for aimon errors
+    	//checks for errors
     	if (parseReplyForErrors(res)) return res;
     	
     	//at this point, the operation was surely executed correctly
@@ -257,9 +255,7 @@ public class SubitosmsProvider
     	
     	//call the api that gets the credit
     	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getBaseUrl(), null, params);
-    	//checks for application errors
-    	if (res.hasErrors()) return res;
-    	//checks for subitosms errors
+    	//checks for errors
     	if (parseReplyForErrors(res)) return res;
     	
     	//at this point reply can only contains the remaining credits
@@ -283,7 +279,7 @@ public class SubitosmsProvider
 		//are correct.
 		res = verifyCredit(username, password);
 		//checks for application errors
-		if (res.hasErrors() || ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR == res.getReturnCode()) return res;
+		if (res.hasErrors() || ResultOperation.RETURNCODE_PROVIDER_ERROR == res.getReturnCode()) return res;
 		
 		//at this point reply can only contains the remaining credits, so credential are correct
 		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
@@ -293,12 +289,15 @@ public class SubitosmsProvider
     
 
 	private boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze) {
+    	//checks for application errors
+    	if (resultToAnalyze.hasErrors()) return true;
+		
 		String reply = resultToAnalyze.getResult();
 		String res;
 
 		//no reply from server is already handled in doRequest method
 
-		//check for know errors		if (mDictionary.isLoginInvalidCredentials(reply)) {
+		//check for know errors
 		if (mDictionary.isValidReplyForCreditRequest(reply) || 
 				mDictionary.isValidReplyForSmsQueued(reply)) {
 			res = "";
@@ -318,7 +317,7 @@ public class SubitosmsProvider
 			LogFacility.e("SubitosmsProvider error reply");
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_INTERNAL_PROVIDER_ERROR);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;
     	} else {
     		return false;
