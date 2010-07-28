@@ -95,10 +95,11 @@ public abstract class BaseBackgroundThread
 	 * still null
 	 * @param message
 	 */
-	protected void callHandlerAndRetry(Message message)
+	protected void callHandlerAndRetry(int messageCode)
 	{
 		for (int retryCounter = 0; retryCounter < TOTAL_RETRIES; retryCounter++) {
 			if (null != mCallerHandler) {
+				Message message = mCallerHandler.obtainMessage(messageCode);
 				mCallerHandler.sendMessage(message);
 				break;
 			}

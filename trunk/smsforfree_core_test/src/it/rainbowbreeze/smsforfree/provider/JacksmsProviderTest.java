@@ -76,43 +76,6 @@ public class JacksmsProviderTest
 	}
 	
 	/**
-	 * Test if translation of user saved account works
-	 */
-	public void testTranslateMultipleStoredUserAccounts()
-	{
-		JacksmsDictionary dictionary = new JacksmsDictionary();
-		
-		String returnChar = String.valueOf((char) 10);
-		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==" + returnChar +
-						"57922	61	AimonTest	YWFhYQ==	YmJiYg==	Y2NjYw==	";
-		List<SmsService> services = dictionary.extractUserServices(providerReply);
-		assertEquals("Wrong service number", 2, services.size());
-
-		SmsService service = services.get(0);
-		assertEquals("Wrong service id", "57922", service.getId());
-		assertEquals("Wrong number of service parameters", new Integer(3), new Integer(service.getParametersNumber()));
-		assertEquals("Wrong service template id", "61", service.getTemplateId());
-		assertEquals("Wrong service name", "AimonTest", service.getName());
-		assertEquals("Wrong service parameters number", 3, service.getParametersNumber());
-		assertEquals("Wrong service parameters 0 value", "aaaa", service.getParameterValue(0));
-		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
-		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
-		assertEquals("Wrong max message size", 612, service.getMaxMessageLenght());
-
-		service = services.get(1);
-		assertEquals("Wrong service id", "57926", service.getId());
-		assertEquals("Wrong service template id", "2", service.getTemplateId());
-		assertEquals("Wrong service name", "Rossoalice", service.getName());
-		assertEquals("Wrong service parameters number", 4, service.getParametersNumber());
-		assertEquals("Wrong service parameters 0 value", "aaaa", service.getParameterValue(0));
-		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
-		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
-		assertEquals("Wrong service parameters 3 value", "dddd", service.getParameterValue(3));
-		assertEquals("Wrong max message size", 146, service.getMaxMessageLenght());
-	}
-	
-	
-	/**
 	 * Test if the command for retrieving JackSMS stored user account works
 	 */
 	public void testImportStoredAccount_WrongCredentials()
@@ -143,7 +106,7 @@ public class JacksmsProviderTest
 		mProvider.getAllTemplates().clear();
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_NoTemplatesToUse), res.getResult());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_noTemplatesToUse), res.getResult());
 	}
 	
 	/**
@@ -161,7 +124,7 @@ public class JacksmsProviderTest
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		//check results messages
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 3, services.size());
@@ -185,11 +148,11 @@ public class JacksmsProviderTest
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		//check results messages
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
 		//re-execute the request
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 3, services.size());
@@ -206,6 +169,7 @@ public class JacksmsProviderTest
 	public void testImportStoreAccount_SomeTwins()
 	{
 		ResultOperation<String> res;
+		SmsService service;
 		
 		injectTemplates(mProvider);
 		Bundle bundle = putCredentialsInBundle();
@@ -214,18 +178,18 @@ public class JacksmsProviderTest
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		//check results messages
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
 		//remove some service
 		mProvider.getAllSubservices().remove(2);
 		mProvider.getAllSubservices().remove(1);
 		assertEquals("Wrong number of subservices", 1, mProvider.getAllSubservices().size());
 		//add new subservice
-		SmsService service = new SmsConfigurableService("999", "1", "00Service", new String[]{"myusername", "mypassword"});
+		service = new SmsConfigurableService("999", "1", "00Service", new String[]{"myusername", "mypassword"});
 		mProvider.getAllSubservices().add(service);
 		//re-execute the request
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 4, services.size());
@@ -233,6 +197,15 @@ public class JacksmsProviderTest
 		assertEquals("Wrong id of user service 2", "58302", services.get(1).getId());
 		assertEquals("Wrong id of user service 3", "57727", services.get(2).getId());
 		assertEquals("Wrong id of user service 4", "57926", services.get(3).getId());
+		
+		//check all data of one service
+		service = services.get(1);
+		assertEquals("Wrong service name", "AimonFree", service.getName());
+		assertEquals("Wrong service parameters number", 3, service.getParametersNumber());
+		assertEquals("Wrong service parameters 0 value", "aaaa", service.getParameterValue(0));
+		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
+		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
+		assertEquals("Wrong max message size", 612, service.getMaxMessageLenght());
 	}
 	
 

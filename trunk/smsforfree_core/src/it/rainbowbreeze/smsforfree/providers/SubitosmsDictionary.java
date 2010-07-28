@@ -23,6 +23,8 @@ import it.rainbowbreeze.smsforfree.util.ParserUtils;
 
 import java.util.HashMap;
 
+import android.text.TextUtils;
+
 /**
  * @author rainbowbreeze
  *
@@ -123,6 +125,11 @@ public class SubitosmsDictionary
 	
 	public boolean isValidReplyForCreditRequest(String webserviceReply)
 	{
+		if (TextUtils.isEmpty(webserviceReply)) return false;
+		
+		//if the reply starts with "credito:", is a correct reply
+		if (webserviceReply.startsWith(SEARCH_CREDITI_SMS_START)) return true;
+		
 		//if the result could be parsed to an int, the reply is valid
 		try {
 			Integer.parseInt(webserviceReply);

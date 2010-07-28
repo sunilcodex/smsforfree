@@ -75,7 +75,7 @@ public class PrepareLogToSendThread
 			mResultOperation = new ResultOperation<String>();
 		}
 		
-		callHandlerAndRetry(mCallerHandler.obtainMessage(WHAT_PREPARELOGTOSEND));
+		callHandlerAndRetry(WHAT_PREPARELOGTOSEND);
 	}
 	
 

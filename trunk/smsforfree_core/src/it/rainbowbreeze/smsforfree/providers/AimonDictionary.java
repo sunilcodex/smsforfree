@@ -307,6 +307,20 @@ public class AimonDictionary
 		return params;
 	}
 
+	public String adjustMessageBody(String message) {
+		String okMessage;
+		
+		//checks body length
+    	if (message.length() > MAX_BODY_API_LENGTH) {
+    		okMessage = message.substring(0, AimonDictionary.MAX_BODY_API_LENGTH);
+    	} else {
+    		okMessage = message;
+    	}
+    	//TODO : remove unsupported characters
+    	
+    	return okMessage;
+	}
+
 
 	
 	

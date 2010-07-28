@@ -164,6 +164,18 @@ public class JacksmsDictionary
 		return headers;
 	}
 	
+	/**
+	 * Replace illegal chars in the message
+	 * @param body
+	 * @return
+	 */
+	public String adjustMessageBody(String body) {
+		body.replace("\n", " ");
+		body.replace("\t", " ");
+		body.replace("\r", " ");
+		return body;
+	}
+	
 	
 	/**
 	 * Extracts the message text from provider's reply
@@ -266,9 +278,9 @@ public class JacksmsDictionary
 	}
 	
 	
-	public List<SmsService> extractUserServices(String providerReply)
+	public List<SmsConfigurableService> extractUserServices(String providerReply)
 	{
-		List<SmsService> services = new ArrayList<SmsService>();
+		List<SmsConfigurableService> services = new ArrayList<SmsConfigurableService>();
 		
 		//examine the reply, line by line
 		String[] lines = providerReply.split(String.valueOf((char) 10));

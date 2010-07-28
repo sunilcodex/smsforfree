@@ -2,10 +2,10 @@ TODOLIST
 -mettere try-catch su dismiss del progress dialog dentro l'hander
 -icone mancanti credits aimon
 -mettere bottone che ripresenta ultimo messaggio di invio sms
--mettere codice per invio sms, non solo generico codice di ok
+-sostituire caratteri illegali su corpo messaggio aimon
 -mettere il register a livello di smsprovider e non di singolo provider
 -scrivere test per ParserUtils
--rinominare RETURNCODE_INTERNAL_PROVIDER_ERROR e metterlo dove l'operazione non e' stata completata, anche per errori non del server
+-includere nei log header e url mandati al server in caso di errore
 
 FUTURE IMPLEMENTAZIONI
 

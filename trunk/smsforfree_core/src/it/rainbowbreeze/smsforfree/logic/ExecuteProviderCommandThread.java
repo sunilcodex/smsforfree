@@ -70,7 +70,7 @@ public class ExecuteProviderCommandThread
 		//execute the command
 		mResultOperation = mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
 		//and call the caller activity handler when the execution is terminated
-		callHandlerAndRetry(mCallerHandler.obtainMessage(WHAT_EXECUTEDPROVIDERCOMMAND));
+		callHandlerAndRetry(WHAT_EXECUTEDPROVIDERCOMMAND);
 	}
 
 	
