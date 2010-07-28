@@ -127,12 +127,14 @@ public abstract class SmsProvider
 	public abstract ResultOperation<Void> saveSubservices(Context context);
 	
 	/**
-	 * Create a new service object starting from a template
+	 * Create a new service object starting from a template or integrate an existing service data
+	 * with the info from the template
 	 * 
+	 * @param originalService the service to integrate, null if a new service must be created
 	 * @param templateId
 	 * @return
 	 */
-	public abstract SmsService newSubserviceFromTemplate(String templateId);
+	public abstract SmsService integrateSubserviceWithTemplateData(SmsConfigurableService originalService, String templateId);
 
 	/**
 	 * Checks if services has all mandatory parameters configured

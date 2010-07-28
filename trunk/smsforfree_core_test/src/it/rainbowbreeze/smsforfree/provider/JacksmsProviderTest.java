@@ -1,6 +1,22 @@
 /**
+ * Copyright (C) 2010 Alfredo Morresi
  * 
+ * This file is part of SmsForFree project.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/>.
  */
+
 package it.rainbowbreeze.smsforfree.provider;
 
 
@@ -10,13 +26,16 @@ import android.os.Bundle;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 
 /**
- * @author rainbowbreeze
+ * 
+ * 
+ * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class JacksmsProviderTest
@@ -26,7 +45,10 @@ public class JacksmsProviderTest
 	private static final String newLine = String.valueOf((char) 10);
 
 	private String providers = "1	Vodafone-SMS	360	username	password	sim		Invia 10 SMS al giorno tramite il sito Vodafone. È possibile inviare SMS solo verso numeri Vodafone, occorre un numero registrato sul sito." + newLine + 
-							   "3	Communicator	141	username	password	domain		Invia 10 SMS al giorno tramite il sito di Virgilio. Richiede un abbonamento Tin.it";
+							   "3	Communicator	141	username	password	domain		Invia 10 SMS al giorno tramite il sito di Virgilio. Richiede un abbonamento Tin.it" + newLine +
+							   "40	JackSMS-Messenger	8000	username	password			Invia messaggi gratuiti ad utenti di JackSMS" + newLine + 
+							   "2	Rossoalice	146	username	password	login_account	spc	Invia 10 SMS al giorno tramite il sito di Alice. Richiede un abbonamento flat Alice Adsl per registrarsi al sito." + newLine +
+							   "61	Aimon	612	username	password	mittente		Invia gli SMS che hai acquistato o guadagnato con Aimon.";
 	
 	
 	
@@ -56,28 +78,6 @@ public class JacksmsProviderTest
 	/**
 	 * Test if translation of user saved account works
 	 */
-	public void testTranslateSingleStoredUserAccount()
-	{
-		JacksmsDictionary dictionary = new JacksmsDictionary();
-		
-		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==";
-
-		List<SmsService> services = dictionary.extractUserServices(providerReply);
-		assertEquals("Wrong service number", 1, services.size());
-		SmsService service = services.get(0);
-		assertEquals("Wrong service id", "57926", service.getId());
-		assertEquals("Wrong service template id", "2", service.getTemplateId());
-		assertEquals("Wrong service name", "Rossoalice", service.getName());
-		assertEquals("Wrong service parameters number", 4, service.getParametersNumber());
-		assertEquals("Wrong service parameters 0 value", "aaaa", service.getParameterValue(0));
-		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
-		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
-		assertEquals("Wrong service parameters 3 value", "dddd", service.getParameterValue(3));
-	}
-	
-	/**
-	 * Test if translation of user saved account works
-	 */
 	public void testTranslateMultipleStoredUserAccounts()
 	{
 		JacksmsDictionary dictionary = new JacksmsDictionary();
@@ -97,6 +97,7 @@ public class JacksmsProviderTest
 		assertEquals("Wrong service parameters 0 value", "aaaa", service.getParameterValue(0));
 		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
 		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
+		assertEquals("Wrong max message size", 612, service.getMaxMessageLenght());
 
 		service = services.get(1);
 		assertEquals("Wrong service id", "57926", service.getId());
@@ -107,6 +108,7 @@ public class JacksmsProviderTest
 		assertEquals("Wrong service parameters 1 value", "bbbb", service.getParameterValue(1));
 		assertEquals("Wrong service parameters 2 value", "cccc", service.getParameterValue(2));
 		assertEquals("Wrong service parameters 3 value", "dddd", service.getParameterValue(3));
+		assertEquals("Wrong max message size", 146, service.getMaxMessageLenght());
 	}
 	
 	
@@ -162,7 +164,7 @@ public class JacksmsProviderTest
 		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
-		assertEquals("Wrong number of user services", new Integer(3), new Integer(services.size()));
+		assertEquals("Wrong number of user services", 3, services.size());
 		assertEquals("Wrong id of user service 1", "58302", services.get(0).getId());
 		assertEquals("Wrong id of user service 2", "57727", services.get(1).getId());
 		assertEquals("Wrong id of user service 3", "57926", services.get(2).getId());
@@ -190,7 +192,7 @@ public class JacksmsProviderTest
 		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
-		assertEquals("Wrong number of user services", new Integer(3), new Integer(services.size()));
+		assertEquals("Wrong number of user services", 3, services.size());
 		assertEquals("Wrong id of user service 1", "58302", services.get(0).getId());
 		assertEquals("Wrong id of user service 2", "57727", services.get(1).getId());
 		assertEquals("Wrong id of user service 3", "57926", services.get(2).getId());
@@ -198,55 +200,41 @@ public class JacksmsProviderTest
 	
 
 	/**
-	 * Test if code for find if the sms was sent, a captcha is needed or there was another
-	 * error works
+	 * Test if the command for retrieving JackSMS stored user account works
+	 * Add same stored user services twice
 	 */
-	public void testWebserviceReplyRecognition() {
-		String serverReply;
-		JacksmsDictionary dictionary = new JacksmsDictionary();
-
-		//empty
-		serverReply = "";
-		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
-		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
-		assertTrue("Wrong error reply identification", dictionary.isErrorReply(serverReply));
-		assertTrue("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
+	public void testImportStoreAccount_SomeTwins()
+	{
+		ResultOperation<String> res;
 		
-		//captcha
-		serverReply = "3617	iVBORw0KGgoAAAANSUhEUgAAAFUAAAAWCAIAAAA+W0fPAAABHklEQVRYhe1YXQ/DIAgcy/7/X2YPTRqjcIcU23TdPVZEPg7Eiqq+HowPXhaR7sser3HJRBtfsMVMQyc/yuwCYAlreHsGeQi6XaIWc7PEEpL/l59Az7iIjKlTREZ5VcUC5inblgj1pvOPsYIdqtoVnYgA5k+B558WoYl1bZXya0w+sIf7P2qPMB+vJqq9LYRCcP5rg+2LaUdLSFqlo0yEL4ktFDX1n6vG4NXoyZTQYc5/s9MeaUWzISjHnP8gA2k20srqlmpDxv2XBq0FtWwEIcAUO3iu28xDmyvynz7CC4p5/7n603Yn5v+DR8Tn/3gIpu//M0Ed2IaC+DxiRHDpoHbh43rV+y+OW/xZuDJFJ4A2gh/3n2Ih/2+Bv//PxhfjgdscfiyFSwAAAABJRU5ErkJggg==	1";
-		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
-		assertTrue("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
-		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
-		assertFalse("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
-
-		//sent sms
-		serverReply = "1	messaggio spedito con successo";
-		assertTrue("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
-		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
-		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
-		assertFalse("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
-		
-		//generic error
-		serverReply = "error	generic error message";
-		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
-		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
-		assertTrue("Wrong error reply identification", dictionary.isErrorReply(serverReply));
-		assertFalse("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
-		
-		//strange reply from service
-		serverReply = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">" + "\n" +
-			"<html><head>" + "\n" +
-			"<title>400 Bad Request</title>" + "\n" +
-			"</head><body>" + "\n" +
-			"<h1>Bad Request</h1>" + "\n" +
-			"<p>Your browser sent a request that this server could not understand.<br />" + "\n" +
-			"</p>" + "\n" +
-			"</body></html>";
-		assertFalse("Wrong sent sms identification", dictionary.isSmsCorrectlySend(serverReply));
-		assertFalse("Wrong captcha identification", dictionary.isCaptchaRequest(serverReply));
-		assertFalse("Wrong error reply identification", dictionary.isErrorReply(serverReply));
-		assertTrue("Wrong unmanaged error reply identification", dictionary.isUnmanagedErrorReply(serverReply));
+		injectTemplates(mProvider);
+		Bundle bundle = putCredentialsInBundle();
+		//clear the list of provider's services
+		mProvider.getAllSubservices().clear();
+		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
+		//check results messages
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		//remove some service
+		mProvider.getAllSubservices().remove(2);
+		mProvider.getAllSubservices().remove(1);
+		assertEquals("Wrong number of subservices", 1, mProvider.getAllSubservices().size());
+		//add new subservice
+		SmsService service = new SmsConfigurableService("999", "1", "00Service", new String[]{"myusername", "mypassword"});
+		mProvider.getAllSubservices().add(service);
+		//re-execute the request
+		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
+		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
+		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_UserServicesListUpdated), res.getResult());
+		//checks results
+		List<SmsService> services = mProvider.getAllSubservices();
+		assertEquals("Wrong number of user services", 4, services.size());
+		assertEquals("Wrong id of user service 1", "999", services.get(0).getId());
+		assertEquals("Wrong id of user service 2", "58302", services.get(1).getId());
+		assertEquals("Wrong id of user service 3", "57727", services.get(2).getId());
+		assertEquals("Wrong id of user service 4", "57926", services.get(3).getId());
 	}
+	
 
 
 
@@ -282,7 +270,7 @@ public class JacksmsProviderTest
 		JacksmsDictionary dictionary = new JacksmsDictionary();
 
 		List<SmsService> newTemplates = dictionary.extractTemplates(providers);
-		assertEquals("Wrong extracted templates", new Integer(2), new Integer(newTemplates.size()));
+		assertEquals("Wrong extracted templates", 5, newTemplates.size());
 
 		//copy extracted templates into provider templates
 		templates.clear();

@@ -167,10 +167,9 @@ public class ActSubservicesList
 	protected void onResume() {
 		super.onResume();
 		
-		//update the list and avoid the IllegalStateException when a new subservice is added
-		if (null != mListAdapter) mListAdapter.notifyDataSetChanged();
+		refreshSubservicesList();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
@@ -210,13 +209,12 @@ public class ActSubservicesList
 		case CONTEXTMENU_DELETESERVICE:
 			service = (SmsService) getListAdapter().getItem(menuInfo.position);
 			mProvider.getAllSubservices().remove(service);
-			mListAdapter.notifyDataSetChanged();
+			refreshSubservicesList();
 			ResultOperation<Void> res = mProvider.saveSubservices(this);
 			if (res.hasErrors()) {
 				ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 				return false;
 			}
-			showHideInfoLabel();
 			break;
 		}
 		
@@ -274,6 +272,8 @@ public class ActSubservicesList
 			ActivityHelper.showCommandExecutionResult(ActSubservicesList.this, res);
 			//free the thread
 			mExecutedProviderCommandThread = null;
+			//refresh subservices list
+			refreshSubservicesList();
 		};
 	};	
 
@@ -347,4 +347,14 @@ public class ActSubservicesList
 		mExecutedProviderCommandThread.start();
 		//at the end of the execution, the handler will be called
 	}
+
+	/**
+	 * refresh the list of provider's subservices
+	 */
+	private void refreshSubservicesList() {
+		//update the list and avoid the IllegalStateException when a new subservice is added
+		if (null != mListAdapter) mListAdapter.notifyDataSetChanged();
+		showHideInfoLabel();
+	}
+	
 }

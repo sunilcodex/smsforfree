@@ -129,9 +129,9 @@ public class JacksmsProvider
 		command = new SmsServiceCommand(
 				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1, R.drawable.ic_menu_refresh);
 		mSubservicesListActivityCommands.add(command);
-//		command = new SmsServiceCommand(
-//				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 2, R.drawable.ic_menu_cloud);
-//		mSubservicesListActivityCommands.add(command);
+		command = new SmsServiceCommand(
+				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 2, R.drawable.ic_menu_cloud);
+		mSubservicesListActivityCommands.add(command);
 		//provider commands list
 		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
 		command = new SmsServiceCommand(
@@ -192,7 +192,7 @@ public class JacksmsProvider
 		} else {
 			//other generic error not handled by the parseReplyForErrors() method
 			res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
-			res.setResult(mMessages[MSG_INDEX_SERVER_ERROR]);
+			res.setResult(String.format(mMessages[MSG_INDEX_SERVER_ERROR], reply));
 			LogFacility.e("Error sending message in Jacksms Provider");
 			LogFacility.e(reply);
 		}
@@ -366,7 +366,7 @@ public class JacksmsProvider
     	//checks for jacksms errors
     	if (parseReplyForErrors(res)) return res;
 
-    	//at this point, the provider reply should contains the list of templates
+    	//at this point, the provider reply should contains the list of user saved subservices
     	String providerReply = res.getResult();
     	
     	//transform the reply in the list of user services
@@ -413,11 +413,9 @@ public class JacksmsProvider
 		//generic JackSMS internal error
 		} else if (mDictionary.isErrorReply(reply)) {
 			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], mDictionary.getTextPartFromReply(reply));
-		}
-		
-		//JackSMS internal error
-		if (mDictionary.isUnmanagedErrorReply(reply)) {
-			res = reply;
+		//JackSMS unknown internal error
+		} else if (mDictionary.isUnmanagedErrorReply(reply)) {
+			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], reply);
 		}
 		
     	//errors are internal to JackSMS, not related to communication issues.
@@ -453,6 +451,11 @@ public class JacksmsProvider
 				if (!canAdd) break;
 			}
 		}
+		
+    	//TODO
+    	//lenght of service
+    	//mEditedService = mProvider.newSubserviceFromTemplate(mTemplateService.getId());
+		
 
 		//checks if the template for given service exists
 		if (canAdd) {

@@ -134,16 +134,21 @@ public abstract class SmsMultiProvider
 		return mDao.saveProviderSubservices(context, getSubservicesFileName(), this);
 	}
 	
-	public SmsService newSubserviceFromTemplate(String templateId) {
+	public SmsService integrateSubserviceWithTemplateData(SmsConfigurableService originalService, String templateId) {
 		//find the template
 		SmsService template = getTemplate(templateId);
 		if (null == template) return null;
 		
-		//create new services and config it
-		SmsConfigurableService subservice = new SmsConfigurableService(template.getParametersNumber());
-		subservice.setId(NEWSERVICEID);
-		subservice.setMaxMessageLenght(template.getMaxMessageLenght());
-		subservice.setName(template.getName());
+		SmsConfigurableService subservice;
+		if (null == originalService) {
+			//create new services and configure it
+			subservice = new SmsConfigurableService(template.getParametersNumber());
+			subservice.setId(NEWSERVICEID);
+		} else {
+			subservice = originalService;
+		}
+		if (0 == subservice.getMaxMessageLenght()) subservice.setMaxMessageLenght(template.getMaxMessageLenght());
+		if (TextUtils.isEmpty(subservice.getName())) subservice.setName(template.getName());
 		subservice.setTemplateId(templateId);
 		for(int i = 0; i < template.getParametersNumber(); i++)
 			subservice.setParameterDesc(i, template.getParameterDesc(i));
@@ -165,7 +170,8 @@ public abstract class SmsMultiProvider
 		if (null == getAllTemplates()) return false;
 		return getAllTemplates().size() > 0;
 	}	
-	
+
+
 
 
 	//---------- Private methods

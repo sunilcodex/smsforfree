@@ -102,12 +102,12 @@ public abstract class SmsSingleProvider
 	public ResultOperation<Void> saveSubservices(Context context)
 	{ return null; }
 	
-	public SmsService newSubserviceFromTemplate(String templateId)
+	public SmsService integrateSubserviceWithTemplateData(SmsConfigurableService originalService, String templateId)
 	{ return null; }
+	
+	
 
-	
-	
-	
+
 	//---------- Private methods
 	protected ResultOperation<Void> saveTemplates(Context context)
 	{ return null; }
