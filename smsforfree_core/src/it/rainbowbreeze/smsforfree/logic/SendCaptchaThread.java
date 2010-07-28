@@ -69,7 +69,7 @@ public class SendCaptchaThread
 		//execute the command
 		mResultOperation = mProvider.sendCaptcha(mProviderCaptchaData, mCaptchaCode);
 		//and call the caller activity handler when the execution is terminated
-		callHandlerAndRetry(mCallerHandler.obtainMessage(WHAT_SENDCAPTCHA));
+		callHandlerAndRetry(WHAT_SENDCAPTCHA);
 	}
 	
 

@@ -33,6 +33,7 @@ import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -61,16 +62,17 @@ public class JacksmsProvider
 	private final static int PARAM_INDEX_PASSWORD = 1;
 
 	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
-	private final static int MSG_INDEX_SERVER_ERROR = 1;
-	private final static int MSG_INDEX_MESSAGE_SENT = 2;
-	private final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 3;
-	private final static int MSG_INDEX_NO_TEMPLATES_PARSED = 4;
-	private final static int MSG_INDEX_NO_CAPTCHA_PARSED = 5;
-	private final static int MSG_INDEX_TEMPLATES_UPDATED = 6;
-	private final static int MSG_INDEX_CAPTCHA_OK = 7;
-	private final static int MSG_INDEX_NO_TEMPLATES_TO_USE = 8;
-	private final static int MSG_INDEX_USERSERVICES_UPDATED = 9;
-	private final static int MSG_INDEX_NO_USERSERVICES_TO_USE = 10;
+	private final static int MSG_INDEX_SERVER_ERROR_KNOW = 1;
+	private final static int MSG_INDEX_SERVER_ERROR_UNKNOW = 2;
+	private final static int MSG_INDEX_MESSAGE_SENT = 3;
+	private final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 4;
+	private final static int MSG_INDEX_NO_TEMPLATES_PARSED = 5;
+	private final static int MSG_INDEX_NO_CAPTCHA_PARSED = 6;
+	private final static int MSG_INDEX_TEMPLATES_UPDATED = 7;
+	private final static int MSG_INDEX_CAPTCHA_OK = 8;
+	private final static int MSG_INDEX_NO_TEMPLATES_TO_USE = 9;
+	private final static int MSG_INDEX_USERSERVICES_UPDATED = 10;
+	private final static int MSG_INDEX_NO_USERSERVICES_TO_USE = 11;
 	
 	private JacksmsDictionary mDictionary;
 	
@@ -139,18 +141,19 @@ public class JacksmsProvider
 		mProviderSettingsActivityCommands.add(command);
 		
 		//save messages
-		mMessages = new String[11];
+		mMessages = new String[12];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
-		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.jacksms_msg_serverError);
+		mMessages[MSG_INDEX_SERVER_ERROR_KNOW] = context.getString(R.string.jacksms_msg_serverErrorKnow);
+		mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW] = context.getString(R.string.jacksms_msg_serverErrorUnknow);
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
 		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
 		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplatesParsed);
 		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
-		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_TemplatesListUpdated);
+		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_templatesListUpdated);
 		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.jacksms_msg_captchaOk);
-		mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE] = context.getString(R.string.jacksms_msg_NoTemplatesToUse);
-		mMessages[MSG_INDEX_USERSERVICES_UPDATED] = context.getString(R.string.jacksms_msg_UserServicesListUpdated);
-		mMessages[MSG_INDEX_NO_USERSERVICES_TO_USE] = context.getString(R.string.jacksms_msg_NoUserServices);
+		mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE] = context.getString(R.string.jacksms_msg_noTemplatesToUse);
+		mMessages[MSG_INDEX_USERSERVICES_UPDATED] = context.getString(R.string.jacksms_msg_userServicesListUpdated);
+		mMessages[MSG_INDEX_NO_USERSERVICES_TO_USE] = context.getString(R.string.jacksms_msg_noUserServices);
 		
 		return super.initProvider(context);
 	}
@@ -171,7 +174,8 @@ public class JacksmsProvider
 		
 		//sends the sms
 		SmsService service = getSubservice(serviceId);
-		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
+		String okMessage = mDictionary.adjustMessageBody(message);
+		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, okMessage);
 		ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
 	
 		//checks for errors
@@ -192,7 +196,7 @@ public class JacksmsProvider
 		} else {
 			//other generic error not handled by the parseReplyForErrors() method
 			res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
-			res.setResult(String.format(mMessages[MSG_INDEX_SERVER_ERROR], reply));
+			res.setResult(mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
 			LogFacility.e("Error sending message in Jacksms Provider");
 			LogFacility.e(reply);
 		}
@@ -370,7 +374,7 @@ public class JacksmsProvider
     	String providerReply = res.getResult();
     	
     	//transform the reply in the list of user services
-    	List<SmsService> newServices = mDictionary.extractUserServices(providerReply);
+    	List<SmsConfigurableService> newServices = mDictionary.extractUserServices(providerReply);
     	
     	//no stored user services
     	if (newServices.size() <= 0) {
@@ -379,7 +383,7 @@ public class JacksmsProvider
     	}
     	
     	//search for twin
-    	for (SmsService service : newServices) {
+    	for (SmsConfigurableService service : newServices) {
     		searchForServicesTwinAndAdd(service);
     	}
     	//sort subservices
@@ -412,10 +416,10 @@ public class JacksmsProvider
 			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		//generic JackSMS internal error
 		} else if (mDictionary.isErrorReply(reply)) {
-			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], mDictionary.getTextPartFromReply(reply));
+			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR_KNOW], mDictionary.getTextPartFromReply(reply));
 		//JackSMS unknown internal error
 		} else if (mDictionary.isUnmanagedErrorReply(reply)) {
-			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], reply);
+			res = mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW];
 		}
 		
     	//errors are internal to JackSMS, not related to communication issues.
@@ -423,6 +427,7 @@ public class JacksmsProvider
 		//the JackSMS error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
 			LogFacility.e("JacksmsProvider error reply");
+			LogFacility.e(res);
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
@@ -437,7 +442,7 @@ public class JacksmsProvider
 	 * services has the corresponding template
 	 * @param newServiceToAdd
 	 */
-	private void searchForServicesTwinAndAdd(SmsService newServiceToAdd)
+	private void searchForServicesTwinAndAdd(SmsConfigurableService newServiceToAdd)
 	{
 		boolean canAdd = true;
 		
@@ -452,11 +457,6 @@ public class JacksmsProvider
 			}
 		}
 		
-    	//TODO
-    	//lenght of service
-    	//mEditedService = mProvider.newSubserviceFromTemplate(mTemplateService.getId());
-		
-
 		//checks if the template for given service exists
 		if (canAdd) {
 			boolean existsTemplate = false;
@@ -471,6 +471,11 @@ public class JacksmsProvider
 				//log the error, because is not normal that the template doesn't exist
 				LogFacility.e("Template " + newServiceToAdd.getTemplateId() + " for JackSMS doesn't exist in the provider's templates");
 			}
+		}
+		
+		//add template information
+		if (canAdd) {
+			newServiceToAdd = (SmsConfigurableService) integrateSubserviceWithTemplateData(newServiceToAdd, newServiceToAdd.getTemplateId());
 		}
 		
 		if (canAdd) mSubservices.add(newServiceToAdd);

@@ -267,7 +267,7 @@ public class AimonProviderTest
 		//the final part of the message is variable, so cut it!
 		Log.i(TAG, res.getResult());
 		String currentResult = ParserUtils.getInvariableStringFinalBoundary(getContext().getString(R.string.aimon_msg_messageQueued));
-		assertTrue("Wrong return message", res.getResult().startsWith(currentResult));
+		assertEquals("Wrong return message", currentResult, res.getResult().substring(0, currentResult.length()));
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		
 		//if i resend the same message again, i get an error

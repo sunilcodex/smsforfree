@@ -263,14 +263,7 @@ public class AimonProvider
 			okDestination = okDestination.substring(1);
     	}
 
-		//checks body length
-    	if (body.length() > AimonDictionary.MAX_BODY_API_LENGTH) {
-    		okBody = body.substring(0, AimonDictionary.MAX_BODY_API_LENGTH);
-    	} else {
-    		okBody = body;
-    	}
-    	//TODO : remove unsupported characters
-    	
+    	okBody = mDictionary.adjustMessageBody(body);
     	
 		//find how to send the sms (via httpform or via api)
 		ResultOperation<String> res;
@@ -541,6 +534,7 @@ public class AimonProvider
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
 			LogFacility.e("AimonProvider api error reply");
+			LogFacility.e(res);
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
@@ -665,7 +659,8 @@ public class AimonProvider
 		} else if (mDictionary.isFreeSmsUnsupportedMessageEncoding(reply)) {
 			res = mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING];
 		} else {
-			res = mMessages[MSG_INDEX_SERVER_ERROR];
+			//other generic errors
+			res = String.format(mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR], reply);
 		}
 		
     	//errors are internal to Aimon, not related to communication issues.
@@ -673,6 +668,7 @@ public class AimonProvider
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
 			LogFacility.e("AimonProvider http error reply");
+			LogFacility.e(res);
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);

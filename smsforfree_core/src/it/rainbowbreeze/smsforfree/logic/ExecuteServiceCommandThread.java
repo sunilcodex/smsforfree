@@ -72,7 +72,7 @@ public class ExecuteServiceCommandThread
 		//execute the command
 		mResultOperation = mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
 		//and call the caller activity handler when the execution is terminated
-		callHandlerAndRetry(mCallerHandler.obtainMessage(WHAT_EXECUTESERVICECOMMAND));
+		callHandlerAndRetry(WHAT_EXECUTESERVICECOMMAND);
 	}
 
 

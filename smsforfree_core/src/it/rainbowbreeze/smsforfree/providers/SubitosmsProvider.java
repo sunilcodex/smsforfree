@@ -315,6 +315,7 @@ public class SubitosmsProvider
 		//the provider error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
 			LogFacility.e("SubitosmsProvider error reply");
+			LogFacility.e(res);
 			LogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
