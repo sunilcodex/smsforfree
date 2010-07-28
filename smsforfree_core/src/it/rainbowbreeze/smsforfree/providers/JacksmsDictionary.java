@@ -292,7 +292,7 @@ public class JacksmsDictionary
 				}
 				//create new service
 				parametersValue = (String[]) GlobalUtils.resizeArray(parametersValue, numberOfParameters);
-				SmsService newService = new SmsConfigurableService(serviceId, templateId, serviceName, parametersValue);
+				SmsConfigurableService newService = new SmsConfigurableService(serviceId, templateId, serviceName, parametersValue);
 				services.add(newService);
 			} catch (Exception e) {
 				//do nothing, simply skips to next service

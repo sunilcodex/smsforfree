@@ -40,26 +40,26 @@ public class GlobalUtils {
 
 
 	//---------- Public methods
-	public static SmsProvider findProviderInList(List<SmsProvider> list, String id)
+	public static SmsProvider findProviderInList(List<SmsProvider> providers, String id)
 	{
 		if (TextUtils.isEmpty(id)) return null;
 		
-		for(SmsProvider provider : list) {
+		for(SmsProvider provider : providers) {
 			if (id.equals(provider.getId())) return provider;
 		}
 		return null;
 	}
 	
-	public static int findProviderPositionInList(List<SmsProvider> list, String id)
+	public static int findProviderPositionInList(List<SmsProvider> providers, String id)
 	{
-		if (TextUtils.isEmpty(id) || null == list) return -1;
+		if (TextUtils.isEmpty(id) || null == providers) return -1;
 		
-		for(int i = 0; i < list.size(); i++) {
-			if (id.equals(list.get(i).getId())) return i;
+		for(int i = 0; i < providers.size(); i++) {
+			if (id.equals(providers.get(i).getId())) return i;
 		}
 		return -1;
 	}
-	
+
 	
 	/**
 	 * Check for the availability of network connection

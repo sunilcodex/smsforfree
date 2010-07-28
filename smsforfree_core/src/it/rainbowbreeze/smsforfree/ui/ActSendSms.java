@@ -887,13 +887,27 @@ public class ActSendSms
 			return;
 		}
 		
+		//log the message sending
+		String destination = mTxtDestination.getText().toString().trim();
+		String message = mTxtBody.getText().toString();
+		StringBuilder logMessage = new StringBuilder();
+		logMessage.append("Sending message to " + ParserUtils.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId());
+		SmsService service = mSelectedProvider.getSubservice(mSelectedServiceId);
+		if (null != service) {
+			logMessage.append(" and service ")
+				.append(service.getName())
+				.append("( id: ")
+				.append(mSelectedServiceId)
+				.append(" - templateId ")
+				.append(service.getTemplateId())
+				.append(")");
+		}
+		LogFacility.i(logMessage.toString());
+
 		//create new progress dialog
 		showDialog(DIALOG_SENDING_MESSAGE);
 
 		//preparing the background task for sending message
-		String destination = mTxtDestination.getText().toString().trim();
-		String message = mTxtBody.getText().toString();
-		LogFacility.i("Sending message to " + ParserUtils.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId() + " and service " + mSelectedServiceId);
 		mSendMessageThread = new SendMessageThread(
 				this, mActivityHandler,
 				mSelectedProvider, mSelectedServiceId,

@@ -282,7 +282,7 @@ public class ActSettingsSmsService
 		
 		if (isNewService) {
 			//create new service
-			mEditedService = mProvider.newSubserviceFromTemplate(mTemplateService.getId());
+			mEditedService = mProvider.integrateSubserviceWithTemplateData(null, mTemplateService.getId());
 		}
 		//set object name, if object edited is a subservice
 		if (!mIsEditingAProvider)
