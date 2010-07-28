@@ -222,7 +222,7 @@ public class ActSettingsMain
 				ActivityHelper.sendEmail(
 						ActSettingsMain.this,
 						GlobalDef.EMAIL_FOR_LOG,
-						String.format(getString(R.string.common_sendlogSubject), App.instance().getAppName()),
+						String.format(getString(R.string.common_sendlogSubject), App.instance().getAppName() + " " + GlobalDef.appVersionDescription),
 						String.format(getString(R.string.common_sendlogBody), res.getResult()));
 			}
 			//free the thread
