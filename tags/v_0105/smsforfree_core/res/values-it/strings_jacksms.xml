@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  
+ Copyright (C) 2010 Alfredo Morresi
+ This file is part of SmsForFree project.
+   
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 3 of the License, or (at your option) any later
+ version.
+   
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<resources>
+    <string name="jacksms_username_desc">Username</string>
+    <string name="jacksms_password_desc">Password</string>
+    <string name="jacksms_description">Con JackSMS puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
+    <string name="jacksms_commandLoadTemplateServices">Scarica i template di JackSMS</string>
+    <string name="jacksms_commandLoadUserSubservices">Carica i tuoi servizi JackSMS salvati sul sito</string>
+    <string name="jacksms_commandRegister">Registrati a JackSMS</string>
+    <string name="jacksms_msg_invalidCredentials">Credenziali JackSMS non valide :(</string>
+    <string name="jacksms_msg_serverErrorKnow">Error del server JackSMS.\n %s</string>
+    <string name="jacksms_msg_serverErrorUnknow">Error sconosciuto del server JackSMS. Invia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="jacksms_msg_messageSent">Messaggio spedito.\n %s</string>
+    <string name="jacksms_msg_captchaOk">Messaggio spedito.</string>
+    <string name="jacksms_msg_noCaptchaSessionId">Errore: non riesco a trovare il captcha session id... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="jacksms_msg_noTemplatesParsed">Strano, non ci sono template disponibili... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="jacksms_msg_noCaptcha">Strano, no c\'e\' il captcha... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="jacksms_msg_templatesListUpdated">Lista dei template JackSMS aggiornata.</string>
+    <string name="jacksms_msg_noTemplatesToUse">Non ci sono template. Scarica prima i template e poi rilancia il comando.</string>
+    <string name="jacksms_msg_userServicesListUpdated">Servizi utente memorizzati nel sito JackSMS aggiunti alla lista.</string>
+    <string name="jacksms_msg_noUserServices">Non ci sono servizi utente memorizzati nel sito di JackSMS.</string>
+    <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
+</resources>

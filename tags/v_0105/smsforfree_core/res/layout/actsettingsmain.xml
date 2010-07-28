@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  
+ Copyright (C) 2010 Alfredo Morresi
+ This file is part of SmsForFree project.
+   
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 3 of the License, or (at your option) any later
+ version.
+   
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="@string/actsettingsmain_lblApplicationCategory">
+		<CheckBoxPreference
+			android:key="actsettingsmain_chkResetDataAfterSend"
+			android:title="@string/actsettingsmain_chkResetDataAfterSend"
+			android:summary="@string/actsettingsmain_chkResetDataAfterSendSummary"
+		/>
+<!--		<CheckBoxPreference-->
+<!--			android:key="actsettingsmain_chkInsertSmsIntoPim"-->
+<!--			android:title="@string/actsettingsmain_chkInsertSmsIntoPim"-->
+<!--			android:summary="@string/actsettingsmain_chkInsertSmsIntoPimSummary"-->
+<!--		/>-->
+		<EditTextPreference
+			android:key="actsettingsmain_txtSignature"
+			android:title="@string/actsettingsmain_txtSignature"
+			android:summary="@string/actsettingsmain_txtSignatureSummary"
+		/>
+		<EditTextPreference
+			android:key="actsettingsmain_txtDefaultInternationalPrefix"
+			android:title="@string/actsettingsmain_txtDefaultInternationalPrefix"
+			android:summary="@string/actsettingsmain_txtDefaultInternationalPrefixSummary"
+		/>
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/actsettingsmain_lblProvidersCategory">
+		<Preference
+			android:key="actsettingsmain_providersPref"
+			android:title="@string/actsettingsmain_lblProvidersList"
+			android:summary="@string/actsettingsmain_lblProvidersListSummary"
+		/>
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/actsettingsmain_lblDebugCategory">
+		<Preference
+			android:key="actsettingsmain_sendLog"
+			android:title="@string/actsettingsmain_lblSendLog"
+			android:summary="@string/actsettingsmain_lblSendLogSummary"
+		/>
+	</PreferenceCategory>
+	
+</PreferenceScreen>

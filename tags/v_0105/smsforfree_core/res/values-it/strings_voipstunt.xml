@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  
+ Copyright (C) 2010 Alfredo Morresi
+ This file is part of SmsForFree project.
+   
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 3 of the License, or (at your option) any later
+ version.
+   
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<resources>
+    <string name="voipstunt_username_desc">Username</string>
+    <string name="voipstunt_password_desc">Password</string>
+    <string name="voipstunt_sender_desc">Numero mittente (formato internazionale)</string>
+    <string name="voipstunt_description">Invia SMS in tutto il mondo a tariffe concorrenziali usando il tuo credito su voipstunt.com</string>
+	<string name="voipstunt_msg_messageSent">Messaggio spedito.</string>
+    <string name="voipstunt_msg_messageNotSent">Errore nell\'invio del messaggio.\nPotrebbero essere le credenziali sbagliate o un errore interno al server.\n\n. Se il problema persiste, invia i log allo sviluppatore (nelle Preferenze) per avvisarlo.</string>
+    <string name="voipstunt_commandRegister">Registati su Voipstunt</string>
+    <string name="voipstunt_registerLink">http://voipstunt.com</string>
+</resources>
