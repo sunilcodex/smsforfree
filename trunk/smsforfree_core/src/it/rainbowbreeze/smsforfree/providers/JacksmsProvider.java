@@ -389,6 +389,14 @@ public class JacksmsProvider
     	//sort subservices
     	Collections.sort(getAllSubservices());
     	
+    	//save the subservices list
+    	ResultOperation<Void> saveResult = saveSubservices(context);
+    	//and checks for errors in saving
+    	if (saveResult.hasErrors()) {
+    		res.setException(saveResult.getException(), saveResult.getReturnCode());
+    		return res;
+    	}
+    	
     	res.setResult(mMessages[MSG_INDEX_USERSERVICES_UPDATED]);
     	return res;
     }

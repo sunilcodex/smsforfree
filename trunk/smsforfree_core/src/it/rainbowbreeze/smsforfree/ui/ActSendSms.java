@@ -896,7 +896,7 @@ public class ActSendSms
 		if (null != service) {
 			logMessage.append(" and service ")
 				.append(service.getName())
-				.append("( id: ")
+				.append(" (id: ")
 				.append(mSelectedServiceId)
 				.append(" - templateId ")
 				.append(service.getTemplateId())
