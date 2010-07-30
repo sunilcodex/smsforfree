@@ -40,4 +40,7 @@ public interface Def
 	public String JACKSMS_USERNAME = "f.martinelli";
 	public String JACKSMS_PASSWORD = "XXXX";
 	
+	public String VOIPSTUNT_USERNAME = "f.martinelli";
+	public String VOIPSTUNT_PASSWORD = "XXXX";
+	public String VOIPSTUNT_SENDER = "3912345678";
 }
