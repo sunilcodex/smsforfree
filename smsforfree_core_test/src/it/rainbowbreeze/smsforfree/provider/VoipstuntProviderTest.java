@@ -43,6 +43,24 @@ public class VoipstuntProviderTest
 
 	//---------- Tests methods
 
+	@Override
+	public void testAndroidTestCaseSetupProperly()
+	{
+		super.testAndroidTestCaseSetupProperly();
+		
+		//check if password and sender number was changed
+		//before running this test
+		assertFalse("You must change the password...", "XXXX".equals(Def.VOIPSTUNT_PASSWORD));
+	}
+	
+	public void testProviderInitialization()
+	{
+		assertTrue("Providers hasn't settings activity commands", mProvider.hasSettingsActivityCommands());
+		assertEquals("Wrong number of settings activity commands", 1, mProvider.getSettingsActivityCommands().size());
+		
+		assertFalse("Providers has subservices activity commands", mProvider.hasSubservicesListActivityCommands());
+	}
+
 	public void testMaxMessageLenght() {
 		String smsMessageLenght;
 	}

@@ -84,9 +84,8 @@ public class AimonProvider
 	private static final int MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG = 20;
 	private static final int MSG_INDEX_UNMANAGED_SERVER_ERROR = 21;
 	
-	public final static int COMMAND_CHECKCREDENTIALS = 1000;
-	public final static int COMMAND_CHECKCREDITS = 1001;
-	private final static int COMMAND_REGISTER = 1002;
+	public final static int COMMAND_CHECKCREDENTIALS = 100;
+	public final static int COMMAND_CHECKCREDITS = 101;
 	
 	private String[] mMessages;
 	private AimonDictionary mDictionary;
@@ -115,11 +114,6 @@ public class AimonProvider
 	public boolean hasSubServicesToConfigure()
 	{ return false; }
     
-	private List<SmsServiceCommand> mProviderSettingsActivityCommands;
-	@Override
-	public List<SmsServiceCommand> getSettingsActivityCommands()
-	{ return mProviderSettingsActivityCommands; }
-	
 
 	
 	
@@ -134,19 +128,6 @@ public class AimonProvider
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.aimon_sender_desc));
 		setDescription(context.getString(R.string.aimon_description));
-		
-		SmsServiceCommand command;
-		//initializes the command list
-		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_REGISTER, context.getString(R.string.aimon_commandRegister), 1, R.drawable.ic_menu_invite); 
-		mProviderSettingsActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 2, R.drawable.ic_menu_login);
-		mProviderSettingsActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 3);
-		mProviderSettingsActivityCommands.add(command);
 		
 		//save some messages
 		mMessages = new String[22];
@@ -173,7 +154,6 @@ public class AimonProvider
 		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG] = context.getString(R.string.aimon_msg_invalidMessageEncodingOrTooLong);
 		mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR] = context.getString(R.string.aimon_msg_unmanagedServerError);
 		
-		//call other provider's initializations
 		return super.initProvider(context);
 	}
 	
@@ -307,10 +287,6 @@ public class AimonProvider
 			res = verifyCredit(currentUsername, currentPassword);
 			break;
 
-		case COMMAND_REGISTER:
-			res = registerToProvider(context, context.getString(R.string.aimon_registerLink));
-			break;
-
 		default:
 			res = super.executeCommand(commandId, context, extraData);
 		}
@@ -397,6 +373,29 @@ public class AimonProvider
 		mSubservices.add(service);
 		
 		return new ResultOperation<Void>();
+	}
+	
+	
+	@Override
+	protected String getProviderRegistrationUrl(Context context) {
+		return context.getString(R.string.aimon_registerLink);
+	}
+	
+	@Override
+	protected List<SmsServiceCommand> loadSettingsActivityCommands(Context context)
+	{
+		List<SmsServiceCommand> commands = super.loadSettingsActivityCommands(context);
+		
+		SmsServiceCommand newCommand;
+		//initializes the command list
+		newCommand = new SmsServiceCommand(
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 100, R.drawable.ic_menu_login);
+		commands.add(newCommand);
+		newCommand = new SmsServiceCommand(
+				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 101);
+		commands.add(newCommand);
+		
+		return commands;
 	}
 
 	

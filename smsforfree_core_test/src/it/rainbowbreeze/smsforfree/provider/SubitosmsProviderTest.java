@@ -61,9 +61,16 @@ public class SubitosmsProviderTest
 		//check if password and sender number was changed
 		//before running this test
 		assertFalse("You must change the password...", "XXXX".equals(Def.SUBITOSMS_PASSWORD));
-		assertFalse("You must change destination", "XXXX".equals(Def.TEST_DESTINATION));
 	}
 	
+	
+	public void testProviderInitialization()
+	{
+		assertTrue("Providers hasn't settings activity commands", mProvider.hasSettingsActivityCommands());
+		assertEquals("Wrong number of settings activity commands", 3, mProvider.getSettingsActivityCommands().size());
+		
+		assertFalse("Providers has subservices activity commands", mProvider.hasSubservicesListActivityCommands());
+	}
 	
 	/**
 	 * Test the call for right credential

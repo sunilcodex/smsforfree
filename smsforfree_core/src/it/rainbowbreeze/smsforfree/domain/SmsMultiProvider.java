@@ -105,9 +105,10 @@ public abstract class SmsMultiProvider
 	 * Generally, no additional command are provided when editing
 	 * subservices list
 	 */
+	protected List<SmsServiceCommand> mSubservicesListActivityCommands;
 	@Override
 	public List<SmsServiceCommand> getSubservicesListActivityCommands()
-	{ return null; }
+	{ return mSubservicesListActivityCommands; }
 	
 
 
@@ -117,17 +118,20 @@ public abstract class SmsMultiProvider
 	@Override
 	public ResultOperation<Void> initProvider(Context context) {
 		ResultOperation<Void> res;
-		
-		res = loadParameters(context);
+
+		res = super.initProvider(context);
 		if (res.hasErrors()) return res;
 		res = loadTemplates(context);
 		if (res.hasErrors()) return res;
 		res = loadSubservices(context);
 		if (res.hasErrors()) return res;
 		
+		mSubservicesListActivityCommands = loadSubservicesListActivityCommands(context);
+    	
 		return res;
 	}
-	
+
+
 	public ResultOperation<Void> saveSubservices(Context context) {
 		adjustSubservicesIds();
 		Collections.sort(mSubservices);
@@ -175,18 +179,36 @@ public abstract class SmsMultiProvider
 
 
 	//---------- Private methods
+	/**
+	 * Load provider's templates from a file
+	 */
 	protected ResultOperation<Void> loadTemplates(Context context){
 		return mDao.loadProviderTemplates(context, getTemplatesFileName(), this);
 	}
 
+	/**
+	 * Save provider's templates in a file
+	 */
 	protected ResultOperation<Void> saveTemplates(Context context){
 		return mDao.saveProviderTemplates(context, getTemplatesFileName(), this);
 	}
 
+	/**
+	 * Load provider's subservices from a file
+	 */
 	protected ResultOperation<Void> loadSubservices(Context context) {
 		return mDao.loadProviderSubservices(context, getSubservicesFileName(), this);
 	}
 
+	/**
+	 * Return a list of commands to show when the provider's subservices list is displayed
+	 * @return
+	 */
+	protected List<SmsServiceCommand> loadSubservicesListActivityCommands(Context context) {
+		//empty list of commands
+		return new ArrayList<SmsServiceCommand>();
+	}
+	
 	protected SmsService findServiceInList(List<SmsService> list, String serviceId) {
 		if (TextUtils.isEmpty(serviceId)) return null;
 		for (SmsService service : list){
@@ -215,5 +237,5 @@ public abstract class SmsMultiProvider
 			}
 		}
 	}
-
+	
 }

@@ -110,6 +110,8 @@
     <string name="actsettingssmsservice_title">%s - Impostazioni per %s</string>
     <string name="actsettingssmsservice_btnConfigureSubservices">Configura i servizi</string>
 	<string name="actsettingssmsservice_lblServiceName">Nome servizio</string>    
+    <string name="actsettingssmsservice_mnuRegisterToProvider">Registrati a %s</string>
+
 
 
 

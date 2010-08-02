@@ -82,9 +82,8 @@ public class JacksmsProvider
 	
 
 	//---------- Public properties
-	public final static int COMMAND_LOADTEMPLATESERVICES = 1000;
-	public final static int COMMAND_LOADUSERSERVICES = 1001;
-	public final static int COMMAND_REGISTER = 1002;
+	public final static int COMMAND_LOADTEMPLATESERVICES = 100;
+	public final static int COMMAND_LOADUSERSERVICES = 101;
 	
 	@Override
 	public String getId()
@@ -99,19 +98,8 @@ public class JacksmsProvider
 	{ return PARAM_NUMBER; }
 
 
-	private List<SmsServiceCommand> mProviderSettingsActivityCommands;
-	@Override
-	public List<SmsServiceCommand> getSettingsActivityCommands()
-	{ return mProviderSettingsActivityCommands; }
-
-	private List<SmsServiceCommand> mSubservicesListActivityCommands;
-	@Override
-	public List<SmsServiceCommand> getSubservicesListActivityCommands()
-	{ return mSubservicesListActivityCommands; }
-
 
 	
-
 	//---------- Public methods
 	
 	@Override
@@ -124,21 +112,6 @@ public class JacksmsProvider
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setDescription(context.getString(R.string.jacksms_description));
-	
-		//subservices commands list
-		SmsServiceCommand command;
-		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1, R.drawable.ic_menu_refresh);
-		mSubservicesListActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 2, R.drawable.ic_menu_cloud);
-		mSubservicesListActivityCommands.add(command);
-		//provider commands list
-		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_REGISTER, context.getString(R.string.jacksms_commandRegister), 1, R.drawable.ic_menu_invite); 
-		mProviderSettingsActivityCommands.add(command);
 		
 		//save messages
 		mMessages = new String[12];
@@ -274,10 +247,6 @@ public class JacksmsProvider
 			res = downloadUserConfiguredServices(context);
 			break;
 
-		case COMMAND_REGISTER:
-			res = registerToProvider(context, context.getString(R.string.jacksms_registerLink));
-			break;
-
 		default:
 			res = super.executeCommand(commandId, context, extraData);
 		}
@@ -299,8 +268,32 @@ public class JacksmsProvider
 	@Override
 	protected String getSubservicesFileName()
 	{ return GlobalDef.jacksmsSubservicesFileName; }
+	
+	@Override
+	protected String getProviderRegistrationUrl(Context context) {
+		return context.getString(R.string.jacksms_registerLink);
+	}
 
-    
+	
+	@Override
+	protected List<SmsServiceCommand> loadSubservicesListActivityCommands(Context context)
+	{
+		List<SmsServiceCommand> commands = super.loadSubservicesListActivityCommands(context);
+		
+		//subservices commands list
+		SmsServiceCommand command;
+		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
+		command = new SmsServiceCommand(
+				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 100, R.drawable.ic_menu_refresh);
+		commands.add(command);
+		command = new SmsServiceCommand(
+				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 101, R.drawable.ic_menu_cloud);
+		commands.add(command);
+		
+		return commands;
+	};
+	
+	
     /**
      * Downloads all service templates available from JackSMS site
      * @return

@@ -25,7 +25,6 @@
     <string name="subitosms_description">Send SMS to Italy and other 178 countries at less than 7 eurocent. www.subitosms.it.</string>
     <string name="subitosms_commandCheckCredentials">Check credentials</string>
     <string name="subitosms_commandCheckCredits">Get credit</string>
-    <string name="subitosms_commandRegister">Register to SubitoSMS</string>
     <string name="subitosms_msg_invalidCredentials">Invalid SubitoSMS credentials :(</string>
     <string name="subitosms_msg_invalidSender">Invalid sender.\nChange it in the SubitoSMS provider settings</string>
     <string name="subitosms_msg_invalidDestination">Invalid destination.\n</string>

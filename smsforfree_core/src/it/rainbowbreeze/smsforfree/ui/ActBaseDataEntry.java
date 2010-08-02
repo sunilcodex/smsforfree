@@ -124,9 +124,9 @@ public abstract class ActBaseDataEntry
 	{
 		super.onCreateOptionsMenu(menu);
 		
-		menu.add(0, OPTIONMENU_SAVE, 10, R.string.common_mnuSave)
+		menu.add(0, OPTIONMENU_SAVE, 10000, R.string.common_mnuSave)
 			.setIcon(android.R.drawable.ic_menu_save);
-		menu.add(0, OPTIONMENU_CANCEL, 11, R.string.common_mnuCancel)
+		menu.add(0, OPTIONMENU_CANCEL, 10001, R.string.common_mnuCancel)
 			.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		
 		return true;
