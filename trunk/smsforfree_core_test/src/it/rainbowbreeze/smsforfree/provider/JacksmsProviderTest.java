@@ -72,7 +72,16 @@ public class JacksmsProviderTest
 		//check if password and sender number was changed
 		//before running this test
 		assertFalse("You must change the password...", "XXXX".equals(Def.JACKSMS_PASSWORD));
-		assertFalse("You must change destination", "XXXX".equals(Def.TEST_DESTINATION));
+	}
+	
+	
+	public void testProviderInitialization()
+	{
+		assertTrue("Providers hasn't settings activity commands", mProvider.hasSettingsActivityCommands());
+		assertEquals("Wrong number of settings activity commands", 1, mProvider.getSettingsActivityCommands().size());
+		
+		assertTrue("Providers hasn't subservices activity commands", mProvider.hasSubservicesListActivityCommands());
+		assertEquals("Wrong number of settings activity commands", 2, mProvider.getSubservicesListActivityCommands().size());
 	}
 	
 	/**

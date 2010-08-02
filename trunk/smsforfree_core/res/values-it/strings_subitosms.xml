@@ -25,7 +25,6 @@
     <string name="subitosms_description">Invia SMS in Italia e altri 178 paesi a medo di 7 eurocent. www.subitosms.it.</string>
     <string name="subitosms_commandCheckCredentials">Verifica credenziali</string>
     <string name="subitosms_commandCheckCredits">Credito disponibile</string>
-    <string name="subitosms_commandRegister">Registrati ad subitosms</string>
     <string name="subitosms_msg_invalidCredentials">Credenziali subitosms non valide :(</string>
     <string name="subitosms_msg_invalidSender">Mittente del messaggio non valido.\nCambialo nelle impostazioni del provider subitosms</string>
     <string name="subitosms_msg_invalidDestination">Destinatione non valida.\nSolo i numeri italiani sono supportati</string>

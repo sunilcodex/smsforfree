@@ -1,11 +1,8 @@
 TODOLIST
--mettere try-catch su dismiss del progress dialog dentro l'hander
 -icone mancanti credits aimon
 -mettere bottone che ripresenta ultimo messaggio di invio sms
 -sostituire caratteri illegali su corpo messaggio aimon
--mettere il register a livello di smsprovider e non di singolo provider
 -scrivere test per ParserUtils
--includere nei log header e url mandati al server in caso di errore
 
 FUTURE IMPLEMENTAZIONI
 

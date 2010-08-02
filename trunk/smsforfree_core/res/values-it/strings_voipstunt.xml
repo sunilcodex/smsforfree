@@ -25,6 +25,5 @@
     <string name="voipstunt_description">Invia SMS in tutto il mondo a tariffe concorrenziali usando il tuo credito su voipstunt.com</string>
 	<string name="voipstunt_msg_messageSent">Messaggio spedito.</string>
     <string name="voipstunt_msg_messageNotSent">Errore nell\'invio del messaggio.\nPotrebbero essere le credenziali sbagliate o un errore interno al server.\n\n. Se il problema persiste, invia i log allo sviluppatore (nelle Preferenze) per avvisarlo.</string>
-    <string name="voipstunt_commandRegister">Registati su Voipstunt</string>
     <string name="voipstunt_registerLink">http://voipstunt.com</string>
 </resources>

@@ -19,7 +19,6 @@
 
 package it.rainbowbreeze.smsforfree.providers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,9 +58,8 @@ public class SubitosmsProvider
 	private final static int PARAM_INDEX_PASSWORD = 1;
 	private final static int PARAM_INDEX_SENDER = 2;
 
-	public static final int COMMAND_CHECKCREDENTIALS = 1000;
-	public static final int COMMAND_CHECKCREDITS = 1001;
-	private static final int COMMAND_REGISTER = 1002;
+	public static final int COMMAND_CHECKCREDENTIALS = 100;
+	public static final int COMMAND_CHECKCREDITS = 101;
 
 	private static final int MSG_INDEX_REMAINING_CREDITS = 0;
 	private static final int MSG_INDEX_VALID_CREDENTIALS = 1;
@@ -95,11 +93,6 @@ public class SubitosmsProvider
 	public int getMaxMessageLenght()
 	{ return 160; }
     
-	private List<SmsServiceCommand> mProviderSettingsActivityCommands;
-	@Override
-	public List<SmsServiceCommand> getSettingsActivityCommands()
-	{ return mProviderSettingsActivityCommands; }
-	
 	
 	
 	
@@ -114,19 +107,6 @@ public class SubitosmsProvider
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
 		setParameterDesc(PARAM_INDEX_SENDER, context.getString(R.string.subitosms_sender_desc));
 		setDescription(context.getString(R.string.subitosms_description));
-		
-		SmsServiceCommand command;
-		//initializes the command list
-		mProviderSettingsActivityCommands = new ArrayList<SmsServiceCommand>();
-		command = new SmsServiceCommand(
-				COMMAND_REGISTER, context.getString(R.string.aimon_commandRegister), 1, R.drawable.ic_menu_invite); 
-		mProviderSettingsActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 2, R.drawable.ic_menu_login);
-		mProviderSettingsActivityCommands.add(command);
-		command = new SmsServiceCommand(
-				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 3);
-		mProviderSettingsActivityCommands.add(command);
 		
 		mMessages = new String[9];
 		mMessages[MSG_INDEX_REMAINING_CREDITS] = context.getString(R.string.subitosms_msg_remainingCredits);
@@ -211,10 +191,6 @@ public class SubitosmsProvider
 			res = verifyCredit(currentUsername, currentPassword);
 			break;
 
-		case COMMAND_REGISTER:
-			res = registerToProvider(context, context.getString(R.string.aimon_registerLink));
-			break;
-
 		default:
 			res = super.executeCommand(commandId, context, extraData);
 		}
@@ -238,6 +214,27 @@ public class SubitosmsProvider
 	@Override
 	protected String getParametersFileName()
 	{ return GlobalDef.subitosmsParametersFileName; }
+	
+	@Override
+	protected String getProviderRegistrationUrl(Context context) {
+		return context.getString(R.string.aimon_registerLink);
+	}
+	
+	@Override
+	protected List<SmsServiceCommand> loadSettingsActivityCommands(Context context)
+	{
+		List<SmsServiceCommand> commands = super.loadSettingsActivityCommands(context);
+
+		SmsServiceCommand newCommand;
+		newCommand = new SmsServiceCommand(
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 100, R.drawable.ic_menu_login);
+		commands.add(newCommand);
+		newCommand = new SmsServiceCommand(
+				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 101);
+		commands.add(newCommand);
+		
+		return commands;
+	}
 	
 	
 	/**

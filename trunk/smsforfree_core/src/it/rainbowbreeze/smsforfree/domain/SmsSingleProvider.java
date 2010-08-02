@@ -88,16 +88,6 @@ public abstract class SmsSingleProvider
 	
 	
 	//---------- Public methods
-	@Override
-	public ResultOperation<Void> initProvider(Context context)
-	{
-		ResultOperation<Void> res;
-		
-		res = loadParameters(context);
-		if (res.hasErrors()) return res;
-		
-		return res;
-	}
 	
 	public ResultOperation<Void> saveSubservices(Context context)
 	{ return null; }

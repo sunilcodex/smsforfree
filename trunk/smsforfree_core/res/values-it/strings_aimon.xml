@@ -25,7 +25,6 @@
     <string name="aimon_description">Invia SMS verso numeri di tutta Italia con mittente personalizzato a meno di 7 centesimi. 2 SMS gratis ogni giorno. www.aimon.it</string>
     <string name="aimon_commandCheckCredentials">Verifica credenziali</string>
     <string name="aimon_commandCheckCredits">Credito disponibile</string>
-    <string name="aimon_commandRegister">Registrati ad Aimon</string>
     <string name="aimon_msg_invalidCredentials">Credenziali Aimon non valide :(</string>
     <string name="aimon_msg_invalidSender">Mittente del messaggio non valido.\nCambialo nelle impostazioni del provider Aimon</string>
     <string name="aimon_msg_invalidDestination">Destinatione non valida.\nSolo i numeri italiani sono supportati</string>

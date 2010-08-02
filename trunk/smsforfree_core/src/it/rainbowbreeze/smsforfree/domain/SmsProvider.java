@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -28,6 +29,7 @@ import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import it.rainbowbreeze.smsforfree.util.Base64;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -35,6 +37,7 @@ import java.util.Map.Entry;
 import org.apache.http.client.ClientProtocolException;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 
@@ -63,6 +66,9 @@ public abstract class SmsProvider
 	//---------- Private fields
 	protected ProviderDao mDao;
 	protected WebserviceClient mWebserviceClient;
+
+	//command used to register to provider
+	protected final static int COMMAND_REGISTER = 10000;
 	
 	
 	
@@ -91,15 +97,32 @@ public abstract class SmsProvider
 	/** Menu to show on option menu of ActSubservicesList activity */
     public abstract List<SmsServiceCommand> getSubservicesListActivityCommands();
 
+    /** List of provider's commands to show in the provider's settings activity  */
+    protected List<SmsServiceCommand> mProviderSettingsActivityCommands;
+	@Override
+	public List<SmsServiceCommand> getSettingsActivityCommands()
+	{ return mProviderSettingsActivityCommands; }
     
     
     
 	//---------- Public methods
     
     /**
-     * Initialize provider
+     * Base initialization for the provider, overrides in providers to
+     * add additional initialization logic
+     * 
+     * @param context
      */
-    public abstract ResultOperation<Void> initProvider(Context context);
+    public ResultOperation<Void> initProvider(Context context) {
+		ResultOperation<Void> res;
+
+		res = loadParameters(context);
+		if (res.hasErrors()) return res;
+
+		mProviderSettingsActivityCommands = loadSettingsActivityCommands(context);
+    	
+    	return res;
+    }
     
 	/**
 	 * Load provider's parameters
@@ -107,7 +130,7 @@ public abstract class SmsProvider
 	 * @param context
 	 * @return
 	 */
-	public ResultOperation<Void> loadParameters(Context context){
+	public ResultOperation<Void> loadParameters(Context context) {
 		return mDao.loadProviderParameters(context, getParametersFileName(), this);
 	}
 	
@@ -203,7 +226,35 @@ public abstract class SmsProvider
      */
     public abstract ResultOperation<String> sendCaptcha(String providerReply, String captchaCode);
 
-    
+
+    /**
+     * Execute the command action
+     * 
+     * @param commandId
+     * @param context
+     * @param extraData
+     */
+    @Override
+    public ResultOperation<String> executeCommand(
+    		int commandId,
+    		Context context,
+    		Bundle extraData)
+	{
+		ResultOperation<String> res;
+    	
+		//execute commands
+		switch (commandId) {
+
+		case COMMAND_REGISTER:
+			res = registerToProvider(context, getProviderRegistrationUrl(context));
+			break;
+
+		default:
+			res = super.executeCommand(commandId, context, extraData);
+		}
+
+		return res;
+    }
     
     
 	//---------- Private methods
@@ -241,6 +292,13 @@ public abstract class SmsProvider
 	 */
 	protected abstract ResultOperation<Void> loadSubservices(Context context);
 	
+    /**
+     * Return the url to use for provider's new account registration
+     * @param context
+     * @return
+     */
+	protected abstract String getProviderRegistrationUrl(Context context);
+
 	/**
 	 * Checks if username and password are not empty
 	 * Throws an error if one of the two are not correct
@@ -260,7 +318,30 @@ public abstract class SmsProvider
 	protected ResultOperation<String> getExceptionForInvalidCredentials()
 	{
 		return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL);
-	}  
+	}
+	
+
+	/**
+	 * Create the list of commands to show in the provider's settings activity
+	 * @param context
+	 * @return
+	 */
+	protected List<SmsServiceCommand> loadSettingsActivityCommands(Context context)
+	{
+		//initializes the command list
+		List<SmsServiceCommand> commands = new ArrayList<SmsServiceCommand>();
+		
+		SmsServiceCommand command;
+		//register to provider command
+		command = new SmsServiceCommand(
+				COMMAND_REGISTER, 
+				String.format(context.getString(R.string.actsettingssmsservice_mnuRegisterToProvider), getName()),
+				1,
+				R.drawable.ic_menu_invite); 
+		commands.add(command);
+		
+		return commands;
+	}
 
 	
     

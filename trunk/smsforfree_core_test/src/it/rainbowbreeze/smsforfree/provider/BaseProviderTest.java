@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.provider;
 
+import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.TestUtils;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
@@ -80,7 +81,12 @@ public abstract class BaseProviderTest
 
 
 	//---------- Tests methods
-
+	@Override
+	public void testAndroidTestCaseSetupProperly() {
+		super.testAndroidTestCaseSetupProperly();
+		
+		assertFalse("You must change destination", "XXXX".equals(Def.TEST_DESTINATION));
+	}
 
 
 
