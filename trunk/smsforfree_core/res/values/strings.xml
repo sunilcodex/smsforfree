@@ -75,6 +75,8 @@
     <string name="actsendsms_msg_infobox_title">Welcome</string>
     <string name="actsendsms_msg_askForCrashReportEmailTitle">Error reporting</string>
     <string name="actsendsms_msg_askForCrashReportEmail">A previous run of the application crashed with errors.\nDo you want to send an email to the developer with crash information?</string>
+    <string name="actsendsms_msg_error_saving_sent_sms">An error occurred saving SMS in the Sent folder.\nSend log to developer (in the Preferences) if the problem persists.</string>
+    <string name="actsendsms_msg_error_retrieving_inbox_sms">An error occurred reading latest SMS received.\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>
@@ -149,7 +151,7 @@
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email to developer</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.7\nSave SMS into device\'s Sent folder, better log management\n\nv1.6\nBugfixes\n\nv1.5\nImport user services saved on JackSMS site, bugfixes\n\nv1.4\nFixed issues with Android 1.6\n\nv1.3\n -Added SubitoSMS, send errors via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v1.7\nSave SMS into device\'s Sent folder, retrieve last received SMS number, better log management\n\nv1.6\nBugfixes\n\nv1.5\nImport user services saved on JackSMS site, bugfixes\n\nv1.4\nFixed issues with Android 1.6\n\nv1.3\n -Added SubitoSMS, send errors via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
     <string name="actabout_msgEmailSubject">About your %s application...</string>
     <string name="actabout_msgEmailBody">Hi Alfredo,\n\n</string>
 

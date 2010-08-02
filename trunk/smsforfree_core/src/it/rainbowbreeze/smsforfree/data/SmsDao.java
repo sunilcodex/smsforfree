@@ -35,7 +35,8 @@ public class SmsDao {
 	//---------- Ctors
 
 	//---------- Private fields
-	private final static Uri SMS_CONTENT_PROVIDER = Uri.parse("content://sms/sent");
+	private final static Uri CONTENT_PROVIDER_SENT_SMS = Uri.parse("content://sms/sent");
+	private final static Uri CONTENT_PROVIDER_INBOX_SMS = Uri.parse("content://sms/inbox");
 
 	//---------- Public properties
 
@@ -50,14 +51,24 @@ public class SmsDao {
 	//---------- Public methods
     
     /**
-     * Verify if standard sms content provider is accessible on the device
+     * Verify if standard sent sms content provider is accessible on the device
      */
-    public boolean isSmsProviderAvailable(Context context)
+    public boolean isSentSmsProviderAvailable(Context context)
     {
-    	Cursor cursor = context.getContentResolver().query(SMS_CONTENT_PROVIDER, null, null, null, null);
+    	Cursor cursor = context.getContentResolver().query(CONTENT_PROVIDER_SENT_SMS, null, null, null, null);
     	boolean exists = (null != cursor);
     	if (exists) cursor.close();
-
+    	return exists;
+    }
+    
+    /**
+     * Verify if standard inbox sms content provider is accessible on the device
+     */
+    public boolean isInboxSmsProviderAvailable(Context context)
+    {
+    	Cursor cursor = context.getContentResolver().query(CONTENT_PROVIDER_INBOX_SMS, null, null, null, null);
+    	boolean exists = (null != cursor);
+    	if (exists) cursor.close();
     	return exists;
     }
     
@@ -69,40 +80,66 @@ public class SmsDao {
      * @param body
      * @return
      */
-    public ResultOperation<String> saveSmsInSentFolder(Context context, String destination, String body)
+    public ResultOperation<Void> saveSmsInSentFolder(Context context, String destination, String body)
     {
     	try {
 	    	ContentValues values = new ContentValues();
 	    	values.put("address", destination);
 	    	values.put("body", body);
-	    	context.getContentResolver().insert(SMS_CONTENT_PROVIDER, values);
+	    	context.getContentResolver().insert(CONTENT_PROVIDER_SENT_SMS, values);
     	} catch (Exception e) {
     		LogFacility.e("Error retrieving SMS content provider");
     		LogFacility.e(e);
-    		return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
+    		return new ResultOperation<Void>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		}
     	
-    	return new ResultOperation<String>();
+    	return new ResultOperation<Void>();
     }
     
     
     public int getMessagesNumberInSentFolder(Context context)
     {
-        Cursor cursor = context.getContentResolver().query(SMS_CONTENT_PROVIDER, null, null, null,  null);                                   
-        //String body = null;
-        int smsTotal = 0;
-
-        if(cursor.moveToFirst()){
-        	smsTotal ++;
-        }
-        while (cursor.moveToNext()) {
-        	smsTotal++;
-        }
+        Cursor cursor = context.getContentResolver().query(CONTENT_PROVIDER_SENT_SMS, null, null, null,  null);                                   
+        int smsTotal = cursor.getCount();;
         cursor.close();
         
         return smsTotal;
+    }
+    
+    
+    /**
+     * Return the number of the last received SMS in the inbox system folder
+     * @param context
+     * @return
+     */
+    public ResultOperation<String> getLastSmsReceivedNumber(Context context) {
+		final String[] projection = new String[] { "_id", "thread_id",
+				"address", "date", "body" };
+		String[] selectionArgs = null;
+		final String sortOrder = "date DESC";
+
+		String numberSms = null;
+		int count = 0;
+
+		Cursor cursor = context.getContentResolver().query(
+				CONTENT_PROVIDER_INBOX_SMS, projection, null, selectionArgs,
+				sortOrder);
+
+		if (cursor != null) {
+			try {
+				count = cursor.getCount();
+				if (count > 0) {
+					cursor.moveToFirst();
+					numberSms = cursor.getString(2);
+				}
+			} catch (Exception e) {
+				return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
+			} finally {
+				cursor.close();
+			}
+		}
 		
-        //body = cursor.getString(cursor.getColumnIndexOrThrow("body")).toString();               
+		return new ResultOperation<String>(numberSms);
     }
     
 

@@ -33,16 +33,29 @@ import android.util.Log;
 public class SmsDaoTest extends AndroidTestCase {
 	//---------- Private fields
 
+	
+	
+	
 	//---------- Constructor
+	
+	
+	
 
 	//---------- SetUp and TearDown
 
+	
+	
+	
 	//---------- Tests methods
-	public void testIsSmsProviderAvailable()
+	public void testIsSentSmsProviderAvailable()
 	{
-		assertTrue(SmsDao.instance().isSmsProviderAvailable(getContext()));
+		assertTrue(SmsDao.instance().isSentSmsProviderAvailable(getContext()));
 	}
 	
+	public void testIsInboxSmsProviderAvailable()
+	{
+		assertTrue(SmsDao.instance().isInboxSmsProviderAvailable(getContext()));
+	}
 	
 	public void testSaveSmsInSentFolder()
 	{
@@ -50,11 +63,9 @@ public class SmsDaoTest extends AndroidTestCase {
 		Log.i("SmsForFree-Test", "SMS before the insert: " + totalSmsBefore);
 		assertTrue("Wrong number of SMS in Sent Folder", totalSmsBefore >= 0);
 		
-		ResultOperation<String> res = SmsDao.instance().saveSmsInSentFolder(
+		ResultOperation<Void> res = SmsDao.instance().saveSmsInSentFolder(
 				getContext(), Def.TEST_DESTINATION, "Test message");
-		
 		assertFalse("Error in request", res.hasErrors());
-		assertTrue("Wrong return message", TextUtils.isEmpty(res.getResult()));
 		
 		int totalSmsAfter = SmsDao.instance().getMessagesNumberInSentFolder(getContext());
 		Log.i("SmsForFree-Test", "SMS after the insert: " + totalSmsAfter);
@@ -63,7 +74,19 @@ public class SmsDaoTest extends AndroidTestCase {
 		assertTrue("Sms insert doesn't work", totalSmsAfter > totalSmsBefore);
 	}
 	
-
+	/**
+	 * If this test fails in the emulator / device, add at least an SMS to the queue
+	 * (the emulator has it's own panel to do this
+	 */
+	public void testRetrieveLastSmsRecievedNumber()
+	{
+		ResultOperation<String> res = SmsDao.instance().getLastSmsReceivedNumber(getContext());
+		assertFalse("Error in request", res.hasErrors());
+		Log.i("SmsForFree-Test", "SMS last sender: " + res.getResult());
+		assertFalse("Empty message number", TextUtils.isEmpty(res.getResult()));
+	}
+	
+	
 	//---------- Private methods
 
 }

@@ -24,10 +24,10 @@ public class GlobalDef {
 	public final static String appPreferencesKeys = "SmsForFreePrefs"; 
 	
 	/** Application version, displayed to the user */
-	public final static String appVersionDescription = "1.7b";
+	public final static String appVersionDescription = "1.7";
 
 	/** Application version, for internal use */
-	public final static String appVersion = "01.07.00b";
+	public final static String appVersion = "01.07.00";
 
 	/** file name for providers preferences */
 	public final static String jacksmsParametersFileName = "jacksms_parameters.xml"; 
