@@ -106,6 +106,7 @@ public class ActSendSms
 	private TextView mLblMessageLength;
 	private Button mBtnSend;
 	private ImageButton mBtnPickContact;
+	private ImageButton mBtnGetLastSmsReceivedNumber;
 	private TextView mLblProvider;
 
 	private List<ContactPhone> mPhonesToShowInDialog;
@@ -160,6 +161,7 @@ public class ActSendSms
         mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
         mBtnSend = (Button) findViewById(R.id.actsendsms_btnSend);
         mBtnPickContact = (ImageButton) findViewById(R.id.actsendsms_btnPickContact);
+        mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
         
         //eventually remove ad view
         if (!App.instance().isAdEnables()) {
@@ -173,10 +175,16 @@ public class ActSendSms
 		mSpiSubservices.setOnItemSelectedListener(mSpiSubservicesSelectedListener);
         mBtnSend.setOnClickListener(mBtnSendClickListener);
         mBtnPickContact.setOnClickListener(mBtnPickContactListener);
+        mBtnGetLastSmsReceivedNumber.setOnClickListener(mBtnGetLastSmsReceivedNumberListener);
         mTxtBody.addTextChangedListener(mTxtBodyTextChangedListener);
 
         //populate Spinner with values
         bindProvidersSpinner();
+        
+        //hide views
+        if (!SmsDao.instance().isInboxSmsProviderAvailable(this)) {
+        	mBtnGetLastSmsReceivedNumber.setVisibility(View.INVISIBLE);
+        }
 
     	//executed when the application first runs
         if (null == savedInstanceState) {
@@ -197,7 +205,6 @@ public class ActSendSms
         		showDialog(DIALOG_SEND_CRASH_REPORTS);
         	}
         }
-
     }
 
 	@Override
@@ -482,7 +489,19 @@ public class ActSendSms
         	ActivityHelper.openPickContact(ActSendSms.this);
 		}
 	};
-
+	
+	
+	private OnClickListener mBtnGetLastSmsReceivedNumberListener = new OnClickListener() {
+		public void onClick(View v) {
+			ResultOperation<String> res = SmsDao.instance().getLastSmsReceivedNumber(ActSendSms.this);
+			if (res.hasErrors()) {
+				ActivityHelper.reportError(ActSendSms.this, R.string.actsendsms_msg_error_retrieving_inbox_sms);
+				return;
+			}
+			mTxtDestination.setText(res.getResult());
+		}
+	};
+	
 	
 	private OnClickListener mBtnSendClickListener = new OnClickListener() {
 		public void onClick(View v) {
@@ -762,8 +781,6 @@ public class ActSendSms
 	 */
 	private String getTranslationForPhoneType(String type)
 	{
-		//TODO
-		//check the links between numbers and values
 		if ("1".equals(type))
 			return getString(R.string.actsendsms_phoneType_home);
 		else if ("2".equals(type))
@@ -992,7 +1009,7 @@ public class ActSendSms
 			//dismiss captcha progress dialog
 			removeDialog(DIALOG_SENDING_CAPTCHA);
 		}
-
+		
 		//return with errors
 		if (result.hasErrors()) {
 			ActivityHelper.reportError(ActSendSms.this, result);
@@ -1020,13 +1037,13 @@ public class ActSendSms
 	private void insertSmsIntoPim() {
 		//insert SMS into PIM
 		if (AppPreferencesDao.instance().getInsertMessageIntoPim()) {
-			ResultOperation<String> res = SmsDao.instance().saveSmsInSentFolder(
+			ResultOperation<Void> res = SmsDao.instance().saveSmsInSentFolder(
 					getApplicationContext(),
 					mTxtDestination.getText().toString(),
 					mTxtBody.getText().toString());
 
 			if (res.hasErrors()) {
-				ActivityHelper.showInfo(getApplicationContext(), res.getResult());
+				ActivityHelper.reportError(getApplicationContext(), R.string.actsendsms_msg_error_saving_sent_sms);
 			}
 		}
 	}

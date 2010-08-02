@@ -209,7 +209,7 @@ public class ActSettingsMain
 		
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			if (!SmsDao.instance().isSmsProviderAvailable(preference.getContext())) {
+			if (!SmsDao.instance().isSentSmsProviderAvailable(preference.getContext())) {
 				ActivityHelper.showInfo(preference.getContext(), R.string.actsettingsmain_msgNoSmsProviderAvailable);
 				return false;
 			} else {
