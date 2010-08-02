@@ -77,6 +77,7 @@
     <string name="actsendsms_msg_askForCrashReportEmail">A previous run of the application crashed with errors.\nDo you want to send an email to the developer with crash information?</string>
     <string name="actsendsms_msg_error_saving_sent_sms">An error occurred saving SMS in the Sent folder.\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="actsendsms_msg_error_retrieving_inbox_sms">An error occurred reading latest SMS received.\nSend log to developer (in the Preferences) if the problem persists.</string>
+    <string name="actsendsms_msg_empty_inbox_sms">No SMS found in your received messages.</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>

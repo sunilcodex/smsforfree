@@ -316,7 +316,8 @@ public class AimonDictionary
     	} else {
     		okMessage = message;
     	}
-    	//TODO : remove unsupported characters
+
+    	okMessage = okMessage.replace("\n", " ").replace("\t", " ").replace("\r", " ");
     	
     	return okMessage;
 	}

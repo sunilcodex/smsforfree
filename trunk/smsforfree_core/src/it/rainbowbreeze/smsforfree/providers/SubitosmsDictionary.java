@@ -96,7 +96,7 @@ public class SubitosmsDictionary
 		getParametersForApiLogin(username, password, params);
 		params.put(PARAM_SENDER, sender);
 		params.put(PARAM_DESTINATION, destination);
-		params.put(PARAM_MESSAGE, message);
+		params.put(PARAM_MESSAGE, adjustMessageBody(message));
 		return params;
 	}
 
@@ -154,5 +154,18 @@ public class SubitosmsDictionary
 	{
 		params.put(PARAM_USERNAME, username);
     	params.put(PARAM_PASSWORD, password);
+	}
+	
+	
+	/**
+	 * Replace illegal chars in the message
+	 * @param body
+	 * @return
+	 */
+	public String adjustMessageBody(String body) {
+		body = body.replace("\n", " ");
+		body = body.replace("\t", " ");
+		body = body.replace("\r", " ");
+		return body;
 	}
 }
