@@ -136,7 +136,7 @@ public class JacksmsDictionary
 		
 		//second header
 		key = "J-M";
-		value = message;
+		value = adjustMessageBody(message);
 		headers.put(key, value);
 		
 		return headers;
@@ -170,9 +170,9 @@ public class JacksmsDictionary
 	 * @return
 	 */
 	public String adjustMessageBody(String body) {
-		body.replace("\n", " ");
-		body.replace("\t", " ");
-		body.replace("\r", " ");
+		body = body.replace("\n", " ");
+		body = body.replace("\t", " ");
+		body = body.replace("\r", " ");
 		return body;
 	}
 	

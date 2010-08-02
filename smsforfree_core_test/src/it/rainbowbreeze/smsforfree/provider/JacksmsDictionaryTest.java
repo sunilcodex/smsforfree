@@ -184,6 +184,13 @@ public class JacksmsDictionaryTest extends TestCase {
 		assertFalse("Wrong error reply identification", mDictionary.isErrorReply(serverReply));
 		assertTrue("Wrong unmanaged error reply identification", mDictionary.isUnmanagedErrorReply(serverReply));
 	}
+	
+	
+	public void testAdjustMessageBody() {
+		assertEquals("Wrong string manipulation", "ciao da me", mDictionary.adjustMessageBody("ciao\nda me"));
+		assertEquals("Wrong string manipulation", "ciao da me", mDictionary.adjustMessageBody("ciao\rda me"));
+		assertEquals("Wrong string manipulation", "ciao da me", mDictionary.adjustMessageBody("ciao\tda me"));
+	}
 
 	
 	

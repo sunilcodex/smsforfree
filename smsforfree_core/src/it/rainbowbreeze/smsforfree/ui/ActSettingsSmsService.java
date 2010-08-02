@@ -286,12 +286,12 @@ public class ActSettingsSmsService
 		}
 		//set object name, if object edited is a subservice
 		if (!mIsEditingAProvider)
-			((SmsConfigurableService)mEditedService).setName(mTxtServiceName.getText().toString());
+			((SmsConfigurableService)mEditedService).setName(mTxtServiceName.getText().toString().trim());
 
 		for (int i = 0; i < mEditedService.getParametersNumber(); i++){
         	//save the data inside the object
     		findLabelAndEditTextViewsForParameter(i);
-    		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
+    		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString().trim());
 		}
 		
 		//persist the parameters

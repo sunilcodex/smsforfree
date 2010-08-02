@@ -498,7 +498,12 @@ public class ActSendSms
 				ActivityHelper.reportError(ActSendSms.this, R.string.actsendsms_msg_error_retrieving_inbox_sms);
 				return;
 			}
-			mTxtDestination.setText(res.getResult());
+			
+			if (TextUtils.isEmpty(res.getResult())) {
+				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_empty_inbox_sms);
+			} else {
+				mTxtDestination.setText(res.getResult());
+			}
 		}
 	};
 	

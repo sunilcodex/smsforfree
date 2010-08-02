@@ -147,9 +147,8 @@ public class JacksmsProvider
 		
 		//sends the sms
 		SmsService service = getSubservice(serviceId);
-		String okMessage = mDictionary.adjustMessageBody(message);
 		String url = mDictionary.getUrlForSendingMessage(username, password);
-		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, okMessage);
+		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
 		ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
 	
 		//checks for errors
