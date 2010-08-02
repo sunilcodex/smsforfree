@@ -24,6 +24,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
@@ -134,27 +135,24 @@ public class VoipstuntProvider
 		//check for destination number and, eventually, add international prefix
     	String okDestination = transalteInInternationalFormat(destination);
 		
-		String urlToSend = mDictionary.getUrlForMessage(
+		String url = mDictionary.getUrlForMessage(
 				getParameterValue(PARAM_INDEX_USERNAME),
 				getParameterValue(PARAM_INDEX_PASSWORD),
 				getParameterValue(PARAM_INDEX_SENDER),
 				okDestination,
 				body);
 			
-		ResultOperation<String> res = doSingleHttpRequest(urlToSend, null, null);
+		ResultOperation<String> res = doSingleHttpRequest(url, null, null);
 
-    	//checks for applications errors
-    	if (res.hasErrors()) return res;
-    	
-    	//examine it the return contains confirmation if the message was sent
-    	if (mDictionary.messageWasSent(res.getResult())) {
-    		res.setResult(mMessages[MSG_INDEX_MESSAGE_SENT]);
-		} else {
-			LogFacility.e("VoipstuntProvider error reply");
-			LogFacility.e(res.getResult());
-    		res.setResult(mMessages[MSG_INDEX_MESSAGE_NO_SENT]);
-    		res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
-    	}
+    	//checks for errors
+		if (parseReplyForErrors(res)){
+			//log action data for a better error management
+			logRequest(url, null, null);
+			return res;
+		}
+
+    	//at this point, the operation was surely executed correctly
+		res.setResult(mMessages[MSG_INDEX_MESSAGE_SENT]);
 		
 		return res;    	
 	}
@@ -194,5 +192,39 @@ public class VoipstuntProvider
 	@Override
 	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode)
 	{ return null; }
+	
+	
+	private boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze) {
+    	//checks for application errors
+    	if (resultToAnalyze.hasErrors()) return true;
+		
+		String reply = resultToAnalyze.getResult();
+		String res;
+
+		//no reply from server is already handled in doRequest method
+
+		//check for know errors
+		if (mDictionary.messageWasSent(reply)) {
+			res = "";
+		} else {
+			//at this point, unknown errors
+			res = mMessages[MSG_INDEX_MESSAGE_NO_SENT];
+		}
+	
+    	//errors are internal to provider, not related to communication issues.
+    	//so no application errors (like network issues) should be returned, but
+		//the provider error must stops the execution of the calling method
+    	if (!TextUtils.isEmpty(res)) {
+			LogFacility.e("VoipstuntProvider error reply");
+			LogFacility.e(res);
+			LogFacility.e(reply);
+    		resultToAnalyze.setResult(res);
+    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
+    		return true;
+    	} else {
+    		return false;
+    	}
+	}
+	
 
 }

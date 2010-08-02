@@ -1,4 +1,4 @@
-package it.rainbowbreeeze.smsforfree.logic;
+package it.rainbowbreeze.smsforfree.logic;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.TestUtils;

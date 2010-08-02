@@ -166,17 +166,18 @@ public class SubitosmsProvider
     		return new ResultOperation<String>(
 					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
 
-		HashMap<String, String> params;
-
-    	String url = mDictionary.getBaseUrl();
-		params = mDictionary.getParametersForApiSend(username, password, sender, destination, body);
-		
 		//send the sms
+    	String url = mDictionary.getBaseUrl();
+    	HashMap<String, String> params = mDictionary.getParametersForApiSend(username, password, sender, destination, body);
 		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
 
     	//checks for errors
-    	if (parseReplyForErrors(res)) return res;
-    	
+		if (parseReplyForErrors(res)){
+			//log action data for a better error management
+			logRequest(url, null, params);
+			return res;
+		}
+
     	//at this point, the operation was surely executed correctly
 		res.setResult(String.format(
 				mMessages[MSG_INDEX_MESSAGE_SENT], res.getResult()));
@@ -251,12 +252,17 @@ public class SubitosmsProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
     	
-		HashMap<String, String> params = mDictionary.getParametersForCreditCheck(username, password);
-    	
     	//call the api that gets the credit
-    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getBaseUrl(), null, params);
+		String url = mDictionary.getBaseUrl();
+		HashMap<String, String> params = mDictionary.getParametersForCreditCheck(username, password);
+    	ResultOperation<String> res = doSingleHttpRequest(url, null, params);
     	//checks for errors
-    	if (parseReplyForErrors(res)) return res;
+		if (parseReplyForErrors(res)){
+			LogFacility.e("Error in command verifyCredit");
+			//log action data for a better error management
+			logRequest(url, null, params);
+			return res;
+		}
     	
     	//at this point reply can only contains the remaining credits
     	String credit = mDictionary.findRemainingCredit(res.getResult());

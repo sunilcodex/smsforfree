@@ -19,15 +19,18 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+import it.rainbowbreeze.smsforfree.util.Base64;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -431,8 +434,6 @@ public abstract class SmsProvider
     	return finalNumber;
 	}
 
-
-
 	
 	/**
 	 * Launch the browser activity with a personalized link for subscribe to provider
@@ -444,4 +445,37 @@ public abstract class SmsProvider
 		ActivityHelper.openBrowser(context, urlToOpen, true);
 		return new ResultOperation<String>();
 	}
+	
+
+	/**
+	 * Write headers and url in the log, so a better debugger could be made
+	 * when a report is sent to the developer
+	 * 
+	 * @param url
+	 * @param headers
+	 */
+	protected void logRequest(String url, HashMap<String, String> headers, HashMap<String, String> parameters)
+	{
+		LogFacility.e(getName() + " provider request content");
+		if (!TextUtils.isEmpty(url)) {
+			LogFacility.e("Url");
+			LogFacility.e(Base64.encodeBytes(url.getBytes()));
+		}
+		if (null != headers) {
+			LogFacility.e("Headers");
+			for (Entry<String, String> header : headers.entrySet()) {
+				LogFacility.e(Base64.encodeBytes(header.getKey().getBytes()));
+				LogFacility.e(Base64.encodeBytes(header.getValue().getBytes()));
+			}
+		}
+		if (null != parameters) {
+			LogFacility.e("Parameters");
+			for (Entry<String, String> param : parameters.entrySet()) {
+				LogFacility.e(Base64.encodeBytes(param.getKey().getBytes()));
+				LogFacility.e(Base64.encodeBytes(param.getValue().getBytes()));
+			}
+		}
+	}
+
+	
 }
