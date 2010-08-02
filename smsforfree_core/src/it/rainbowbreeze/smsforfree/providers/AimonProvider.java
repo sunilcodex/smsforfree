@@ -411,13 +411,18 @@ public class AimonProvider
     	//args check
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
-    	
-		HashMap<String, String> params = mDictionary.getParametersForApiCreditCheck(username, password);
-    	
+
     	//call the api that gets the credit
-    	ResultOperation<String> res = doSingleHttpRequest(AimonDictionary.URL_GET_CREDIT, null, params);
+    	String url = AimonDictionary.URL_GET_CREDIT;
+		HashMap<String, String> params = mDictionary.getParametersForApiCreditCheck(username, password);
+    	ResultOperation<String> res = doSingleHttpRequest(url, null, params);
+
     	//checks for errors
-    	if (parseReplyForApiErrors(res)) return res;
+    	if (parseReplyForApiErrors(res)) {
+			//log action data for a better error management
+			logRequest(url, null, params);
+			return res;
+		}
     	
     	//at this point reply can only contains the remaining credits
     	//append the message to credit amount
@@ -469,16 +474,17 @@ public class AimonProvider
 			String destination,
 			String body)
 	{
-		HashMap<String, String> params;
-
-    	String url = AimonDictionary.URL_SEND_SMS;
-		params = mDictionary.getParametersForApiSend(username, password, idApi, sender, destination, body);
-		
 		//send the sms
+    	String url = AimonDictionary.URL_SEND_SMS;
+    	HashMap<String, String> params = mDictionary.getParametersForApiSend(username, password, idApi, sender, destination, body);
 		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
 
     	//checks for errors
-    	if (parseReplyForApiErrors(res)) return res;
+    	if (parseReplyForApiErrors(res)) {
+			//log action data for a better error management
+			logRequest(url, null, params);
+			return res;
+		}
     	
     	//at this point, the operation was surely executed correctly
 		res.setResult(String.format(
@@ -576,7 +582,12 @@ public class AimonProvider
         params = mDictionary.getParametersForFreeSmsLogin(username, password);
         res = doConversationHttpRequest(url, null, params);
         
-        if (parseRetryForHttpErrors(res, username)) return res;
+    	//checks for errors
+        if (parseRetryForHttpErrors(res, username)) {
+			//log action data for a better error management
+			logRequest(url, null, params);
+			return res;
+		}
         
         //check if login is really correct
         if (!mDictionary.isFreeSmsLoginOk(res.getResult(), username)) {
@@ -611,6 +622,9 @@ public class AimonProvider
 					mMessages[MSG_INDEX_MESSAGE_SENT], 
 					String.format(mMessages[MSG_INDEX_REMAINING_FREE_CREDITS], remainingCredits)));
     		
+		} else {
+			//log action data for a better error management
+			logRequest(url, null, params);
 		}
 		
         //logout from the site and close the conversation

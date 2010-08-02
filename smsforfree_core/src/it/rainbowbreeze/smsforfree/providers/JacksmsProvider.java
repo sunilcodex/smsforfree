@@ -175,11 +175,16 @@ public class JacksmsProvider
 		//sends the sms
 		SmsService service = getSubservice(serviceId);
 		String okMessage = mDictionary.adjustMessageBody(message);
+		String url = mDictionary.getUrlForSendingMessage(username, password);
 		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, okMessage);
-		ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingMessage(username, password), headers, null);
+		ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
 	
 		//checks for errors
-		if (parseReplyForErrors(res)) return res;
+		if (parseReplyForErrors(res)){
+			//log action data for a better error management
+			logRequest(url, headers, null);
+			return res;
+		}
 		
 		//at this point, no error happened, so checks if the sms was sent or
 		//a captcha code is needed
@@ -233,11 +238,16 @@ public class JacksmsProvider
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
     	//sends the captcha code
+    	String url = mDictionary.getUrlForSendingCaptcha(username, password);
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
-    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForSendingCaptcha(username, password), headers, null);
+    	ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
 
     	//checks for errors
-    	if (parseReplyForErrors(res)) return res;
+		if (parseReplyForErrors(res)){
+			//log action data for a better error management
+			logRequest(url, headers, null);
+			return res;
+		}
     	
     	//at this point, no error happened, so the reply contains captcha submission result
     	String reply = res.getResult();
@@ -304,12 +314,15 @@ public class JacksmsProvider
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
 
-    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForDownloadTemplates(username, password), null, null);
+    	String url = mDictionary.getUrlForDownloadTemplates(username, password);
+    	ResultOperation<String> res = doSingleHttpRequest(url, null, null);
 
-    	//checks for applications errors
-    	if (res.hasErrors()) return res;
-    	//checks for jacksms errors
-    	if (parseReplyForErrors(res)) return res;
+    	//checks for errors
+		if (parseReplyForErrors(res)){
+			//log action data for a better error management
+			logRequest(url, null, null);
+			return res;
+		}
 
     	//at this point, the provider reply should contains the list of templates
     	String templatesReply = res.getResult();
@@ -363,12 +376,16 @@ public class JacksmsProvider
     	//checks for templates
     	if (!hasTemplatesConfigured())
     		return new ResultOperation<String>(ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
-    	
-    	ResultOperation<String> res = doSingleHttpRequest(mDictionary.getUrlForDownloadUserServices(username, password), null, null);
 
-    	//checks for applications errors
-    	//checks for jacksms errors
-    	if (parseReplyForErrors(res)) return res;
+    	String url = mDictionary.getUrlForDownloadUserServices(username, password);
+    	ResultOperation<String> res = doSingleHttpRequest(url, null, null);
+
+    	//checks for errors
+		if (parseReplyForErrors(res)){
+			//log action data for a better error management
+			logRequest(url, null, null);
+			return res;
+		}
 
     	//at this point, the provider reply should contains the list of user saved subservices
     	String providerReply = res.getResult();
