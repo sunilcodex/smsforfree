@@ -30,6 +30,7 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactDao;
+import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -353,7 +354,7 @@ public class ActSendSms
 			break;
 
 		case OPTIONMENU_RESETDATA:
-			cleanDataFields();
+			cleanDataFields(true);
 			break;
 			
 		}
@@ -948,9 +949,11 @@ public class ActSendSms
 	/**
 	 * Reset destination and message body
 	 */
-	private void cleanDataFields() {
-		mTxtDestination.setText("");
-		mTxtBody.setText("");
+	private void cleanDataFields(boolean force) {
+		if (force || AppPreferencesDao.instance().getAutoClearMessage()) {
+			mTxtDestination.setText("");
+			mTxtBody.setText("");
+		}
 	}
 	
 	
@@ -1003,10 +1006,27 @@ public class ActSendSms
 				LogFacility.i("Sms correctly sent");
 				//update number of messages sent in the day
 				LogicManager.updateSmsCounter(1);
+				//insert sms into pim, if required
+				insertSmsIntoPim();
 				//check if the text should be deleted
-				if (AppPreferencesDao.instance().getAutoClearMessage()) {
-					cleanDataFields();
-				}
+				cleanDataFields(false);
+			}
+		}
+	}
+
+	/**
+	 * Insert sent SMS into PIM of the device
+	 */
+	private void insertSmsIntoPim() {
+		//insert SMS into PIM
+		if (AppPreferencesDao.instance().getInsertMessageIntoPim()) {
+			ResultOperation<String> res = SmsDao.instance().saveSmsInSentFolder(
+					getApplicationContext(),
+					mTxtDestination.getText().toString(),
+					mTxtBody.getText().toString());
+
+			if (res.hasErrors()) {
+				ActivityHelper.showInfo(getApplicationContext(), res.getResult());
 			}
 		}
 	}

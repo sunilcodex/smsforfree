@@ -30,7 +30,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
-
+/**
+ * Dao for contact retrieving
+ *
+ * @author Alfredo "Rainbowbreeze" Morresi
+ */
 public abstract class ContactDao
 {
 	//---------- Private fields

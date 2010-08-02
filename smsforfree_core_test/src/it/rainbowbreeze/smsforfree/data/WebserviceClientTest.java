@@ -29,6 +29,11 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.test.AndroidTestCase;
 
+/**
+ * Test class for {@link WebserviceClient}
+ *
+ * @author Alfredo "Rainbowbreeze" Morresi
+ */
 public class WebserviceClientTest
 	extends AndroidTestCase
 {

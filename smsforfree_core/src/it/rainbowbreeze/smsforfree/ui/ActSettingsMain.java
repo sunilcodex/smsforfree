@@ -24,6 +24,7 @@ import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
+import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.logic.PrepareLogToSendThread;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -50,6 +51,7 @@ public class ActSettingsMain
 {
 	//---------- Private fields
 	private CheckBoxPreference mChkResetData;
+	private CheckBoxPreference mChkInsertSmsIntoPim;
 	private EditTextPreference mTxtSignature;
 	private EditTextPreference mTxtPrefix;
 	private ProgressDialog mProgressDialog;
@@ -76,6 +78,7 @@ public class ActSettingsMain
 		getDataFromIntent(getIntent());
 		
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
+		mChkInsertSmsIntoPim = (CheckBoxPreference) findPreference("actsettingsmain_chkInsertSmsIntoPim");
 		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
 		mTxtPrefix = (EditTextPreference) findPreference("actsettingsmain_txtDefaultInternationalPrefix");
 		
@@ -89,11 +92,13 @@ public class ActSettingsMain
 		
 		//set value of other preferences
 		mChkResetData.setChecked(AppPreferencesDao.instance().getAutoClearMessage());
+		mChkResetData.setChecked(AppPreferencesDao.instance().getInsertMessageIntoPim());
 		mTxtSignature.setText(AppPreferencesDao.instance().getSignature());
 		mTxtPrefix.setText(AppPreferencesDao.instance().getDefaultInternationalPrefix());
 		
 		//register listeners
 		mChkResetData.setOnPreferenceChangeListener(mChkResetDataChangeListener);
+		mChkInsertSmsIntoPim.setOnPreferenceChangeListener(mChkInsertSmsIntoPimChangeListener);
 		mTxtSignature.setOnPreferenceChangeListener(mTxtSignatureChangeListener);
 		mTxtPrefix.setOnPreferenceChangeListener(mTxtPrefixChangeListener);
 		
@@ -197,6 +202,20 @@ public class ActSettingsMain
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			AppPreferencesDao.instance().setAutoClearMessage(((Boolean)newValue).booleanValue());
 			return AppPreferencesDao.instance().save();
+		}
+	};
+	
+	private OnPreferenceChangeListener mChkInsertSmsIntoPimChangeListener = new OnPreferenceChangeListener() {
+		
+		@Override
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			if (!SmsDao.instance().isSmsProviderAvailable(preference.getContext())) {
+				ActivityHelper.showInfo(preference.getContext(), R.string.actsettingsmain_msgNoSmsProviderAvailable);
+				return false;
+			} else {
+				AppPreferencesDao.instance().setInsertMessageIntoPim(((Boolean)newValue).booleanValue());
+				return AppPreferencesDao.instance().save();
+			}
 		}
 	};
 
