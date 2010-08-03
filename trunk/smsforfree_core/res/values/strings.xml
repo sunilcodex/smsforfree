@@ -46,7 +46,7 @@
 
     <!-- ActSendSms -->
     <string name="actsendsms_title">%s - Send SMS</string>
-    <string name="actsendsms_txtDestination">Destionation number</string>
+    <string name="actsendsms_txtDestination">Destination num.</string>
     <string name="actsendsms_txtBody">Message</string>
     <string name="actsendsms_btnSend">Send</string>
     <string name="actsendsms_lblProviderMulti">Choose an SMS provider and one of it\'s services</string>
