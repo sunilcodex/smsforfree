@@ -724,6 +724,12 @@ public class ActSendSms
 		        removeDialog(DIALOG_PHONES);
 		    }
 		});
+		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+		        removeDialog(DIALOG_PHONES);
+			}
+		});
 		AlertDialog alert = builder.create();
 		
 		return alert;
@@ -1115,6 +1121,12 @@ public class ActSendSms
 				mTxtBody.append(template);
 		        removeDialog(DIALOG_TEMPLATES);
 		    }
+		});
+		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+		        removeDialog(DIALOG_TEMPLATES);
+			}
 		});
 		AlertDialog alert = builder.create();
 		

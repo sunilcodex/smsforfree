@@ -82,10 +82,12 @@ public class ActSettingsMain
 		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
 		mTxtPrefix = (EditTextPreference) findPreference("actsettingsmain_txtDefaultInternationalPrefix");
 		
-		//Get the custom preference
+		//Get the custom providers' preference and register listener for it
 		Preference providerPref = findPreference("actsettingsmain_providersPref");
-		//register listener for it
-		providerPref.setOnPreferenceClickListener(providersPrefsClickListener);
+		providerPref.setOnPreferenceClickListener(providersPrefClickListener);
+		//Get the custom providers' preference and register listener for it
+		Preference templatesPref = findPreference("actsettingsmain_templatesPref");
+		templatesPref.setOnPreferenceClickListener(templatesPrefClickListener);
 		//send application log
 		Preference sendLog = findPreference("actsettingsmain_sendLog");
 		sendLog.setOnPreferenceClickListener(sendLogClickListener);
@@ -143,7 +145,7 @@ public class ActSettingsMain
 	/**
 	 * Called when providers preferences button is pressed
 	 */
-	private OnPreferenceClickListener providersPrefsClickListener = new OnPreferenceClickListener() {
+	private OnPreferenceClickListener providersPrefClickListener = new OnPreferenceClickListener() {
 		public boolean onPreferenceClick(Preference preference) {
 			//checks if only on provider is configured
 			
@@ -154,6 +156,17 @@ public class ActSettingsMain
 				//open providers list
 				ActivityHelper.openProvidersList(ActSettingsMain.this);
 			}
+			return true;
+		}
+	};
+	
+	
+	/**
+	 * Called when template button is pressed
+	 */
+	private OnPreferenceClickListener templatesPrefClickListener = new OnPreferenceClickListener() {
+		public boolean onPreferenceClick(Preference preference) {
+			ActivityHelper.openMessageTemplates(ActSettingsMain.this);
 			return true;
 		}
 	};

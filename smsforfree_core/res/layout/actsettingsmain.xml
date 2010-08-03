@@ -40,6 +40,11 @@
 			android:title="@string/actsettingsmain_txtDefaultInternationalPrefix"
 			android:summary="@string/actsettingsmain_txtDefaultInternationalPrefixSummary"
 		/>
+		<Preference
+			android:key="actsettingsmain_templatesPref"
+			android:title="@string/actsettingsmain_lblTemplatesList"
+			android:summary="@string/actsettingsmain_lblTemplatesListSummary"
+		/>
 	</PreferenceCategory>
 	
 	<PreferenceCategory android:title="@string/actsettingsmain_lblProvidersCategory">

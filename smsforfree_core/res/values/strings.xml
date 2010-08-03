@@ -60,7 +60,7 @@
     <string name="actsendsms_mnuSettings">Settings</string>
     <string name="actsendsms_mnuResetData">Empty fields</string>
     <string name="actsendsms_mnuAbout">About</string>
-    <string name="actsendsms_mnuTemplates">Templates</string>
+    <string name="actsendsms_mnuTemplates">Append template</string>
     <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
     <string name="actsendsms_msg_noProviderSelected">Choose a provider...</string>
     <string name="actsendsms_msg_noSubserviceSelected">Choose a provider\'s service...</string>
@@ -98,6 +98,8 @@
     <string name="actsettingsmain_lblDebugCategory">Debug</string>
     <string name="actsettingsmain_lblProvidersList">Providers settings</string>
     <string name="actsettingsmain_lblProvidersListSummary">Specify the configuration for each SMS provider</string>
+    <string name="actsettingsmain_lblTemplatesList">Templates</string>
+    <string name="actsettingsmain_lblTemplatesListSummary">Add, modify, remove, message templates</string>
     <string name="actsettingsmain_lblSendLog">Send log</string>
     <string name="actsettingsmain_lblSendLogSummary">Send application log to developer, useful to discover failure causes</string>
     <string name="actsettingsmain_chkResetDataAfterSend">Reset after send</string>
@@ -109,6 +111,16 @@
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefixSummary">Default international prefix to use when another prefix is not used</string>
     <string name="actsettingsmain_msgNoSmsProviderAvailable">Sorry, this function isn\'t supported for your device model</string>
+
+
+
+
+    <!-- ActMessageTemplates -->
+    <string name="actmessagetemplates_title">%s - Templates</string>
+    <string name="actmessagetemplates_lblTemplatesCategory">Configure templates</string>
+    <string name="actmessagetemplates_txtTemplate">Undefined</string>
+    <string name="actmessagetemplates_txtTemplateFull">Template %s</string>
+    <string name="actmessagetemplates_txtTemplateSummary"></string>
 
 
 
@@ -155,7 +167,7 @@
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email to developer</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v1.7\nSave SMS into device\'s Sent folder, retrieve last received SMS number, better log management\n\nv1.6\nBugfixes\n\nv1.5\nImport user services saved on JackSMS site, bugfixes\n\nv1.4\nFixed issues with Android 1.6\n\nv1.3\n -Added SubitoSMS, send errors via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v1.8\nMessage templates\n\nv1.7\nSave SMS into device\'s Sent folder, retrieve last received SMS number, better log management\n\nv1.6\nBugfixes\n\nv1.5\nImport user services saved on JackSMS site, bugfixes\n\nv1.4\nFixed issues with Android 1.6\n\nv1.3\n -Added SubitoSMS, send errors via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
     <string name="actabout_msgEmailSubject">About your %s application...</string>
     <string name="actabout_msgEmailBody">Hi Alfredo,\n\n</string>
 

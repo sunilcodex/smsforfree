@@ -99,6 +99,11 @@
         	android:label="@string/common_appNameForDisplay"
        	/>
        	
+        <activity
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActMessageTemplates"
+        	android:label="@string/common_appNameForDisplay"
+       	/>
+       	
 		<!-- The application's publisher ID assigned by AdMob -->
 		<meta-data android:value="a14c28c5ac8b719" android:name="ADMOB_PUBLISHER_ID" />
 		
