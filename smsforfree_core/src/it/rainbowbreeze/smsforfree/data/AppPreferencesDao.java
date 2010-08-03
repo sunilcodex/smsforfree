@@ -24,7 +24,6 @@ import java.util.Calendar;
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.util.ParserUtils;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
 
 public class AppPreferencesDao
 	extends BasePreferencesDao
@@ -48,7 +47,7 @@ public class AppPreferencesDao
     private static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
     private static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
     
-    private static final String TEMPLATES_SEPARATOR = "#$#%#§";
+    private static final String TEMPLATES_SEPARATOR = "§§§§";
     
 
 	//---------- Public Properties

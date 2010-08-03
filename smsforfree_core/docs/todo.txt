@@ -2,7 +2,6 @@ TODOLIST
 -icone mancanti credits aimon
 -mettere bottone che ripresenta ultimo messaggio di invio sms
 -sostituire caratteri illegali su corpo messaggio aimon
--scrivere test per ParserUtils
 
 FUTURE IMPLEMENTAZIONI
 
