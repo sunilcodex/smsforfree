@@ -117,12 +117,11 @@
 	
 	<EditText
 		android:id="@+id/actsendsms_txtMessage"
-		style="@style/common_EditText"
+		style="@style/actsendsms_txtMessage"
 		android:layout_alignParentLeft="true"
 		android:layout_below="@id/actsendsms_btnPickContact"
 		android:layout_above="@id/actsendsms_layoutSend"
 		android:hint="@string/actsendsms_txtBody"
-		android:gravity="top|left"
 	/>
 
 </RelativeLayout>

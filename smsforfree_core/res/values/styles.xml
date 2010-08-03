@@ -98,6 +98,11 @@
 		<item name="android:layout_marginLeft">2dp</item>
 	</style>
 
+	<style name="actsendsms_txtMessage" parent="@style/common_EditText">
+		<item name="android:gravity">top|left</item>
+		<item name="android:capitalize">sentences</item>
+	</style>
+
 
 
 	
