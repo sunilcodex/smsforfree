@@ -88,7 +88,6 @@ public class ActMessageTemplates
 			mElementIndex = index;
 		}
 
-		@Override
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			String newTemplate = newValue.toString();
 			boolean result = changeAndSaveTemplate(mElementIndex, newTemplate);

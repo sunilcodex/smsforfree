@@ -82,6 +82,7 @@ public class SmsDao {
      */
     public ResultOperation<Void> saveSmsInSentFolder(Context context, String destination, String body)
     {
+    	LogFacility.i("Adding SMS into Sent folder");
     	try {
 	    	ContentValues values = new ContentValues();
 	    	values.put("address", destination);
@@ -112,12 +113,13 @@ public class SmsDao {
      * @param context
      * @return
      */
-    public ResultOperation<String> getLastSmsReceivedNumber(Context context) {
-		final String[] projection = new String[] { "_id", "thread_id",
-				"address", "date", "body" };
+    public ResultOperation<String> getLastSmsReceivedNumber(Context context)
+    {
+    	LogFacility.i("Getting number of latest SMS in the Inbox");
+
+    	final String[] projection = new String[] { "_id", "thread_id", "address", "date", "body" };
 		String[] selectionArgs = null;
 		final String sortOrder = "date DESC";
-
 		String numberSms = null;
 		int count = 0;
 

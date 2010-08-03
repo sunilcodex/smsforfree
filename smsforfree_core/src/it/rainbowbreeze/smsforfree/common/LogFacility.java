@@ -99,6 +99,7 @@ public class LogFacility {
 	public static void e(Exception e)
 	{
 		//log the message
+		e("--- Errortrace ---");
 		e(e.getMessage());
 		//and the stack trace
 		final Writer result = new StringWriter();
@@ -106,6 +107,7 @@ public class LogFacility {
 		e.printStackTrace(printWriter);
 		String stacktrace = result.toString();		
 		e(stacktrace);
+		e("------------------");
 	}
 
 	public static void e(String message)

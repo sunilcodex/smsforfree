@@ -725,7 +725,6 @@ public class ActSendSms
 		    }
 		});
 		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			@Override
 			public void onCancel(DialogInterface dialog) {
 		        removeDialog(DIALOG_PHONES);
 			}
@@ -1123,7 +1122,6 @@ public class ActSendSms
 		    }
 		});
 		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			@Override
 			public void onCancel(DialogInterface dialog) {
 		        removeDialog(DIALOG_TEMPLATES);
 			}
