@@ -69,18 +69,20 @@ public class LogicManager
 		
 		LogFacility.i("App started");
 		
+		//load configurations
+		AppPreferencesDao.instance().load(context);
+		LogFacility.i("Preferences loaded");
+		
 		//set application name
 		App.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
-		App.instance().setForceSubserviceRefresh(false);
 		LogFacility.i("App name: " + App.instance().getAppName());
 		
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);
 		App.instance().setAdEnables("true".equalsIgnoreCase(adEnabel));
-		
-		//load configurations
-		AppPreferencesDao.instance().load(context);
-		LogFacility.i("Preferences loaded");
+
+		//init some vars
+		App.instance().setForceSubserviceRefresh(false);
 		
 		//load some application license setting
 		App.instance().setLiteVersionApp(
@@ -111,7 +113,9 @@ public class LogicManager
 		if (res.hasErrors()) return res;
 		res = addProvidersToList(context);
 		if (res.hasErrors()) return res;
-
+		res = checksTemplatesValues(context);
+		if (res.hasErrors()) return res;
+			
 		return res;
 	}
 
@@ -304,4 +308,26 @@ public class LogicManager
 		return res;
 	}
 	
+	/**
+	 * Checks if message templates values are not empty, elsewhere put default templates
+	 * 
+	 * public for testing purposes
+	 * @param context
+	 * @return
+	 */
+	public static ResultOperation<Void> checksTemplatesValues(Context context) {
+		//checks if templates are ok
+		String [] templates = AppPreferencesDao.instance().getMessageTemplates();
+		if (null == templates || templates.length < 1 || TextUtils.isEmpty(templates[0])) {
+			//load standard templates
+			templates = context.getString(R.string.common_defaultMessageTemplates).split("§§§§");
+			AppPreferencesDao.instance().setMessageTemplates(templates);
+			boolean result = AppPreferencesDao.instance().save();
+			if (!result) return new ResultOperation<Void>(new Exception("Error saving application preferences"), ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
+		}
+		
+		return new ResultOperation<Void>();
+	}
+
+
 }

@@ -364,7 +364,7 @@ public class ActSendSms
 			break;
 			
 		case OPTIONMENU_TEMPLATES:
-			addTeamplates();
+			showDialog(DIALOG_TEMPLATES);
 			break;
 			
 		}
@@ -1090,14 +1090,6 @@ public class ActSendSms
 			//clear the string
 			mTxtBody.setText(message);
 		}
-	}
-
-	/**
-	 * Choose a template to add in the nessage boby
-	 */
-	private void addTeamplates() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	
