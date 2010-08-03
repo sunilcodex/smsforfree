@@ -144,6 +144,15 @@ public class ActivityHelper {
 	}
 	
 	/**
+	 * Open message templates activity
+	 */
+	public static void openMessageTemplates(Activity callerActivity)
+	{
+		LogFacility.i("Launching activity Message Templates");
+		openActivity(callerActivity, ActMessageTemplates.class, null, false, REQUESTCODE_NONE);
+	}
+	
+	/**
 	 * Open compact message activity
 	 * @param callerActivity
 	 * @param message the message to compact
