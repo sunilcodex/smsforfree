@@ -84,6 +84,25 @@ public class ParserUtils {
 		}
 	}
 	
+	
+	/**
+	 * Join an array of strings in a single string
+	 * @param array
+	 * @param separator
+	 * @return
+	 */
+	public static String join(String [] array, CharSequence separator)
+	{
+		if (null == array) return null;
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < array.length; i++) {
+			sb.append(array[i]);
+			if (i != array.length -1) sb.append(separator);
+		}
+		return sb.toString();
+	}
+	
 
 	//---------- Private methods
 
