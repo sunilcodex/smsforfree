@@ -92,7 +92,7 @@ public class ActSettingsMain
 		
 		//set value of other preferences
 		mChkResetData.setChecked(AppPreferencesDao.instance().getAutoClearMessage());
-		mChkResetData.setChecked(AppPreferencesDao.instance().getInsertMessageIntoPim());
+		mChkInsertSmsIntoPim.setChecked(AppPreferencesDao.instance().getInsertMessageIntoPim());
 		mTxtSignature.setText(AppPreferencesDao.instance().getSignature());
 		mTxtPrefix.setText(AppPreferencesDao.instance().getDefaultInternationalPrefix());
 		
@@ -207,7 +207,6 @@ public class ActSettingsMain
 	
 	private OnPreferenceChangeListener mChkInsertSmsIntoPimChangeListener = new OnPreferenceChangeListener() {
 		
-		@Override
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			if (!SmsDao.instance().isSentSmsProviderAvailable(preference.getContext())) {
 				ActivityHelper.showInfo(preference.getContext(), R.string.actsettingsmain_msgNoSmsProviderAvailable);
