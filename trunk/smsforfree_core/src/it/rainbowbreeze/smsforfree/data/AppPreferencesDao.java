@@ -22,7 +22,9 @@ package it.rainbowbreeze.smsforfree.data;
 import java.util.Calendar;
 
 import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.util.ParserUtils;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 public class AppPreferencesDao
 	extends BasePreferencesDao
@@ -39,13 +41,14 @@ public class AppPreferencesDao
     private static final String PROP_SMSCOUNTER_NUMBERFORCURRENTDAY = "smsCounterNumber";
     private static final String PROP_SMSCOUNTER_TOTAL = "smsCounterTotal";
     private static final String PROP_UNIQUEID = "uniqueId";
+    private static final String PROP_MESSAGETEMPLATES = "messageTemplates";
     
     private static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     private static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
     private static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
     private static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
     
-    
+    private static final String TEMPLATES_SEPARATOR = "#$#%#§";
     
 
 	//---------- Public Properties
@@ -153,7 +156,10 @@ public class AppPreferencesDao
     public void setSmsTotalNumber(int newValue)
     { mEditor.putInt(PROP_SMSCOUNTER_TOTAL, newValue); }
 
-
+	public String[] getMessageTemplates()
+	{ return mSettings.getString(PROP_MESSAGETEMPLATES, "").split(TEMPLATES_SEPARATOR); }
+	public void setMessageTemplates(String[] newValue)
+	{ mEditor.putString(PROP_MESSAGETEMPLATES, ParserUtils.join(newValue, TEMPLATES_SEPARATOR)); }
     
 
     //---------- Protected Methods
@@ -198,4 +204,8 @@ public class AppPreferencesDao
 	protected String getPreferencesKey() {
 		return GlobalDef.appPreferencesKeys;
 	}
+
+
+
+
 }

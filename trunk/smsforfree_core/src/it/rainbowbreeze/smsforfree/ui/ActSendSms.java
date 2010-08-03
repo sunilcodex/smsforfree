@@ -84,16 +84,17 @@ public class ActSendSms
 	private final static int DIALOG_SENDING_CAPTCHA = 13;
 	private static final int DIALOG_STARTUP_INFOBOX = 14;
 	private static final int DIALOG_SEND_CRASH_REPORTS = 15;
+	private static final int DIALOG_TEMPLATES = 16;
 	
 	private final static String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	private final static String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
 
-	private final static int OPTIONMENU_EXIT = 1;
 	private final static int OPTIONMENU_SETTINGS = 2;
 	private final static int OPTIONMENU_SIGNATURE = 3;
 	private final static int OPTIONMENU_ABOUT = 4;
 	private final static int OPTIONMENU_RESETDATA = 5;
 	private final static int OPTIONMENU_COMPRESS = 6;
+	private final static int OPTIONMENU_TEMPLATES = 7;
 
 	
 	private Spinner mSpiProviders;
@@ -325,6 +326,8 @@ public class ActSendSms
 
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
+    	menu.add(0, OPTIONMENU_TEMPLATES, 0, R.string.actsendsms_mnuTemplates)
+			.setIcon(R.drawable.ic_menu_friendslist);
     	menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress)
     		.setIcon(R.drawable.ic_menu_cut);
 		menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
@@ -339,10 +342,6 @@ public class ActSendSms
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case OPTIONMENU_EXIT:
-			finish();
-			break;
-			
 		case OPTIONMENU_SETTINGS:
 			ActivityHelper.openSettingsMain(this);
 			break;
@@ -362,6 +361,10 @@ public class ActSendSms
 
 		case OPTIONMENU_RESETDATA:
 			cleanDataFields(true);
+			break;
+			
+		case OPTIONMENU_TEMPLATES:
+			addTeamplates();
 			break;
 			
 		}
@@ -414,6 +417,10 @@ public class ActSendSms
     	switch (id) {
     	case DIALOG_PHONES:
     		retDialog = createPhonesDialog();
+    		break;
+    		
+    	case DIALOG_TEMPLATES:
+    		retDialog = createTemplatesDialog();
     		break;
     		
     	case DIALOG_CAPTCHA_REQUEST:
@@ -1084,6 +1091,45 @@ public class ActSendSms
 			mTxtBody.setText(message);
 		}
 	}
+
+	/**
+	 * Choose a template to add in the nessage boby
+	 */
+	private void addTeamplates() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	/**
+	 * Create a list dialog box that shows all the templates available
+	 * @return
+	 */
+	private Dialog createTemplatesDialog()
+	{
+		String[] templates = AppPreferencesDao.instance().getMessageTemplates();
+		CharSequence[] items = new CharSequence[templates.length];
+		
+		int i=0;
+		for (String template : templates) {
+			items[i++] = template;
+		}
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(getText(R.string.actsendsms_dlgPickTemplate));
+		builder.setItems(items, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int item) {
+		        String template = (String) ((AlertDialog) dialog).getListView().getItemAtPosition(item);
+				mTxtBody.append(template);
+		        removeDialog(DIALOG_TEMPLATES);
+		    }
+		});
+		AlertDialog alert = builder.create();
+		
+		return alert;
+	}
+
+
 	
 	
 }

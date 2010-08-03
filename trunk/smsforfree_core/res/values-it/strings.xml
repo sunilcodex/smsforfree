@@ -53,11 +53,13 @@
     <string name="actsendsms_spiProvidersPrompt">Scegli un provider SMS</string>
     <string name="actsendsms_spiServicesPrompt">Scegli un servizio</string>
     <string name="actsendsms_dlgPickNumber">Scegli un servizio</string>
+    <string name="actsendsms_dlgPickTemplate">Scegli un modello</string>
     <string name="actsendsms_mnuSignature">Aggiungi firma</string>
     <string name="actsendsms_mnuCompress">Comprimi testo</string>
     <string name="actsendsms_mnuSettings">Impostazioni</string>
     <string name="actsendsms_mnuResetData">Svuota campi</string>
     <string name="actsendsms_mnuAbout">Informazioni su...</string>
+    <string name="actsendsms_mnuTemplates">Modelli</string>
     <string name="actsendsms_msg_noPhoneNumber">Non ci sono numeri telefonici per il contatto selezionato...</string>
     <string name="actsendsms_msg_noProviderSelected">Scegli prima un provider...</string>
     <string name="actsendsms_msg_noSubserviceSelected">Scegli prima un servizio del provider...</string>
