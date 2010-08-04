@@ -162,7 +162,6 @@ public class ActSettingsSmsService
 		//exit if the command was processed
 		if (result) return result;
 		
-		
 		//save EditText values
 		Bundle bundle = new Bundle();
 		for (int i = 0; i < mEditedService.getParametersNumber(); i++) {

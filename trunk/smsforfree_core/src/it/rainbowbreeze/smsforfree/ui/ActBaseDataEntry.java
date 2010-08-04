@@ -49,8 +49,8 @@ public abstract class ActBaseDataEntry
 	
 	
 	//---------- Private fields
-	protected final static int OPTIONMENU_SAVE = 10000;
-	protected final static int OPTIONMENU_CANCEL = 10001;
+	protected final static int OPTIONMENU_SAVE = 10;
+	protected final static int OPTIONMENU_CANCEL = 11;
 	
 	protected final static String KEY_MUSTRETURNFROMCALLEDACTIVITY = "mustReturnFromCalledActivity";
 	
@@ -153,7 +153,7 @@ public abstract class ActBaseDataEntry
 			break;
 			
 		default:
-			result = super.onOptionsItemSelected(item); 
+			result = super.onOptionsItemSelected(item);
 		}
 
 		return result; 
