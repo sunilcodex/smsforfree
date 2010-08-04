@@ -84,8 +84,8 @@ public class AimonProvider
 	private static final int MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG = 20;
 	private static final int MSG_INDEX_UNMANAGED_SERVER_ERROR = 21;
 	
-	public final static int COMMAND_CHECKCREDENTIALS = 100;
-	public final static int COMMAND_CHECKCREDITS = 101;
+	public final static int COMMAND_CHECKCREDENTIALS = 1000;
+	public final static int COMMAND_CHECKCREDITS = 1001;
 	
 	private String[] mMessages;
 	private AimonDictionary mDictionary;
@@ -389,10 +389,10 @@ public class AimonProvider
 		SmsServiceCommand newCommand;
 		//initializes the command list
 		newCommand = new SmsServiceCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 100, R.drawable.ic_menu_login);
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
 		commands.add(newCommand);
 		newCommand = new SmsServiceCommand(
-				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 101);
+				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 1001);
 		commands.add(newCommand);
 		
 		return commands;

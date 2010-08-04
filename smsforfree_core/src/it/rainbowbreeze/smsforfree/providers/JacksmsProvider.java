@@ -82,8 +82,8 @@ public class JacksmsProvider
 	
 
 	//---------- Public properties
-	public final static int COMMAND_LOADTEMPLATESERVICES = 100;
-	public final static int COMMAND_LOADUSERSERVICES = 101;
+	public final static int COMMAND_LOADTEMPLATESERVICES = 1000;
+	public final static int COMMAND_LOADUSERSERVICES = 1001;
 	
 	@Override
 	public String getId()
@@ -283,10 +283,10 @@ public class JacksmsProvider
 		SmsServiceCommand command;
 		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
 		command = new SmsServiceCommand(
-				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 100, R.drawable.ic_menu_refresh);
+				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1000, R.drawable.ic_menu_refresh);
 		commands.add(command);
 		command = new SmsServiceCommand(
-				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 101, R.drawable.ic_menu_cloud);
+				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 1001, R.drawable.ic_menu_cloud);
 		commands.add(command);
 		
 		return commands;

@@ -19,6 +19,14 @@
  -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="@string/actsettingsmain_lblProvidersCategory">
+		<Preference
+			android:key="actsettingsmain_providersPref"
+			android:title="@string/actsettingsmain_lblProvidersList"
+			android:summary="@string/actsettingsmain_lblProvidersListSummary"
+		/>
+	</PreferenceCategory>
+	
 	<PreferenceCategory android:title="@string/actsettingsmain_lblApplicationCategory">
 		<CheckBoxPreference
 			android:key="actsettingsmain_chkResetDataAfterSend"
@@ -44,14 +52,6 @@
 			android:key="actsettingsmain_templatesPref"
 			android:title="@string/actsettingsmain_lblTemplatesList"
 			android:summary="@string/actsettingsmain_lblTemplatesListSummary"
-		/>
-	</PreferenceCategory>
-	
-	<PreferenceCategory android:title="@string/actsettingsmain_lblProvidersCategory">
-		<Preference
-			android:key="actsettingsmain_providersPref"
-			android:title="@string/actsettingsmain_lblProvidersList"
-			android:summary="@string/actsettingsmain_lblProvidersListSummary"
 		/>
 	</PreferenceCategory>
 	

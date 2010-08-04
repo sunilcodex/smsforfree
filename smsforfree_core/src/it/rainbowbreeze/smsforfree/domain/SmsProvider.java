@@ -68,7 +68,7 @@ public abstract class SmsProvider
 	protected WebserviceClient mWebserviceClient;
 
 	//command used to register to provider
-	protected final static int COMMAND_REGISTER = 10000;
+	protected final static int COMMAND_REGISTER = 100;
 	
 	
 	
