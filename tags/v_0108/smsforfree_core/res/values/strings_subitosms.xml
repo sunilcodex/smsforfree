@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  
+ Copyright (C) 2010 Alfredo Morresi
+ This file is part of SmsForFree project.
+   
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 3 of the License, or (at your option) any later
+ version.
+   
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<resources>
+    <string name="subitosms_username_desc">Username</string>
+    <string name="subitosms_password_desc">Password</string>
+    <string name="subitosms_sender_desc">Sender</string>
+    <string name="subitosms_description">Send SMS to Italy and other 178 countries at less than 7 eurocent. www.subitosms.it.</string>
+    <string name="subitosms_commandCheckCredentials">Check credentials</string>
+    <string name="subitosms_commandCheckCredits">Get credit</string>
+    <string name="subitosms_msg_invalidCredentials">Invalid SubitoSMS credentials :(</string>
+    <string name="subitosms_msg_invalidSender">Invalid sender.\nChange it in the SubitoSMS provider settings</string>
+    <string name="subitosms_msg_invalidDestination">Invalid destination.\n</string>
+    <string name="subitosms_msg_validCredentials">Valid SubitoSMS credentials</string>
+    <string name="subitosms_msg_serverError">SubitoSMS internal server error. Send log to developer (in the Preferences) to alert it about the problem.\n %s</string>
+    <string name="subitosms_msg_remainingCredits">Remaining credits: %s</string>
+    <string name="subitosms_msg_emptyMessage">Empty messagge</string>
+    <string name="subitosms_msg_notEnoughCredit">Not enough credit for sending SMS. Recharge our account on SubitoSMS</string>
+    <string name="subitosms_msg_messageQueued">Message sent.\n %s</string>
+    <string name="subitosms_registerLink">http://www.subitosms.it/registrazione_step1.php</string>
+</resources>
