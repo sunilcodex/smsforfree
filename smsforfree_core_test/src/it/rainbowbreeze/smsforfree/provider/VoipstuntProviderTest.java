@@ -37,12 +37,21 @@ public class VoipstuntProviderTest
 
 	//---------- Private fields
 
+	
+	
+	
 	//---------- Constructor
 
+	
+	
+	
 	//---------- SetUp and TearDown
 
+	
+	
+	
 	//---------- Tests methods
-
+	
 	@Override
 	public void testAndroidTestCaseSetupProperly()
 	{
@@ -64,6 +73,8 @@ public class VoipstuntProviderTest
 	public void testMaxMessageLenght() {
 		String smsMessageLenght;
 	}
+	
+	
 	
 
 	//---------- Private methods
