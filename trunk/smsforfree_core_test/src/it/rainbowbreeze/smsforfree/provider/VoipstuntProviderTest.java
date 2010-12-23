@@ -71,7 +71,6 @@ public class VoipstuntProviderTest
 	}
 
 	public void testMaxMessageLenght() {
-		String smsMessageLenght;
 	}
 	
 	
