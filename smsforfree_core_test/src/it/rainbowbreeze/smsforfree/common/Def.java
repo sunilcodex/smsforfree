@@ -30,17 +30,17 @@ public interface Def
 	public String TEST_DESTINATION = "XXXX";
 
 	public String AIMON_USERNAME = "f.martinelli@aimon.it";
-	public String AIMON_PASSWORD = "XXXX";
+	public String AIMON_PASSWORD = "smsf0rfr33";
 	public String AIMON_SENDER = "3912345678";
 	
 	public String SUBITOSMS_USERNAME = "fmartinelli";
-	public String SUBITOSMS_PASSWORD = "XXXX";
+	public String SUBITOSMS_PASSWORD = "outtura";
 	public String SUBITOSMS_SENDER = "3912345678";
 	
 	public String JACKSMS_USERNAME = "f.martinelli";
-	public String JACKSMS_PASSWORD = "XXXX";
+	public String JACKSMS_PASSWORD = "smsf0rfr33";
 	
 	public String VOIPSTUNT_USERNAME = "f.martinelli";
-	public String VOIPSTUNT_PASSWORD = "XXXX";
+	public String VOIPSTUNT_PASSWORD = "smsf0rfr33";
 	public String VOIPSTUNT_SENDER = "3912345678";
 }

@@ -37,7 +37,7 @@
          so the apk is not created and the instrumentation test needs this
          apk in order to work :( -->
     <instrumentation
-    	android:targetPackage="it.rainbowbreeze.smsforfree"
+    	android:targetPackage="it.rainbowbreeze.smsforfree.lite"
     	android:name="android.test.InstrumentationTestRunner"
    	/>
 </manifest> 
