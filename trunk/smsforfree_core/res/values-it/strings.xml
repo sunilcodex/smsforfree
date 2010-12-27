@@ -126,7 +126,7 @@
 
 
     <!-- ActSettingsSmsService -->
-    <string name="actsettingssmsservice_title">%s - Impostazioni per %s</string>
+    <string name="actsettingssmsservice_title">%1$s - Impostazioni per %2$s</string>
     <string name="actsettingssmsservice_btnConfigureSubservices">Configura i servizi</string>
 	<string name="actsettingssmsservice_lblServiceName">Nome servizio</string>    
     <string name="actsettingssmsservice_mnuRegisterToProvider">Registrati a %s</string>
@@ -147,7 +147,7 @@
 
 
     <!-- ActSubservicesList -->
-    <string name="actsubserviceslist_title">%s - Servizi per %s</string>
+    <string name="actsubserviceslist_title">%1$s - Servizi per %2$s</string>
     <string name="actsubserviceslist_lblNoSubservices">Non ci sono servizi configurati.\n\n Per aggiungere un servizio, usa il tasto Menu e seleziona\n\"Aggiungi servizio\"</string>
     <string name="actsubserviceslist_mnuHeaderTitle">Scegli azione</string>
     <string name="actsubserviceslist_mnuDeleteService">Elimina</string>
@@ -182,17 +182,10 @@
 
 
 
-    <!-- ActInitializationError -->
-    <string name="actinitialization_title">%s - Errori nell\'inizializzazione :(</string>
-    <string name="actinitialization_msgErrors">Spiacente, ci sono stati alcuni errori nell\'inizializzazione del programma...\n\nRiavvia l\'applicazione e, se il problema persiste, avvisa l\'autore.\n\nGrazie!</string>
-
-
-
-
     <!-- ActCompactMessage -->
     <string name="actcompactmessage_title">%s - Comprimi messaggio</string>
     <string name="actcompactmessage_lblHelp">Scegli quanto comprimere il messaggio</string>
-    <string name="actcompactmessage_lblStatus">Lunghezza originale: %s - Nuova: %s</string>
+    <string name="actcompactmessage_lblStatus">Lunghezza originale: %1$s - Nuova: %2$s</string>
 
 
 

@@ -19,8 +19,11 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 import java.util.List;
 
@@ -31,8 +34,13 @@ public abstract class SmsSingleProvider
 	extends SmsProvider
 {
 	//---------- Ctors
-	protected SmsSingleProvider(ProviderDao dao, int numberOfParameters) {
-		super(dao, numberOfParameters);
+	protected SmsSingleProvider(
+			LogFacility logFacility,
+			int numberOfParameters,
+			AppPreferencesDao appPreferencesDao,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper) {
+		super(logFacility, numberOfParameters, appPreferencesDao, providerDao, activityHelper);
 	}
 	
 	

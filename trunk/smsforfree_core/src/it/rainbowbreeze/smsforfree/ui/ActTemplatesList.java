@@ -19,27 +19,31 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
-import it.rainbowbreeze.smsforfree.util.GlobalUtils;
+import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
- * @author rainbowbreeze
+ * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class ActTemplatesList
 	extends ListActivity
 {
 	//---------- Private fields
-	SmsProvider mProvider;
+	private SmsProvider mProvider;
+	private LogFacility mLogFacility;
 
 	
 	
@@ -54,11 +58,13 @@ public class ActTemplatesList
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        setTitle(String.format(
-        		getString(R.string.acttemplateslist_title), App.instance().getAppName()));
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
 
-		setContentView(R.layout.acttemplateslist);
 		getDataFromIntent(getIntent());
+        setTitle(String.format(
+        		getString(R.string.acttemplateslist_title), App.i().getAppName()));
+		setContentView(R.layout.acttemplateslist);
 		
 		if (null == mProvider) return;
 
@@ -91,7 +97,7 @@ public class ActTemplatesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(App.instance().getProviderList(), id);
+			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), id);
 		} else {
 			mProvider = null;
 		}

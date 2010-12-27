@@ -28,7 +28,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -38,7 +38,8 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
-import it.rainbowbreeze.smsforfree.util.Base64;
+import it.rainbowbreeze.smsforfree.helper.Base64Helper;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 /**
  * 
@@ -48,13 +49,6 @@ import it.rainbowbreeze.smsforfree.util.Base64;
 public class AimonProvider
 	extends SmsMultiProvider
 {
-	//---------- Ctors
-	public AimonProvider(ProviderDao dao)
-	{
-		super(dao, PARAM_NUMBER);
-	}
-	
-	
 	//---------- Private fields
 	private final static int PARAM_NUMBER = 3;
 	private final static int PARAM_INDEX_USERNAME = 0;
@@ -92,6 +86,16 @@ public class AimonProvider
 	
 	
 
+	//---------- Constructors
+	public AimonProvider(
+			LogFacility logFacility,
+			AppPreferencesDao appPreferencesDao,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper) {
+		super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
+	}
+	
+	
 	//---------- Public fields
 	
 	
@@ -209,7 +213,7 @@ public class AimonProvider
 	    	} else {
 	        	if (TextUtils.isDigitsOnly(sender)) {
 	        		//find prefix to use
-	        		String prefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+	        		String prefix = mAppPreferencesDao.getDefaultInternationalPrefix();
 	        		//append it to number
 	        		okSender = prefix + sender;
 	        		//and check length
@@ -252,8 +256,8 @@ public class AimonProvider
 			res = sendSmsViaHttpConversation(username, password, serviceId, okSender, okDestination, okBody);
 		} else {
 	    	//encode sender and body
-	    	okSender = Base64.encodeBytes(okSender.getBytes());
-			okBody = Base64.encodeBytes(okBody.getBytes());
+	    	okSender = Base64Helper.encodeBytes(okSender.getBytes());
+			okBody = Base64Helper.encodeBytes(okBody.getBytes());
 			//other type of payed sms
 			res = sendSmsWithApi(username, password, serviceId, okSender, okDestination, okBody);
 		}
@@ -315,7 +319,7 @@ public class AimonProvider
 
 	@Override
 	protected String getParametersFileName()
-	{ return GlobalDef.aimonParametersFileName; }
+	{ return App.aimonParametersFileName; }
 
 	@Override
 	protected String getTemplatesFileName()
@@ -342,31 +346,31 @@ public class AimonProvider
 		//create the list of subservices
 		mSubservices = new ArrayList<SmsService>();
 		
-		service = new SmsConfigurableService(0);
+		service = new SmsConfigurableService(mLogFacility, 0);
 		service.setId(AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE_ANONYMOUS]);
 		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_FREE_LENGTH);
 		mSubservices.add(service);
 
-		service = new SmsConfigurableService(0);
+		service = new SmsConfigurableService(mLogFacility, 0);
 		service.setId(AimonDictionary.ID_API_FREE_NORMAL);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_FREE_NORMAL]);
 		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_FREE_LENGTH);
 		mSubservices.add(service);
 
-		service = new SmsConfigurableService(0);
+		service = new SmsConfigurableService(mLogFacility, 0);
 		service.setId(AimonDictionary.ID_API_ANONYMOUS_SENDER);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_ANONYMOUS]);
 		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_API_LENGTH);
 		mSubservices.add(service);
 
-		service = new SmsConfigurableService(0);
+		service = new SmsConfigurableService(mLogFacility, 0);
 		service.setId(AimonDictionary.ID_API_SELECTED_SENDER_NO_REPORT);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_NORMAL]);
 		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_API_LENGTH);
 		mSubservices.add(service);
 
-		service = new SmsConfigurableService(0);
+		service = new SmsConfigurableService(mLogFacility, 0);
 		service.setId(AimonDictionary.ID_API_SELECTED_SENDER_REPORT);
 		service.setName(mMessages[MSG_INDEX_SERVICENANE_REPORT]);
 		service.setMaxMessageLenght(AimonDictionary.MAX_BODY_API_LENGTH);
@@ -538,9 +542,9 @@ public class AimonProvider
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
-			LogFacility.e("AimonProvider api error reply");
-			LogFacility.e(res);
-			LogFacility.e(reply);
+			mLogFacility.e("AimonProvider api error reply");
+			mLogFacility.e(res);
+			mLogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;
@@ -680,9 +684,9 @@ public class AimonProvider
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
-			LogFacility.e("AimonProvider http error reply");
-			LogFacility.e(res);
-			LogFacility.e(reply);
+			mLogFacility.e("AimonProvider http error reply");
+			mLogFacility.e(res);
+			mLogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;

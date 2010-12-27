@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
+import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Context;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ import android.os.Handler;
  *
  */
 public class ExecuteProviderCommandThread
-	extends BaseBackgroundThread
+	extends RainbowBaseBackgroundThread<String>
 {
 	//---------- Ctors
 	public ExecuteProviderCommandThread(

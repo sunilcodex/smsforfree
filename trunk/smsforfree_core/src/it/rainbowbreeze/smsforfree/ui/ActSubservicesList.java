@@ -19,14 +19,17 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandThread;
-import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -42,6 +45,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -62,6 +66,8 @@ public class ActSubservicesList
 
 	private ExecuteProviderCommandThread mExecutedProviderCommandThread;
 	private ProgressDialog mProgressDialog;
+	private LogFacility mLogFacility;
+	private ActivityHelper mActivityHelper;
 
 
 
@@ -75,6 +81,11 @@ public class ActSubservicesList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+		
 		setContentView(R.layout.actsubserviceslist);
 		
 		getDataFromIntent(getIntent());
@@ -85,7 +96,7 @@ public class ActSubservicesList
 		//update title
         setTitle(String.format(
         		getString(R.string.actsubserviceslist_title),
-        		App.instance().getAppName(),
+        		App.i().getAppName(),
         		mProvider.getName()));
 
         mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);
@@ -107,7 +118,7 @@ public class ActSubservicesList
 		mExecutedProviderCommandThread = (ExecuteProviderCommandThread) getLastNonConfigurationInstance();
 		if (null != mExecutedProviderCommandThread) {
 			//create and show a new progress dialog
-			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
+			mProgressDialog = mActivityHelper.createAndShowProgressDialog(this, 0, R.string.common_msg_executingCommand);
 			//register new handler
 			mExecutedProviderCommandThread.registerCallerHandler(mExecutedCommandHandler);
 		}
@@ -204,7 +215,7 @@ public class ActSubservicesList
 			//find current selected service
 			service = (SmsService) getListAdapter().getItem(menuInfo.position);
 			//and edit it
-			ActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());
+			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());
 			break;
 		case CONTEXTMENU_DELETESERVICE:
 			service = (SmsService) getListAdapter().getItem(menuInfo.position);
@@ -212,7 +223,7 @@ public class ActSubservicesList
 			refreshSubservicesList();
 			ResultOperation<Void> res = mProvider.saveSubservices(this);
 			if (res.hasErrors()) {
-				ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
+				mActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 				return false;
 			}
 			break;
@@ -226,7 +237,7 @@ public class ActSubservicesList
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		SmsService service = mProvider.getAllSubservices().get(position);
 		
-		ActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());
+		mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());
 	}
 
 	
@@ -244,7 +255,7 @@ public class ActSubservicesList
 			//get templateId
 			String templateId = data.getExtras().getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
 			//and launch the creation of new subservice
-			ActivityHelper.openSettingsSmsService(this, mProvider.getId(), templateId, SmsService.NEWSERVICEID);
+			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), templateId, SmsService.NEWSERVICEID);
 			break;
 			
 		case ActivityHelper.REQUESTCODE_SERVICESETTINGS:
@@ -267,9 +278,9 @@ public class ActSubservicesList
 			//dismisses progress dialog
 			if (null != mProgressDialog && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
-			ResultOperation<String> res = mExecutedProviderCommandThread.getResult();
+			RainbowResultOperation<String> res = mExecutedProviderCommandThread.getResult();
 			//and show the result
-			ActivityHelper.showCommandExecutionResult(ActSubservicesList.this, res);
+			mActivityHelper.showCommandExecutionResult(ActSubservicesList.this, res);
 			//free the thread
 			mExecutedProviderCommandThread = null;
 			//refresh subservices list
@@ -292,7 +303,7 @@ public class ActSubservicesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(App.instance().getProviderList(), id);
+			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), id);
 		} else {
 			mProvider = null;
 		}
@@ -317,10 +328,10 @@ public class ActSubservicesList
 	 */
 	private void addNewService() {
 		if (!mProvider.hasTemplatesConfigured()) {
-			ActivityHelper.showInfo(this, R.string.actsubserviceslist_msgNoTemplates);
+			mActivityHelper.showInfo(this, R.string.actsubserviceslist_msgNoTemplates);
 		} else {
 			//launch the activity for selecting subservice template
-			ActivityHelper.openTemplatesList(this, mProvider.getId());
+			mActivityHelper.openTemplatesList(this, mProvider.getId());
 		}
 	}
 
@@ -334,7 +345,7 @@ public class ActSubservicesList
 	private void execureProviderCommand(SmsProvider provider, int subserviceId, Bundle extraData)
 	{
 		//create new progress dialog
-		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
+		mProgressDialog = mActivityHelper.createAndShowProgressDialog(this, 0, R.string.common_msg_executingCommand);
 
 		//preparing the background thread for executing provider command
 		mExecutedProviderCommandThread = new ExecuteProviderCommandThread(

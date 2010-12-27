@@ -25,8 +25,8 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.WebserviceClient;
+import it.rainbowbreeze.smsforfree.helper.Base64Helper;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
-import it.rainbowbreeze.smsforfree.util.Base64;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import org.apache.http.client.ClientProtocolException;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * Base provider for sms service
@@ -53,22 +53,30 @@ import android.text.TextUtils;
 public abstract class SmsProvider
 	extends SmsService
 {
-	//---------- Ctors
-	protected SmsProvider(ProviderDao dao, int numberOfParameters)
-	{
-		super(numberOfParameters);
-		mDao = dao;
-	}
-
-	
-	
-	
 	//---------- Private fields
-	protected ProviderDao mDao;
+	protected final AppPreferencesDao mAppPreferencesDao;
+	protected final ProviderDao mProviderDao;
+	protected final ActivityHelper mActivityHelper;
 	protected WebserviceClient mWebserviceClient;
 
 	//command used to register to provider
 	protected final static int COMMAND_REGISTER = 100;
+	
+	
+	
+	//---------- Constructors
+	protected SmsProvider(
+			LogFacility logFacility,
+			int numberOfParameters,
+			AppPreferencesDao appPreferencesDao,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper) {
+		super(logFacility, numberOfParameters);
+		mAppPreferencesDao = checkNotNull(appPreferencesDao, "AppPreferencesDao");
+		mProviderDao = checkNotNull(providerDao, "ProviderDao");
+		mActivityHelper = checkNotNull(activityHelper, "ActivityHelper");
+	}
+
 	
 	
 	
@@ -131,7 +139,7 @@ public abstract class SmsProvider
 	 * @return
 	 */
 	public ResultOperation<Void> loadParameters(Context context) {
-		return mDao.loadProviderParameters(context, getParametersFileName(), this);
+		return mProviderDao.loadProviderParameters(context, getParametersFileName(), this);
 	}
 	
 	/**
@@ -141,7 +149,7 @@ public abstract class SmsProvider
 	 * @return
 	 */
 	public ResultOperation<Void> saveParameters(Context context){
-		return mDao.saveProviderParameters(context, getParametersFileName(), this);
+		return mProviderDao.saveProviderParameters(context, getParametersFileName(), this);
 	}
 
 	/**
@@ -457,7 +465,7 @@ public abstract class SmsProvider
      */
     protected String transalteInInternationalFormat(String number)
     {
-    	String defaultPrefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+    	String defaultPrefix = mAppPreferencesDao.getDefaultInternationalPrefix();
     	return transalteInInternationalFormat(number, defaultPrefix);
 	}
     
@@ -490,7 +498,7 @@ public abstract class SmsProvider
      */
 	protected String removeInternationalPrefix(String number)
 	{
-    	String defaultPrefix = AppPreferencesDao.instance().getDefaultInternationalPrefix();
+    	String defaultPrefix = mAppPreferencesDao.getDefaultInternationalPrefix();
     	return removeInternationalPrefix(number, defaultPrefix);
 	}
 
@@ -523,7 +531,7 @@ public abstract class SmsProvider
 	 */
 	protected ResultOperation<String> registerToProvider(Context context, String urlToOpen)
 	{
-		ActivityHelper.openBrowser(context, urlToOpen, true);
+		mActivityHelper.openBrowser(context, urlToOpen, true);
 		return new ResultOperation<String>();
 	}
 	
@@ -537,23 +545,23 @@ public abstract class SmsProvider
 	 */
 	protected void logRequest(String url, HashMap<String, String> headers, HashMap<String, String> parameters)
 	{
-		LogFacility.e(getName() + " provider request content");
+		mLogFacility.e(getName() + " provider request content");
 		if (!TextUtils.isEmpty(url)) {
-			LogFacility.e("Url");
-			LogFacility.e(Base64.encodeBytes(url.getBytes()));
+			mLogFacility.e("Url");
+			mLogFacility.e(Base64Helper.encodeBytes(url.getBytes()));
 		}
 		if (null != headers) {
-			LogFacility.e("Headers");
+			mLogFacility.e("Headers");
 			for (Entry<String, String> header : headers.entrySet()) {
-				LogFacility.e(Base64.encodeBytes(header.getKey().getBytes()));
-				LogFacility.e(Base64.encodeBytes(header.getValue().getBytes()));
+				mLogFacility.e(Base64Helper.encodeBytes(header.getKey().getBytes()));
+				mLogFacility.e(Base64Helper.encodeBytes(header.getValue().getBytes()));
 			}
 		}
 		if (null != parameters) {
-			LogFacility.e("Parameters");
+			mLogFacility.e("Parameters");
 			for (Entry<String, String> param : parameters.entrySet()) {
-				LogFacility.e(Base64.encodeBytes(param.getKey().getBytes()));
-				LogFacility.e(Base64.encodeBytes(param.getValue().getBytes()));
+				mLogFacility.e(Base64Helper.encodeBytes(param.getKey().getBytes()));
+				mLogFacility.e(Base64Helper.encodeBytes(param.getValue().getBytes()));
 			}
 		}
 	}

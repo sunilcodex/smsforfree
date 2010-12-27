@@ -19,9 +19,10 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import android.app.Activity;
 import android.app.Dialog;
@@ -29,6 +30,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class ActAbout
 	extends Activity
@@ -38,6 +40,9 @@ public class ActAbout
 	private final static int OPTIONMENU_EMAIL = 2;
 	private final static int DIALOG_CHANGESLOG = 1;
 
+	private LogFacility mLogFacility;
+	private ActivityHelper mActivityHelper;
+	private LogicManager mLogicManager;
 	
 	
 	
@@ -48,26 +53,30 @@ public class ActAbout
 	
 	//---------- Events
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
+
         setContentView(R.layout.actabout);
         setTitle(String.format(
-        		getString(R.string.actabout_title), App.instance().getAppName()));
+        		getString(R.string.actabout_title), App.i().getAppName()));
         
         TextView lblVersion = (TextView)findViewById(R.id.actabout_lblAppVersion);
-        String version = GlobalDef.appVersionDescription;
-        if (App.instance().isLiteVersionApp()) version = version + " " + GlobalDef.lite_description;
+        String version = App.APP_DISPLAY_VERSION;
+        if (App.i().isLiteVersionApp()) version = version + " " + App.lite_description;
         lblVersion.setText(version);
 
         TextView lblSentSms = (TextView)findViewById(R.id.actabout_lblSentSms);
-        String sentSms = String.valueOf(LogicManager.getSmsSentToday());
-        if (App.instance().isLiteVersionApp()) sentSms = sentSms + "/" + App.instance().getAllowedSmsForDay();
+        String sentSms = String.valueOf(mLogicManager.getSmsSentToday());
+        if (App.i().isLiteVersionApp()) sentSms = sentSms + "/" + App.i().getAllowedSmsForDay();
         lblSentSms.setText(String.format(
         		getString(R.string.actabout_lblSentSms), sentSms));
         
         TextView lblDescription2 = (TextView) findViewById(R.id.actabout_lblDescription2);
-        lblDescription2.setText(String.format(getString(R.string.actabout_lblDescription2), GlobalDef.EMAIL_FOR_LOG));
+        lblDescription2.setText(String.format(getString(R.string.actabout_lblDescription2), App.EMAIL_FOR_LOG));
 	}
 	
 	
@@ -91,9 +100,9 @@ public class ActAbout
 			break;
 		
 		case OPTIONMENU_EMAIL:
-			ActivityHelper.sendEmail(this,
-					GlobalDef.EMAIL_FOR_LOG,
-					String.format(getString(R.string.actabout_msgEmailSubject), App.instance().getAppName()),
+			mActivityHelper.sendEmail(this,
+					App.EMAIL_FOR_LOG,
+					String.format(getString(R.string.actabout_msgEmailSubject), App.i().getAppName()),
 					getString(R.string.actabout_msgEmailBody));
 			break;
 		}
@@ -110,7 +119,7 @@ public class ActAbout
 		
 		switch (id) {
 		case DIALOG_CHANGESLOG:
-			returnDialog = ActivityHelper.createInformativeDialog(this,
+			returnDialog = mActivityHelper.createInformativeDialog(this,
 					R.string.actabout_msgChangeslogTitle, R.string.actabout_msgChangeslog, R.string.common_btnOk);
 			break;
 

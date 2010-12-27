@@ -21,19 +21,24 @@ package it.rainbowbreeze.smsforfree.provider;
 
 import java.util.List;
 
+import android.test.AndroidTestCase;
+
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary;
-import junit.framework.TestCase;
+import it.rainbowbreeze.smsforfree.util.TestHelper;
 
 /**
  * 
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class JacksmsDictionaryTest extends TestCase {
+public class JacksmsDictionaryTest extends AndroidTestCase {
 	//---------- Private fields
 	private JacksmsDictionary mDictionary;
+	private LogFacility mLogFacility;
 
 
 
@@ -47,7 +52,10 @@ public class JacksmsDictionaryTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		TestHelper.init(getContext());
 		mDictionary = new JacksmsDictionary();
+		mLogFacility = RainbowServiceLocator.get(LogFacility.class);
 	}
 
 	
@@ -61,7 +69,7 @@ public class JacksmsDictionaryTest extends TestCase {
 	{
 		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==";
 
-		List<SmsConfigurableService> services = mDictionary.extractUserServices(providerReply);
+		List<SmsConfigurableService> services = mDictionary.extractUserServices(mLogFacility, providerReply);
 		assertEquals("Wrong service number", 1, services.size());
 		SmsService service = services.get(0);
 		assertEquals("Wrong service id", "57926", service.getId());
@@ -82,7 +90,7 @@ public class JacksmsDictionaryTest extends TestCase {
 	{
 		String providerReply = "58302	61	AimonFree	YWFhYQ==	YmJiYg==	Y2NjYw==	";
 
-		List<SmsConfigurableService> services = mDictionary.extractUserServices(providerReply);
+		List<SmsConfigurableService> services = mDictionary.extractUserServices(mLogFacility, providerReply);
 		assertEquals("Wrong service number", 1, services.size());
 		SmsService service = services.get(0);
 		assertEquals("Wrong service id", "58302", service.getId());
@@ -104,7 +112,7 @@ public class JacksmsDictionaryTest extends TestCase {
 		String returnChar = String.valueOf((char) 10);
 		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==" + returnChar +
 						"57922	61	AimonTest	YWFhYQ==	YmJiYg==	Y2NjYw==	";
-		List<SmsConfigurableService> services = dictionary.extractUserServices(providerReply);
+		List<SmsConfigurableService> services = dictionary.extractUserServices(mLogFacility, providerReply);
 		assertEquals("Wrong service number", 2, services.size());
 
 		SmsService service = services.get(0);

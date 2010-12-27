@@ -12,18 +12,21 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ * import android.util.Log;
+
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.rainbowbreeze.smsforfree.ui;
 
-import java.net.URLDecoder;
 import java.util.List;
 
 import com.admob.android.ads.AdView;
 
+import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
@@ -34,13 +37,10 @@ import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
-import it.rainbowbreeze.smsforfree.logic.CrashReporter;
+import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.logic.SendCaptchaThread;
 import it.rainbowbreeze.smsforfree.logic.SendMessageThread;
-import it.rainbowbreeze.smsforfree.logic.SendStatisticsAsyncTask;
-import it.rainbowbreeze.smsforfree.util.GlobalUtils;
-import it.rainbowbreeze.smsforfree.util.ParserUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -73,6 +73,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class ActSendSms
 	extends Activity
@@ -83,7 +84,6 @@ public class ActSendSms
 	private final static int DIALOG_SENDING_MESSAGE = 12;
 	private final static int DIALOG_SENDING_CAPTCHA = 13;
 	private static final int DIALOG_STARTUP_INFOBOX = 14;
-	private static final int DIALOG_SEND_CRASH_REPORTS = 15;
 	private static final int DIALOG_TEMPLATES = 16;
 	
 	private final static String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
@@ -116,6 +116,11 @@ public class ActSendSms
 	private SendMessageThread mSendMessageThread;
 	private SendCaptchaThread mSendCaptchaThread;
 	
+	private LogFacility mLogFacility;
+	private ActivityHelper mActivityHelper;
+	private AppPreferencesDao mAppPreferencesDao;
+	private LogicManager mLogicManager;
+    private SmsDao mSmsDao;
 
 	
 	
@@ -129,30 +134,27 @@ public class ActSendSms
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
+        mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
+        mSmsDao = checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao");
 
-        //checks for app was correctly initialized
-    	if (!App.instance().isCorrectlyInitialized()) {
-    		//application is expired
-            setContentView(R.layout.actinitializationerror);
-            setTitle(String.format(
-            		getString(R.string.actinitialization_title), App.instance().getAppName()));
-    		return;
-    	}
-    	
         //checks for app validity
-    	if (App.instance().isAppExpired()) {
-    		LogFacility.i("App expired");
+    	if (App.i().isAppExpired()) {
+    		mLogFacility.i("App expired");
     		//application is expired
             setContentView(R.layout.actexpired);
             setTitle(String.format(
-            		getString(R.string.actexpired_title), App.instance().getAppName()));
-    		ActivityHelper.showInfo(this, R.string.common_msg_appExpired);
+            		getString(R.string.actexpired_title), App.i().getAppName()));
+    		mActivityHelper.showInfo(this, R.string.common_msg_appExpired);
     		return;
     	}
     	
         setContentView(R.layout.actsendsms);
         setTitle(String.format(
-        		getString(R.string.actsendsms_title), App.instance().getAppName()));
+        		getString(R.string.actsendsms_title), App.i().getAppName()));
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
@@ -165,7 +167,7 @@ public class ActSendSms
         mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
         
         //eventually remove ad view
-        if (!App.instance().isAdEnables()) {
+        if (!App.i().isAdEnables()) {
         	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
         	LinearLayout parent = (LinearLayout) adView.getParent();
         	parent.removeView(adView);
@@ -183,28 +185,19 @@ public class ActSendSms
         bindProvidersSpinner();
         
         //hide views
-        if (!SmsDao.instance().isInboxSmsProviderAvailable(this)) {
+        if (mSmsDao.isInboxSmsProviderAvailable(this)) {
         	mBtnGetLastSmsReceivedNumber.setVisibility(View.INVISIBLE);
         }
 
     	//executed when the application first runs
         if (null == savedInstanceState) {
-    		LogFacility.i("App started: " + App.instance().getAppName());
-        	//send statistics data first time the app runs
-	        SendStatisticsAsyncTask statsTask = new SendStatisticsAsyncTask();
-	        statsTask.execute(this);
             //load values of view from previous application execution
         	restoreLastRunViewValues();
         	//check if the application was called as intent action
         	processIntentData(getIntent());
         	//show info dialog, if needed
-        	if (App.instance().isStartupInfoboxRequired())
+        	if (App.i().isFirstRunAfterUpdate())
         		showDialog(DIALOG_STARTUP_INFOBOX);
-        	
-        	//checks for previous crash reports
-        	if (CrashReporter.instance().isCrashReportPresent(this)) {
-        		showDialog(DIALOG_SEND_CRASH_REPORTS);
-        	}
         }
     }
 
@@ -265,15 +258,15 @@ public class ActSendSms
     	
     	//save current fields value to prefs
     	//provider and subservice was already saved in change event of the spinner
-    	AppPreferencesDao.instance().setLastUsedDestination(
+    	mAppPreferencesDao.setLastUsedDestination(
     			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
-    	AppPreferencesDao.instance().setLastUsedMessage(
+    	mAppPreferencesDao.setLastUsedMessage(
     			TextUtils.isEmpty(mTxtBody.getText()) ? "" : mTxtBody.getText().toString());
 		
 		//and save new selected provider
-		AppPreferencesDao.instance().setLastUsedProviderId(mSelectedProvider.getId());
-		AppPreferencesDao.instance().setLastUsedSubserviceId(mSelectedServiceId);
-    	AppPreferencesDao.instance().save();
+		mAppPreferencesDao.setLastUsedProviderId(mSelectedProvider.getId());
+		mAppPreferencesDao.setLastUsedSubserviceId(mSelectedServiceId);
+    	mAppPreferencesDao.save();
     }
 	
 	
@@ -316,13 +309,10 @@ public class ActSendSms
     public boolean onCreateOptionsMenu(Menu menu) {
     	if (!super.onCreateOptionsMenu(menu)) return false;
     	
-    	//errors on initialization
-    	if (!App.instance().isCorrectlyInitialized()) return true;
-
     	menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
     		.setIcon(android.R.drawable.ic_menu_info_details);
     	//menu ends here if the application is expired
-    	if (App.instance().isAppExpired()) return true;
+    	if (App.i().isAppExpired()) return true;
 
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
@@ -343,11 +333,11 @@ public class ActSendSms
     public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case OPTIONMENU_SETTINGS:
-			ActivityHelper.openSettingsMain(this);
+			mActivityHelper.openSettingsMain(this);
 			break;
 			
 		case OPTIONMENU_ABOUT:
-			ActivityHelper.openAbout(this);
+			mActivityHelper.openAbout(this);
 			break;
 
 		case OPTIONMENU_SIGNATURE:
@@ -356,7 +346,7 @@ public class ActSendSms
 
 		case OPTIONMENU_COMPRESS:
 			String message = mTxtBody.getText().toString();
-			ActivityHelper.openCompactMessage(this, message);
+			mActivityHelper.openCompactMessage(this, message);
 			break;
 
 		case OPTIONMENU_RESETDATA:
@@ -398,8 +388,8 @@ public class ActSendSms
     		
     		case (ActivityHelper.REQUESTCODE_SETTINGS):
     			//refresh subservices list if subservices of a provider was edited
-    			if (App.instance().getForceSubserviceRefresh()) {
-    				App.instance().setForceSubserviceRefresh(false);
+    			if (App.i().getForceSubserviceRefresh()) {
+    				App.i().setForceSubserviceRefresh(false);
     				changeProvider(mSelectedProvider, true);
     			}
     		break;  
@@ -428,38 +418,20 @@ public class ActSendSms
     		break;
     		
     	case DIALOG_SENDING_MESSAGE:
-    		retDialog = ActivityHelper.createProgressDialog(this, R.string.actsendsms_msg_sendingMessage);
+    		retDialog = mActivityHelper.createProgressDialog(this, 0, R.string.actsendsms_msg_sendingMessage);
     		break;
     		
     	case DIALOG_SENDING_CAPTCHA:
-    		retDialog = ActivityHelper.createProgressDialog(this, R.string.actsendsms_msg_sendingCaptcha);
+    		retDialog = mActivityHelper.createProgressDialog(this, 0, R.string.actsendsms_msg_sendingCaptcha);
     		break;
     		
     	case DIALOG_STARTUP_INFOBOX:
-    		retDialog = ActivityHelper.createInformativeDialog(this,
+    		retDialog = mActivityHelper.createInformativeDialog(this,
     				this.getString(R.string.actsendsms_msg_infobox_title),
     				this.getString(R.string.actabout_lblDescription) + "\n\n" + this.getString(R.string.actabout_msgChangeslog),
     				this.getString(R.string.common_btnOk));
     		break;
     	
-    	case DIALOG_SEND_CRASH_REPORTS:
-    		retDialog = ActivityHelper.createYesNoDialog(this,
-    				R.string.actsendsms_msg_askForCrashReportEmailTitle,
-    				R.string.actsendsms_msg_askForCrashReportEmail,
-    				new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							ActivityHelper.openSettingsMain(ActSendSms.this, true);
-						}
-					},
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							//delete all previous crash error files
-							CrashReporter.instance().deleteCrashFiles(ActSendSms.this);
-							dialog.cancel();							
-						}
-					});
-    		break;
-    		
 		default:
 			retDialog = super.onCreateDialog(id);
     	}
@@ -493,21 +465,21 @@ public class ActSendSms
 	private OnClickListener mBtnPickContactListener = new OnClickListener() {
 		public void onClick(View v) {
     		//launch the pick contact intent
-        	ActivityHelper.openPickContact(ActSendSms.this);
+        	mActivityHelper.openPickContact(ActSendSms.this);
 		}
 	};
 	
 	
 	private OnClickListener mBtnGetLastSmsReceivedNumberListener = new OnClickListener() {
 		public void onClick(View v) {
-			ResultOperation<String> res = SmsDao.instance().getLastSmsReceivedNumber(ActSendSms.this);
+			ResultOperation<String> res = mSmsDao.getLastSmsReceivedNumber(ActSendSms.this);
 			if (res.hasErrors()) {
-				ActivityHelper.reportError(ActSendSms.this, R.string.actsendsms_msg_error_retrieving_inbox_sms);
+				mActivityHelper.reportError(ActSendSms.this, R.string.actsendsms_msg_error_retrieving_inbox_sms);
 				return;
 			}
 			
 			if (TextUtils.isEmpty(res.getResult())) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_empty_inbox_sms);
+				mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_empty_inbox_sms);
 			} else {
 				mTxtDestination.setText(res.getResult());
 			}
@@ -541,13 +513,13 @@ public class ActSendSms
 	private Handler mActivityHandler = new Handler() {
 		public void handleMessage(Message msg)
 		{
-			LogFacility.i("Returned to ActSendSms from external thread");
+			mLogFacility.i("Returned to ActSendSms from external thread");
 			//check if the message is for this handler
 			if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
 					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
 				return;
 			
-			ResultOperation<String> res;
+			RainbowResultOperation<String> res;
 			switch (msg.what) {
 			case SendMessageThread.WHAT_SENDMESSAGE:
 				//pass data to method
@@ -579,7 +551,7 @@ public class ActSendSms
 	private void bindProvidersSpinner()
 	{
 		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
-				android.R.layout.simple_spinner_item, App.instance().getProviderList());
+				android.R.layout.simple_spinner_item, App.i().getProviderList());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpiProviders.setAdapter(adapter);
 	}
@@ -590,7 +562,7 @@ public class ActSendSms
 
 		//display a message when subservices are not configured
 		if (null == subservices || subservices.size() <= 0)
-			ActivityHelper.showInfo(this, String.format(
+			mActivityHelper.showInfo(this, String.format(
 					getString(R.string.actsendsms_msg_subservicesNotPresent), mSelectedProvider.getName()));
 		
 		ArrayAdapter<SmsService> adapter = new ArrayAdapter<SmsService>(this,
@@ -675,7 +647,7 @@ public class ActSendSms
 			mPhonesToShowInDialog = ContactDao.instance().getContactNumbers(this, contactUri);
 		} catch (Exception e) {
 			mPhonesToShowInDialog = null;
-			ActivityHelper.reportError(this, String.format(getText(R.string.common_msg_genericError).toString(), e.getMessage()));
+			mActivityHelper.reportError(this, String.format(getText(R.string.common_msg_genericError).toString(), e.getMessage()));
 		}
 		
 		if (null == mPhonesToShowInDialog)
@@ -685,7 +657,7 @@ public class ActSendSms
 
 			//no phones for the contact selected
 			case 0:
-				ActivityHelper.showInfo(this, R.string.actsendsms_msg_noPhoneNumber);
+				mActivityHelper.showInfo(this, R.string.actsendsms_msg_noPhoneNumber);
 				break;
 
 			//contact has only one phone number
@@ -745,7 +717,7 @@ public class ActSendSms
 		ResultOperation<Object> res = mSelectedProvider.getCaptchaContentFromProviderReply(providerReply);
 		if (res.hasErrors()) {
 			//show errors
-			ActivityHelper.showInfo(this, res.getResult().toString());
+			mActivityHelper.showInfo(this, res.getResult().toString());
 			//and returns with no dialog created
 			return null;
 		}
@@ -760,7 +732,7 @@ public class ActSendSms
 		//load the image
 		ImageView mImgCaptcha = (ImageView) layout.findViewById(R.id.dlgcaptcha_imgCaptcha);
 		byte[] imageData = (byte[]) res.getResult();
-		LogFacility.i("Captcha lenght: " + imageData.length);
+		mLogFacility.i("Captcha lenght: " + imageData.length);
 		BitmapFactory.Options options = new BitmapFactory.Options();
         //options.inSampleSize = 1;
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
@@ -816,7 +788,7 @@ public class ActSendSms
 	 * Add signature to current message
 	 */
 	private void addSignature() {
-		String signature = AppPreferencesDao.instance().getSignature();
+		String signature = mAppPreferencesDao.getSignature();
 		String message = mTxtBody.getText().toString();
 
 		//check if the signature was already added
@@ -832,23 +804,23 @@ public class ActSendSms
 	 */
 	private void restoreLastRunViewValues()
 	{
-		if (App.instance().isAppExpired()) return;
+		if (App.i().isAppExpired()) return;
 		
 		//text and message
-		mTxtDestination.setText(AppPreferencesDao.instance().getLastUsedDestination());
-		mTxtBody.setText(AppPreferencesDao.instance().getLastUsedMessage());
+		mTxtDestination.setText(mAppPreferencesDao.getLastUsedDestination());
+		mTxtBody.setText(mAppPreferencesDao.getLastUsedMessage());
 
 		//reassign spinner values and status of class inner fields
-		String providerId = AppPreferencesDao.instance().getLastUsedProviderId();
-		String subserviceId = AppPreferencesDao.instance().getLastUsedSubserviceId();
+		String providerId = mAppPreferencesDao.getLastUsedProviderId();
+		String subserviceId = mAppPreferencesDao.getLastUsedSubserviceId();
 
 		//assign provider
-		SmsProvider provider = GlobalUtils.findProviderInList(App.instance().getProviderList(), providerId);
+		SmsProvider provider = GlobalHelper.findProviderInList(App.i().getProviderList(), providerId);
 		changeProvider(provider, false);
 		//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
 		//in the provider spinner, because is execute at the end of this method, but i need it
 		//before assign subservice
-		int providerPos = GlobalUtils.findProviderPositionInList(App.instance().getProviderList(), providerId);
+		int providerPos = GlobalHelper.findProviderPositionInList(App.i().getProviderList(), providerId);
 		if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
 		
 		if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
@@ -865,20 +837,20 @@ public class ActSendSms
 	private void sendMessage()
 	{
 		//check if can send another SMS
-		if (!LogicManager.checkIfCanSendSms()) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
+		if (!mLogicManager.checkIfCanSendSms()) {
+			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
 			return;
 		}
 		
 		//check provider
 		if (null == mSelectedProvider) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noProviderSelected);
+			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noProviderSelected);
 			return;
 		}
 		
 		//check provider parameters
 		if (!mSelectedProvider.hasParametersConfigured()) {
-			ActivityHelper.showInfo(ActSendSms.this, String.format(
+			mActivityHelper.showInfo(ActSendSms.this, String.format(
 					getString(R.string.actsendsms_msg_providerNotConfigured), mSelectedProvider.getName()));
 			return;
 		}
@@ -887,12 +859,12 @@ public class ActSendSms
 		if (mSelectedProvider.hasSubServices()){
 			//checks if a subservices is selected
 			if (TextUtils.isEmpty(mSelectedServiceId)) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noSubserviceSelected);
+				mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noSubserviceSelected);
 				return;
 			}
 			//check if service has parameters configured
 			if (!mSelectedProvider.hasServiceParametersConfigured(mSelectedServiceId)) {
-				ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_subserviceNotConfigured);
+				mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_subserviceNotConfigured);
 				return;
 			}
 		}
@@ -900,7 +872,7 @@ public class ActSendSms
 		
 		//check destination number
 		if (TextUtils.isEmpty(mTxtDestination.getText())) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noDestination);
+			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noDestination);
 			return;
 		}
 		
@@ -912,13 +884,13 @@ public class ActSendSms
 		
 		//check body
 		if (TextUtils.isEmpty(mTxtBody.getText())) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noMessage);
+			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noMessage);
 			return;
 		}
 		
 		//check message length
 		if (mTxtBody.length() > mSelectedProvider.getMaxMessageLenght()) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
+			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
 			return;
 		}
 		
@@ -926,7 +898,7 @@ public class ActSendSms
 		String destination = mTxtDestination.getText().toString().trim();
 		String message = mTxtBody.getText().toString();
 		StringBuilder logMessage = new StringBuilder();
-		logMessage.append("Sending message to " + ParserUtils.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId());
+		logMessage.append("Sending message to " + RainbowStringHelper.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId());
 		SmsService service = mSelectedProvider.getSubservice(mSelectedServiceId);
 		if (null != service) {
 			logMessage.append(" and service ")
@@ -937,7 +909,7 @@ public class ActSendSms
 				.append(service.getTemplateId())
 				.append(")");
 		}
-		LogFacility.i(logMessage.toString());
+		mLogFacility.i(logMessage.toString());
 
 		//create new progress dialog
 		showDialog(DIALOG_SENDING_MESSAGE);
@@ -959,9 +931,9 @@ public class ActSendSms
 	 */
 	private void sendCaptcha(String providerReply, String captchaCode)
 	{
-		LogFacility.i("Captcha code: " + captchaCode);
+		mLogFacility.i("Captcha code: " + captchaCode);
 		if (TextUtils.isEmpty(captchaCode)) {
-			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
+			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
 			return;
 		}
 
@@ -984,7 +956,7 @@ public class ActSendSms
 	 * Reset destination and message body
 	 */
 	private void cleanDataFields(boolean force) {
-		if (force || AppPreferencesDao.instance().getAutoClearMessage()) {
+		if (force || mAppPreferencesDao.getAutoClearMessage()) {
 			mTxtDestination.setText("");
 			mTxtBody.setText("");
 		}
@@ -995,7 +967,7 @@ public class ActSendSms
 	 * Called when the background activity has sent the message
 	 * @param result result of sending message
 	 */
-	private void sendMessageComplete(ResultOperation<String> result)
+	private void sendMessageComplete(RainbowResultOperation<String> result)
 	{
 		//dismiss progress dialog
 		removeDialog(DIALOG_SENDING_MESSAGE);
@@ -1004,7 +976,7 @@ public class ActSendSms
 		if (ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST == result.getReturnCode()) {
 			//save captcha data
 			mCaptchaStorage = result.getResult();
-			LogFacility.i("Captcha request from provider: " + mCaptchaStorage);
+			mLogFacility.i("Captcha request from provider: " + mCaptchaStorage);
 			//launch captcha request
 			showDialog(DIALOG_CAPTCHA_REQUEST);
 		
@@ -1020,7 +992,7 @@ public class ActSendSms
 	 * 
 	 * @param result
 	 */
-	private void displayMessageSendResult(ResultOperation<String> result, boolean returnFromCaptcha)
+	private void displayMessageSendResult(RainbowResultOperation<String> result, boolean returnFromCaptcha)
 	{
 		if (returnFromCaptcha) {
 			//dismiss captcha progress dialog
@@ -1029,17 +1001,17 @@ public class ActSendSms
 		
 		//return with errors
 		if (result.hasErrors()) {
-			ActivityHelper.reportError(ActSendSms.this, result);
+			mActivityHelper.reportError(ActSendSms.this, result);
 		} else {
-			LogFacility.i(result.getResult());
+			mLogFacility.i(result.getResult());
 			//display returning message of the provider
-			ActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
+			mActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
 
 			//only if sms was sent
 			if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
-				LogFacility.i("Sms correctly sent");
+				mLogFacility.i("Sms correctly sent");
 				//update number of messages sent in the day
-				LogicManager.updateSmsCounter(1);
+				mLogicManager.updateSmsCounter(1);
 				//insert sms into pim, if required
 				insertSmsIntoPim();
 				//check if the text should be deleted
@@ -1053,14 +1025,14 @@ public class ActSendSms
 	 */
 	private void insertSmsIntoPim() {
 		//insert SMS into PIM
-		if (AppPreferencesDao.instance().getInsertMessageIntoPim()) {
-			ResultOperation<Void> res = SmsDao.instance().saveSmsInSentFolder(
+		if (mAppPreferencesDao.getInsertMessageIntoPim()) {
+			ResultOperation<Void> res = mSmsDao.saveSmsInSentFolder(
 					getApplicationContext(),
 					mTxtDestination.getText().toString(),
 					mTxtBody.getText().toString());
 
 			if (res.hasErrors()) {
-				ActivityHelper.reportError(getApplicationContext(), R.string.actsendsms_msg_error_saving_sent_sms);
+				mActivityHelper.reportError(getApplicationContext(), R.string.actsendsms_msg_error_saving_sent_sms);
 			}
 		}
 	}
@@ -1074,27 +1046,15 @@ public class ActSendSms
 	 */
 	private void processIntentData(Intent intent)
 	{
-		if (null == intent) return;
-		
-		if (Intent.ACTION_SENDTO.equals(intent.getAction())) {
-			//in the data i'll find the number of the destination
-			String destionationNumber = intent.getDataString();
-			destionationNumber = URLDecoder.decode(destionationNumber);
-			//clear the string
-			destionationNumber = destionationNumber.replace("-", "")
-				.replace("smsto:", "")
-				.replace("sms:", "");
-			//and set fields
-			LogFacility.i("Application called for sending number to " + ParserUtils.scrambleNumber(destionationNumber));
-			mTxtDestination.setText(destionationNumber);
-			
-		} else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
-			//in the data i'll find the content of the message
-			String message = intent.getStringExtra(Intent.EXTRA_TEXT);
-			LogFacility.i("Application called for sending message " + (message.length() < 200 ? message : message.substring(0, 200)));
-			//clear the string
-			mTxtBody.setText(message);
-		}
+		if (null == intent || null == intent.getExtras()) return;
+	
+		String destination = intent.getExtras().getString(ActivityHelper.INTENTKEY_MESSAGE_DESTIONATION);
+        String text = intent.getExtras().getString(ActivityHelper.INTENTKEY_MESSAGE_TEXT);
+        
+        if (!TextUtils.isEmpty(destination))
+            mTxtDestination.setText(destination);
+        if (!TextUtils.isEmpty(text))
+            mTxtBody.setText(text);
 	}
 
 	
@@ -1104,7 +1064,7 @@ public class ActSendSms
 	 */
 	private Dialog createTemplatesDialog()
 	{
-		String[] templates = AppPreferencesDao.instance().getMessageTemplates();
+		String[] templates = mAppPreferencesDao.getMessageTemplates();
 		CharSequence[] items = new CharSequence[templates.length];
 		
 		int i=0;
@@ -1130,8 +1090,4 @@ public class ActSendSms
 		
 		return alert;
 	}
-
-
-	
-	
 }

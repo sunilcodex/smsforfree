@@ -29,15 +29,17 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 /**
  * 
@@ -47,15 +49,6 @@ import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 public class JacksmsProvider
 	extends SmsMultiProvider
 {
-	//---------- Ctors
-	public JacksmsProvider(ProviderDao dao)
-	{
-		super(dao, PARAM_NUMBER);
-	}
-	
-	
-	
-
 	//---------- Private fields
 	private final static int PARAM_NUMBER = 2;
 	private final static int PARAM_INDEX_USERNAME = 0;
@@ -78,6 +71,19 @@ public class JacksmsProvider
 	
 	private String[] mMessages;
 
+	
+	
+
+	//---------- Constructors
+	public JacksmsProvider(
+			LogFacility logFacility,
+			AppPreferencesDao appPreferencesDao,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper)
+	{
+		super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
+	}
+	
 	
 	
 
@@ -174,8 +180,8 @@ public class JacksmsProvider
 			//other generic error not handled by the parseReplyForErrors() method
 			res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
 			res.setResult(mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
-			LogFacility.e("Error sending message in Jacksms Provider");
-			LogFacility.e(reply);
+			mLogFacility.e("Error sending message in Jacksms Provider");
+			mLogFacility.e(reply);
 		}
 		
 		return res;    	
@@ -258,15 +264,15 @@ public class JacksmsProvider
 	//---------- Private methods
 	@Override
 	protected String getParametersFileName()
-	{ return GlobalDef.jacksmsParametersFileName; }
+	{ return App.jacksmsParametersFileName; }
 
 	@Override
 	protected String getTemplatesFileName()
-	{ return GlobalDef.jacksmsmTemplatesFileName; }
+	{ return App.jacksmsmTemplatesFileName; }
 
 	@Override
 	protected String getSubservicesFileName()
-	{ return GlobalDef.jacksmsSubservicesFileName; }
+	{ return App.jacksmsSubservicesFileName; }
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {
@@ -320,7 +326,7 @@ public class JacksmsProvider
     	String templatesReply = res.getResult();
     	
     	//transform the reply in the list of templates
-    	List<SmsService> newTemplates = mDictionary.extractTemplates(templatesReply);
+    	List<SmsService> newTemplates = mDictionary.extractTemplates(mLogFacility, templatesReply);
     	
     	if (newTemplates.size() <= 0) {
     		//retain old templates
@@ -383,7 +389,7 @@ public class JacksmsProvider
     	String providerReply = res.getResult();
     	
     	//transform the reply in the list of user services
-    	List<SmsConfigurableService> newServices = mDictionary.extractUserServices(providerReply);
+    	List<SmsConfigurableService> newServices = mDictionary.extractUserServices(mLogFacility, providerReply);
     	
     	//no stored user services
     	if (newServices.size() <= 0) {
@@ -443,9 +449,9 @@ public class JacksmsProvider
     	//so no application errors (like network issues) should be returned, but
 		//the JackSMS error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
-			LogFacility.e("JacksmsProvider error reply");
-			LogFacility.e(res);
-			LogFacility.e(reply);
+			mLogFacility.e("JacksmsProvider error reply");
+			mLogFacility.e(res);
+			mLogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;
@@ -486,7 +492,7 @@ public class JacksmsProvider
 			if (!existsTemplate) {
 				canAdd = false;
 				//log the error, because is not normal that the template doesn't exist
-				LogFacility.e("Template " + newServiceToAdd.getTemplateId() + " for JackSMS doesn't exist in the provider's templates");
+				mLogFacility.e("Template " + newServiceToAdd.getTemplateId() + " for JackSMS doesn't exist in the provider's templates");
 			}
 		}
 		

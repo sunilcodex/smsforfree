@@ -19,13 +19,17 @@
 
 package it.rainbowbreeze.smsforfree.provider;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.Def;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
-import it.rainbowbreeze.smsforfree.util.ParserUtils;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+import it.rainbowbreeze.smsforfree.util.Def;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -274,7 +278,7 @@ public class AimonProviderTest
 		ResultOperation<String> res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me - free sms");
 		//the final part of the message is variable, so cut it!
 		Log.i(TAG, res.getResult());
-		String currentResult = ParserUtils.getInvariableStringFinalBoundary(getContext().getString(R.string.aimon_msg_messageQueued));
+		String currentResult = RainbowStringHelper.getInvariableStringFinalBoundary(getContext().getString(R.string.aimon_msg_messageQueued));
 		assertEquals("Wrong return message", currentResult, res.getResult().substring(0, currentResult.length()));
 		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
 		
@@ -302,7 +306,11 @@ public class AimonProviderTest
 	
 	@Override
 	protected SmsProvider createProvider() {
-		return new AimonProvider(mDao);
+		return new AimonProvider(
+		        RainbowServiceLocator.get(LogFacility.class),
+		        RainbowServiceLocator.get(AppPreferencesDao.class),
+		        mProviderDao,
+		        RainbowServiceLocator.get(ActivityHelper.class));
 	}
 
 

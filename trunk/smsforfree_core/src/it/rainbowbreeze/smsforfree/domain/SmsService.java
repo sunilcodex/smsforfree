@@ -21,10 +21,12 @@ package it.rainbowbreeze.smsforfree.domain;
 
 import java.util.List;
 
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 
 /**
@@ -38,11 +40,19 @@ import android.text.TextUtils;
 public abstract class SmsService
 	implements Comparable<SmsService>
 {
-	//---------- Ctors
-	protected SmsService()
-	{}
+	//---------- Private fields
+	protected final LogFacility mLogFacility;
 	
-	protected SmsService(int numberOfParameters) {
+	
+	
+	
+	//---------- Constructors
+	protected SmsService(LogFacility logFacility){
+		mLogFacility = checkNotNull(logFacility, "LogFacility");
+	}
+	
+	protected SmsService(LogFacility logFacility, int numberOfParameters) {
+		this(logFacility);
 		if (numberOfParameters < 1) {
 			mParameters = null;
 		} else {
@@ -52,11 +62,6 @@ public abstract class SmsService
 		}
 	}
 
-	
-	
-	
-	//---------- Private fields
-	
 	
 	
 	

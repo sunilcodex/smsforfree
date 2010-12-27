@@ -19,23 +19,28 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
- * @author rainbowbreeze
+ * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class ActProvidersList
 	extends ListActivity
 {
 	//---------- Private fields
+	private LogFacility mLogFacility;
+	private ActivityHelper mActivityHelper;
 
 	
 	
@@ -49,19 +54,23 @@ public class ActProvidersList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+
         setTitle(String.format(
-        		getString(R.string.actproviderslist_title), App.instance().getAppName()));
+        		getString(R.string.actproviderslist_title), App.i().getAppName()));
 		setContentView(R.layout.acttemplateslist);
 
 		setListAdapter(new ArrayAdapter<SmsProvider>(this, 
-	              android.R.layout.simple_list_item_1, App.instance().getProviderList()));
+	              android.R.layout.simple_list_item_1, App.i().getProviderList()));
 	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		SmsProvider provider = App.instance().getProviderList().get(position);
+		SmsProvider provider = App.i().getProviderList().get(position);
 		
-		ActivityHelper.openSettingsSmsService(this, provider.getId());
+		mActivityHelper.openSettingsSmsService(this, provider.getId());
 	}
 
 	

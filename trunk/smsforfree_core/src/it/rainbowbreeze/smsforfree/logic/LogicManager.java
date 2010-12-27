@@ -19,33 +19,69 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
+import it.rainbowbreeze.libs.common.RainbowAppGlobalBag;
+import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
+import it.rainbowbreeze.libs.logic.RainbowLogicManager;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.providers.AimonProvider;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
 import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class LogicManager
-{
+public class LogicManager extends RainbowLogicManager {
 	//---------- Private fields
+	protected final AppPreferencesDao mAppPreferencesDao;
+	protected final LogFacility mLogFacility;
+	protected final ProviderDao mProviderDao;
+	protected final ActivityHelper mActivityHelper;
+	
+	
+	
+	//---------- Constructors
+	/**
+	 * @param logFacility
+	 * @param appPreferencesDao
+	 * @param globalBag
+	 * @param currentAppVersion
+	 * @param itemsDao
+	 */
+	public LogicManager(
+			LogFacility logFacility,
+			AppPreferencesDao appPreferencesDao,
+			RainbowAppGlobalBag globalBag,
+			String currentAppVersion,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper)
+	{
+		super(logFacility, appPreferencesDao, globalBag, currentAppVersion);
+		mAppPreferencesDao = appPreferencesDao;
+		mLogFacility = logFacility;
+		mProviderDao = checkNotNull(providerDao, "ProviderDao");
+		mActivityHelper = checkNotNull(activityHelper, "ActivityHelper");
+	}
 
 	
 	
@@ -60,34 +96,30 @@ public class LogicManager
 	/**
 	 * Initializes data, execute begin operation
 	 */
-	public static ResultOperation<Void> executeBeginTask(Context context)
+	@Override
+	public RainbowResultOperation<Void> executeBeginTasks(Context context)
 	{
-		ResultOperation<Void> res = new ResultOperation<Void>();
+		RainbowResultOperation<Void> res;
 		
-		//init log facility
-		LogFacility.init(GlobalDef.LOG_TAG);
-		
-		LogFacility.i("App started");
-		
-		//load configurations
-		AppPreferencesDao.instance().load(context);
-		LogFacility.i("Preferences loaded");
-		
+		res = super.executeBeginTasks(context);
+		if (res.hasErrors())
+			return res;
+
 		//set application name
-		App.instance().setAppName(context.getString(R.string.common_appNameForDisplay));
-		LogFacility.i("App name: " + App.instance().getAppName());
+		App.i().setAppName(context.getString(R.string.common_appNameForDisplay));
+		mLogFacility.i("App name: " + App.i().getAppName());
 		
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);
-		App.instance().setAdEnables("true".equalsIgnoreCase(adEnabel));
+		App.i().setAdEnables("true".equalsIgnoreCase(adEnabel));
 
 		//init some vars
-		App.instance().setForceSubserviceRefresh(false);
+		App.i().setForceSubserviceRefresh(false);
 		
 		//load some application license setting
-		App.instance().setLiteVersionApp(
-				GlobalDef.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType)));
-		App.instance().setAllowedSmsForDay(
+		App.i().setLiteVersionApp(
+				App.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType)));
+		App.i().setAllowedSmsForDay(
 				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
 
 //		//check if the application expired
@@ -98,19 +130,12 @@ public class LogicManager
 //				return res;
 //			}
 //		} else {
-			App.instance().setAppExpired(false);
+			App.i().setAppExpired(false);
 //		}
 		
 		//update the daily number of sms
 		updateSmsCounter(0);
 		
-		//check if startup infobox is required
-		if (isNewAppVersion())
-			App.instance().setStartupInfoboxRequired(true);
-		
-		//checks for application upgrade
-		res = performAppVersionUpgrade(context);
-		if (res.hasErrors()) return res;
 		res = addProvidersToList(context);
 		if (res.hasErrors()) return res;
 		res = checksTemplatesValues(context);
@@ -118,18 +143,13 @@ public class LogicManager
 			
 		return res;
 	}
-
-
+	
 	/**
-	 * Executes final operation, just before the app close
-	 * @param context
-	 * @return
+	 * Executes final tasks (free resources, etc)
 	 */
-	public static ResultOperation<Void> executeEndTast(Context context)
-	{
-		ResultOperation<Void> res = new ResultOperation<Void>();
-
-		return res;
+	@Override
+	public RainbowResultOperation<Void> executeEndTasks(Context context) {
+	    return super.executeEndTasks(context);
 	}
 
 
@@ -138,126 +158,118 @@ public class LogicManager
 	 * 
 	 * @param factorToAdd number of sms to add to the total
 	 */
-	public static void updateSmsCounter(int factorToAdd)
+	public void updateSmsCounter(int factorToAdd)
 	{
 		//check current date hash
 		String currentDateHash = getCurrentDayHash();
-		String lastUpdate = AppPreferencesDao.instance().getSmsCounterDate();
+		String lastUpdate = mAppPreferencesDao.getSmsCounterDate();
 		
 		if (TextUtils.isEmpty(lastUpdate) || !lastUpdate.equals(currentDateHash)) {
 			//new day :D
-			AppPreferencesDao.instance().setSmsCounterDate(currentDateHash);
-			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(factorToAdd);
+			mAppPreferencesDao.setSmsCounterDate(currentDateHash);
+			mAppPreferencesDao.setSmsCounterNumberForCurrentDay(factorToAdd);
 		} else {
 			//update sms sent in the day
-			AppPreferencesDao.instance().setSmsCounterNumberForCurrentDay(AppPreferencesDao.instance().getSmsCounterNumberForCurrentDay() + factorToAdd);
+			mAppPreferencesDao.setSmsCounterNumberForCurrentDay(mAppPreferencesDao.getSmsCounterNumberForCurrentDay() + factorToAdd);
 		}
-		AppPreferencesDao.instance().save();
+		mAppPreferencesDao.save();
 	}
 
 
 	/**
 	 * Checks if sms message sent in the current day is still under the allowed limit
 	 */
-	public static boolean checkIfCanSendSms()
+	public boolean checkIfCanSendSms()
 	{
 		//unlimited sms for normal app
-		if (!App.instance().isLiteVersionApp()) return true;
+		if (!App.i().isLiteVersionApp()) return true;
 		
 		//0: no send limit
-		if (0 == App.instance().getAllowedSmsForDay()) return true;
+		if (0 == App.i().getAllowedSmsForDay()) return true;
 		
-		return getSmsSentToday() <= App.instance().getAllowedSmsForDay();
+		return getSmsSentToday() <= App.i().getAllowedSmsForDay();
 	}
 	
 	/**
 	 * Get the number of sms sent today
 	 */
-	public static int getSmsSentToday()
+	public int getSmsSentToday()
 	{
 		//check current date hash
 		String currentDateHash = getCurrentDayHash();
-		String lastUpdate = AppPreferencesDao.instance().getSmsCounterDate();
+		String lastUpdate = mAppPreferencesDao.getSmsCounterDate();
 
 		int sentSms = 0;
 		if (currentDateHash.equals(lastUpdate)) {
-			sentSms = AppPreferencesDao.instance().getSmsCounterNumberForCurrentDay();
+			sentSms = mAppPreferencesDao.getSmsCounterNumberForCurrentDay();
 		}
 		
 		return sentSms;
 	}
-	
-	
+
 	/**
-	 * Check if the current application is new compared to the last time
-	 * the application run
+	 * Checks if message templates values are not empty, elsewhere put default templates
 	 * 
+	 * public for testing purposes
+	 * @param context
 	 * @return
 	 */
-	public static boolean isNewAppVersion() {
-		String currentAppVersion = AppPreferencesDao.instance().getAppVersion();
-		return GlobalDef.appVersion.compareToIgnoreCase(currentAppVersion) > 0;
-	}
-
-
-	
-	
-	//---------- Private methods
-
-	/**
-	 * Checks the expiration date of the application
-	 * 
-	 * @return true if the app is valid, false and RETURNCODE_SMS_DAILY_LIMIT_OVERTAKED
-	 *         return code if app is invalid
-	 */
-	private static boolean checkIfAppExpired()
-	{
-		//get installation time
-	    long installTime = AppPreferencesDao.instance().getInstallationTime();
-		
-		// get the current time
-	    final Calendar c = Calendar.getInstance();
-	    long currentTime = c.getTimeInMillis();
-
-	    //find the maximum valid time interval
-	    //60 days
-	    long maxGap = 60 * 86400000;
-
-	    //if the difference between the two dates is greater than the max allowed gap
-	    return (currentTime - installTime > maxGap);
-	}
-	
-	
-	/**
-	 * Checks if some upgrade is needed between current version of the
-	 * application and the previous one
-	 * 
-	 *  @return true if all ok, otherwise false
-	 */
-	private static ResultOperation<Void> performAppVersionUpgrade(Context context)
-	{
-		if (isNewAppVersion()) {
-			LogFacility.i("Upgrading from " + AppPreferencesDao.instance().getAppVersion() + " to " + GlobalDef.appVersion);
-			//perform upgrade
-			
-			//update expiration date
-    	    final Calendar c = Calendar.getInstance();
-			AppPreferencesDao.instance().setInstallationTime(c.getTimeInMillis());
-			
-			//update application version in the configuration
-			AppPreferencesDao.instance().setAppVersion(GlobalDef.appVersion);
-			
-			//and save updates
-			AppPreferencesDao.instance().save();
-			
-			LogFacility.i("Upgrading complete");
+	public ResultOperation<Void> checksTemplatesValues(Context context) {
+		//checks if templates are ok
+		String [] templates = mAppPreferencesDao.getMessageTemplates();
+		if (null == templates || templates.length < 1 || TextUtils.isEmpty(templates[0])) {
+			//load standard templates
+			templates = context.getString(R.string.common_defaultMessageTemplates).split("§§§§");
+			mAppPreferencesDao.setMessageTemplates(templates);
+			boolean result = mAppPreferencesDao.save();
+			if (!result) return new ResultOperation<Void>(new Exception("Error saving application preferences"), ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		}
-		
 		return new ResultOperation<Void>();
 	}
 	
+	/**
+	 * Get the message data from the intent
+	 * 
+	 * @param intent intent with, maybe, the message
+	 * 
+	 * @return null if no message was found inside the intent,
+	 *         else an object with message data
+	 */
+	public TextMessage getMessageFromIntent(Intent intent) {
+        if (null == intent) return null;
+        
+        TextMessage message = new TextMessage();
+        
+        if (Intent.ACTION_SENDTO.equals(intent.getAction())) {
+            //in the data i'll find the number of the destination
+            String destionationNumber = intent.getDataString();
+            destionationNumber = URLDecoder.decode(destionationNumber);
+            //clear the string
+            destionationNumber = destionationNumber.replace("-", "")
+                .replace("smsto:", "")
+                .replace("sms:", "");
+            //and set fields
+            mLogFacility.i("Application called for sending number to " + RainbowStringHelper.scrambleNumber(destionationNumber));
+            message.setDestination(destionationNumber);
+            
+        } else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
+            //in the data i'll find the content of the message
+            String messageBody = intent.getStringExtra(Intent.EXTRA_TEXT);
+            mLogFacility.i("Application called for sending message " + (messageBody.length() < 200 ? message : messageBody.substring(0, 200)));
+            //clear the string
+            message.setMessage(messageBody);
+        } else {
+            mLogFacility.v("No extra message data found on main intent");
+        }
+        
+        return message;
+	}
+
 	
-	private static String getCurrentDayHash()
+
+
+	//---------- Private methods
+	private String getCurrentDayHash()
 	{
         final Calendar c = Calendar.getInstance();
         StringBuilder dateHash = new StringBuilder();
@@ -274,14 +286,13 @@ public class LogicManager
 	 * Add providers to the list of available providers, according with configurations
 	 * @param context
 	 */
-	private static ResultOperation<Void> addProvidersToList(Context context)
+	private ResultOperation<Void> addProvidersToList(Context context)
 	{
 		ResultOperation<Void> res = null;
 		
 		//initialize provider list
-		ProviderDao dao = new ProviderDao();
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
-		App.instance().setProviderList(new ArrayList<SmsProvider>());
+		App.i().setProviderList(new ArrayList<SmsProvider>());
 		
 		//cycles thru all providers and initializes only the required providers
 		String[] allSupportedProviders = "AIMON,JACKSMS,SUBITOSMS,VOIPSTUNT".split(",");
@@ -289,45 +300,29 @@ public class LogicManager
 			SmsProvider provider = null;
 			if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains(providerName)) {
 				
-				if ("AIMON".equals(providerName)) provider = new AimonProvider(dao);
-				else if ("JACKSMS".equals(providerName)) provider = new JacksmsProvider(dao);
-				else if ("SUBITOSMS".equals(providerName)) provider = new SubitosmsProvider(dao);
-				else if ("VOIPSTUNT".equals(providerName)) provider = new VoipstuntProvider(dao);
+				if ("AIMON".equals(providerName)) provider = new AimonProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
+				else if ("JACKSMS".equals(providerName)) provider = new JacksmsProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
+				else if ("SUBITOSMS".equals(providerName)) provider = new SubitosmsProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
+				else if ("VOIPSTUNT".equals(providerName)) provider = new VoipstuntProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
 				
 				if (null != provider) {
-					LogFacility.i("Inizializing provider " + providerName);
+					mLogFacility.i("Inizializing provider " + providerName);
 					res = provider.initProvider(context);
-					App.instance().getProviderList().add(provider);
+					App.i().getProviderList().add(provider);
 				}
 				if (res.hasErrors()) break;
 			}
 		}
 		
 		//sort the collection of provider
-		Collections.sort(App.instance().getProviderList());
+		Collections.sort(App.i().getProviderList());
 		return res;
 	}
 	
-	/**
-	 * Checks if message templates values are not empty, elsewhere put default templates
-	 * 
-	 * public for testing purposes
-	 * @param context
-	 * @return
-	 */
-	public static ResultOperation<Void> checksTemplatesValues(Context context) {
-		//checks if templates are ok
-		String [] templates = AppPreferencesDao.instance().getMessageTemplates();
-		if (null == templates || templates.length < 1 || TextUtils.isEmpty(templates[0])) {
-			//load standard templates
-			templates = context.getString(R.string.common_defaultMessageTemplates).split("§§§§");
-			AppPreferencesDao.instance().setMessageTemplates(templates);
-			boolean result = AppPreferencesDao.instance().save();
-			if (!result) return new ResultOperation<Void>(new Exception("Error saving application preferences"), ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
-		}
-		
-		return new ResultOperation<Void>();
+	@Override
+	protected RainbowResultOperation<Void> executeUpgradeTasks(
+			Context context,
+			String startingAppVersion) {
+		return new RainbowResultOperation<Void>();
 	}
-
-
 }

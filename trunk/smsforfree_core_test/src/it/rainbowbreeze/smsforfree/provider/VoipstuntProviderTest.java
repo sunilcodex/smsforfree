@@ -27,9 +27,12 @@ package it.rainbowbreeze.smsforfree.provider;
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-import it.rainbowbreeze.smsforfree.common.Def;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+import it.rainbowbreeze.smsforfree.util.Def;
 
 public class VoipstuntProviderTest
 	extends BaseProviderTest
@@ -79,7 +82,11 @@ public class VoipstuntProviderTest
 	//---------- Private methods
 	@Override
 	protected SmsProvider createProvider() {
-		return new VoipstuntProvider(mDao);
+        return new VoipstuntProvider(
+                mLogFacility,
+                RainbowServiceLocator.get(AppPreferencesDao.class),
+                mProviderDao,
+                RainbowServiceLocator.get(ActivityHelper.class));
 	}
 
 	@Override

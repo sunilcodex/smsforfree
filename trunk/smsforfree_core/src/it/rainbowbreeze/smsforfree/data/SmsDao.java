@@ -25,28 +25,32 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
- * Store SMS in the sent forlder of the device
+ * Store SMS in the sent folder of the device
  *
- * @author Alfredo Morresi
+ * @author Alfredo "Rainbowbreeze" Morresi
  */
 public class SmsDao {
-	//---------- Ctors
-
 	//---------- Private fields
 	private final static Uri CONTENT_PROVIDER_SENT_SMS = Uri.parse("content://sms/sent");
 	private final static Uri CONTENT_PROVIDER_INBOX_SMS = Uri.parse("content://sms/inbox");
 
+	protected final LogFacility mLogFacility;
+	
+	
+	//---------- Constructors
+	public SmsDao(LogFacility logFacility) {
+		mLogFacility = checkNotNull(logFacility, "LogFacility");
+	}
+
+	
+	
 	//---------- Public properties
 
-    private static SmsDao mInstance;
-    public static SmsDao instance()
-    {
-    	if (null == mInstance)
-    		mInstance = new SmsDao();
-    	return mInstance;
-    }
+
+
 
 	//---------- Public methods
     
@@ -82,15 +86,15 @@ public class SmsDao {
      */
     public ResultOperation<Void> saveSmsInSentFolder(Context context, String destination, String body)
     {
-    	LogFacility.i("Adding SMS into Sent folder");
+    	mLogFacility.i("Adding SMS into Sent folder");
     	try {
 	    	ContentValues values = new ContentValues();
 	    	values.put("address", destination);
 	    	values.put("body", body);
 	    	context.getContentResolver().insert(CONTENT_PROVIDER_SENT_SMS, values);
     	} catch (Exception e) {
-    		LogFacility.e("Error retrieving SMS content provider");
-    		LogFacility.e(e);
+    		mLogFacility.e("Error retrieving SMS content provider");
+    		mLogFacility.e(e);
     		return new ResultOperation<Void>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		}
     	
@@ -115,7 +119,7 @@ public class SmsDao {
      */
     public ResultOperation<String> getLastSmsReceivedNumber(Context context)
     {
-    	LogFacility.i("Getting number of latest SMS in the Inbox");
+    	mLogFacility.i("Getting number of latest SMS in the Inbox");
 
     	final String[] projection = new String[] { "_id", "thread_id", "address", "date", "body" };
 		String[] selectionArgs = null;

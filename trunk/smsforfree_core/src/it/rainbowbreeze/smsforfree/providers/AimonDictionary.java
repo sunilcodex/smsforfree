@@ -19,7 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.providers;
 
-import it.rainbowbreeze.smsforfree.util.ParserUtils;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 
 import java.util.HashMap;
 
@@ -210,7 +210,7 @@ public class AimonDictionary
 	 */
 	public String findRemainingCreditsForFreeSms(String message)
 	{
-		String result = ParserUtils.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END).trim();
+		String result = RainbowStringHelper.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END).trim();
 		return TextUtils.isEmpty(result) ? "--" : result;
 		
 	}
