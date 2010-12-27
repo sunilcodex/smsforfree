@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--  
  Copyright (C) 2010 Alfredo Morresi
  This file is part of SmsForFree project.
@@ -21,8 +20,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="it.rainbowbreeze.smsforfree"
-	android:versionName="1.8"
-	android:versionCode="11"
+	android:versionName="2.0"
+	android:versionCode="12"
 	android:installLocation="auto"
 >
     <application
@@ -32,7 +31,7 @@
    	>
    		<!-- Defines also the app name in the Android menu -->
         <activity
-        	android:name="it.rainbowbreeze.smsforfree.ui.ActSendSms"
+        	android:name="it.rainbowbreeze.smsforfree.ui.ActSplashScreen"
         	android:label="@string/common_appName"
        	>
        		<!-- Starting activity -->
@@ -41,7 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             
-            <!-- Receives sms for someone -->
+            <!-- Send message to someone -->
 			<intent-filter>
 			    <action android:name="android.intent.action.VIEW" />
 			    <action android:name="android.intent.action.SENDTO" />
@@ -51,7 +50,7 @@
 			    <data android:scheme="smsto" />
 			</intent-filter>
 		
-			<!-- Sends text to someone -->
+			<!-- Send text -->
 		    <intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -59,6 +58,11 @@
 			</intent-filter> 
         </activity>
 
+        <activity
+            android:name="it.rainbowbreeze.smsforfree.ui.ActSendSms"
+            android:label="@string/common_appName"
+        />
+        
         <activity
         	android:name="it.rainbowbreeze.smsforfree.ui.ActSettingsMain"
         	android:label="@string/common_appNameForDisplay"

@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="it.rainbowbreeze.jacksms"
-	android:versionName="1.8"
-	android:versionCode="11"
+    android:versionName="2.0"
+    android:versionCode="12"
 	android:installLocation="auto"
 >
     <application
@@ -13,32 +13,42 @@
    	>
    		<!-- Defines also the app name in the Android menu -->
         <activity
-        	android:name="it.rainbowbreeze.smsforfree.ui.ActSendSms"
-        	android:label="@string/common_appName"
-       	>
-       		<!-- Starting activity -->
-			<intent-filter>
+            android:name="it.rainbowbreeze.smsforfree.ui.ActSplashScreen"
+            android:label="@string/common_appName"
+        >
+            <!-- Starting activity -->
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             
-            <!-- Receives sms for someone -->
-			<intent-filter>
-			    <action android:name="android.intent.action.VIEW" />
-			    <action android:name="android.intent.action.SENDTO" />
-			    <category android:name="android.intent.category.DEFAULT" />
-			    <category android:name="android.intent.category.BROWSABLE" />
-			    <data android:scheme="sms" />
-			    <data android:scheme="smsto" />
-			</intent-filter>
-		
-			<!-- Sends text to someone -->
-		    <intent-filter>
-				<action android:name="android.intent.action.SEND" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="text/plain" />
-			</intent-filter> 
+            <!-- Send text to someone -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SENDTO" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="sms" />
+                <data android:scheme="smsto" />
+            </intent-filter>
+        
+            <!-- Sends text -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter> 
         </activity>
+
+        <activity
+            android:name="it.rainbowbreeze.smsforfree.ui.ActSendSms"
+            android:label="@string/common_appName"
+        />
+        
+        <activity
+            android:name="it.rainbowbreeze.smsforfree.ui.ActSettingsMain"
+            android:label="@string/common_appNameForDisplay"
+        />
 
         <activity
         	android:name="it.rainbowbreeze.smsforfree.ui.ActSettingsMain"
