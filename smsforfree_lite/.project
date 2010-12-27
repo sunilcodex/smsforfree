@@ -32,9 +32,19 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>RainbowLibs_src</name>
+			<type>2</type>
+			<locationURI>_android_RainbowLibs_b8259944/src</locationURI>
+		</link>
+		<link>
 			<name>SmsForFreeCore</name>
 			<type>2</type>
 			<locationURI>_android_SmsForFreeCore/src</locationURI>
+		</link>
+		<link>
+			<name>SmsForFreeCore_src</name>
+			<type>2</type>
+			<locationURI>_android_SmsForFreeCore_8e7b511b/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
