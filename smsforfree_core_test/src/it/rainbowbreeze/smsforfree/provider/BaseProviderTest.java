@@ -19,12 +19,14 @@
 
 package it.rainbowbreeze.smsforfree.provider;
 
-import it.rainbowbreeze.smsforfree.common.Def;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.TestUtils;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.util.Def;
+import it.rainbowbreeze.smsforfree.util.TestHelper;
 import android.test.AndroidTestCase;
 
 
@@ -39,7 +41,8 @@ public abstract class BaseProviderTest
 {
 	//---------- Private fields
 	protected SmsProvider mProvider;
-	protected ProviderDao mDao;
+	protected ProviderDao mProviderDao;
+    protected LogFacility mLogFacility;
 	protected SmsServiceParameter[] mBackupParameters;
 	
 	
@@ -48,7 +51,9 @@ public abstract class BaseProviderTest
 	public BaseProviderTest() {
 		super();
 		
-		mDao = new ProviderDao();
+		TestHelper.init(getContext());
+		mLogFacility = RainbowServiceLocator.get(LogFacility.class);
+		mProviderDao = new ProviderDao();
 	}
 	
 	
@@ -62,10 +67,11 @@ public abstract class BaseProviderTest
 		assertFalse("provider initialization with errors", res.hasErrors());
 
 		//mock some values of SmsForFreeApplication
-		TestUtils.loadAppPreferences(getContext());
+		//FIXME
+		//TestHelper.loadAppPreferences(getContext());
 
 		//save provider parameters
-		mBackupParameters = TestUtils.backupServiceParameters(mProvider);
+		mBackupParameters = TestHelper.backupServiceParameters(mProvider);
 		
 		initProviderParams();
 	}
@@ -75,7 +81,7 @@ public abstract class BaseProviderTest
 		super.tearDown();
 		
 		//restore modified parameters.
-		TestUtils.restoreServiceParameters(mProvider, mBackupParameters);
+		TestHelper.restoreServiceParameters(mProvider, mBackupParameters);
 	}
 
 

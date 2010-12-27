@@ -23,14 +23,17 @@ package it.rainbowbreeze.smsforfree.provider;
 import java.util.List;
 
 import android.os.Bundle;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+import it.rainbowbreeze.smsforfree.util.Def;
 
 /**
  * 
@@ -193,7 +196,7 @@ public class JacksmsProviderTest
 		mProvider.getAllSubservices().remove(1);
 		assertEquals("Wrong number of subservices", 1, mProvider.getAllSubservices().size());
 		//add new subservice
-		service = new SmsConfigurableService("999", "1", "00Service", new String[]{"myusername", "mypassword"});
+		service = new SmsConfigurableService(mLogFacility, "999", "1", "00Service", new String[]{"myusername", "mypassword"});
 		mProvider.getAllSubservices().add(service);
 		//re-execute the request
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
@@ -224,7 +227,11 @@ public class JacksmsProviderTest
 	
 	@Override
 	protected SmsProvider createProvider() {
-		return new JacksmsProvider(mDao);
+		return new JacksmsProvider(
+		        mLogFacility,
+		        RainbowServiceLocator.get(AppPreferencesDao.class),
+		        mProviderDao,
+		        RainbowServiceLocator.get(ActivityHelper.class));
 	}
 	
 	@Override
@@ -251,7 +258,7 @@ public class JacksmsProviderTest
 		List<SmsService> templates = provider.getAllTemplates();
 		JacksmsDictionary dictionary = new JacksmsDictionary();
 
-		List<SmsService> newTemplates = dictionary.extractTemplates(providers);
+		List<SmsService> newTemplates = dictionary.extractTemplates(mLogFacility, providers);
 		assertEquals("Wrong extracted templates", 5, newTemplates.size());
 
 		//copy extracted templates into provider templates

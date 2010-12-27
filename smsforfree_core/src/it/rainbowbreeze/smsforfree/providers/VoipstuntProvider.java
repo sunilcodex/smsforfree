@@ -22,25 +22,18 @@ package it.rainbowbreeze.smsforfree.providers;
 import android.content.Context;
 import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 public class VoipstuntProvider
 	extends SmsSingleProvider
 {
-	//---------- Ctors
-	public VoipstuntProvider(ProviderDao dao)
-	{
-		super(dao, PARAM_NUMBER);
-	}
-
-
-
-
 	//---------- Private fields
 	private final static int PARAM_NUMBER = 3;
 	private final static int PARAM_INDEX_USERNAME = 0;
@@ -54,9 +47,21 @@ public class VoipstuntProvider
 	private VoipstuntDictionary mDictionary;
 	
 
+
 	
-	
-	
+	//---------- Constructors
+	public VoipstuntProvider(
+			LogFacility logFacility,
+			AppPreferencesDao appPreferencesDao,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper)
+	{
+		super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
+	}
+
+
+
+
 	//---------- Public properties
 	@Override
 	public String getId()
@@ -82,7 +87,7 @@ public class VoipstuntProvider
 	@Override
 	public ResultOperation<Void> initProvider(Context context)
 	{
-		mDictionary = new VoipstuntDictionary();
+		mDictionary = new VoipstuntDictionary(mLogFacility);
 		
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.voipstunt_username_desc));
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.voipstunt_password_desc));
@@ -153,7 +158,7 @@ public class VoipstuntProvider
 
 	@Override
 	protected String getParametersFileName()
-	{ return GlobalDef.voipstuntParametersFileName; }
+	{ return App.voipstuntParametersFileName; }
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {
@@ -182,9 +187,9 @@ public class VoipstuntProvider
     	//so no application errors (like network issues) should be returned, but
 		//the provider error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
-			LogFacility.e("VoipstuntProvider error reply");
-			LogFacility.e(res);
-			LogFacility.e(reply);
+			mLogFacility.e("VoipstuntProvider error reply");
+			mLogFacility.e(res);
+			mLogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;

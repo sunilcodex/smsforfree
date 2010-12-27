@@ -17,18 +17,16 @@
  * this program; If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.rainbowbreeze.smsforfree.util;
+package it.rainbowbreeze.smsforfree.helper;
 
 import java.util.List;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import it.rainbowbreeze.libs.helper.RainbowGlobalHelper;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 
-public class GlobalUtils {
+public class GlobalHelper extends RainbowGlobalHelper {
 	//---------- Private fields
 
 
@@ -61,42 +59,6 @@ public class GlobalUtils {
 	}
 
 	
-	/**
-	 * Check for the availability of network connection
-	 * @param context
-	 * @return
-	 */
-	public static boolean isConnectionAvailable(Context context)
-	{
-		ConnectivityManager mgr = (ConnectivityManager)
-			context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo netInfo = mgr.getActiveNetworkInfo();
-
-		if (netInfo != null)
-			return netInfo.isAvailable();
-		else
-			return false;
-	}
-	
-	/**
-	* Reallocates an array with a new size, and copies the contents
-	* of the old array to the new array.
-	* @param oldArray  the old array, to be reallocated.
-	* @param newSize   the new array size.
-	* @return          A new array with the same contents.
-	*/
-	public static Object resizeArray (Object oldArray, int newSize) {
-		int oldSize = java.lang.reflect.Array.getLength(oldArray);
-		Class elementType = oldArray.getClass().getComponentType();
-		Object newArray = java.lang.reflect.Array.newInstance(
-		elementType,newSize);
-		int preserveLength = Math.min(oldSize,newSize);
-		if (preserveLength > 0)
-		System.arraycopy (oldArray,0,newArray,0,preserveLength);
-		return newArray;
-	}	
-
-
 	//---------- Private methods
 
 }

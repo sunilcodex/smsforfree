@@ -19,15 +19,19 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.libs.ui.RainbowBaseDataEntryActivity;
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.ExecuteServiceCommandThread;
-import it.rainbowbreeze.smsforfree.util.GlobalUtils;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,13 +47,14 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class ActSettingsSmsService
-	extends ActBaseDataEntry
+	extends RainbowBaseDataEntryActivity
 {
 	//---------- Private fields
 	private final static int MAXFIELDS = 10;
@@ -63,6 +68,8 @@ public class ActSettingsSmsService
 	private TextView mTxtServiceName;
 	private TextView mLblServiceDesc;
 	
+	private ActivityHelper mActivityHelper;
+
 	//fuck java only passing parameters by value :(
 	private TextView mLblDesc;
 	private EditText mTxtValue;
@@ -74,6 +81,7 @@ public class ActSettingsSmsService
 	private ExecuteServiceCommandThread mExecutedServiceCommandThread;
 	
 	private ProgressDialog mProgressDialog;
+	private LogFacility mLogFacility;
 
 
 
@@ -85,9 +93,12 @@ public class ActSettingsSmsService
 	
 	//---------- Events
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+
         setContentView(R.layout.actsettingssmsservice);
         getDataFromIntent(getIntent());
         
@@ -115,7 +126,7 @@ public class ActSettingsSmsService
 		mExecutedServiceCommandThread = (ExecuteServiceCommandThread) getLastNonConfigurationInstance();
 		if (null != mExecutedServiceCommandThread) {
 			//create and show a new progress dialog
-			mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
+			mProgressDialog = mActivityHelper.createAndShowProgressDialog(this, 0, R.string.common_msg_executingCommand);
 			//register new handler
 			mExecutedServiceCommandThread.registerCallerHandler(mExecutedCommandHandler);
 		}
@@ -156,7 +167,7 @@ public class ActSettingsSmsService
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		boolean result;
-		
+
 		result = super.onOptionsItemSelected(item);
 
 		//exit if the command was processed
@@ -170,10 +181,11 @@ public class ActSettingsSmsService
 		}
 		
 		//create new progress dialog
-		mProgressDialog = ActivityHelper.createAndShowProgressDialog(this, R.string.common_msg_executingCommand);
+		mProgressDialog = mActivityHelper.createAndShowProgressDialog(this, 0, R.string.common_msg_executingCommand);
 
 		//preparing the background thread for executing service command
 		mExecutedServiceCommandThread = new ExecuteServiceCommandThread(
+				mLogFacility,
 				this.getApplicationContext(),
 				mExecutedCommandHandler,
 				mEditedService,
@@ -205,10 +217,10 @@ public class ActSettingsSmsService
 			}
 			
 			//store that at least one of the providers' subservices list was accessed
-			App.instance().setForceSubserviceRefresh(true);
+			App.i().setForceSubserviceRefresh(true);
 			
 			//open the subservice configuration activity
-			ActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
+			mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
 		}
 	};
 
@@ -226,9 +238,9 @@ public class ActSettingsSmsService
 			//dismisses progress dialog
 			if (null != mProgressDialog && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
-			ResultOperation<String> res = mExecutedServiceCommandThread.getResult();
+			RainbowResultOperation<String> res = mExecutedServiceCommandThread.getResult();
 			//and show the result
-			ActivityHelper.showCommandExecutionResult(ActSettingsSmsService.this, res);
+			mActivityHelper.showCommandExecutionResult(ActSettingsSmsService.this, res);
 			//free the thread
 			mExecutedServiceCommandThread = null;
 		};
@@ -243,12 +255,12 @@ public class ActSettingsSmsService
 	
 	
 	//---------- Private methods
-	@Override
+    @Override
 	protected void loadDataIntoViews() {
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_title),
-        		App.instance().getAppName(),
+        		App.i().getAppName(),
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice
@@ -308,7 +320,7 @@ public class ActSettingsSmsService
 		}
 		
 		if (res.hasErrors()) {
-			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
+			mActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 			return false;
 		}
 		
@@ -324,7 +336,7 @@ public class ActSettingsSmsService
 		//checks if current editing is for a provider or a subservice
 		if(extras != null) {
 			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalUtils.findProviderInList(App.instance().getProviderList(), providerId);
+			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), providerId);
 			String subserviceId = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
 			if (TextUtils.isEmpty(subserviceId)) {
 				//edit a provider preferences
@@ -492,5 +504,5 @@ public class ActSettingsSmsService
 				outState.putString(String.valueOf(i), mValuesBackup[i]);
 		}
 	}
-	
+
 }

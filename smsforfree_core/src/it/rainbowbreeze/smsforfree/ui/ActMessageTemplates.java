@@ -18,8 +18,10 @@
  */
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -27,6 +29,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * 
@@ -46,6 +49,8 @@ public class ActMessageTemplates
 	private final static int FIELDS = 10;
 	private String[] mMessageTemplates;
 
+	private LogFacility mLogFacility;
+	private AppPreferencesDao mAppPreferencesDao;
 
 
 
@@ -58,12 +63,16 @@ public class ActMessageTemplates
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferences");
+
         setTitle(String.format(
-        		getString(R.string.actmessagetemplates_title), App.instance().getAppName()));
+        		getString(R.string.actmessagetemplates_title), App.i().getAppName()));
 		addPreferencesFromResource(R.layout.actmessagetemplates);
 		
 		//load message templates into internal value
-		String[] savedTemplates = AppPreferencesDao.instance().getMessageTemplates();
+		String[] savedTemplates = mAppPreferencesDao.getMessageTemplates();
 		mMessageTemplates = new String[FIELDS];
 		for (int i = 0; i < savedTemplates.length; i++)
 			mMessageTemplates[i] = savedTemplates[i];
@@ -150,8 +159,8 @@ public class ActMessageTemplates
 		}
 		
 		//save all
-		AppPreferencesDao.instance().setMessageTemplates(newTemplates);
-		return AppPreferencesDao.instance().save();
+		mAppPreferencesDao.setMessageTemplates(newTemplates);
+		return mAppPreferencesDao.save();
 	}
 
 }

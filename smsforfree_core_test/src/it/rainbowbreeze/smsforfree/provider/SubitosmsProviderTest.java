@@ -19,11 +19,14 @@
 
 package it.rainbowbreeze.smsforfree.provider;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+import it.rainbowbreeze.smsforfree.util.Def;
 import android.os.Bundle;
 
 /**
@@ -186,7 +189,11 @@ public class SubitosmsProviderTest
 	
 	@Override
 	protected SmsProvider createProvider() {
-		return new SubitosmsProvider(mDao);
+		return new SubitosmsProvider(
+		        mLogFacility,
+		        RainbowServiceLocator.get(AppPreferencesDao.class),
+		        mProviderDao,
+		        RainbowServiceLocator.get(ActivityHelper.class));
 	}
 
 }

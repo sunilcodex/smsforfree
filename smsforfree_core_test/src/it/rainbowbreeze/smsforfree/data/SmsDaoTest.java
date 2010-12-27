@@ -19,8 +19,11 @@
 
 package it.rainbowbreeze.smsforfree.data;
 
-import it.rainbowbreeze.smsforfree.common.Def;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.util.Def;
+import it.rainbowbreeze.smsforfree.util.TestHelper;
 import android.test.AndroidTestCase;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,7 +35,7 @@ import android.util.Log;
  */
 public class SmsDaoTest extends AndroidTestCase {
 	//---------- Private fields
-
+    SmsDao mSmsDao;
 	
 	
 	
@@ -42,32 +45,39 @@ public class SmsDaoTest extends AndroidTestCase {
 	
 
 	//---------- SetUp and TearDown
-
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        TestHelper.init(getContext());
+        
+        mSmsDao = new SmsDao(
+                RainbowServiceLocator.get(LogFacility.class));
+    }
 	
 	
 	
 	//---------- Tests methods
 	public void testIsSentSmsProviderAvailable()
 	{
-		assertTrue(SmsDao.instance().isSentSmsProviderAvailable(getContext()));
+		assertTrue(mSmsDao.isSentSmsProviderAvailable(getContext()));
 	}
 	
 	public void testIsInboxSmsProviderAvailable()
 	{
-		assertTrue(SmsDao.instance().isInboxSmsProviderAvailable(getContext()));
+		assertTrue(mSmsDao.isInboxSmsProviderAvailable(getContext()));
 	}
 	
 	public void testSaveSmsInSentFolder()
 	{
-		int totalSmsBefore = SmsDao.instance().getMessagesNumberInSentFolder(getContext());
+		int totalSmsBefore = mSmsDao.getMessagesNumberInSentFolder(getContext());
 		Log.i("SmsForFree-Test", "SMS before the insert: " + totalSmsBefore);
 		assertTrue("Wrong number of SMS in Sent Folder", totalSmsBefore >= 0);
 		
-		ResultOperation<Void> res = SmsDao.instance().saveSmsInSentFolder(
+		ResultOperation<Void> res = mSmsDao.saveSmsInSentFolder(
 				getContext(), Def.TEST_DESTINATION, "Test message");
 		assertFalse("Error in request", res.hasErrors());
 		
-		int totalSmsAfter = SmsDao.instance().getMessagesNumberInSentFolder(getContext());
+		int totalSmsAfter = mSmsDao.getMessagesNumberInSentFolder(getContext());
 		Log.i("SmsForFree-Test", "SMS after the insert: " + totalSmsAfter);
 		assertTrue("Wrong number of SMS in Sent Folder", totalSmsAfter >= 0);
 		
@@ -80,7 +90,7 @@ public class SmsDaoTest extends AndroidTestCase {
 	 */
 	public void testRetrieveLastSmsRecievedNumber()
 	{
-		ResultOperation<String> res = SmsDao.instance().getLastSmsReceivedNumber(getContext());
+		ResultOperation<String> res = mSmsDao.getLastSmsReceivedNumber(getContext());
 		assertFalse("Error in request", res.hasErrors());
 		Log.i("SmsForFree-Test", "SMS last sender: " + res.getResult());
 		assertFalse("Empty message number", TextUtils.isEmpty(res.getResult()));

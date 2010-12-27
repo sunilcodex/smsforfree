@@ -19,27 +19,24 @@
 
 package it.rainbowbreeze.smsforfree.data;
 
-import java.util.Calendar;
-
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
-import it.rainbowbreeze.smsforfree.util.ParserUtils;
+import it.rainbowbreeze.libs.data.RainbowAppPreferencesDao;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
+import it.rainbowbreeze.smsforfree.common.App;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 public class AppPreferencesDao
-	extends BasePreferencesDao
+	extends RainbowAppPreferencesDao
 {
 	//---------- Private fields
 	
-    private static final String PROP_APPVERSION = "appVersion";
     private static final String PROP_AUTO_CLEAR_MESSAGE = "clearmessage";
     private static final String PROP_INSERT_MESSAGE_INTO_PIM = "insertmessageintopim";
     private static final String PROP_DEFAULT_INTERNATIONAL_PREFIX = "defaultInternationalPrefix";
     private static final String PROP_SIGNATURE = "signature";
-    private static final String PROP_INSTALLATION_TIME = "installationTime";
     private static final String PROP_SMSCOUNTER_DATE = "smsCounterDate";
     private static final String PROP_SMSCOUNTER_NUMBERFORCURRENTDAY = "smsCounterNumber";
     private static final String PROP_SMSCOUNTER_TOTAL = "smsCounterTotal";
-    private static final String PROP_UNIQUEID = "uniqueId";
     private static final String PROP_MESSAGETEMPLATES = "messageTemplates";
     
     private static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
@@ -49,16 +46,18 @@ public class AppPreferencesDao
     
     private static final String TEMPLATES_SEPARATOR = "§§§§";
     
+    
+    
 
 	//---------- Public Properties
+	public AppPreferencesDao(Context context, String preferenceKey) {
+		super(context, preferenceKey);
+	}
 
-    private static AppPreferencesDao mInstance;
-    public static AppPreferencesDao instance()
-    {
-    	if (null == mInstance)
-    		mInstance = new AppPreferencesDao();
-    	return mInstance;
-    }
+
+
+
+	//---------- Public Properties
 
 
 
@@ -81,45 +80,10 @@ public class AppPreferencesDao
     { mEditor.putString(PROP_SIGNATURE, newValue); }
 
     public String getDefaultInternationalPrefix()
-    { return mSettings.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, GlobalDef.italyInternationalPrefix); }
+    { return mSettings.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, App.italyInternationalPrefix); }
     public void setDefaultInternationalPrefix(String newValue)
     { mEditor.putString(PROP_DEFAULT_INTERNATIONAL_PREFIX, newValue); }
 
-    public String getAppVersion()
-    { return mSettings.getString(PROP_APPVERSION, "00.00.00"); }
-    public void setAppVersion(String newValue)
-    { mEditor.putString(PROP_APPVERSION, newValue); }
-    
-    public long getInstallationTime()
-    {
-    	long installationTime = mSettings.getLong(PROP_INSTALLATION_TIME, 0);
-    	if (0 == installationTime) {
-    		//first run, set as installation time current milliseconds
-    	    final Calendar c = Calendar.getInstance();
-    	    installationTime = c.getTimeInMillis();
-    	    //store it
-    	    setInstallationTime(installationTime);
-    	    save();
-    	}
-    	return installationTime;
-    }
-    public void setInstallationTime(long newValue)
-    { mEditor.putLong(PROP_INSTALLATION_TIME, newValue); }
-    
-    public long getUniqueId()
-    {
-    	long installationTime = mSettings.getLong(PROP_UNIQUEID, 0);
-    	if (0 == installationTime) {
-    		//first run, set as installation time current milliseconds
-    	    final Calendar c = Calendar.getInstance();
-    	    installationTime = c.getTimeInMillis();
-    	    //store it
-    	    mEditor.putLong(PROP_UNIQUEID, installationTime);
-    	    save();
-    	}
-    	return installationTime;
-    }
-    
     public String getLastUsedProviderId()
     { return mSettings.getString(PROP_LASTUSED_PROVIDERID, ""); }
     public void setLastUsedProviderId(String newValue)
@@ -158,7 +122,7 @@ public class AppPreferencesDao
 	public String[] getMessageTemplates()
 	{ return mSettings.getString(PROP_MESSAGETEMPLATES, "").split(TEMPLATES_SEPARATOR); }
 	public void setMessageTemplates(String[] newValue)
-	{ mEditor.putString(PROP_MESSAGETEMPLATES, ParserUtils.join(newValue, TEMPLATES_SEPARATOR)); }
+	{ mEditor.putString(PROP_MESSAGETEMPLATES, RainbowStringHelper.join(newValue, TEMPLATES_SEPARATOR)); }
     
 
     //---------- Protected Methods
@@ -194,17 +158,4 @@ public class AppPreferencesDao
     	setLastUsedDestination(settingsBackup.getString(PROP_LASTUSED_DESTINATION, ""));
     	setLastUsedMessage(settingsBackup.getString(PROP_LASTUSED_MESSAGE, ""));
 	}
-    
-	
-	/* (non-Javadoc)
-	 * @see com.angurialab.postino.data.BasePreferencesDao#getPreferencesKey()
-	 */
-	@Override
-	protected String getPreferencesKey() {
-		return GlobalDef.appPreferencesKeys;
-	}
-
-
-
-
 }

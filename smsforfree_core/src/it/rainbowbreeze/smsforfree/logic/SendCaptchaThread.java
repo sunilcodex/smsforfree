@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
+import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import android.content.Context;
 import android.os.Handler;
@@ -29,7 +30,7 @@ import android.os.Handler;
  * Send a captcha
  */
 public class SendCaptchaThread
-	extends BaseBackgroundThread
+	extends RainbowBaseBackgroundThread<String>
 {
 
 	//---------- Ctors

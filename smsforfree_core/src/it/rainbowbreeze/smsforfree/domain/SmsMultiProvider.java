@@ -19,8 +19,11 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,17 +35,22 @@ import android.text.TextUtils;
 public abstract class SmsMultiProvider
 	extends SmsProvider
 {
-	//---------- Ctors
-	protected SmsMultiProvider(ProviderDao dao, int numberOfParameters) {
-		super(dao, numberOfParameters);
-		mTemplates = new ArrayList<SmsService>();
-		mSubservices = new ArrayList<SmsService>();
-	}
+	//---------- Private fields
 
 	
 	
 	
-	//---------- Private fields
+	//---------- Constructors
+	protected SmsMultiProvider(
+			LogFacility logFacility,
+			int numberOfParameters,
+			AppPreferencesDao appPreferencesDao,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper) {
+		super(logFacility, numberOfParameters, appPreferencesDao, providerDao, activityHelper);
+		mTemplates = new ArrayList<SmsService>();
+		mSubservices = new ArrayList<SmsService>();
+	}
 
 	
 	
@@ -135,7 +143,7 @@ public abstract class SmsMultiProvider
 	public ResultOperation<Void> saveSubservices(Context context) {
 		adjustSubservicesIds();
 		Collections.sort(mSubservices);
-		return mDao.saveProviderSubservices(context, getSubservicesFileName(), this);
+		return mProviderDao.saveProviderSubservices(context, getSubservicesFileName(), this);
 	}
 	
 	public SmsService integrateSubserviceWithTemplateData(SmsConfigurableService originalService, String templateId) {
@@ -146,7 +154,7 @@ public abstract class SmsMultiProvider
 		SmsConfigurableService subservice;
 		if (null == originalService) {
 			//create new services and configure it
-			subservice = new SmsConfigurableService(template.getParametersNumber());
+			subservice = new SmsConfigurableService(mLogFacility, template.getParametersNumber());
 			subservice.setId(NEWSERVICEID);
 		} else {
 			subservice = originalService;
@@ -183,21 +191,21 @@ public abstract class SmsMultiProvider
 	 * Load provider's templates from a file
 	 */
 	protected ResultOperation<Void> loadTemplates(Context context){
-		return mDao.loadProviderTemplates(context, getTemplatesFileName(), this);
+		return mProviderDao.loadProviderTemplates(context, getTemplatesFileName(), this);
 	}
 
 	/**
 	 * Save provider's templates in a file
 	 */
 	protected ResultOperation<Void> saveTemplates(Context context){
-		return mDao.saveProviderTemplates(context, getTemplatesFileName(), this);
+		return mProviderDao.saveProviderTemplates(context, getTemplatesFileName(), this);
 	}
 
 	/**
 	 * Load provider's subservices from a file
 	 */
 	protected ResultOperation<Void> loadSubservices(Context context) {
-		return mDao.loadProviderSubservices(context, getSubservicesFileName(), this);
+		return mProviderDao.loadProviderSubservices(context, getSubservicesFileName(), this);
 	}
 
 	/**

@@ -21,14 +21,24 @@ package it.rainbowbreeze.smsforfree.common;
 
 import java.util.List;
 
+import it.rainbowbreeze.libs.common.RainbowAppGlobalBag;
+import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.libs.logic.RainbowCrashReporter;
+import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.logic.CrashReporter;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import android.app.Application;
+import android.content.Context;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class App
 	extends Application
+	implements RainbowAppGlobalBag
 {
 	//---------- Constructor
 	public App()
@@ -47,12 +57,72 @@ public class App
 	
 	//---------- Public properties
 
-	//singleton
+	//singleton, modified for testing purposes
     private static App mInstance;
-    public static App instance()
+    public static App i()
     { return mInstance; }
 	
-    /** List of providers */
+    
+	/** keys for application preferences */
+	public final static String APP_PREFERENCES_KEY = "SmsForFreePrefs";
+
+	/** Application name */
+	public static String APP_DISPLAY_NAME = "SmsForFree";
+
+	/** Application version displayed to the user (about activity etc) */
+	public final static String APP_DISPLAY_VERSION = "2.0";
+
+	/** Application name used during the ping of update site */
+	public final static String APP_INTERNAL_NAME = "SmsForFree";
+    
+	/** Application version for internal use (update, crash report etc) */
+	public final static String APP_INTERNAL_VERSION = "2.00.00";
+
+	/** address where send log */
+	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
+	
+	/** Tag to use in the log */
+	public final static String LOG_TAG = "SmsForFree";
+
+	/** keys for application preferences */
+	public final static String appPreferencesKeys = "SmsForFreePrefs"; 
+	
+	/** file name for providers preferences */
+	public final static String jacksmsParametersFileName = "jacksms_parameters.xml"; 
+	/** file name for providers templates list */
+	public final static String jacksmsmTemplatesFileName = "jacksms_templates.xml";
+	/** file name for providers subservices list */
+	public final static String jacksmsSubservicesFileName = "jacksms_subservices.xml"; 
+
+	/** file name for providers preferences */
+	public final static String aimonParametersFileName = "aimon_parameters.xml"; 
+	
+	/** file name for providers preferences */
+	public final static String voipstuntParametersFileName = "voipstunt_parameters.xml";
+
+	public final static String subitosmsParametersFileName = "subitosms_parameters.xml";
+
+	/** international prefix for Italy */
+	public final static String italyInternationalPrefix = "+39";
+	
+	/** url where send statistics about device */
+	public final static String statisticsUrl = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
+	
+	/** string for lite version */
+	public final static String lite_description = "Lite";
+
+	/** platform - dependent newline char */
+	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
+	
+	
+	/** First run after an update of the application */
+	protected boolean mFirstRunAfterUpdate;
+	public RainbowAppGlobalBag setFirstRunAfterUpdate(boolean newValue)
+	{ mFirstRunAfterUpdate = newValue; return this; }
+	public boolean isFirstRunAfterUpdate()
+	{ return mFirstRunAfterUpdate; }
+
+	/** List of providers */
 	protected List<SmsProvider> mProviderList;
 	public List<SmsProvider> getProviderList()
 	{ return mProviderList; }
@@ -94,46 +164,23 @@ public class App
 	public void setForceSubserviceRefresh(boolean newValue)
 	{ mForceSubserviceRefresh = newValue; }
 	
-	/** the application was correctly initialized */
-	protected boolean mIsCorrectlyInitialized;
-	public boolean isCorrectlyInitialized()
-	{ return mIsCorrectlyInitialized; }
-
 	/** Show o don't show the ads */
 	protected boolean mAdEnables;
 	public boolean isAdEnables()
 	{ return mAdEnables; }
 	public void setAdEnables(boolean newValue)
 	{ mAdEnables = newValue; }
+
 	
-
-	protected boolean mStartupInfoboxREquired;
-	public void setStartupInfoboxRequired(boolean newValue)
-	{ mStartupInfoboxREquired = newValue; }
-	public boolean isStartupInfoboxRequired()
-	{ return mStartupInfoboxREquired; }
-
-
 
 	
 	//---------- Events
 	
 	@Override
-	public void onCreate()
-	{
+	public void onCreate() {
 		super.onCreate();
 		
-		//register crash reporter
-		CrashReporter.instance().init(this);
-		
-		//execute begin task
-		ResultOperation<Void> res = LogicManager.executeBeginTask(this);
-		if (res.hasErrors()) {
-			mIsCorrectlyInitialized = false;
-			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
-		} else {
-			mIsCorrectlyInitialized = true;
-		}
+		setupEnvironment(getApplicationContext());
 	}
 	
 	
@@ -141,11 +188,17 @@ public class App
 	@Override
 	public void onTerminate()
 	{
+		LogicManager logicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
 		//execute end tasks
-		ResultOperation<Void> res = LogicManager.executeEndTast(this);
+		RainbowResultOperation<Void> res = logicManager.executeEndTasks(this);
 		if (res.hasErrors()) {
-			ActivityHelper.reportError(this, res.getException(), res.getReturnCode());
+			RainbowServiceLocator.get(ActivityHelper.class).reportError(this, res.getException(), res.getReturnCode());
 		}
+
+		
+		//log the end of the application
+		LogFacility logFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+		logFacility.i("App ending: " + App.APP_INTERNAL_NAME);
 		super.onTerminate();
 	}
 	
@@ -158,5 +211,35 @@ public class App
 	
 	
 	//---------- Private methods
+	/**
+	 * Setup the application environment.
+	 * Public only for test purpose
+	 */
+	public void setupEnvironment(Context context) {
+		//set the log tag
+		LogFacility logFacility = new LogFacility(LOG_TAG);
+		//log the begin of the application
+		logFacility.i("App started: " + App.APP_INTERNAL_NAME);
 
+		//calculate application name
+		APP_DISPLAY_NAME = context.getString(R.string.common_appName);
+		
+		//initialize (and automatically register) crash reporter
+		RainbowCrashReporter crashReport = new RainbowCrashReporter(context);
+		RainbowServiceLocator.put(crashReport);
+		
+		RainbowServiceLocator.put(logFacility);
+		
+		//create services and helper respecting IoC dependencies
+		ActivityHelper activityHelper = new ActivityHelper(logFacility, context);
+		RainbowServiceLocator.put(activityHelper);
+		AppPreferencesDao appPreferencesDao = new AppPreferencesDao(context, APP_PREFERENCES_KEY);
+		RainbowServiceLocator.put(appPreferencesDao);
+		ProviderDao providerDao = new ProviderDao();
+		RainbowServiceLocator.put(providerDao);
+		LogicManager logicManager = new LogicManager(logFacility, appPreferencesDao, this, APP_INTERNAL_VERSION, providerDao, activityHelper);
+		RainbowServiceLocator.put(logicManager);
+		SmsDao smsDao = new SmsDao(logFacility);
+        RainbowServiceLocator.put(smsDao);
+	}
 }

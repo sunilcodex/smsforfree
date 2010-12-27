@@ -32,6 +32,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.text.TextUtils;
 import android.util.Xml;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * 
@@ -47,6 +48,15 @@ public class VoipstuntDictionary
 	private final static String XMLNODE_RESULTCODE = "result";
 	private final static String XMLNODE_RESULTSTRING = "resultstring";
 
+	private final LogFacility mLogFacility;
+
+
+
+	//---------- Constructors
+	public VoipstuntDictionary(LogFacility logFacility) {
+		mLogFacility = checkNotNull(logFacility, "LogFacility");
+	}
+
 
 
 
@@ -55,11 +65,6 @@ public class VoipstuntDictionary
 
 
 	
-	//---------- Events
-
-
-
-
 	//---------- Public methods
 	public String getUrlForMessage(
 			String username,
@@ -109,12 +114,12 @@ public class VoipstuntDictionary
 			
 		//TODO advice for providers problem
 		} catch (UnsupportedEncodingException e) {
-			LogFacility.e(e);
+			mLogFacility.e(e);
 			e.printStackTrace();
 		} catch (XmlPullParserException e) {
-			LogFacility.e(e);
+			mLogFacility.e(e);
 		} catch (IOException e) {
-			LogFacility.e(e);
+			mLogFacility.e(e);
 		}
 		
 		return "success".equalsIgnoreCase(providerResult);

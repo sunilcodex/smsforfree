@@ -19,17 +19,31 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.smsforfree.common.LogFacility;
+
 public class SmsConfigurableService
 	extends SmsService
 {
-	//---------- Ctors
-	public SmsConfigurableService(int numberOfParameters) {
-		super(numberOfParameters);
+	//---------- Private fields
+
+
+	
+	
+	//---------- Constructors
+	public SmsConfigurableService(
+			LogFacility logFacility,
+			int numberOfParameters) {
+		super(logFacility, numberOfParameters);
 		mNumberOfParameters = numberOfParameters;
 	}
 	
-	public SmsConfigurableService(String id, String name, int maxLen, String[] parametersDesc) {
-		this(parametersDesc.length);
+	public SmsConfigurableService(
+			LogFacility logFacility,
+			String id, 
+			String name,
+			int maxLen,
+			String[] parametersDesc) {
+		this(logFacility, parametersDesc.length);
 		setId(id);
 		setName(name);
 		setMaxMessageLenght(maxLen);
@@ -38,8 +52,13 @@ public class SmsConfigurableService
 		}
 	}
 	
-	public SmsConfigurableService(String id, String templateId, String name, String[] parametersValue){
-		this(parametersValue.length);
+	public SmsConfigurableService(
+			LogFacility logFacility,
+			String id,
+			String templateId,
+			String name,
+			String[] parametersValue){
+		this(logFacility, parametersValue.length);
 		setId(id);
 		setTemplateId(templateId);
 		setName(name);
@@ -47,13 +66,7 @@ public class SmsConfigurableService
 			setParameterValue(i, parametersValue[i]);
 		}
 	}
-	
 
-
-	
-	
-	
-	//---------- Private fields
 	
 	
 	

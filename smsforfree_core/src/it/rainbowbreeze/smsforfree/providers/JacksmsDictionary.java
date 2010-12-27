@@ -19,10 +19,11 @@
 
 package it.rainbowbreeze.smsforfree.providers;
 
+import it.rainbowbreeze.libs.helper.RainbowArrayHelper;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
-import it.rainbowbreeze.smsforfree.util.Base64;
-import it.rainbowbreeze.smsforfree.util.GlobalUtils;
+import it.rainbowbreeze.smsforfree.helper.Base64Helper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,17 +40,6 @@ import android.text.TextUtils;
  */
 public class JacksmsDictionary
 {
-	//---------- Ctors
-	public JacksmsDictionary() {
-	}
-	
-	
-
-	//---------- Public fields
-
-
-
-	
 	//---------- Private fields
 	private static final String FORMAT_CSV = "csv";
 	private static final String FORMAT_XML = "xml";
@@ -79,8 +69,14 @@ public class JacksmsDictionary
 		"0" + CSV_SEPARATOR
 		};
 	
-	
 
+
+
+	//---------- Constructors
+	public JacksmsDictionary() {
+	}
+	
+	
 
 	//---------- Public properties
 
@@ -89,22 +85,16 @@ public class JacksmsDictionary
 
 	//---------- Public methods
 	public String getUrlForSendingMessage(String username, String password)
-	{
-		return getUrlForCommand(username, password, ACTION_SEND_MESSAGE);
-	}
+	{ return getUrlForCommand(username, password, ACTION_SEND_MESSAGE); }
 	
-	public String getUrlForSendingCaptcha(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA);
-	}
+	public String getUrlForSendingCaptcha(String username, String password)
+	{ return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA); }
 	
 	public String getUrlForDownloadTemplates(String username, String password)
-	{
-		return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES);
-	}
+	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES); }
 
-	public String getUrlForDownloadUserServices(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES);
-	}
+	public String getUrlForDownloadUserServices(String username, String password)
+	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES); }
 	
 	/**
 	 * Builds headers used in send sms api
@@ -216,7 +206,7 @@ public class JacksmsDictionary
 		byte[] decodedCaptcha;
 		try {
 			//decodedCaptcha = new String(Base64.decode(content), "UTF-8");
-			decodedCaptcha = Base64.decode(content);
+			decodedCaptcha = Base64Helper.decode(content);
 		} catch (IOException e) {
 			decodedCaptcha = null;
 		}
@@ -240,7 +230,7 @@ public class JacksmsDictionary
 	}
 
 	
-	public List<SmsService> extractTemplates(String providerReply)
+	public List<SmsService> extractTemplates(LogFacility logFacility, String providerReply)
 	{
 		List<SmsService> templates = new ArrayList<SmsService>();
 		
@@ -262,8 +252,9 @@ public class JacksmsDictionary
 					if (TextUtils.isEmpty(parametersDesc[i])) numberOfParameters--;
 				}
 				//create new service
-				parametersDesc = (String[]) GlobalUtils.resizeArray(parametersDesc, numberOfParameters);
-				SmsService newTemplate = new SmsConfigurableService(serviceId, serviceName, maxChar, parametersDesc);
+				parametersDesc = (String[]) RainbowArrayHelper.resizeArray(parametersDesc, numberOfParameters);
+				SmsService newTemplate = new SmsConfigurableService(
+						logFacility, serviceId, serviceName, maxChar, parametersDesc);
 				//sometimes the service description could be unavailable
 				if (pieces.length > 7)
 					newTemplate.setDescription(pieces[7]);
@@ -278,7 +269,9 @@ public class JacksmsDictionary
 	}
 	
 	
-	public List<SmsConfigurableService> extractUserServices(String providerReply)
+	public List<SmsConfigurableService> extractUserServices(
+			LogFacility logFacility,
+			String providerReply)
 	{
 		List<SmsConfigurableService> services = new ArrayList<SmsConfigurableService>();
 		
@@ -296,15 +289,16 @@ public class JacksmsDictionary
 				int numberOfParameters = MAX_SERVICE_PARAMETERS;
 				for(int i = 0; i < MAX_SERVICE_PARAMETERS; i++) {
 					if (pieces.length > 3+i)
-						parametersValue[i] = new String(Base64.decode(pieces[3+i]));
+						parametersValue[i] = new String(Base64Helper.decode(pieces[3+i]));
 					else
 						parametersValue[i] = "";
 					//find the total number of parameter
 					if (TextUtils.isEmpty(parametersValue[i])) numberOfParameters--;
 				}
 				//create new service
-				parametersValue = (String[]) GlobalUtils.resizeArray(parametersValue, numberOfParameters);
-				SmsConfigurableService newService = new SmsConfigurableService(serviceId, templateId, serviceName, parametersValue);
+				parametersValue = (String[]) RainbowArrayHelper.resizeArray(parametersValue, numberOfParameters);
+				SmsConfigurableService newService = new SmsConfigurableService(
+						logFacility, serviceId, templateId, serviceName, parametersValue);
 				services.add(newService);
 			} catch (Exception e) {
 				//do nothing, simply skips to next service
@@ -392,8 +386,8 @@ public class JacksmsDictionary
 			codedUser = USER_TEST;
 			codedPwd = USER_TEST;
 		}else{
-			codedUser = replaceNotAllowedChars(Base64.encodeBytes(username.getBytes()));
-			codedPwd = replaceNotAllowedChars(Base64.encodeBytes(password.getBytes()));
+			codedUser = replaceNotAllowedChars(Base64Helper.encodeBytes(username.getBytes()));
+			codedPwd = replaceNotAllowedChars(Base64Helper.encodeBytes(password.getBytes()));
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(URL_BASE)

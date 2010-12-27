@@ -19,6 +19,8 @@
 
 package it.rainbowbreeze.smsforfree.data;
 
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +35,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
@@ -48,31 +52,38 @@ import android.util.Xml;
  */
 public class ProviderDao
 {
-	//---------- Ctors
-
 	//---------- Private fields
-	private final static String XMLNODE_PROVIDER = "Provider";
-	private final static String XMLNODE_TEMPLATE = "Template";
-	private final static String XMLNODE_TEMPLATESARRAY = "TemplatesArray";
-	private final static String XMLNODE_SUBSERVICESARRAY = "SubservicesArray";
-	private final static String XMLNODE_SUBSERVICE = "Subservice";
-	private final static String XMLNODE_ID = "Id";
-	private final static String XMLNODE_NAME = "Name";
-	private final static String XMLNODE_PARAMETERSNUMBER = "ParametersNumber";
-	private final static String XMLNODE_MAXMESSAGELENGHT = "MaxMessageLenght";
-	private final static String XMLNODE_TEMPLATEID = "TemplateId";
-	private final static String XMLNODE_DESCRIPTION = "Description";
-	private final static String XMLNODE_PARAMETERSARRAY = "ParametersArray";
-	private final static String XMLNODE_PARAMETER = "Parameter";
-	private final static String XMLNODE_PARAMETERDESC = "Desc";
-	private final static String XMLNODE_PARAMETERVALUE = "Value";
-	private final static String XMLNODE_PARAMETERFORMAT = "Format";
-	private final static String XMLATTRIBUTE_PARAMETERSNUMBER = "ParametersNumber";
+	protected final static String XMLNODE_PROVIDER = "Provider";
+	protected final static String XMLNODE_TEMPLATE = "Template";
+	protected final static String XMLNODE_TEMPLATESARRAY = "TemplatesArray";
+	protected final static String XMLNODE_SUBSERVICESARRAY = "SubservicesArray";
+	protected final static String XMLNODE_SUBSERVICE = "Subservice";
+	protected final static String XMLNODE_ID = "Id";
+	protected final static String XMLNODE_NAME = "Name";
+	protected final static String XMLNODE_PARAMETERSNUMBER = "ParametersNumber";
+	protected final static String XMLNODE_MAXMESSAGELENGHT = "MaxMessageLenght";
+	protected final static String XMLNODE_TEMPLATEID = "TemplateId";
+	protected final static String XMLNODE_DESCRIPTION = "Description";
+	protected final static String XMLNODE_PARAMETERSARRAY = "ParametersArray";
+	protected final static String XMLNODE_PARAMETER = "Parameter";
+	protected final static String XMLNODE_PARAMETERDESC = "Desc";
+	protected final static String XMLNODE_PARAMETERVALUE = "Value";
+	protected final static String XMLNODE_PARAMETERFORMAT = "Format";
+	protected final static String XMLATTRIBUTE_PARAMETERSNUMBER = "ParametersNumber";
 	
-	private final static int PROVIDERDATA_PARAMETERS = 1;
-	private final static int PROVIDERDATA_TEMPLATES = 2;
-	private final static int PROVIDERDATA_SUBSERVICES = 3;
+	protected final static int PROVIDERDATA_PARAMETERS = 1;
+	protected final static int PROVIDERDATA_TEMPLATES = 2;
+	protected final static int PROVIDERDATA_SUBSERVICES = 3;
 	
+	protected final LogFacility mLogFacility;
+	
+	
+	//---------- Constructors
+	public ProviderDao() {
+		mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+	}
+
+
 	
 	
 	//---------- Public properties
@@ -81,15 +92,12 @@ public class ProviderDao
 	
 	
 	//---------- Public methods
-
-
 	/**
 	 * Persist a provider parameters into a file in xml format
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation<Void> saveProviderParameters(Context context, String filename, SmsProvider provider)
-	{
+	public ResultOperation<Void> saveProviderParameters(Context context, String filename, SmsProvider provider) {
 		return saveProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
 	}
 
@@ -98,8 +106,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation<Void> saveProviderTemplates(Context context, String filename, SmsProvider provider)
-	{
+	public ResultOperation<Void> saveProviderTemplates(Context context, String filename, SmsProvider provider) {
 		return saveProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
 	}
 
@@ -108,8 +115,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, IllegalArgumentException, IllegalStateException
 	 */
-	public ResultOperation<Void> saveProviderSubservices(Context context, String filename, SmsProvider provider)
-	{
+	public ResultOperation<Void> saveProviderSubservices(Context context, String filename, SmsProvider provider) {
 		return saveProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
 	}
 
@@ -119,8 +125,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation<Void> loadProviderParameters(Context context, String filename, SmsProvider provider)
-	{
+	public ResultOperation<Void> loadProviderParameters(Context context, String filename, SmsProvider provider) {
 		return loadProviderData(context, filename, provider, PROVIDERDATA_PARAMETERS);
 	}
 
@@ -129,8 +134,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation<Void> loadProviderTemplates(Context context, String filename, SmsProvider provider)
-	{
+	public ResultOperation<Void> loadProviderTemplates(Context context, String filename, SmsProvider provider) {
 		return loadProviderData(context, filename, provider, PROVIDERDATA_TEMPLATES);
 	}
 
@@ -139,8 +143,7 @@ public class ProviderDao
 	 * 
 	 * Could throws FileNotFoundException, IOException, XmlPullParserException
 	 */
-	public ResultOperation<Void> loadProviderSubservices(Context context, String filename, SmsProvider provider)
-	{
+	public ResultOperation<Void> loadProviderSubservices(Context context, String filename, SmsProvider provider) {
 		return loadProviderData(context, filename, provider, PROVIDERDATA_SUBSERVICES);
 	}
 
@@ -511,7 +514,7 @@ public class ProviderDao
 					String attributesNumbers = parser.getAttributeValue(0);
 					int attributes = Integer.parseInt(attributesNumbers);
 					//initialized the service
-					service = new SmsConfigurableService(attributes);
+					service = new SmsConfigurableService(mLogFacility, attributes);
 				} else if (name.equalsIgnoreCase(XMLNODE_ID)) {
 					service.setId(parser.nextText());
 				} else if (name.equalsIgnoreCase(XMLNODE_NAME)) {

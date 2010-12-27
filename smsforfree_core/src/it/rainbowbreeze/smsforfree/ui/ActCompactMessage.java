@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.ui.RainbowBaseDataEntryActivity;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.App;
 import android.content.Intent;
@@ -28,11 +29,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
- * @author rainbowbreeze
+ * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class ActCompactMessage
-	extends ActBaseDataEntry
+	extends RainbowBaseDataEntryActivity
 {
 	//---------- Private fields
 	private String mOriginalText;
@@ -52,8 +53,9 @@ public class ActCompactMessage
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
         setTitle(String.format(
-        		getString(R.string.actcompactmessage_title), App.instance().getAppName()));
+        		getString(R.string.actcompactmessage_title), App.i().getAppName()));
         setContentView(R.layout.actcompactmessage);
         
 		//retrieve the message to compact

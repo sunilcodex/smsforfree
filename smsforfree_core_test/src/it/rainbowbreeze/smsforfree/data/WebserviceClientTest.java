@@ -19,8 +19,8 @@
 
 package it.rainbowbreeze.smsforfree.data;
 
-import it.rainbowbreeze.smsforfree.common.Def;
 import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
+import it.rainbowbreeze.smsforfree.util.Def;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -46,21 +46,7 @@ public class WebserviceClientTest
 		
 		mClient = new WebserviceClient();		
 	}
-	
 
-	/**
-	 * Test a simple get request
-	 */
-	public void testSimpleGet()
-		throws ClientProtocolException, IOException
-	{
-		
-		String url = "http://www.rainbowbreeze.it/devel/getlatestversion.php?unique=test&swname=test&ver=test&sover=test&sores=test";
-		String reply = mClient.requestGet(url);
-		
-		assertEquals("Not a RainbowBreeze software :(", reply);
-	}
-	
 	
 	/**
 	 * Test a conversation using aimon api

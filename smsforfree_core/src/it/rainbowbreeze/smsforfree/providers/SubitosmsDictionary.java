@@ -19,7 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.providers;
 
-import it.rainbowbreeze.smsforfree.util.ParserUtils;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 
 import java.util.HashMap;
 
@@ -111,7 +111,7 @@ public class SubitosmsDictionary
 	 */
 	public String findRemainingCredit(String message)
 	{
-		return ParserUtils.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END);
+		return RainbowStringHelper.getStringBetween(message, SEARCH_CREDITI_SMS_START, SEARCH_CREDITI_SMS_END);
 	}
 	
 	public boolean isLoginInvalidCredentials(String webserviceReply)

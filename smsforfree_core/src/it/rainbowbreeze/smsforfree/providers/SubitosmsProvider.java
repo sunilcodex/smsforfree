@@ -26,16 +26,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.GlobalDef;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 /**
- * @author rainbowbreeze
+ * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
 public class SubitosmsProvider
@@ -43,9 +45,13 @@ public class SubitosmsProvider
 {
 
 	//---------- Ctors
-	public SubitosmsProvider(ProviderDao dao)
+	public SubitosmsProvider(
+			LogFacility logFacility,
+			AppPreferencesDao appPreferencesDao,
+			ProviderDao providerDao,
+			ActivityHelper activityHelper)
 	{
-		super(dao, PARAM_NUMBER);
+		super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
 	}
 
 	
@@ -213,7 +219,7 @@ public class SubitosmsProvider
 	//---------- Private methods
 	@Override
 	protected String getParametersFileName()
-	{ return GlobalDef.subitosmsParametersFileName; }
+	{ return App.subitosmsParametersFileName; }
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {
@@ -255,7 +261,7 @@ public class SubitosmsProvider
     	ResultOperation<String> res = doSingleHttpRequest(url, null, params);
     	//checks for errors
 		if (parseReplyForErrors(res)){
-			LogFacility.e("Error in command verifyCredit");
+			mLogFacility.e("Error in command verifyCredit");
 			//log action data for a better error management
 			logRequest(url, null, params);
 			return res;
@@ -317,9 +323,9 @@ public class SubitosmsProvider
     	//so no application errors (like network issues) should be returned, but
 		//the provider error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(res)) {
-			LogFacility.e("SubitosmsProvider error reply");
-			LogFacility.e(res);
-			LogFacility.e(reply);
+			mLogFacility.e("SubitosmsProvider error reply");
+			mLogFacility.e(res);
+			mLogFacility.e(reply);
     		resultToAnalyze.setResult(res);
     		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
     		return true;
