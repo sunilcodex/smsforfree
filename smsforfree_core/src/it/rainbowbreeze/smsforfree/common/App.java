@@ -40,6 +40,11 @@ public class App
 	extends Application
 	implements RainbowAppGlobalBag
 {
+    //---------- Private fields
+    private static final String LOG_HASH = "App";
+    
+    
+    
 	//---------- Constructor
 	public App()
 	{
@@ -47,11 +52,6 @@ public class App
 		//this is the first instruction, so no fear that mInstance is null is following calls
 		mInstance = this;
 	}
-	
-	
-	
-	//---------- Private fields
-
 	
 	
 	
@@ -198,7 +198,7 @@ public class App
 		
 		//log the end of the application
 		LogFacility logFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-		logFacility.i("App ending: " + App.APP_INTERNAL_NAME);
+		logFacility.i(LOG_HASH, "App ending: " + App.APP_INTERNAL_NAME);
 		super.onTerminate();
 	}
 	
@@ -219,7 +219,7 @@ public class App
 		//set the log tag
 		LogFacility logFacility = new LogFacility(LOG_TAG);
 		//log the begin of the application
-		logFacility.i("App started: " + App.APP_INTERNAL_NAME);
+		logFacility.i(LOG_HASH, "App started: " + App.APP_INTERNAL_NAME);
 
 		//calculate application name
 		APP_DISPLAY_NAME = context.getString(R.string.common_appName);

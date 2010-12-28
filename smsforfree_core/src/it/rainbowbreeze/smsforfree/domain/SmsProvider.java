@@ -54,6 +54,8 @@ public abstract class SmsProvider
 	extends SmsService
 {
 	//---------- Private fields
+    protected final static String LOG_HASH = "SmsProvider";
+    
 	protected final AppPreferencesDao mAppPreferencesDao;
 	protected final ProviderDao mProviderDao;
 	protected final ActivityHelper mActivityHelper;
@@ -212,9 +214,9 @@ public abstract class SmsProvider
 	 * Sends the message
 	 * 
 	 * @param destination
-	 * @param body
+	 * @param messageBody
 	 */
-	public abstract ResultOperation<String> sendMessage(String serviceId, String destination, String body);
+	public abstract ResultOperation<String> sendMessage(String serviceId, String destination, String messageBody);
 
     /**
      * Get the captcha image content from a provider reply
@@ -323,11 +325,10 @@ public abstract class SmsProvider
 	 * Create an exception for empty username or password
 	 * @return
 	 */
-	protected ResultOperation<String> getExceptionForInvalidCredentials()
-	{
-		return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL);
+	protected ResultOperation<String> getExceptionForInvalidCredentials() {
+	    mLogFacility.v(LOG_HASH, "Invalid user credential :(");
+		return new ResultOperation<String>(ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL);
 	}
-	
 
 	/**
 	 * Create the list of commands to show in the provider's settings activity
@@ -368,7 +369,7 @@ public abstract class SmsProvider
     		HashMap<String, String> parameters
 		)
     {
-    	WebserviceClient client = new WebserviceClient();
+    	WebserviceClient client = new WebserviceClient(mLogFacility);
     	return doHttpRequest(url, headers, parameters, client);
     }
     
@@ -385,7 +386,7 @@ public abstract class SmsProvider
     		endConversation();
     	}
     	
-    	mWebserviceClient = new WebserviceClient();
+    	mWebserviceClient = new WebserviceClient(mLogFacility);
     	mWebserviceClient.startConversation();
     	return mWebserviceClient;
     }
@@ -545,26 +546,103 @@ public abstract class SmsProvider
 	 */
 	protected void logRequest(String url, HashMap<String, String> headers, HashMap<String, String> parameters)
 	{
-		mLogFacility.e(getName() + " provider request content");
+		mLogFacility.e(LOG_HASH, getName() + " provider request content");
 		if (!TextUtils.isEmpty(url)) {
-			mLogFacility.e("Url");
-			mLogFacility.e(Base64Helper.encodeBytes(url.getBytes()));
+			mLogFacility.e(LOG_HASH, "Url");
+			mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(url.getBytes()));
 		}
 		if (null != headers) {
-			mLogFacility.e("Headers");
+			mLogFacility.e(LOG_HASH, "Headers");
 			for (Entry<String, String> header : headers.entrySet()) {
-				mLogFacility.e(Base64Helper.encodeBytes(header.getKey().getBytes()));
-				mLogFacility.e(Base64Helper.encodeBytes(header.getValue().getBytes()));
+				mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(header.getKey().getBytes()));
+				mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(header.getValue().getBytes()));
 			}
 		}
 		if (null != parameters) {
-			mLogFacility.e("Parameters");
+			mLogFacility.e(LOG_HASH, "Parameters");
 			for (Entry<String, String> param : parameters.entrySet()) {
-				mLogFacility.e(Base64Helper.encodeBytes(param.getKey().getBytes()));
-				mLogFacility.e(Base64Helper.encodeBytes(param.getValue().getBytes()));
+				mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(param.getKey().getBytes()));
+				mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(param.getValue().getBytes()));
 			}
 		}
 	}
-
 	
+	/**
+	 * Creates a standard {@link SmsProviderException} inside the 
+	 * {@link ResultOperation} class
+	 * 
+	 * @param resultOperation {@link ResultOperation} where set the exception
+	 * @param message error message
+	 */
+    protected <T> ResultOperation<T> setSmsProviderException(
+	        ResultOperation<T> resultOperation,
+	        String message){
+	    resultOperation.setException(
+	            new SmsProviderException(message),
+	            ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY);
+	    return resultOperation;
+	}
+
+    /**
+     * Before sending an sms, performs basic checks
+     * against parameters validity. Does not check sender validity
+     * 
+     * @param username
+     * @param password
+     * @param sender
+     * @param destination
+     * @param messageBody
+     * 
+     * @return a {@link ResultOperation} with error inside if some parameters
+     *         is not correct, elsewhere an empty {@link ResultOperation}
+     */
+    protected ResultOperation<String> validateSendSmsParameters(
+            String username,
+            String password,
+            String destination,
+            String messageBody) {
+
+        //null or empty credential check
+        if (!checkCredentialsValidity(username, password))
+            return getExceptionForInvalidCredentials();
+
+        //null or empty destination
+        if (TextUtils.isEmpty(destination)) {
+            mLogFacility.v(LOG_HASH, "Empty or null sms destination");
+            return new ResultOperation<String>(ResultOperation.RETURNCODE_ERROR_INVALID_DESTINATION);
+        }
+        
+        return new ResultOperation<String>();
+    }
+    
+    
+    /**
+     * Before sending an sms, performs basic checks
+     * against parameters validity. Performs checks also
+     * on sender validity
+     * 
+     * @param username
+     * @param password
+     * @param sender
+     * @param destination
+     * @param messageBody
+     * 
+     * @return a {@link ResultOperation} with error inside if some parameters
+     *         is not correct, elsewhere an empty {@link ResultOperation}
+     */
+    protected ResultOperation<String> validateSendSmsParameters(
+            String username, 
+            String password,
+            String sender,
+            String destination,
+            String messageBody) {
+        ResultOperation<String> res = validateSendSmsParameters(
+                username, password, destination, messageBody);
+        if (res.hasErrors()) return res;
+        
+        if (TextUtils.isEmpty(sender)) 
+            res.setReturnCode(ResultOperation.RETURNCODE_ERROR_INVALID_SENDER);
+        
+        return res;
+    }	
 }

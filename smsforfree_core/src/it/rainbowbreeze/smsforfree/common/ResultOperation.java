@@ -26,8 +26,8 @@ import it.rainbowbreeze.libs.common.RainbowResultOperation;
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public class ResultOperation<T>
-extends RainbowResultOperation<T>
+public class ResultOperation<ResultValueType>
+extends RainbowResultOperation<ResultValueType>
 {
 	//---------- Constructors
 	public ResultOperation()
@@ -36,27 +36,32 @@ extends RainbowResultOperation<T>
 	public ResultOperation(Exception ex, int errorReturnCode)
 	{ super(ex, errorReturnCode); }
 	
-	public ResultOperation(T value)
+	public ResultOperation(ResultValueType value)
 	{ super(value); }
 
-	public ResultOperation(int errorReturnCode, T errorMessage)
-	{ super(errorReturnCode, errorMessage); }
+    public ResultOperation(int errorReturnCode)
+    { super(errorReturnCode); }
 
 
-	
-	//---------- Public fields
+
+
+    //---------- Public fields
 	/** User should decode a captcha in order to send sms */
-	public final static int RETURNCODE_SMS_CAPTCHA_REQUEST = 1001;
-	/** Conversation with provider ends correctly, but SMS was not send or command doesn't complete for some reason*/
-	public static final int RETURNCODE_PROVIDER_ERROR = 1002;
+	public final static int RETURNCODE_SMS_CAPTCHA_REQUEST = RETURNCODE_OPERATION_FIRST_USER;
 	/** SMS daily limit overtaked */
-	public final static int RETURNCODE_SMS_DAILY_LIMIT_OVERTAKED = 1003;
+	public final static int RETURNCODE_SMS_DAILY_LIMIT_OVERTAKED = RETURNCODE_OPERATION_FIRST_USER + 1;
 
 	/** Errors code */
-	public final static int RETURNCODE_ERROR_SAVE_PROVIDER_DATA = 501;
-	public final static int RETURNCODE_ERROR_LOAD_PROVIDER_DATA = 502;
-	public final static int RETURNCODE_ERROR_NOCREDENTIAL = 503;
-	public static final int RETURNCODE_ERROR_EMPTY_REPLY = 504;
+	public final static int RETURNCODE_ERROR_SAVE_PROVIDER_DATA = RETURNCODE_ERROR_FIRST_USER;
+	public final static int RETURNCODE_ERROR_LOAD_PROVIDER_DATA = RETURNCODE_ERROR_FIRST_USER + 1;
+	public final static int RETURNCODE_ERROR_INVALID_CREDENTIAL = RETURNCODE_ERROR_FIRST_USER + 2;
+	/** Sms destination is empty */
+	public final static int RETURNCODE_ERROR_INVALID_DESTINATION = RETURNCODE_ERROR_FIRST_USER + 3;
+    /** Sms sender is empty */
+    public final static int RETURNCODE_ERROR_INVALID_SENDER = RETURNCODE_ERROR_FIRST_USER + 4;
+	public static final int RETURNCODE_ERROR_EMPTY_REPLY = RETURNCODE_ERROR_FIRST_USER + 5;
+    /** Conversation with provider ends correctly, but SMS was not send or command doesn't complete for some reason */
+    public static final int RETURNCODE_ERROR_PROVIDER_ERROR_REPLY = RETURNCODE_ERROR_FIRST_USER + 6;
 	
 
 	
@@ -67,6 +72,18 @@ extends RainbowResultOperation<T>
 	
 	
 	//---------- Public methods
+    /**
+     * Move Exception and return code to another {@link RainbowResultOperation} but with a different type
+     * @param <T>
+     * @param newResultOperation
+     * @return
+     */
+    public <T> ResultOperation<T> translateError(ResultOperation<T> newResultOperation) {
+        if (null == newResultOperation) return null;
+        
+        newResultOperation.setException(mException, mReturnCode);
+        return newResultOperation;
+    }
 	
 	
 	

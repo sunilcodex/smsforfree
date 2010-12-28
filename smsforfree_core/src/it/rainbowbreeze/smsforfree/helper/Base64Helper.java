@@ -1375,6 +1375,7 @@ public class Base64Helper
             // the provided class loader.
             else {
                 ois = new java.io.ObjectInputStream(bais){
+                    @SuppressWarnings("unchecked")
                     @Override
                     public Class<?> resolveClass(java.io.ObjectStreamClass streamClass)
                     throws java.io.IOException, ClassNotFoundException {

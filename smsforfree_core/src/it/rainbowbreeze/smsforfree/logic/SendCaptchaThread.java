@@ -33,23 +33,6 @@ public class SendCaptchaThread
 	extends RainbowBaseBackgroundThread<String>
 {
 
-	//---------- Ctors
-	public SendCaptchaThread(
-			Context context,
-			Handler handler,
-			SmsProvider provider,
-			String providerCaptchaData,
-			String captchaCode)
-	{
-		super(context, handler);
-		mProvider = provider;
-		mProviderCaptchaData = providerCaptchaData;
-		mCaptchaCode = captchaCode;
-	}
-
-
-
-
 	//---------- Private fields
 	private SmsProvider mProvider;
 	private String mProviderCaptchaData;
@@ -57,6 +40,23 @@ public class SendCaptchaThread
 
 	
 	
+
+    //---------- Constructors
+    public SendCaptchaThread(
+            Context context,
+            Handler handler,
+            SmsProvider provider,
+            String providerCaptchaData,
+            String captchaCode)
+    {
+        super(context, handler);
+        mProvider = provider;
+        mProviderCaptchaData = providerCaptchaData;
+        mCaptchaCode = captchaCode;
+    }
+
+
+
 
 	//---------- Public fields
 	public final static int WHAT_SENDCAPTCHA = 1003;

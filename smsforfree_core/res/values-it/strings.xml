@@ -35,7 +35,9 @@
     <string name="common_msg_cannotLoadProviderData">Non posso caricare i dati del provider:\n%s\n\nSegnalalo questo errore allo sviluppatore.</string>
     <string name="common_msg_communicationError">Errore di comunicazione generico:\n%s\n\nPotrebbe essere un problema di connessione ad Internet oppure il provider non sta funzionanto...</string>
     <string name="common_msg_architecturalError">Errore interno all\'applicazione:\n%s\n\nSegnalalo allo sviluppatore.</string>
-    <string name="common_msg_noCredentials">Le credenziali non sono state specificate.\nInseriscile nelle impostazioni del provider o del servizio.</string>
+    <string name="common_msg_invalidCredential">Le credenziali non sono state specificate o sono errate.\nInseriscile nelle impostazioni del provider o del servizio.</string>
+    <string name="common_msg_invalidSender">Il mittente non e\' stato specificato o non e\' corretto.\nModificalo nelle impostazioni del provider o del servizio.</string>
+    <string name="common_msg_invalidDestination">Il destinatario non e\' stato specificato o non e\' corretto.</string>
     <string name="common_sendlogSubject">Log %s</string>
     <string name="common_sendlogBody">Ciao Alfredo, ti mando i log dell\'applicazione perche\' (aggiungi qui il motivo della segnalazione)\n\n\n%s</string>
     <string name="common_sendEmailChooser">Scegli l\'applicazione per l\'email</string>
@@ -81,6 +83,7 @@
     <string name="actsendsms_msg_error_saving_sent_sms">Errore salvando l\'SMS nella cartella degli Inviati.\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
     <string name="actsendsms_msg_error_retrieving_inbox_sms">Errore leggendo l\'ultimo SMS ricevuto.\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
     <string name="actsendsms_msg_empty_inbox_sms">Nessun SMS trovato tra i messaggi ricevuti.</string>
+    <string name="actsendsms_msg_errorSendingMessageTitle">Errore nell\'invio</string>
     <string name="actsendsms_phoneType_home">Casa</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Lavoro</string>
