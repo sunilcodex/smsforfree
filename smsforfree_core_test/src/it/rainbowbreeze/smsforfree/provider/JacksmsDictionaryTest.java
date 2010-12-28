@@ -54,8 +54,8 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 		super.setUp();
 		
 		TestHelper.init(getContext());
-		mDictionary = new JacksmsDictionary();
-		mLogFacility = RainbowServiceLocator.get(LogFacility.class);
+        mLogFacility = RainbowServiceLocator.get(LogFacility.class);
+		mDictionary = new JacksmsDictionary(mLogFacility);
 	}
 
 	
@@ -69,7 +69,7 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 	{
 		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==";
 
-		List<SmsConfigurableService> services = mDictionary.extractUserServices(mLogFacility, providerReply);
+		List<SmsConfigurableService> services = mDictionary.extractUserServices(providerReply);
 		assertEquals("Wrong service number", 1, services.size());
 		SmsService service = services.get(0);
 		assertEquals("Wrong service id", "57926", service.getId());
@@ -90,7 +90,7 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 	{
 		String providerReply = "58302	61	AimonFree	YWFhYQ==	YmJiYg==	Y2NjYw==	";
 
-		List<SmsConfigurableService> services = mDictionary.extractUserServices(mLogFacility, providerReply);
+		List<SmsConfigurableService> services = mDictionary.extractUserServices(providerReply);
 		assertEquals("Wrong service number", 1, services.size());
 		SmsService service = services.get(0);
 		assertEquals("Wrong service id", "58302", service.getId());
@@ -107,12 +107,10 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 	 */
 	public void testTranslateMultipleStoredUserAccounts()
 	{
-		JacksmsDictionary dictionary = new JacksmsDictionary();
-		
 		String returnChar = String.valueOf((char) 10);
 		String providerReply = "57926	2	Rossoalice	YWFhYQ==	YmJiYg==	Y2NjYw==	ZGRkZA==" + returnChar +
 						"57922	61	AimonTest	YWFhYQ==	YmJiYg==	Y2NjYw==	";
-		List<SmsConfigurableService> services = dictionary.extractUserServices(mLogFacility, providerReply);
+		List<SmsConfigurableService> services = mDictionary.extractUserServices(providerReply);
 		assertEquals("Wrong service number", 2, services.size());
 
 		SmsService service = services.get(0);
@@ -152,28 +150,28 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 
 		//empty
 		serverReply = "";
-		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySent(serverReply));
 		assertFalse("Wrong captcha identification", mDictionary.isCaptchaRequest(serverReply));
 		assertTrue("Wrong error reply identification", mDictionary.isErrorReply(serverReply));
 		assertTrue("Wrong unmanaged error reply identification", mDictionary.isUnmanagedErrorReply(serverReply));
 		
 		//captcha
 		serverReply = "3617	iVBORw0KGgoAAAANSUhEUgAAAFUAAAAWCAIAAAA+W0fPAAABHklEQVRYhe1YXQ/DIAgcy/7/X2YPTRqjcIcU23TdPVZEPg7Eiqq+HowPXhaR7sser3HJRBtfsMVMQyc/yuwCYAlreHsGeQi6XaIWc7PEEpL/l59Az7iIjKlTREZ5VcUC5inblgj1pvOPsYIdqtoVnYgA5k+B558WoYl1bZXya0w+sIf7P2qPMB+vJqq9LYRCcP5rg+2LaUdLSFqlo0yEL4ktFDX1n6vG4NXoyZTQYc5/s9MeaUWzISjHnP8gA2k20srqlmpDxv2XBq0FtWwEIcAUO3iu28xDmyvynz7CC4p5/7n603Yn5v+DR8Tn/3gIpu//M0Ed2IaC+DxiRHDpoHbh43rV+y+OW/xZuDJFJ4A2gh/3n2Ih/2+Bv//PxhfjgdscfiyFSwAAAABJRU5ErkJggg==	1";
-		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySent(serverReply));
 		assertTrue("Wrong captcha identification", mDictionary.isCaptchaRequest(serverReply));
 		assertFalse("Wrong error reply identification", mDictionary.isErrorReply(serverReply));
 		assertFalse("Wrong unmanaged error reply identification", mDictionary.isUnmanagedErrorReply(serverReply));
 
 		//sent sms
 		serverReply = "1	messaggio spedito con successo";
-		assertTrue("Wrong sent sms identification", mDictionary.isSmsCorrectlySend(serverReply));
+		assertTrue("Wrong sent sms identification", mDictionary.isSmsCorrectlySent(serverReply));
 		assertFalse("Wrong captcha identification", mDictionary.isCaptchaRequest(serverReply));
 		assertFalse("Wrong error reply identification", mDictionary.isErrorReply(serverReply));
 		assertFalse("Wrong unmanaged error reply identification", mDictionary.isUnmanagedErrorReply(serverReply));
 		
 		//generic error
 		serverReply = "error	generic error message";
-		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySent(serverReply));
 		assertFalse("Wrong captcha identification", mDictionary.isCaptchaRequest(serverReply));
 		assertTrue("Wrong error reply identification", mDictionary.isErrorReply(serverReply));
 		assertFalse("Wrong unmanaged error reply identification", mDictionary.isUnmanagedErrorReply(serverReply));
@@ -187,7 +185,7 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 			"<p>Your browser sent a request that this server could not understand.<br />" + "\n" +
 			"</p>" + "\n" +
 			"</body></html>";
-		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySend(serverReply));
+		assertFalse("Wrong sent sms identification", mDictionary.isSmsCorrectlySent(serverReply));
 		assertFalse("Wrong captcha identification", mDictionary.isCaptchaRequest(serverReply));
 		assertFalse("Wrong error reply identification", mDictionary.isErrorReply(serverReply));
 		assertTrue("Wrong unmanaged error reply identification", mDictionary.isUnmanagedErrorReply(serverReply));

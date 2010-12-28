@@ -29,6 +29,7 @@ import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.domain.SmsProviderException;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
@@ -100,9 +101,15 @@ public class JacksmsProviderTest
 		injectTemplates(mProvider);
 		
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+		assertTrue("No errors in call", res.hasErrors());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+		        res.getReturnCode());
 		//return a string with all user services
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_invalidCredentials), res.getResult());
+		assertTrue("Wrong exception returned", res.getException() instanceof SmsProviderException);
+		assertEquals("Wrong error message",
+		        getContext().getString(R.string.jacksms_msg_invalidCredentials),
+		        res.getException().getMessage());
 	}
 
 	/**
@@ -114,11 +121,15 @@ public class JacksmsProviderTest
 		ResultOperation<String> res;
 		
 		Bundle bundle = putCredentialsInBundle();
-		//clear the list of provider's templages
+		//clear the list of provider's templates
 		mProvider.getAllTemplates().clear();
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_noTemplatesToUse), res.getResult());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+		        res.getReturnCode());
+		assertEquals("Wrong error text",
+		        getContext().getString(R.string.jacksms_msg_noTemplatesToUse),
+		        res.getException().getMessage());
 	}
 	
 	/**
@@ -135,8 +146,12 @@ public class JacksmsProviderTest
 		mProvider.getAllSubservices().clear();
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		//check results messages
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
+		assertEquals("Wrong return code",
+		        ResultOperation.RETURNCODE_OK,
+		        res.getReturnCode());
+		assertEquals("Wrong command text",
+		        getContext().getString(R.string.jacksms_msg_userServicesListUpdated),
+		        res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 3, services.size());
@@ -159,12 +174,20 @@ public class JacksmsProviderTest
 		mProvider.getAllSubservices().clear();
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		//check results messages
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_OK,
+		        res.getReturnCode());
+		assertEquals("Wrong command text",
+		        getContext().getString(R.string.jacksms_msg_userServicesListUpdated),
+		        res.getResult());
 		//re-execute the request
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_OK,
+		        res.getReturnCode());
+		assertEquals("Wrong command text",
+		        getContext().getString(R.string.jacksms_msg_userServicesListUpdated),
+		        res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 3, services.size());
@@ -189,8 +212,12 @@ public class JacksmsProviderTest
 		mProvider.getAllSubservices().clear();
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
 		//check results messages
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_OK,
+		        res.getReturnCode());
+		assertEquals("Wrong command text",
+		        getContext().getString(R.string.jacksms_msg_userServicesListUpdated),
+		        res.getResult());
 		//remove some service
 		mProvider.getAllSubservices().remove(2);
 		mProvider.getAllSubservices().remove(1);
@@ -200,8 +227,12 @@ public class JacksmsProviderTest
 		mProvider.getAllSubservices().add(service);
 		//re-execute the request
 		res = mProvider.executeCommand(JacksmsProvider.COMMAND_LOADUSERSERVICES, getContext(), bundle);
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong command text", getContext().getString(R.string.jacksms_msg_userServicesListUpdated), res.getResult());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_OK,
+		        res.getReturnCode());
+		assertEquals("Wrong command text",
+		        getContext().getString(R.string.jacksms_msg_userServicesListUpdated),
+		        res.getResult());
 		//checks results
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 4, services.size());
@@ -256,7 +287,7 @@ public class JacksmsProviderTest
 	private void injectTemplates(SmsProvider provider) {
 
 		List<SmsService> templates = provider.getAllTemplates();
-		JacksmsDictionary dictionary = new JacksmsDictionary();
+		JacksmsDictionary dictionary = new JacksmsDictionary(mLogFacility);
 
 		List<SmsService> newTemplates = dictionary.extractTemplates(mLogFacility, providers);
 		assertEquals("Wrong extracted templates", 5, newTemplates.size());

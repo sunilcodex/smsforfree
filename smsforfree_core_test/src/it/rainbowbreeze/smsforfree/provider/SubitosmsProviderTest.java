@@ -87,24 +87,36 @@ public class SubitosmsProviderTest
 		bundle.putString("0", "XXXX");
 		bundle.putString("1", "XXXX");
 		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
-		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidCredentials), res.getResult());
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+        assertEquals("Wrong returncode",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+		assertEquals("Wrong error message",
+		        getContext().getString(R.string.subitosms_msg_invalidCredentials),
+		        res.getException().getMessage());
 
 		//user with wrong password
 		bundle.clear();
 		bundle.putString("0", Def.SUBITOSMS_USERNAME);
 		bundle.putString("1", "XXXX");
 		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
-		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidCredentials), res.getResult());
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+        assertEquals("Wrong return code",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+		assertEquals("Wrong error message",
+		        getContext().getString(R.string.subitosms_msg_invalidCredentials),
+		        res.getException().getMessage());
 
 		//user with good password
 		bundle.clear();
 		bundle.putString("0", Def.SUBITOSMS_USERNAME);
 		bundle.putString("1", Def.SUBITOSMS_PASSWORD);
 		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDENTIALS, getContext(), bundle);
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
-		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_validCredentials), res.getResult());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_OK,
+		        res.getReturnCode());
+		assertEquals("Wrong return message",
+		        getContext().getString(R.string.subitosms_msg_validCredentials),
+		        res.getResult());
 	}	
 
 
@@ -119,8 +131,12 @@ public class SubitosmsProviderTest
 		res = mProvider.executeCommand(SubitosmsProvider.COMMAND_CHECKCREDITS, getContext(), bundle);
 		String remainingCredits = String.format(
     			getContext().getString(R.string.subitosms_msg_remainingCredits), USER_CREDITS);
-		assertEquals("Wrong return message", remainingCredits, res.getResult());
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_OK, res.getReturnCode());
+		assertEquals("Wrong return message",
+		        remainingCredits,
+		        res.getResult());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_OK,
+		        res.getReturnCode());
 	}
 
 	
@@ -134,35 +150,43 @@ public class SubitosmsProviderTest
 		//empty sender
 		mProvider.setParameterValue(2, "");
 		res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "subitosms test");
-		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidSender), res.getResult());
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+        assertEquals("Wrong returncode",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+		assertEquals("Wrong return message",
+		        getContext().getString(R.string.subitosms_msg_invalidSender),
+		        res.getException().getMessage());
 		mProvider.setParameterValue(2, Def.SUBITOSMS_SENDER);
 
 //		//wrong sender
 //		mProvider.setParameterValue(2, "asdasdasdfafasf");
 //		res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "subitosms test");
 //		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidSender), res.getResult());
-//		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+//		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY, res.getReturnCode());
 //		mProvider.setParameterValue(2, Def.SUBITOSMS_SENDER);
 
 		//empty destination
 		res = mProvider.sendMessage(null, "", "subitosms test");
-		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidDestination), res.getResult());
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
-
-		//empty message
-		res = mProvider.sendMessage(null, "+393211234567", "");
-		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_emptyMessage), res.getResult());
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+        assertEquals("Wrong returncode",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+		assertEquals("Wrong error message",
+		        getContext().getString(R.string.subitosms_msg_invalidDestination),
+		        res.getException().getMessage());
 
 //		//wrong message encoding
 //		res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "subitosms\t\ttest!\n");
 //		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_invalidMessageEncodingOrTooLong), res.getResult());
-//		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+//		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY, res.getReturnCode());
 
+		//message ok, but no credit
 		res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "test messaggio subito sms ok senza credito");
-		assertEquals("Wrong return message", getContext().getString(R.string.subitosms_msg_notEnoughCredit), res.getResult());
-		assertEquals("Wrong returncode", ResultOperation.RETURNCODE_PROVIDER_ERROR, res.getReturnCode());
+		assertEquals("Wrong error message",
+		        getContext().getString(R.string.subitosms_msg_notEnoughCredit),
+		        res.getException().getMessage());
+		assertEquals("Wrong returncode",
+		        ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+		        res.getReturnCode());
 	}
 
 	/**
