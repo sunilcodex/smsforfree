@@ -39,6 +39,7 @@ public class AimonDictionaryTest
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
 		mDictionary = new AimonDictionary();
 	}
 

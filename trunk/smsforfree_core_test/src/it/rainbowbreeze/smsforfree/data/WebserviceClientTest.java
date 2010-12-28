@@ -19,8 +19,11 @@
 
 package it.rainbowbreeze.smsforfree.data;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
 import it.rainbowbreeze.smsforfree.util.Def;
+import it.rainbowbreeze.smsforfree.util.TestHelper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,7 +47,10 @@ public class WebserviceClientTest
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		mClient = new WebserviceClient();		
+		TestHelper.init(getContext());
+		LogFacility logFacility = RainbowServiceLocator.get(LogFacility.class);
+		
+		mClient = new WebserviceClient(logFacility);		
 	}
 
 	
