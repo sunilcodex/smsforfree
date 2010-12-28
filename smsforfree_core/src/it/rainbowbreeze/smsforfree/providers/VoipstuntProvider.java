@@ -104,7 +104,7 @@ public class VoipstuntProvider
 	}
 	
 	@Override
-	public ResultOperation<String> sendMessage(String serviceId, String destination, String body)
+	public ResultOperation<String> sendMessage(String serviceId, String destination, String messageBody)
 	{
 		/*
 		 * https://www.voipstunt.com/myaccount/sendsms.php?username=xxxxxxxxxx&password=xxxxxxxxxx&from=xxxxxxxxxx&to=xxxxxxxxxx&text=xxxxxxxxxx
@@ -126,7 +126,7 @@ public class VoipstuntProvider
 				getParameterValue(PARAM_INDEX_PASSWORD),
 				getParameterValue(PARAM_INDEX_SENDER),
 				okDestination,
-				body);
+				messageBody);
 			
 		ResultOperation<String> res = doSingleHttpRequest(url, null, null);
 
@@ -171,27 +171,26 @@ public class VoipstuntProvider
     	if (resultToAnalyze.hasErrors()) return true;
 		
 		String reply = resultToAnalyze.getResult();
-		String res;
+		String errorMessage;
 
 		//no reply from server is already handled in doRequest method
 
 		//check for know errors
 		if (mDictionary.messageWasSent(reply)) {
-			res = "";
+			errorMessage = "";
 		} else {
 			//at this point, unknown errors
-			res = mMessages[MSG_INDEX_MESSAGE_NO_SENT];
+			errorMessage = mMessages[MSG_INDEX_MESSAGE_NO_SENT];
 		}
 	
     	//errors are internal to provider, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
 		//the provider error must stops the execution of the calling method
-    	if (!TextUtils.isEmpty(res)) {
+    	if (!TextUtils.isEmpty(errorMessage)) {
 			mLogFacility.e("VoipstuntProvider error reply");
-			mLogFacility.e(res);
+			mLogFacility.e(errorMessage);
 			mLogFacility.e(reply);
-    		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
+			setSmsProviderException(resultToAnalyze, errorMessage);
     		return true;
     	} else {
     		return false;

@@ -79,48 +79,54 @@ public class ActSendSms
 	extends Activity
 {
 	//---------- Private fields
-	private static final int DIALOG_PHONES = 10;
-	private final static int DIALOG_CAPTCHA_REQUEST = 11;
-	private final static int DIALOG_SENDING_MESSAGE = 12;
-	private final static int DIALOG_SENDING_CAPTCHA = 13;
-	private static final int DIALOG_STARTUP_INFOBOX = 14;
-	private static final int DIALOG_TEMPLATES = 16;
+    protected static final String LOG_HASH = "ActSendSms";
+    
+	protected static final int DIALOG_PHONES = 10;
+	protected static final int DIALOG_CAPTCHA_REQUEST = 11;
+	protected static final int DIALOG_SENDING_MESSAGE = 12;
+	protected static final int DIALOG_SENDING_CAPTCHA = 13;
+	protected static final int DIALOG_STARTUP_INFOBOX = 14;
+	protected static final int DIALOG_TEMPLATES = 16;
+	protected static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
 	
-	private final static String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
-	private final static String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
+	protected static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
+	protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
 
-	private final static int OPTIONMENU_SETTINGS = 2;
-	private final static int OPTIONMENU_SIGNATURE = 3;
-	private final static int OPTIONMENU_ABOUT = 4;
-	private final static int OPTIONMENU_RESETDATA = 5;
-	private final static int OPTIONMENU_COMPRESS = 6;
-	private final static int OPTIONMENU_TEMPLATES = 7;
+	protected static final int OPTIONMENU_SETTINGS = 2;
+	protected static final int OPTIONMENU_SIGNATURE = 3;
+	protected static final int OPTIONMENU_ABOUT = 4;
+	protected static final int OPTIONMENU_RESETDATA = 5;
+	protected static final int OPTIONMENU_COMPRESS = 6;
+	protected static final int OPTIONMENU_TEMPLATES = 7;
+
 
 	
-	private Spinner mSpiProviders;
-	private Spinner mSpiSubservices;
+	protected Spinner mSpiProviders;
+	protected Spinner mSpiSubservices;
 
-	private SmsProvider mSelectedProvider;
-	private String mSelectedServiceId;
-	private EditText mTxtDestination;
-	private EditText mTxtBody;
-	private TextView mLblMessageLength;
-	private Button mBtnSend;
-	private ImageButton mBtnPickContact;
-	private ImageButton mBtnGetLastSmsReceivedNumber;
-	private TextView mLblProvider;
+	protected SmsProvider mSelectedProvider;
+	protected String mSelectedServiceId;
+	protected EditText mTxtDestination;
+	protected EditText mTxtBody;
+	protected TextView mLblMessageLength;
+	protected Button mBtnSend;
+	protected ImageButton mBtnPickContact;
+	protected ImageButton mBtnGetLastSmsReceivedNumber;
+	protected TextView mLblProvider;
 
-	private List<ContactPhone> mPhonesToShowInDialog;
-	private String mCaptchaStorage;
+	protected List<ContactPhone> mPhonesToShowInDialog;
+	protected String mCaptchaStorage;
+    protected String mErrorSendingMessage;
 
-	private SendMessageThread mSendMessageThread;
-	private SendCaptchaThread mSendCaptchaThread;
+	protected SendMessageThread mSendMessageThread;
+	protected SendCaptchaThread mSendCaptchaThread;
 	
-	private LogFacility mLogFacility;
-	private ActivityHelper mActivityHelper;
-	private AppPreferencesDao mAppPreferencesDao;
-	private LogicManager mLogicManager;
-    private SmsDao mSmsDao;
+	protected LogFacility mLogFacility;
+	protected ActivityHelper mActivityHelper;
+	protected AppPreferencesDao mAppPreferencesDao;
+	protected LogicManager mLogicManager;
+	protected SmsDao mSmsDao;
+
 
 	
 	
@@ -135,7 +141,7 @@ public class ActSendSms
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
         mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
         mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
@@ -143,7 +149,7 @@ public class ActSendSms
 
         //checks for app validity
     	if (App.i().isAppExpired()) {
-    		mLogFacility.i("App expired");
+    		mLogFacility.i(LOG_HASH, "App expired");
     		//application is expired
             setContentView(R.layout.actexpired);
             setTitle(String.format(
@@ -427,10 +433,17 @@ public class ActSendSms
     		
     	case DIALOG_STARTUP_INFOBOX:
     		retDialog = mActivityHelper.createInformativeDialog(this,
-    				this.getString(R.string.actsendsms_msg_infobox_title),
-    				this.getString(R.string.actabout_lblDescription) + "\n\n" + this.getString(R.string.actabout_msgChangeslog),
-    				this.getString(R.string.common_btnOk));
+    				getString(R.string.actsendsms_msg_infobox_title),
+    				getString(R.string.actabout_lblDescription) + "\n\n" + this.getString(R.string.actabout_msgChangeslog),
+    				getString(R.string.common_btnOk));
     		break;
+    	
+    	case DIALOG_SENDING_MESSAGE_ERROR:
+    	    retDialog = mActivityHelper.createInformativeDialog(this,
+    	            getString(R.string.actsendsms_msg_errorSendingMessageTitle),
+    	            mErrorSendingMessage,
+    	            getString(R.string.common_btnOk));
+    	    break;
     	
 		default:
 			retDialog = super.onCreateDialog(id);
@@ -513,7 +526,7 @@ public class ActSendSms
 	private Handler mActivityHandler = new Handler() {
 		public void handleMessage(Message msg)
 		{
-			mLogFacility.i("Returned to ActSendSms from external thread");
+			mLogFacility.i(LOG_HASH, "Returned to ActSendSms from external thread");
 			//check if the message is for this handler
 			if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
 					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
@@ -732,7 +745,7 @@ public class ActSendSms
 		//load the image
 		ImageView mImgCaptcha = (ImageView) layout.findViewById(R.id.dlgcaptcha_imgCaptcha);
 		byte[] imageData = (byte[]) res.getResult();
-		mLogFacility.i("Captcha lenght: " + imageData.length);
+		mLogFacility.i(LOG_HASH, "Captcha lenght: " + imageData.length);
 		BitmapFactory.Options options = new BitmapFactory.Options();
         //options.inSampleSize = 1;
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
@@ -909,7 +922,7 @@ public class ActSendSms
 				.append(service.getTemplateId())
 				.append(")");
 		}
-		mLogFacility.i(logMessage.toString());
+		mLogFacility.i(LOG_HASH, logMessage.toString());
 
 		//create new progress dialog
 		showDialog(DIALOG_SENDING_MESSAGE);
@@ -931,7 +944,7 @@ public class ActSendSms
 	 */
 	private void sendCaptcha(String providerReply, String captchaCode)
 	{
-		mLogFacility.i("Captcha code: " + captchaCode);
+		mLogFacility.i(LOG_HASH, "Captcha code: " + captchaCode);
 		if (TextUtils.isEmpty(captchaCode)) {
 			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
 			return;
@@ -976,7 +989,7 @@ public class ActSendSms
 		if (ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST == result.getReturnCode()) {
 			//save captcha data
 			mCaptchaStorage = result.getResult();
-			mLogFacility.i("Captcha request from provider: " + mCaptchaStorage);
+			mLogFacility.i(LOG_HASH, "Captcha request from provider: " + mCaptchaStorage);
 			//launch captcha request
 			showDialog(DIALOG_CAPTCHA_REQUEST);
 		
@@ -1001,22 +1014,22 @@ public class ActSendSms
 		
 		//return with errors
 		if (result.hasErrors()) {
-			mActivityHelper.reportError(ActSendSms.this, result);
+		    mErrorSendingMessage = mActivityHelper.getErrorMessage(result.getReturnCode(), result.getException());
+		    mLogFacility.e(LOG_HASH, "Error sending message: " + mErrorSendingMessage);
+		    showDialog(DIALOG_SENDING_MESSAGE_ERROR);
+		    return;
+
 		} else {
-			mLogFacility.i(result.getResult());
+			mLogFacility.i(LOG_HASH, "Send message result: " + result.getResult());
 			//display returning message of the provider
 			mActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
 
-			//only if sms was sent
-			if (ResultOperation.RETURNCODE_OK == result.getReturnCode()) {
-				mLogFacility.i("Sms correctly sent");
-				//update number of messages sent in the day
-				mLogicManager.updateSmsCounter(1);
-				//insert sms into pim, if required
-				insertSmsIntoPim();
-				//check if the text should be deleted
-				cleanDataFields(false);
-			}
+			//update number of messages sent in the day
+			mLogicManager.updateSmsCounter(1);
+			//insert sms into pim, if required
+			insertSmsIntoPim();
+			//check if the text should be deleted
+			cleanDataFields(false);
 		}
 	}
 

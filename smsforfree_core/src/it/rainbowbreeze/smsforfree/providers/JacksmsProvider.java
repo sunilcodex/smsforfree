@@ -50,26 +50,28 @@ public class JacksmsProvider
 	extends SmsMultiProvider
 {
 	//---------- Private fields
-	private final static int PARAM_NUMBER = 2;
-	private final static int PARAM_INDEX_USERNAME = 0;
-	private final static int PARAM_INDEX_PASSWORD = 1;
+    protected final static String LOG_HASH = "JacksmsProvider";
+    
+    protected final static int PARAM_NUMBER = 2;
+    protected final static int PARAM_INDEX_USERNAME = 0;
+    protected final static int PARAM_INDEX_PASSWORD = 1;
 
-	private final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
-	private final static int MSG_INDEX_SERVER_ERROR_KNOW = 1;
-	private final static int MSG_INDEX_SERVER_ERROR_UNKNOW = 2;
-	private final static int MSG_INDEX_MESSAGE_SENT = 3;
-	private final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 4;
-	private final static int MSG_INDEX_NO_TEMPLATES_PARSED = 5;
-	private final static int MSG_INDEX_NO_CAPTCHA_PARSED = 6;
-	private final static int MSG_INDEX_TEMPLATES_UPDATED = 7;
-	private final static int MSG_INDEX_CAPTCHA_OK = 8;
-	private final static int MSG_INDEX_NO_TEMPLATES_TO_USE = 9;
-	private final static int MSG_INDEX_USERSERVICES_UPDATED = 10;
-	private final static int MSG_INDEX_NO_USERSERVICES_TO_USE = 11;
+    protected final static int MSG_INDEX_INVALID_CREDENTIALS = 0;
+    protected final static int MSG_INDEX_SERVER_ERROR_KNOW = 1;
+    protected final static int MSG_INDEX_SERVER_ERROR_UNKNOW = 2;
+    protected final static int MSG_INDEX_MESSAGE_SENT = 3;
+    protected final static int MSG_INDEX_NO_CAPTCHA_SESSION_ID = 4;
+    protected final static int MSG_INDEX_NO_TEMPLATES_PARSED = 5;
+    protected final static int MSG_INDEX_NO_CAPTCHA_PARSED = 6;
+    protected final static int MSG_INDEX_TEMPLATES_UPDATED = 7;
+    protected final static int MSG_INDEX_CAPTCHA_OK = 8;
+    protected final static int MSG_INDEX_NO_TEMPLATES_TO_USE = 9;
+    protected final static int MSG_INDEX_USERSERVICES_UPDATED = 10;
+    protected final static int MSG_INDEX_NO_USERSERVICES_TO_USE = 11;
 	
-	private JacksmsDictionary mDictionary;
+    protected JacksmsDictionary mDictionary;
 	
-	private String[] mMessages;
+    protected String[] mMessages;
 
 	
 	
@@ -111,7 +113,7 @@ public class JacksmsProvider
 	@Override
 	public ResultOperation<Void> initProvider(Context context)
 	{
-		mDictionary = new JacksmsDictionary();
+		mDictionary = new JacksmsDictionary(mLogFacility);
 
 		//provider parameters
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
@@ -142,20 +144,21 @@ public class JacksmsProvider
     public ResultOperation<String> sendMessage(
     		String serviceId,
     		String destination,
-    		String message)
+    		String messageBody)
     {
+        mLogFacility.v(LOG_HASH, "Send sms message");
+        
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 	
-		//credentials check
-		if (!checkCredentialsValidity(username, password))
-			return getExceptionForInvalidCredentials();
+		ResultOperation<String> res = validateSendSmsParameters(username, password, destination, messageBody);
+		if (res.hasErrors()) return res;
 		
 		//sends the sms
 		SmsService service = getSubservice(serviceId);
 		String url = mDictionary.getUrlForSendingMessage(username, password);
-		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, message);
-		ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
+		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, messageBody);
+		res = doSingleHttpRequest(url, headers, null);
 	
 		//checks for errors
 		if (parseReplyForErrors(res)){
@@ -168,7 +171,7 @@ public class JacksmsProvider
 		//a captcha code is needed
 		String reply = res.getResult();
 		//message sent
-		if (mDictionary.isSmsCorrectlySend(reply)) {
+		if (mDictionary.isSmsCorrectlySent(reply)) {
 			//breaks the reply and find the message
 			res.setResult(String.format(
 					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
@@ -178,10 +181,9 @@ public class JacksmsProvider
 			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
 		} else {
 			//other generic error not handled by the parseReplyForErrors() method
-			res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
-			res.setResult(mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
-			mLogFacility.e("Error sending message in Jacksms Provider");
-			mLogFacility.e(reply);
+		    setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
+			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
+			mLogFacility.e(LOG_HASH, reply);
 		}
 		
 		return res;    	
@@ -190,26 +192,29 @@ public class JacksmsProvider
 	@Override
 	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
 	{
+        mLogFacility.v(LOG_HASH, "Get captcha content");
+        
 		//captcha content is the text part of the reply
 		byte[] content = mDictionary.getCaptchaImageContentFromReply(providerReply);
 
 		if (null == content) {
-    		//errors in parsing captcha
-			ResultOperation<Object> res = new ResultOperation<Object>(mMessages[MSG_INDEX_NO_CAPTCHA_PARSED]);
-			res.setReturnCode(ResultOperation.RETURNCODE_ERROR_GENERIC);
-    		return res;
+            //errors in parsing captcha
+            mLogFacility.e(LOG_HASH, "Null content for captcha image");
+            return setSmsProviderException(new ResultOperation<Object>(), mMessages[MSG_INDEX_NO_CAPTCHA_PARSED]);
     	}
 
 		return new ResultOperation<Object>(content);
 	}
 
 	@Override
-	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode)
-	{
+	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode) {
+	    mLogFacility.v(LOG_HASH, "Captcha return message analysis");
+        
 		//find captcha sessionId
 		String sessionId = mDictionary.getCaptchaSessionIdFromReply(providerReply);
 		if (TextUtils.isEmpty(sessionId)) {
-			return new ResultOperation<String>(mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
+            mLogFacility.e(LOG_HASH, "Captcha session id is empty");
+		    return setSmsProviderException(new ResultOperation<String>(), mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
 		}
     	
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
@@ -218,7 +223,7 @@ public class JacksmsProvider
     	//sends the captcha code
     	String url = mDictionary.getUrlForSendingCaptcha(username, password);
     	HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
-    	ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
+        ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
 
     	//checks for errors
 		if (parseReplyForErrors(res)){
@@ -226,14 +231,19 @@ public class JacksmsProvider
 			logRequest(url, headers, null);
 			return res;
 		}
-    	
+
     	//at this point, no error happened, so the reply contains captcha submission result
     	String reply = res.getResult();
     	String returnMessage = mDictionary.getTextPartFromReply(reply);
-    	if (TextUtils.isEmpty(returnMessage)) returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
-		res.setResult(returnMessage);
-		
-		return res;    	
+    	if (mDictionary.isCaptchaCorrectlySent(returnMessage)) {
+    	    returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
+            res.setResult(returnMessage);
+    	} else {
+            mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
+            mLogFacility.e(LOG_HASH, reply);
+            setSmsProviderException(res, returnMessage);
+    	}
+		return res;
 	}
 	
 	
@@ -305,10 +315,11 @@ public class JacksmsProvider
      */
     private ResultOperation<String> downloadTemplates(Context context)
     {
+        mLogFacility.v(LOG_HASH, "Download provider templates");
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
-    	//credentials check
+    	//credential check
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
 
@@ -348,7 +359,7 @@ public class JacksmsProvider
     	ResultOperation<Void> saveResult = saveTemplates(context);
     	//and checks for errors in saving
     	if (saveResult.hasErrors()) {
-    		res.setException(saveResult.getException(), saveResult.getReturnCode());
+    	    saveResult.translateError(res);
     		return res;
     	}
     	
@@ -364,16 +375,19 @@ public class JacksmsProvider
      */
     private ResultOperation<String> downloadUserConfiguredServices(Context context)
     {
+        mLogFacility.v(LOG_HASH, "Download user configured service");
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
-    	//credentials check
+    	//credential check
     	if (!checkCredentialsValidity(username, password))
     		return getExceptionForInvalidCredentials();
     	
     	//checks for templates
-    	if (!hasTemplatesConfigured())
-    		return new ResultOperation<String>(ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
+    	if (!hasTemplatesConfigured()) {
+    	    mLogFacility.i(LOG_HASH, "JackSMS templates are not present");
+    	    return setSmsProviderException(new ResultOperation<String>(), mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
+    	}
 
     	String url = mDictionary.getUrlForDownloadUserServices(username, password);
     	ResultOperation<String> res = doSingleHttpRequest(url, null, null);
@@ -389,7 +403,7 @@ public class JacksmsProvider
     	String providerReply = res.getResult();
     	
     	//transform the reply in the list of user services
-    	List<SmsConfigurableService> newServices = mDictionary.extractUserServices(mLogFacility, providerReply);
+    	List<SmsConfigurableService> newServices = mDictionary.extractUserServices(providerReply);
     	
     	//no stored user services
     	if (newServices.size() <= 0) {
@@ -408,7 +422,7 @@ public class JacksmsProvider
     	ResultOperation<Void> saveResult = saveSubservices(context);
     	//and checks for errors in saving
     	if (saveResult.hasErrors()) {
-    		res.setException(saveResult.getException(), saveResult.getReturnCode());
+    	    saveResult.translateError(res);
     		return res;
     	}
     	
@@ -429,31 +443,30 @@ public class JacksmsProvider
 	{
     	if (resultToAnalyze.hasErrors()) return true;
 		
-		String res = "";
+		String errorMessage = "";
 		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
 		
 		//invalid credentials
 		if (mDictionary.isInvalidCredetials(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
+			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		//generic JackSMS internal error
 		} else if (mDictionary.isErrorReply(reply)) {
-			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR_KNOW], mDictionary.getTextPartFromReply(reply));
+			errorMessage = String.format(mMessages[MSG_INDEX_SERVER_ERROR_KNOW], mDictionary.getTextPartFromReply(reply));
 		//JackSMS unknown internal error
 		} else if (mDictionary.isUnmanagedErrorReply(reply)) {
-			res = mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW];
+			errorMessage = mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW];
 		}
 		
     	//errors are internal to JackSMS, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
 		//the JackSMS error must stops the execution of the calling method
-    	if (!TextUtils.isEmpty(res)) {
-			mLogFacility.e("JacksmsProvider error reply");
-			mLogFacility.e(res);
-			mLogFacility.e(reply);
-    		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
+    	if (!TextUtils.isEmpty(errorMessage)) {
+			mLogFacility.e(LOG_HASH, "JacksmsProvider error reply");
+			mLogFacility.e(LOG_HASH, errorMessage);
+			mLogFacility.e(LOG_HASH, reply);
+			setSmsProviderException(resultToAnalyze, errorMessage);
     		return true;
     	} else {
     		return false;
@@ -467,6 +480,7 @@ public class JacksmsProvider
 	 */
 	private void searchForServicesTwinAndAdd(SmsConfigurableService newServiceToAdd)
 	{
+	    mLogFacility.v(LOG_HASH, "Search for service twins");
 		boolean canAdd = true;
 		
 		//twin search

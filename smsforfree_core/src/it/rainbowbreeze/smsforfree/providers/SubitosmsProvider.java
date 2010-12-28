@@ -44,43 +44,46 @@ public class SubitosmsProvider
 	extends SmsSingleProvider
 {
 
-	//---------- Ctors
-	public SubitosmsProvider(
-			LogFacility logFacility,
-			AppPreferencesDao appPreferencesDao,
-			ProviderDao providerDao,
-			ActivityHelper activityHelper)
-	{
-		super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
-	}
-
-	
-	
-
 	//---------- Private fields
-	private final static int PARAM_NUMBER = 3;
+	private final static String LOG_HASH = "SubitosmsProvider";
+	protected final static int PARAM_NUMBER = 3;
 
-	private final static int PARAM_INDEX_USERNAME = 0;
-	private final static int PARAM_INDEX_PASSWORD = 1;
-	private final static int PARAM_INDEX_SENDER = 2;
+	protected final static int PARAM_INDEX_USERNAME = 0;
+	protected final static int PARAM_INDEX_PASSWORD = 1;
+	protected final static int PARAM_INDEX_SENDER = 2;
 
 	public static final int COMMAND_CHECKCREDENTIALS = 1000;
 	public static final int COMMAND_CHECKCREDITS = 1001;
 
-	private static final int MSG_INDEX_REMAINING_CREDITS = 0;
-	private static final int MSG_INDEX_VALID_CREDENTIALS = 1;
-	private static final int MSG_INDEX_INVALID_CREDENTIALS = 2;
-	private static final int MSG_INDEX_EMPTY_MESSAGE = 3;
-	private static final int MSG_INDEX_INVALID_DESTINATION = 4;
-	private static final int MSG_INDEX_INVALID_SENDER = 5;
-	private static final int MSG_INDEX_MESSAGE_SENT = 6;
-	private static final int MSG_INDEX_NOT_ENOUGH_CREDIT = 7;
-	private static final int MSG_INDEX_SERVER_ERROR = 8;
+	protected static final int MSG_INDEX_REMAINING_CREDITS = 0;
+	protected static final int MSG_INDEX_VALID_CREDENTIALS = 1;
+	protected static final int MSG_INDEX_INVALID_CREDENTIALS = 2;
+	protected static final int MSG_INDEX_EMPTY_MESSAGE = 3;
+	protected static final int MSG_INDEX_INVALID_DESTINATION = 4;
+	protected static final int MSG_INDEX_INVALID_SENDER = 5;
+	protected static final int MSG_INDEX_MESSAGE_SENT = 6;
+	protected static final int MSG_INDEX_NOT_ENOUGH_CREDIT = 7;
+	protected static final int MSG_INDEX_SERVER_ERROR = 8;
 
 
 	private String[] mMessages;
 	private SubitosmsDictionary mDictionary;
-	
+
+
+
+
+    //---------- Constructors
+    public SubitosmsProvider(
+            LogFacility logFacility,
+            AppPreferencesDao appPreferencesDao,
+            ProviderDao providerDao,
+            ActivityHelper activityHelper)
+    {
+        super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
+    }
+
+    
+    
 
 	//---------- Public properties
 	@Override
@@ -133,29 +136,20 @@ public class SubitosmsProvider
 	public ResultOperation<String> sendMessage(
 			String serviceId,
 			String destination,
-			String body)
+			String messageBody)
 	{
+	    mLogFacility.v(LOG_HASH, "Send message");
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 		String sender = getParameterValue(PARAM_INDEX_SENDER);
 
-    	//arguments check
-    	if (!checkCredentialsValidity(username, password))
-    		return getExceptionForInvalidCredentials();
-    	if (TextUtils.isEmpty(sender)) 
-    		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
-    	if (TextUtils.isEmpty(destination)) 
-    		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
-    	if (TextUtils.isEmpty(body)) 
-    		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
+		ResultOperation<String> res = validateSendSmsParameters(username, password, sender, destination, messageBody);
+		if (res.hasErrors()) return res;
 
 		//send the sms
     	String url = mDictionary.getBaseUrl();
-    	HashMap<String, String> params = mDictionary.getParametersForApiSend(username, password, sender, destination, body);
-		ResultOperation<String> res = doSingleHttpRequest(url, null, params);
+    	HashMap<String, String> params = mDictionary.getParametersForApiSend(username, password, sender, destination, messageBody);
+		res = doSingleHttpRequest(url, null, params);
 
     	//checks for errors
 		if (parseReplyForErrors(res)){
@@ -288,7 +282,7 @@ public class SubitosmsProvider
 		//are correct.
 		res = verifyCredit(username, password);
 		//checks for application errors
-		if (res.hasErrors() || ResultOperation.RETURNCODE_PROVIDER_ERROR == res.getReturnCode()) return res;
+		if (res.hasErrors()) return res;
 		
 		//at this point reply can only contains the remaining credits, so credential are correct
 		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
@@ -302,32 +296,31 @@ public class SubitosmsProvider
     	if (resultToAnalyze.hasErrors()) return true;
 		
 		String reply = resultToAnalyze.getResult();
-		String res;
+		String errorMessage;
 
 		//no reply from server is already handled in doRequest method
 
 		//check for know errors
 		if (mDictionary.isValidReplyForCreditRequest(reply) || 
 				mDictionary.isValidReplyForSmsQueued(reply)) {
-			res = "";
+			errorMessage = "";
 		} else if (mDictionary.isLoginInvalidCredentials(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
+			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		} else if (mDictionary.isNotEnoughCredit(reply)) {
-			res = mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT];
+			errorMessage = mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT];
 		} else {
 			//at this point, unknown errors
-			res = String.format(mMessages[MSG_INDEX_SERVER_ERROR], reply);
+			errorMessage = String.format(mMessages[MSG_INDEX_SERVER_ERROR], reply);
 		}
 	
     	//errors are internal to provider, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
 		//the provider error must stops the execution of the calling method
-    	if (!TextUtils.isEmpty(res)) {
+    	if (!TextUtils.isEmpty(errorMessage)) {
 			mLogFacility.e("SubitosmsProvider error reply");
-			mLogFacility.e(res);
+			mLogFacility.e(errorMessage);
 			mLogFacility.e(reply);
-    		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
+			setSmsProviderException(resultToAnalyze, errorMessage);
     		return true;
     	} else {
     		return false;

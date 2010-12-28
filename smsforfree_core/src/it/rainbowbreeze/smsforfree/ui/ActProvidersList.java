@@ -39,6 +39,7 @@ public class ActProvidersList
 	extends ListActivity
 {
 	//---------- Private fields
+    protected final static String LOG_HASH = "ActProviderList";
 	private LogFacility mLogFacility;
 	private ActivityHelper mActivityHelper;
 
@@ -55,7 +56,7 @@ public class ActProvidersList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
 
         setTitle(String.format(

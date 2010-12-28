@@ -28,11 +28,6 @@ import android.text.TextUtils;
 
 public class AimonDictionary
 {
-	//---------- Ctors
-
-	
-	
-	
 	//---------- Private fields
 	private static final String RESULT_FREE_ERROR_INVALID_CREDENTIALS = "Nome utente e/o password non riconosciute";
 	private static final String RESULT_FREE_ERROR_NOT_ENOUGH_CREDIT = "Credito non sufficiente per spedire altri messaggi";
@@ -82,6 +77,11 @@ public class AimonDictionary
 
 	
 
+    //---------- Constructors
+
+    
+    
+    
 	//---------- Public fields
 	public final static String URL_BASE = "https://secure.apisms.it/";
 	public final static String URL_GET_CREDIT = URL_BASE + "http/get_credit";

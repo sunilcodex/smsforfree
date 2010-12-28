@@ -55,6 +55,7 @@ public class ActSubservicesList
 	extends ListActivity
 {
 	//---------- Private fields
+    protected final static String LOG_HASH = "ActSubservicesTemplates";
 	private static final int OPTIONMENU_ADDSERVICE = 10;
 	private static final int CONTEXTMENU_ADDSERVICE = 1;
 	private static final int CONTEXTMENU_EDITSERVICE = 2;
@@ -83,7 +84,7 @@ public class ActSubservicesList
 		super.onCreate(savedInstanceState);
 
         mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
 		
 		setContentView(R.layout.actsubserviceslist);

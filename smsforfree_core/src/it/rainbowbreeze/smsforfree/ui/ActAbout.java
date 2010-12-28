@@ -36,6 +36,7 @@ public class ActAbout
 	extends Activity
 {
 	//---------- Private fields
+    protected final static String LOG_HASH = "ActAbout";
 	private final static int OPTIONMENU_CHANGESLOG = 1;
 	private final static int OPTIONMENU_EMAIL = 2;
 	private final static int DIALOG_CHANGESLOG = 1;
@@ -56,7 +57,7 @@ public class ActAbout
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
         mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
 
