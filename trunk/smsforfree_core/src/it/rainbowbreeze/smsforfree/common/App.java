@@ -143,13 +143,6 @@ public class App
 	public void setLiteVersionApp(boolean newValue)
 	{ mLiteVersionApp = newValue; }
 
-	/** Application is expired */
-	protected boolean mAppExpired;
-	public boolean isAppExpired()
-	{ return mAppExpired; }
-	public void setAppExpired(boolean newValue)
-	{ mAppExpired = newValue; }
-
 	/** Application name */
 	protected String mAppName;
 	public String getAppName()

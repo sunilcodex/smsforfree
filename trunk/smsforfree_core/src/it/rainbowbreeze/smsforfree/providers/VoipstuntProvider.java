@@ -42,6 +42,8 @@ public class VoipstuntProvider
 	
 	private final static int MSG_INDEX_MESSAGE_SENT = 0;
 	private final static int MSG_INDEX_MESSAGE_NO_SENT = 1;
+    private final static int MSG_INDEX_ERROR_PARSING_PROVIDER_REPLY = 2;
+    private final static int MSG_INDEX_MESSAGE_TOO_LONG = 3;
 	
 	private String[] mMessages;
 	private VoipstuntDictionary mDictionary;
@@ -96,9 +98,11 @@ public class VoipstuntProvider
 		setDescription(context.getString(R.string.voipstunt_description));
 
 		//save some messages
-		mMessages = new String[2];
+		mMessages = new String[4];
 		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.voipstunt_msg_messageSent);
 		mMessages[MSG_INDEX_MESSAGE_NO_SENT] = context.getString(R.string.voipstunt_msg_messageNotSent);
+        mMessages[MSG_INDEX_ERROR_PARSING_PROVIDER_REPLY] = context.getString(R.string.voipstunt_msg_errorParsingProviderReply);
+        mMessages[MSG_INDEX_MESSAGE_TOO_LONG] = context.getString(R.string.voipstunt_msg_messageTooLong);
 
 		return super.initProvider(context);
 	}
@@ -170,13 +174,20 @@ public class VoipstuntProvider
     	//checks for application errors
     	if (resultToAnalyze.hasErrors()) return true;
 		
+        //no reply from server is already handled in doRequest method
 		String reply = resultToAnalyze.getResult();
-		String errorMessage;
+        VoipstuntDictionary.ProviderReply providerReply = mDictionary.deserializeProviderReply(reply);
+		
+        //empty or not valid reply message
+        if (null == providerReply) {
+            setSmsProviderException(resultToAnalyze, mMessages[MSG_INDEX_ERROR_PARSING_PROVIDER_REPLY]);
+            return true;
+        }
 
-		//no reply from server is already handled in doRequest method
-
-		//check for know errors
-		if (mDictionary.messageWasSent(reply)) {
+        String errorMessage;
+		if (mDictionary.isMessageTooLong(providerReply))
+		    errorMessage = mMessages[MSG_INDEX_MESSAGE_TOO_LONG];
+		if (mDictionary.messageWasSent(providerReply)) {
 			errorMessage = "";
 		} else {
 			//at this point, unknown errors
