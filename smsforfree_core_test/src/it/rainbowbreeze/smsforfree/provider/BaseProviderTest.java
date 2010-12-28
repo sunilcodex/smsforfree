@@ -48,21 +48,20 @@ public abstract class BaseProviderTest
 	
 
 	//---------- Constructor
-	public BaseProviderTest() {
-		super();
-		
-		TestHelper.init(getContext());
-		mLogFacility = RainbowServiceLocator.get(LogFacility.class);
-		mProviderDao = new ProviderDao();
-	}
-	
+
+
+
 	
 	//---------- SetUp and TearDown
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		mProvider = createProvider();
+        TestHelper.init(getContext());
+        mLogFacility = RainbowServiceLocator.get(LogFacility.class);
+        mProviderDao = new ProviderDao();
+
+        mProvider = createProvider();
 		ResultOperation<Void> res = mProvider.initProvider(getContext());
 		assertFalse("provider initialization with errors", res.hasErrors());
 

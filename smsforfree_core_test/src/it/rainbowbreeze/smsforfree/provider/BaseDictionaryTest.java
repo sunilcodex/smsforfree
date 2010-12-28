@@ -19,41 +19,43 @@
 
 package it.rainbowbreeze.smsforfree.provider;
 
-import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
+import it.rainbowbreeze.smsforfree.util.TestHelper;
+import android.test.AndroidTestCase;
+
 
 /**
+ * Base class for dictionary testcases
  * 
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class AimonDictionaryTest
-	extends BaseDictionaryTest
+public abstract class BaseDictionaryTest
+	extends AndroidTestCase
 {
 	//---------- Private fields
-	private AimonDictionary mDictionary;
+    protected LogFacility mLogFacility;
+	
+	
 
 	//---------- Constructor
-
+	
+	
 	//---------- SetUp and TearDown
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		mDictionary = new AimonDictionary();
+        TestHelper.init(getContext());
+        mLogFacility = RainbowServiceLocator.get(LogFacility.class);
 	}
 
+
+
+
 	//---------- Tests methods
-	public void testFreeSmsRemainigCredits()
-	{
-		String credits;
-		
-		//no credit info in the message
-		credits = mDictionary.findRemainingCreditsForFreeSms("Credito residuo giornali");
-		assertEquals("Wrong credits", "--", credits);
-		//credit info in the message
-		credits = mDictionary.findRemainingCreditsForFreeSms("Credito residuo giornaliero: 3 crediti/sms");
-		assertEquals("Wrong credits", "3", credits);
-	}
+
 
 
 	//---------- Private methods
