@@ -53,7 +53,9 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
  */
 public class LogicManager extends RainbowLogicManager {
 	//---------- Private fields
-	protected final AppPreferencesDao mAppPreferencesDao;
+    private static final String LOG_HASH = "LogicManager";
+
+    protected final AppPreferencesDao mAppPreferencesDao;
 	protected final LogFacility mLogFacility;
 	protected final ProviderDao mProviderDao;
 	protected final ActivityHelper mActivityHelper;
@@ -107,7 +109,7 @@ public class LogicManager extends RainbowLogicManager {
 
 		//set application name
 		App.i().setAppName(context.getString(R.string.common_appNameForDisplay));
-		mLogFacility.i("App name: " + App.i().getAppName());
+		mLogFacility.v(LOG_HASH, "App name: " + App.i().getAppName());
 		
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);
@@ -249,17 +251,15 @@ public class LogicManager extends RainbowLogicManager {
                 .replace("smsto:", "")
                 .replace("sms:", "");
             //and set fields
-            mLogFacility.i("Application called for sending number to " + RainbowStringHelper.scrambleNumber(destionationNumber));
+            mLogFacility.i(LOG_HASH, "Application called for sending number to " + RainbowStringHelper.scrambleNumber(destionationNumber));
             message.setDestination(destionationNumber);
             
         } else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
             //in the data i'll find the content of the message
             String messageBody = intent.getStringExtra(Intent.EXTRA_TEXT);
-            mLogFacility.i("Application called for sending message " + (messageBody.length() < 200 ? message : messageBody.substring(0, 200)));
+            mLogFacility.i(LOG_HASH, "Application called for sending message " + (messageBody.length() < 200 ? message : messageBody.substring(0, 200)));
             //clear the string
             message.setMessage(messageBody);
-        } else {
-            mLogFacility.v("No extra message data found on main intent");
         }
         
         return message;
@@ -306,7 +306,7 @@ public class LogicManager extends RainbowLogicManager {
 				else if ("VOIPSTUNT".equals(providerName)) provider = new VoipstuntProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
 				
 				if (null != provider) {
-					mLogFacility.i("Inizializing provider " + providerName);
+					mLogFacility.i(LOG_HASH, "Inizializing provider " + providerName);
 					res = provider.initProvider(context);
 					App.i().getProviderList().add(provider);
 				}

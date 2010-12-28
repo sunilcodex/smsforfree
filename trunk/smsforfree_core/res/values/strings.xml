@@ -35,7 +35,9 @@
     <string name="common_msg_cannotLoadProviderData">Cannot load provider data:\n%s\n\nPlease, report this error to the developer.</string>
     <string name="common_msg_communicationError">Generic communication error:\n%s\n\nNetwork issues, or maybe the provider has problem or is down...</string>
     <string name="common_msg_architecturalError">Inner application error:\n%s\n\nPlease, report it to the developer.</string>
-    <string name="common_msg_noCredentials">No credentials supplied.\nInsert them in the settings of provider or service.</string>
+    <string name="common_msg_invalidCredential">Empty or invalid credential supplied.\nPlease correct them in the settings of provider or service.</string>
+    <string name="common_msg_invalidSender">Empty or invalid sender supplied.\nPlease correct it in the settings of provider or service.</string>
+    <string name="common_msg_invalidDestination">Empty or invalid destination supplied.\nPlease fix it.</string>
     <string name="common_sendlogSubject">Log %s</string>
     <string name="common_sendlogBody">Dear Alfredo,\n I\'m sending application log because (add here report cause / problem encountered)\n\n\n%s</string>
     <string name="common_sendEmailChooser">Select email application</string>
@@ -81,6 +83,7 @@
     <string name="actsendsms_msg_error_saving_sent_sms">An error occurred saving SMS in the Sent folder.\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="actsendsms_msg_error_retrieving_inbox_sms">An error occurred reading latest SMS received.\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="actsendsms_msg_empty_inbox_sms">No SMS found in your received messages.</string>
+    <string name="actsendsms_msg_errorSendingMessageTitle">Error in sending</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>

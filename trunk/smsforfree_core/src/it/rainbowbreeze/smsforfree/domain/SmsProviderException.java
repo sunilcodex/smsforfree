@@ -16,27 +16,30 @@
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/>.
  */
+package it.rainbowbreeze.smsforfree.domain;
 
-package it.rainbowbreeze.smsforfree.data;
-
-import it.rainbowbreeze.libs.common.RainbowLogFacility;
-import it.rainbowbreeze.libs.data.RainbowWebserviceClient;
-
-public class WebserviceClient
-    extends RainbowWebserviceClient
-{
+/**
+ * Represents an error during provider operation
+ * 
+ * @author Alfredo "Rainbowbreeze" Morresi
+ *
+ */
+public class SmsProviderException extends Exception {
     //---------- Private fields
+    private static final long serialVersionUID = 1049647949315321958L;
 
-    //---------- Constructors
-    public WebserviceClient(RainbowLogFacility logFacility) {
-        super(logFacility);
+    //---------- Constructor
+    public SmsProviderException() {
+    }
+    
+    public SmsProviderException(String message) {
+        super(message);
     }
 
-    //---------- Public properties
+    //---------- SetUp and TearDown
 
-    //---------- Events
-
-    //---------- Public methods
+    //---------- Tests methods
 
     //---------- Private methods
+
 }

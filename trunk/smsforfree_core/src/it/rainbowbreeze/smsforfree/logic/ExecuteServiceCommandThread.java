@@ -37,6 +37,7 @@ public class ExecuteServiceCommandThread
 	extends RainbowBaseBackgroundThread<String>
 {
 	//---------- Private fields
+    private static final String LOG_HASH = "ExecuteServiceCommandThread";
 	private final SmsService mService;
 	private final int mCommandToExecute;
 	private final LogFacility mLogFacility;
@@ -73,7 +74,7 @@ public class ExecuteServiceCommandThread
 	//---------- Public methods
 	@Override
 	public void run() {
-		mLogFacility.i("Execute command " + mCommandToExecute + " for service " + mService.getId());
+		mLogFacility.v(LOG_HASH, "Execute command " + mCommandToExecute + " for service " + mService.getId());
 		//execute the command
 		mResultOperation = mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
 		//and call the caller activity handler when the execution is terminated
