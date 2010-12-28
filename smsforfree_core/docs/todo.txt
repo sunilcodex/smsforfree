@@ -3,6 +3,8 @@ TODOLIST
 -mettere bottone che ripresenta ultimo messaggio di invio sms
 -sostituire caratteri illegali su corpo messaggio aimon
 
+
+
 FUTURE IMPLEMENTAZIONI
 
 

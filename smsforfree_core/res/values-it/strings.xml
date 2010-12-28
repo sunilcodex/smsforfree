@@ -178,13 +178,6 @@
 
 
 
-    <!-- ActExpired -->
-    <string name="actexpired_title">%s - Scaduto :(</string>
-    <string name="actexpired_msgExpired">Spiacente, la versione dell\'applicazione e\' scaduta.\n\n\nAcquista nell\'Android Market la versione di SmsForFree Full per non aver piu\' limiti</string>
-
-
-
-
     <!-- ActCompactMessage -->
     <string name="actcompactmessage_title">%s - Comprimi messaggio</string>
     <string name="actcompactmessage_lblHelp">Scegli quanto comprimere il messaggio</string>

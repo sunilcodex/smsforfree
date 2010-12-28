@@ -91,6 +91,7 @@ public class ActSendSms
 	
 	protected static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
+    protected static final String BUNDLEKEY_DIALOGERRORMESSAGE = "DialogErrorMessage";
 
 	protected static final int OPTIONMENU_SETTINGS = 2;
 	protected static final int OPTIONMENU_SIGNATURE = 3;
@@ -147,17 +148,6 @@ public class ActSendSms
         mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
         mSmsDao = checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao");
 
-        //checks for app validity
-    	if (App.i().isAppExpired()) {
-    		mLogFacility.i(LOG_HASH, "App expired");
-    		//application is expired
-            setContentView(R.layout.actexpired);
-            setTitle(String.format(
-            		getString(R.string.actexpired_title), App.i().getAppName()));
-    		mActivityHelper.showInfo(this, R.string.common_msg_appExpired);
-    		return;
-    	}
-    	
         setContentView(R.layout.actsendsms);
         setTitle(String.format(
         		getString(R.string.actsendsms_title), App.i().getAppName()));
@@ -287,6 +277,7 @@ public class ActSendSms
 		String phones = ContactDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
 		outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
 		outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
+        outState.putString(BUNDLEKEY_DIALOGERRORMESSAGE, mErrorSendingMessage);
 	};
 
 	
@@ -303,6 +294,7 @@ public class ActSendSms
 		mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
 		mPhonesToShowInDialog = ContactDao.instance().deserializeContactPhones(
 				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
+        mErrorSendingMessage = savedInstanceState.getString(BUNDLEKEY_DIALOGERRORMESSAGE);
 		
 		//when the activity is rotated, in the onPause event the values of
 		//provider, text values and subservice are persisted, so i can rely on this value
@@ -318,7 +310,6 @@ public class ActSendSms
     	menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
     		.setIcon(android.R.drawable.ic_menu_info_details);
     	//menu ends here if the application is expired
-    	if (App.i().isAppExpired()) return true;
 
     	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
 			.setIcon(android.R.drawable.ic_menu_edit);
@@ -443,6 +434,11 @@ public class ActSendSms
     	            getString(R.string.actsendsms_msg_errorSendingMessageTitle),
     	            mErrorSendingMessage,
     	            getString(R.string.common_btnOk));
+    	    retDialog.setOnDismissListener(new Dialog.OnDismissListener() {
+                public void onDismiss(DialogInterface dialog) {
+                    removeDialog(DIALOG_SENDING_MESSAGE_ERROR);
+                }
+            });
     	    break;
     	
 		default:
@@ -817,8 +813,6 @@ public class ActSendSms
 	 */
 	private void restoreLastRunViewValues()
 	{
-		if (App.i().isAppExpired()) return;
-		
 		//text and message
 		mTxtDestination.setText(mAppPreferencesDao.getLastUsedDestination());
 		mTxtBody.setText(mAppPreferencesDao.getLastUsedMessage());

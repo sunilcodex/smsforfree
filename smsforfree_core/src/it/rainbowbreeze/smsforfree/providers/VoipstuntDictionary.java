@@ -42,13 +42,15 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 public class VoipstuntDictionary
 {
 	//---------- Private fields
-	private final static String VOIPSTUNT_BASE_URL =
+    private static final String LOG_HASH = "VoipstuntDictionary";
+	protected static final String VOIPSTUNT_BASE_URL =
 		"https://www.voipstunt.com/myaccount/sendsms.php";
 	
-	private final static String XMLNODE_RESULTCODE = "result";
-	private final static String XMLNODE_RESULTSTRING = "resultstring";
+	protected static final String XMLNODE_RESULTCODE = "result";
+	protected static final String XMLNODE_RESULTSTRING = "resultstring";
+    protected static final String XMLNODE_DESCRIPTION = "description";
 
-	private final LogFacility mLogFacility;
+	protected final LogFacility mLogFacility;
 
 
 
@@ -94,82 +96,97 @@ public class VoipstuntDictionary
 		return sb.toString();
 	}
 	
+	/**
+     * Checks if an error for message too long (or with strange chars) was returned from provider
+	 */
+    public boolean isMessageTooLong(ProviderReply providerReply) {
+        if (null == providerReply || TextUtils.isEmpty(providerReply.description)) return false;
+        //return providerReply.equalsIgnoreCase("The text message you are trying to send is larger than 160 characters, please shorten your message.");
+        return providerReply.description.toLowerCase().contains("please shorten your message");
+    }
 	
 	/**
 	 * Parses the provider reply and search if the message was sent
-	 * 
-	 * @param providerReply
-	 * @return
 	 */
-	public boolean messageWasSent(String providerReply)
-	{
-		if (TextUtils.isEmpty(providerReply))
-			return false;
-	
-		String providerResult = null;
-		InputStream is;
-		try {
-			is = new ByteArrayInputStream(providerReply.getBytes("UTF-8"));
-			providerResult = deserializeProviderReply(is);
-			
-		//TODO advice for providers problem
-		} catch (UnsupportedEncodingException e) {
-			mLogFacility.e(e);
-			e.printStackTrace();
-		} catch (XmlPullParserException e) {
-			mLogFacility.e(e);
-		} catch (IOException e) {
-			mLogFacility.e(e);
-		}
-		
-		return "success".equalsIgnoreCase(providerResult);
+	public boolean messageWasSent(ProviderReply providerReply) {
+		if (null == providerReply || TextUtils.isEmpty(providerReply.resultString)) return false;
+		return "success".equalsIgnoreCase(providerReply.resultString);
 	}
 
-
-
-
-	//---------- Private methods
+	
 	/**
-	 * Deserializes provider reply from xml input
+	 * Deserializes provider reply from xml input.
+	 * Public for testing purpose
+	 * 
+	 * @return provider reply text, or null in case of parsing errors
 	 */
-	private String deserializeProviderReply(InputStream in)
-		throws XmlPullParserException, IOException
+	public ProviderReply deserializeProviderReply(String providerReply)
 	{
+	    InputStream in;
+        try {
+            in = new ByteArrayInputStream(providerReply.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            mLogFacility.e(LOG_HASH, "Error parsing provider result: UnsupportedEncodingException");
+            mLogFacility.e(e);
+            return null;
+        }
+	    
 		XmlPullParser parser = Xml.newPullParser();
 		int resultCode = 0;
-		String resultString = "";
+		String resultString = null;
+		String description = null;
 
-		parser.setInput(in, null);
-		int eventType = parser.getEventType();
+		try {
+            parser.setInput(in, null);
+		    int eventType = parser.getEventType();
 		
-		while (eventType != XmlPullParser.END_DOCUMENT) {
-			String name = null;
-			switch (eventType) {
-			case XmlPullParser.START_DOCUMENT:
-				break;
-				
-			case XmlPullParser.START_TAG:
-				name = parser.getName();
-				
-				if (name.equalsIgnoreCase(XMLNODE_RESULTCODE)) {
-					resultCode = Integer.parseInt(parser.nextText());
-				} else if (name.equalsIgnoreCase(XMLNODE_RESULTSTRING)) {
-					resultString = parser.nextText();
-				}
-				break;
-				
-			case XmlPullParser.END_TAG:
-				break;
-			
-			}
-			
-			eventType = parser.next();
-		}
+    		while (eventType != XmlPullParser.END_DOCUMENT) {
+    			String name = null;
+    			switch (eventType) {
+    			case XmlPullParser.START_DOCUMENT:
+    				break;
+    				
+    			case XmlPullParser.START_TAG:
+    				name = parser.getName();
+    				
+    				if (name.equalsIgnoreCase(XMLNODE_RESULTCODE)) {
+    					resultCode = Integer.parseInt(parser.nextText());
+    				} else if (name.equalsIgnoreCase(XMLNODE_RESULTSTRING)) {
+    					resultString = parser.nextText();
+                    } else if (name.equalsIgnoreCase(XMLNODE_DESCRIPTION)) {
+                        description = parser.nextText();
+                    }
+    				break;
+    				
+    			case XmlPullParser.END_TAG:
+    				break;
+    			
+    			}
+    			
+    			eventType = parser.next();
+    		}
+        } catch (XmlPullParserException e) {
+            mLogFacility.e(LOG_HASH, "Error parsing provider result: XmlPullParserException");
+            mLogFacility.e(e);
+            return null;
+        } catch (NumberFormatException e) {
+            mLogFacility.e(LOG_HASH, "Error parsing provider result: NumberFormatException");
+            mLogFacility.e(e);
+            return null;
+        } catch (IOException e) {
+            mLogFacility.e(LOG_HASH, "Error parsing provider result: IOException");
+            mLogFacility.e(e);
+            return null;
+        }
 		
-		return resultString;
+		return new ProviderReply(resultCode, resultString, description);
 	}
-	
-	private String urlEncode(String stringToEncode) {
+
+
+
+
+    //---------- Private methods
+	protected String urlEncode(String stringToEncode) {
 		String result;
 		
 		try {
@@ -178,5 +195,23 @@ public class VoipstuntDictionary
 			result = stringToEncode;
 		}
 		return result;
+	}
+	
+	
+	
+	/**
+	 * Voipstunt provider reply
+	 *
+	 */
+	public class ProviderReply {
+	    public final int resultCode;
+	    public final String resultString;
+        public final String description;
+	    
+        public ProviderReply(int resultCode, String resultString, String description) {
+            this.resultCode = resultCode;
+            this.resultString = resultString;
+            this.description = description;
+        }
 	}
 }

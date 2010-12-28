@@ -123,17 +123,6 @@ public class LogicManager extends RainbowLogicManager {
 				App.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType)));
 		App.i().setAllowedSmsForDay(
 				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
-
-//		//check if the application expired
-//		if (SmsForFreeApplication.instance().isLiteVersionApp()) {
-//			SmsForFreeApplication.instance().setAppExpired(checkIfAppExpired());
-//			if (SmsForFreeApplication.instance().isAppExpired()) {
-//				res.setReturnCode(ResultOperation.RETURNCODE_APP_EXPIRED);
-//				return res;
-//			}
-//		} else {
-			App.i().setAppExpired(false);
-//		}
 		
 		//update the daily number of sms
 		updateSmsCounter(0);
