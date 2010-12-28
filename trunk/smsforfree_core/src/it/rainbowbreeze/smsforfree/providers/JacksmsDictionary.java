@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.text.TextUtils;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * 
@@ -41,9 +42,12 @@ import android.text.TextUtils;
 public class JacksmsDictionary
 {
 	//---------- Private fields
+    protected static final String LOG_HASH = "JacksmsDictionary";
+    protected final LogFacility mLogFacility;
+    
 	private static final String FORMAT_CSV = "csv";
-	private static final String FORMAT_XML = "xml";
-	private static final String FORMAT_JSON = "jsn";
+	//private static final String FORMAT_XML = "xml";
+	//private static final String FORMAT_JSON = "jsn";
 
 	private static final String URL_BASE = "http://q.jacksms.it/";
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
@@ -51,8 +55,8 @@ public class JacksmsDictionary
 	private static final String ACTION_SEND_CAPTCHA = "continueSend";
 	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
 	
-	private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
-	private static final String PARAM_CLIENTVERSION = "clientVersion=";
+	//private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
+	//private static final String PARAM_CLIENTVERSION = "clientVersion=";
 	private static final String PARAM_CLIENTVERSION_VALUE = "android";
 	private static final String CSV_SEPARATOR = "\t";
 
@@ -73,7 +77,8 @@ public class JacksmsDictionary
 
 
 	//---------- Constructors
-	public JacksmsDictionary() {
+	public JacksmsDictionary(LogFacility logFacility) {
+	    mLogFacility = checkNotNull(logFacility, "LogFacility");
 	}
 	
 	
@@ -269,10 +274,9 @@ public class JacksmsDictionary
 	}
 	
 	
-	public List<SmsConfigurableService> extractUserServices(
-			LogFacility logFacility,
-			String providerReply)
+	public List<SmsConfigurableService> extractUserServices(String providerReply)
 	{
+	    mLogFacility.v(LOG_HASH, "Extract user services");
 		List<SmsConfigurableService> services = new ArrayList<SmsConfigurableService>();
 		
 		//examine the reply, line by line
@@ -295,23 +299,28 @@ public class JacksmsDictionary
 					//find the total number of parameter
 					if (TextUtils.isEmpty(parametersValue[i])) numberOfParameters--;
 				}
+				mLogFacility.v(LOG_HASH, "Found new service:" +
+				        "\n service id: " + serviceId +
+				        "\n yemplate id: " + templateId +
+				        "\n service name: " + serviceName +
+				        "\n parameters: " + numberOfParameters);
 				//create new service
 				parametersValue = (String[]) RainbowArrayHelper.resizeArray(parametersValue, numberOfParameters);
 				SmsConfigurableService newService = new SmsConfigurableService(
-						logFacility, serviceId, templateId, serviceName, parametersValue);
+						mLogFacility, serviceId, templateId, serviceName, parametersValue);
 				services.add(newService);
 			} catch (Exception e) {
 				//do nothing, simply skips to next service
 			}
 		}
 		
+		mLogFacility.v(LOG_HASH, "Total services found: " + services.size());
 		Collections.sort(services);
 		return services;
 	}
 
 
-	public boolean isSmsCorrectlySend(String webserviceReply)
-	{
+	public boolean isSmsCorrectlySent(String webserviceReply) {
 		if (TextUtils.isEmpty(webserviceReply)) return false;
 		return webserviceReply.startsWith(JacksmsDictionary.PREFIX_RESULT_OK);
 	}
@@ -334,6 +343,16 @@ public class JacksmsDictionary
 		}
 		return 1 != number; 
 	}
+
+	/**
+	 * Checks if captcha code was correctly received by JackSMS
+	 * server and sent to sms provider
+	 * @param webserviceReply
+	 * @return
+	 */
+    public boolean isCaptchaCorrectlySent(String webserviceReply) {
+        return TextUtils.isEmpty(webserviceReply);
+    }
 
 	/**
 	 * Checks if the reply for webservice contains errors or not

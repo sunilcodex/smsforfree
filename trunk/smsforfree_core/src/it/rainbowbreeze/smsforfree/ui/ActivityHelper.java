@@ -19,6 +19,8 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import java.util.Map;
+
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.ui.RainbowActivityHelper;
 import it.rainbowbreeze.smsforfree.R;
@@ -38,8 +40,15 @@ import android.text.TextUtils;
 public class ActivityHelper
 	extends RainbowActivityHelper {
 	//---------- Private fields
-	
-	
+    protected static final int MSG_INDEX_ERROR_EMPTY_REPLY = MSG_INDEX_FIRST_USER;
+    protected static final int MSG_INDEX_ERROR_LOAD_PROVIDER_DATA = MSG_INDEX_FIRST_USER + 1;
+    protected static final int MSG_INDEX_ERROR_IMPORT_FROM_RESOURCE = MSG_INDEX_FIRST_USER + 2;
+    protected static final int MSG_INDEX_ERROR_SAVE_PROVIDER_DATA = MSG_INDEX_FIRST_USER + 3;
+    protected static final int MSG_INDEX_ERROR_INVALID_CREDENTIAL = MSG_INDEX_FIRST_USER + 4;
+    protected static final int MSG_INDEX_ERROR_INVALID_SENDER = MSG_INDEX_FIRST_USER + 5;
+    protected static final int MSG_INDEX_ERROR_INVALID_DESTINATION = MSG_INDEX_FIRST_USER + 6;
+
+
 
 
 	//---------- Public properties
@@ -200,54 +209,46 @@ public class ActivityHelper
                 App.LOG_TAG);
     }
     
-	
-	public void reportError(Context context, Exception exception, int returnCode)
-	{
-		//First of all, examines return code for standard errors
-		String userMessage;
-		switch (returnCode) {
-		case ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE:
-			userMessage = String.format(
-					context.getString(R.string.common_msg_architecturalError), exception.getMessage());
-			break;
-		case ResultOperation.RETURNCODE_ERROR_COMMUNICATION:
-			userMessage = String.format(
-					context.getString(R.string.common_msg_communicationError), exception.getMessage());
-			break;
-		case ResultOperation.RETURNCODE_ERROR_GENERIC:
-			userMessage = String.format(
-					context.getString(R.string.common_msg_genericError), exception.getMessage());
-			break;
-		case ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY:
-			userMessage = context.getString(R.string.common_msg_noReplyFromProvider);
-			break;
-		case ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA:
-			userMessage = String.format(
-					context.getString(R.string.common_msg_cannotLoadProviderData), exception.getMessage());
-			break;
-		case ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL:
-			userMessage = context.getString(R.string.common_msg_noCredentials);
-			break;
-		case ResultOperation.RETURNCODE_ERROR_SAVE_PROVIDER_DATA:
-			userMessage = String.format(
-					context.getString(R.string.common_msg_cannotSaveProviderData), exception.getMessage());
-			break;
-		default:
-			userMessage = String.format(
-					context.getString(R.string.common_msg_architecturalError), "No error result code managed.");
-			break;
-		}
-		
-		//display the error to the user
-		reportError(context, userMessage);
-		//and log the error
-		if (ResultOperation.RETURNCODE_ERROR_NOCREDENTIAL != returnCode &&
-				ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY != returnCode) {
-			mBaseLogFacility.e(exception);
-		}
-	}
-	
 
+    @Override
+    public String getErrorMessage(int returnCode, Exception exception) {
+        //First of all, examines return code for standard errors
+        String userMessage = null;
+        String exceptionMessage = null != exception ? exception.getMessage() : getMessage(MSG_INDEX_NO_ERROR_MESSAGE);
+
+        switch (returnCode) {
+        case ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY:
+            userMessage = getMessage(MSG_INDEX_ERROR_EMPTY_REPLY);
+            break;
+        case ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY:
+            userMessage = exceptionMessage;
+            break;
+        case ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA:
+            userMessage = String.format(
+                    getMessage(MSG_INDEX_ERROR_LOAD_PROVIDER_DATA), exceptionMessage);
+            break;
+        case ResultOperation.RETURNCODE_ERROR_SAVE_PROVIDER_DATA:
+            userMessage = String.format(
+                    getMessage(MSG_INDEX_ERROR_SAVE_PROVIDER_DATA), exceptionMessage);
+            break;
+        case ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL:
+            userMessage = getMessage(MSG_INDEX_ERROR_INVALID_CREDENTIAL);
+            break;
+        case ResultOperation.RETURNCODE_ERROR_INVALID_SENDER:
+            userMessage = getMessage(MSG_INDEX_ERROR_INVALID_SENDER);
+            break;
+        case ResultOperation.RETURNCODE_ERROR_INVALID_DESTINATION:
+            userMessage = getMessage(MSG_INDEX_ERROR_INVALID_DESTINATION);
+            break;
+            
+        default:
+            userMessage = super.getErrorMessage(returnCode, exception);
+            break;
+        }
+        
+        return userMessage;
+    }
+    
 	/**
 	 * Process in a standard way the result of SmsService extended command
 	 * execution
@@ -281,7 +282,22 @@ public class ActivityHelper
 	}
 
 
+
 	
 	//---------- Private methods
+	@Override
+	protected void loadCustomMessageStrings(
+	        Context context,
+	        Map<Integer, String> messages) {
+	    super.loadCustomMessageStrings(context, messages);
+	    messages.put(MSG_INDEX_ERROR_EMPTY_REPLY, context.getString(R.string.common_msg_noReplyFromProvider));
+        messages.put(MSG_INDEX_ERROR_LOAD_PROVIDER_DATA, context.getString(R.string.common_msg_cannotLoadProviderData));
+        messages.put(MSG_INDEX_ERROR_SAVE_PROVIDER_DATA, context.getString(R.string.common_msg_cannotSaveProviderData));
+        messages.put(MSG_INDEX_ERROR_INVALID_CREDENTIAL, context.getString(R.string.common_msg_invalidCredential));
+        messages.put(MSG_INDEX_ERROR_INVALID_SENDER, context.getString(R.string.common_msg_invalidSender));
+        messages.put(MSG_INDEX_ERROR_INVALID_DESTINATION, context.getString(R.string.common_msg_invalidSender));
+        //FIXME put right error message
+        //messages.put(MSG_INDEX_ERROR_IMPORT_FROM_RESOURCE, context.getString(R.string.common_msg_architecturalError));
+	}
 	
 }

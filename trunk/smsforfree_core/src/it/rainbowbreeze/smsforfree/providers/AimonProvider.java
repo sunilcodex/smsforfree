@@ -162,26 +162,15 @@ public class AimonProvider
 	}
 	
     @Override
-	public ResultOperation<String> sendMessage(String serviceId, String destination, String body)
+	public ResultOperation<String> sendMessage(String serviceId, String destination, String message)
 	{
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 		String sender = getParameterValue(PARAM_INDEX_SENDER);
 
-    	//arguments check
-    	if (!checkCredentialsValidity(username, password))
-    		return getExceptionForInvalidCredentials();
-    	if (TextUtils.isEmpty(sender)) 
-    		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
-    	if (TextUtils.isEmpty(destination)) 
-    		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
-    	if (TextUtils.isEmpty(body)) 
-    		return new ResultOperation<String>(
-					ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_EMPTY_MESSAGE]);
-    	
-    	
+		ResultOperation<String> res = validateSendSmsParameters(username, password, sender, destination, message);
+		if (res.hasErrors()) return res;
+		
     	//parameters correction
     	String okSender = "";
     	String okDestination;
@@ -193,8 +182,7 @@ public class AimonProvider
     		//sender still starts with an international prefix
     		if (okSender.substring(0, 1).equals("+")) {
 				//no way, error is generated
-				ResultOperation<String> res = new ResultOperation<String>(
-						ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_SENDER]);
+				res.setReturnCode(ResultOperation.RETURNCODE_ERROR_INVALID_SENDER);
 				return res;
 			}
         		
@@ -232,12 +220,12 @@ public class AimonProvider
     	}
 
     	if (isFreeSmsCall(serviceId)) {
-    		okDestination = removeInternationalPrefix(destination);
-    		//sender still starts with an international prefix
+    	    //free sms valid only for italian numbers
+    		okDestination = removeInternationalPrefix(destination, "+39");
+    		//destination still starts with an international prefix
     		if (okDestination.substring(0, 1).equals("+")) {
 				//no way, error is generated
-				ResultOperation<String> res = new ResultOperation<String>(
-						ResultOperation.RETURNCODE_PROVIDER_ERROR, mMessages[MSG_INDEX_INVALID_DESTINATION]);
+    		    res.setReturnCode(ResultOperation.RETURNCODE_ERROR_INVALID_DESTINATION);
 				return res;
 			}
     	} else {
@@ -247,10 +235,9 @@ public class AimonProvider
 			okDestination = okDestination.substring(1);
     	}
 
-    	okBody = mDictionary.adjustMessageBody(body);
+    	okBody = mDictionary.adjustMessageBody(message);
     	
 		//find how to send the sms (via httpform or via api)
-		ResultOperation<String> res;
 		if (isFreeSmsCall(serviceId)) {
 	    	//send free sms
 			res = sendSmsViaHttpConversation(username, password, serviceId, okSender, okDestination, okBody);
@@ -401,7 +388,6 @@ public class AimonProvider
 		
 		return commands;
 	}
-
 	
 	/**
 	 * Verifies remaining credits for the user
@@ -409,7 +395,7 @@ public class AimonProvider
 	 * @param password
 	 * @return
 	 */
-    private ResultOperation<String> verifyCredit(String username, String password)
+    protected ResultOperation<String> verifyCredit(String username, String password)
     {
     	//args check
     	if (!checkCredentialsValidity(username, password))
@@ -439,7 +425,7 @@ public class AimonProvider
      * Verifies if username and password are correct
      * @return an error if the user is not authenticated, otherwise the message to show
      */
-	private ResultOperation<String> verifyCredentials(String username, String password)
+	protected ResultOperation<String> verifyCredentials(String username, String password)
 	{
 		ResultOperation<String> res;
 		
@@ -448,7 +434,7 @@ public class AimonProvider
 		//are correct.
 		res = verifyCredit(username, password);
 		//checks for application errors
-		if (res.hasErrors() || ResultOperation.RETURNCODE_PROVIDER_ERROR == res.getReturnCode()) return res;
+		if (res.hasErrors()) return res;
 		
 		//at this point reply can only contains the remaining credits, so credential are correct
 		res.setResult(mMessages[MSG_INDEX_VALID_CREDENTIALS]);
@@ -469,7 +455,7 @@ public class AimonProvider
 	 * @param params
 	 * @return
 	 */
-	private ResultOperation<String> sendSmsWithApi(
+	protected ResultOperation<String> sendSmsWithApi(
 			String username,
 			String password,
 			String idApi,
@@ -506,47 +492,46 @@ public class AimonProvider
 	 * @param resultToAnalyze
 	 * @return true if an aimon error is found, otherwise false
 	 */
-	private boolean parseReplyForApiErrors(ResultOperation<String> resultToAnalyze)
+	protected boolean parseReplyForApiErrors(ResultOperation<String> resultToAnalyze)
 	{
 		if (resultToAnalyze.hasErrors()) return true;
 
-		String res;
+		String errorMessage;
 		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
 
 		//message correctly sent
 		if (mDictionary.isOperationCorrectlyExecuted(reply)) {
-			res = "";
+			errorMessage = "";
 		//check for know errors
 		} else if (mDictionary.isLoginInvalidCredentials(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
+			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		} else if (mDictionary.isInternalServerError(reply)) {
-			res = mMessages[MSG_INDEX_SERVER_ERROR];
+			errorMessage = mMessages[MSG_INDEX_SERVER_ERROR];
 		} else if (mDictionary.isMissingParameters(reply)) {
-			res = mMessages[MSG_INDEX_MISSING_PARAMETERS];
+			errorMessage = mMessages[MSG_INDEX_MISSING_PARAMETERS];
 		} else if (mDictionary.isInvalidSender(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_SENDER];
+			errorMessage = mMessages[MSG_INDEX_INVALID_SENDER];
 		} else if (mDictionary.isInvalidDestination(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_DESTINATION];
+			errorMessage = mMessages[MSG_INDEX_INVALID_DESTINATION];
 		} else if (mDictionary.isNotEnoughCredit(reply)) {
-			res = mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT];
+			errorMessage = mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT];
 		} else if (mDictionary.isUnsupportedMessageEncodingOrTooLong(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG];
+			errorMessage = mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG];
 		} else {
 			//other generic errors
-			res = String.format(mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR], reply);
+			errorMessage = String.format(mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR], reply);
 		}
 	
     	//errors are internal to Aimon, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
-    	if (!TextUtils.isEmpty(res)) {
+    	if (!TextUtils.isEmpty(errorMessage)) {
 			mLogFacility.e("AimonProvider api error reply");
-			mLogFacility.e(res);
+			mLogFacility.e(errorMessage);
 			mLogFacility.e(reply);
-    		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
+			setSmsProviderException(resultToAnalyze, errorMessage);
     		return true;
     	} else {
     		return false;
@@ -566,7 +551,7 @@ public class AimonProvider
 	 * @param body
 	 * @return
 	 */
-	private ResultOperation<String> sendSmsViaHttpConversation(
+	protected ResultOperation<String> sendSmsViaHttpConversation(
 			String username,
 			String password,
 			String idApi,
@@ -595,7 +580,7 @@ public class AimonProvider
         //check if login is really correct
         if (!mDictionary.isFreeSmsLoginOk(res.getResult(), username)) {
         	//set invalid credentials
-        	res.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
+        	res.setReturnCode(ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY);
         	res.setResult(mMessages[MSG_INDEX_INVALID_CREDENTIALS]);
         	return res;
         }
@@ -644,51 +629,50 @@ public class AimonProvider
 	 * @param resultToAnalyze
 	 * @return
 	 */
-	private boolean parseRetryForHttpErrors(ResultOperation<String> resultToAnalyze, String username)
+	protected boolean parseRetryForHttpErrors(ResultOperation<String> resultToAnalyze, String username)
 	{
 		if (resultToAnalyze.hasErrors()) return true;
 		
-		String res;
+		String errorMessage;
 		String reply = resultToAnalyze.getResult();
 
 		//no reply from server is already handled in doRequest method
 				
 		//message sent
 		if (mDictionary.isFreeSmsCorrectlySent(reply) || mDictionary.isFreeSmsLoginOk(reply, username)) {
-			res = "";
+			errorMessage = "";
 		//other possible errors
 		} else if (mDictionary.isFreeSmsLoginInvalidCredentials(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
+			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		} else if (mDictionary.isFreeSmsInvalidDestination(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_DESTINATION];
+			errorMessage = mMessages[MSG_INDEX_INVALID_DESTINATION];
 		} else if (mDictionary.isFreeSmsInvalidSender(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_SENDER];
+			errorMessage = mMessages[MSG_INDEX_INVALID_SENDER];
 		} else if (mDictionary.isFreeSmsDailyLimitReached(reply)) {
-			res = mMessages[MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED];
+			errorMessage = mMessages[MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED];
 		} else if (mDictionary.isFreeSmsEmptyBody(reply)) {
-			res = mMessages[MSG_INDEX_EMPTY_MESSAGE];
+			errorMessage = mMessages[MSG_INDEX_EMPTY_MESSAGE];
 		} else if (mDictionary.isFreeSmsGenericServerError(reply)) {
-			res = mMessages[MSG_INDEX_SERVER_ERROR];
+			errorMessage = mMessages[MSG_INDEX_SERVER_ERROR];
 		} else if (mDictionary.isFreeSmsMonthlyLimitReached(reply)) {
-			res = mMessages[MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED];
+			errorMessage = mMessages[MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED];
 		} else if (mDictionary.isFreeSmsNotEnoughCredit(reply)) {
-			res = mMessages[MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT];
+			errorMessage = mMessages[MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT];
 		} else if (mDictionary.isFreeSmsUnsupportedMessageEncoding(reply)) {
-			res = mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING];
+			errorMessage = mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING];
 		} else {
 			//other generic errors
-			res = String.format(mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR], reply);
+			errorMessage = String.format(mMessages[MSG_INDEX_UNMANAGED_SERVER_ERROR], reply);
 		}
 		
     	//errors are internal to Aimon, not related to communication issues.
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
-    	if (!TextUtils.isEmpty(res)) {
-			mLogFacility.e("AimonProvider http error reply");
-			mLogFacility.e(res);
-			mLogFacility.e(reply);
-    		resultToAnalyze.setResult(res);
-    		resultToAnalyze.setReturnCode(ResultOperation.RETURNCODE_PROVIDER_ERROR);
+    	if (!TextUtils.isEmpty(errorMessage)) {
+			mLogFacility.e(LOG_HASH, "AimonProvider http error reply");
+			mLogFacility.e(LOG_HASH, " Message: " + errorMessage);
+			mLogFacility.e(LOG_HASH, " Raw data: " + (reply.length() < 300 ? reply : reply.substring(0, 300)));
+			setSmsProviderException(resultToAnalyze, errorMessage);
     		return true;
     	} else {
     		return false;
@@ -696,7 +680,7 @@ public class AimonProvider
 	}
 	
 	
-	private boolean isFreeSmsCall(String serviceId) {
+	protected boolean isFreeSmsCall(String serviceId) {
 		return AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER == serviceId || AimonDictionary.ID_API_FREE_NORMAL == serviceId;
 	}
 

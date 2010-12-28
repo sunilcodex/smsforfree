@@ -39,18 +39,20 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 public class ActMessageTemplates
 	extends PreferenceActivity
 {
-	//---------- Ctors
-
-
-
-
 	//---------- Private fields
+    protected final static String LOG_HASH = "ActMessageTemplates";
+    
 	private EditTextPreference[] mTxtTemplates;
 	private final static int FIELDS = 10;
 	private String[] mMessageTemplates;
 
 	private LogFacility mLogFacility;
 	private AppPreferencesDao mAppPreferencesDao;
+
+
+
+    //---------- Constructors
+
 
 
 
@@ -64,7 +66,7 @@ public class ActMessageTemplates
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
         mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferences");
 
         setTitle(String.format(

@@ -42,6 +42,7 @@ public class ActTemplatesList
 	extends ListActivity
 {
 	//---------- Private fields
+    protected final static String LOG_HASH = "ActTemplatesList";
 	private SmsProvider mProvider;
 	private LogFacility mLogFacility;
 
@@ -59,7 +60,7 @@ public class ActTemplatesList
 	{
 		super.onCreate(savedInstanceState);
         mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-        mLogFacility.logStartOfActivity(this.getClass(), savedInstanceState);
+        mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
 
 		getDataFromIntent(getIntent());
         setTitle(String.format(
