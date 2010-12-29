@@ -158,11 +158,11 @@ public class ActSettingsMain
 		
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			if (mSmsDao.isSentSmsProviderAvailable(preference.getContext())) {
-				mActivityHelper.showInfo(preference.getContext(), R.string.actsettingsmain_msgNoSmsProviderAvailable);
-				return false;
+                mAppPreferencesDao.setInsertMessageIntoPim(((Boolean)newValue).booleanValue());
+                return mAppPreferencesDao.save();
 			} else {
-				mAppPreferencesDao.setInsertMessageIntoPim(((Boolean)newValue).booleanValue());
-				return mAppPreferencesDao.save();
+                mActivityHelper.showInfo(preference.getContext(), R.string.actsettingsmain_msgNoSmsProviderAvailable);
+                return false;
 			}
 		}
 	};

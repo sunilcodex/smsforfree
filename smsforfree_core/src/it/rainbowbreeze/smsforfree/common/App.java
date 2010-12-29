@@ -76,7 +76,7 @@ public class App
 	public final static String APP_INTERNAL_NAME = "SmsForFree";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "2.00.00";
+	public final static String APP_INTERNAL_VERSION = "02.00.00";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
