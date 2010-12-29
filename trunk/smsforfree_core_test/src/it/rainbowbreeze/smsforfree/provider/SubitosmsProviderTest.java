@@ -150,12 +150,10 @@ public class SubitosmsProviderTest
 		//empty sender
 		mProvider.setParameterValue(2, "");
 		res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "subitosms test");
+        assertTrue("No error", res.hasErrors());
         assertEquals("Wrong returncode",
-                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                ResultOperation.RETURNCODE_ERROR_INVALID_SENDER,
                 res.getReturnCode());
-		assertEquals("Wrong return message",
-		        getContext().getString(R.string.subitosms_msg_invalidSender),
-		        res.getException().getMessage());
 		mProvider.setParameterValue(2, Def.SUBITOSMS_SENDER);
 
 //		//wrong sender
@@ -167,12 +165,10 @@ public class SubitosmsProviderTest
 
 		//empty destination
 		res = mProvider.sendMessage(null, "", "subitosms test");
+		assertTrue("No error", res.hasErrors());
         assertEquals("Wrong returncode",
-                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                ResultOperation.RETURNCODE_ERROR_INVALID_DESTINATION,
                 res.getReturnCode());
-		assertEquals("Wrong error message",
-		        getContext().getString(R.string.subitosms_msg_invalidDestination),
-		        res.getException().getMessage());
 
 //		//wrong message encoding
 //		res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "subitosms\t\ttest!\n");
@@ -181,6 +177,7 @@ public class SubitosmsProviderTest
 
 		//message ok, but no credit
 		res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "test messaggio subito sms ok senza credito");
+        assertTrue("No error", res.hasErrors());
 		assertEquals("Wrong error message",
 		        getContext().getString(R.string.subitosms_msg_notEnoughCredit),
 		        res.getException().getMessage());

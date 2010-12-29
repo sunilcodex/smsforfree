@@ -166,22 +166,16 @@ public class AimonProviderTest
 		//empty sender
 		mProvider.setParameterValue(2, "");
 		res = mProvider.sendMessage(AimonDictionary.ID_API_ANONYMOUS_SENDER, Def.TEST_DESTINATION, "aimon test");
-		assertEquals("Wrong error message",
-		        getContext().getString(R.string.aimon_msg_invalidSender),
-		        res.getException().getMessage());
         assertEquals("Wrong returncode",
-                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                ResultOperation.RETURNCODE_ERROR_INVALID_SENDER,
                 res.getReturnCode());
 		mProvider.setParameterValue(2, Def.AIMON_SENDER);
 
 		//empty destination
 		res = mProvider.sendMessage(AimonDictionary.ID_API_ANONYMOUS_SENDER, "", "aimon test");
         assertEquals("Wrong returncode",
-                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                ResultOperation.RETURNCODE_ERROR_INVALID_DESTINATION,
                 res.getReturnCode());
-		assertEquals("Wrong error message",
-		        getContext().getString(R.string.aimon_msg_invalidDestination),
-                res.getException().getMessage());
 
 		//wrong destination
 		res = mProvider.sendMessage(AimonDictionary.ID_API_ANONYMOUS_SENDER, "XXXX", "aimon test");
@@ -346,7 +340,7 @@ public class AimonProviderTest
 	 */
 	public void testFreeSmsSendMessageOk()
 	{
-		ResultOperation<String> res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me - free sms");
+		ResultOperation<String> res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me, test1 - free sms");
 		//the final part of the message is variable, so cut it!
 		Log.i(LOG_HASH, res.getResult());
 		String currentResult = RainbowStringHelper.getInvariableStringFinalBoundary(getContext().getString(R.string.aimon_msg_messageQueued));
@@ -358,7 +352,7 @@ public class AimonProviderTest
 		        res.getReturnCode());
 		
 		//if i resend the same message again, i get an error
-		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me - free sms");
+		res = mProvider.sendMessage(AimonDictionary.ID_API_FREE_NORMAL, Def.TEST_DESTINATION, "ciao da me, test 2 - free sms");
 		Log.i(LOG_HASH, res.getResult());
         assertEquals("Wrong returncode",
                 ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,

@@ -156,7 +156,7 @@ public class JacksmsProviderTest
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 3, services.size());
 		assertEquals("Wrong id of user service 1", "58302", services.get(0).getId());
-		assertEquals("Wrong id of user service 2", "57727", services.get(1).getId());
+		assertEquals("Wrong id of user service 2", "1", services.get(1).getId());
 		assertEquals("Wrong id of user service 3", "57926", services.get(2).getId());
 	}
 	
@@ -192,7 +192,7 @@ public class JacksmsProviderTest
 		List<SmsService> services = mProvider.getAllSubservices();
 		assertEquals("Wrong number of user services", 3, services.size());
 		assertEquals("Wrong id of user service 1", "58302", services.get(0).getId());
-		assertEquals("Wrong id of user service 2", "57727", services.get(1).getId());
+		assertEquals("Wrong id of user service 2", "1", services.get(1).getId());
 		assertEquals("Wrong id of user service 3", "57926", services.get(2).getId());
 	}
 	
@@ -238,7 +238,7 @@ public class JacksmsProviderTest
 		assertEquals("Wrong number of user services", 4, services.size());
 		assertEquals("Wrong id of user service 1", "999", services.get(0).getId());
 		assertEquals("Wrong id of user service 2", "58302", services.get(1).getId());
-		assertEquals("Wrong id of user service 3", "57727", services.get(2).getId());
+		assertEquals("Wrong id of user service 3", "1", services.get(2).getId());
 		assertEquals("Wrong id of user service 4", "57926", services.get(3).getId());
 		
 		//check all data of one service
