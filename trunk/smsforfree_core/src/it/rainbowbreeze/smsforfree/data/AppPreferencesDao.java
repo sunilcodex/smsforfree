@@ -30,21 +30,22 @@ public class AppPreferencesDao
 {
 	//---------- Private fields
 	
-    private static final String PROP_AUTO_CLEAR_MESSAGE = "clearmessage";
-    private static final String PROP_INSERT_MESSAGE_INTO_PIM = "insertmessageintopim";
-    private static final String PROP_DEFAULT_INTERNATIONAL_PREFIX = "defaultInternationalPrefix";
-    private static final String PROP_SIGNATURE = "signature";
-    private static final String PROP_SMSCOUNTER_DATE = "smsCounterDate";
-    private static final String PROP_SMSCOUNTER_NUMBERFORCURRENTDAY = "smsCounterNumber";
-    private static final String PROP_SMSCOUNTER_TOTAL = "smsCounterTotal";
-    private static final String PROP_MESSAGETEMPLATES = "messageTemplates";
+    protected static final String PROP_AUTO_CLEAR_MESSAGE = "clearmessage";
+    protected static final String PROP_INSERT_MESSAGE_INTO_PIM = "insertmessageintopim";
+    protected static final String PROP_DEFAULT_INTERNATIONAL_PREFIX = "defaultInternationalPrefix";
+    protected static final String PROP_SIGNATURE = "signature";
+    protected static final String PROP_SMSCOUNTER_DATE = "smsCounterDate";
+    protected static final String PROP_SMSCOUNTER_NUMBERFORCURRENTDAY = "smsCounterNumber";
+    protected static final String PROP_SMSCOUNTER_TOTAL = "smsCounterTotal";
+    protected static final String PROP_MESSAGETEMPLATES = "messageTemplates";
+    protected static final String PROP_SHOW_ONLY_MOBILE_NUMBERS = "showOnlyMobileNumbers";
     
-    private static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
-    private static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
-    private static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
-    private static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
+    protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
+    protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
+    protected static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
+    protected static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
     
-    private static final String TEMPLATES_SEPARATOR = "§§§§";
+    protected static final String TEMPLATES_SEPARATOR = "§§§§";
     
     
     
@@ -73,6 +74,11 @@ public class AppPreferencesDao
     { return mSettings.getBoolean(PROP_INSERT_MESSAGE_INTO_PIM, false); }
     public void setInsertMessageIntoPim(boolean newValue)
     { mEditor.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, newValue); }
+    
+    public boolean getShowOnlyMobileNumbers()
+    { return mSettings.getBoolean(PROP_SHOW_ONLY_MOBILE_NUMBERS, false); }
+    public void setShowOnlyMobileNumbers(boolean newValue)
+    { mEditor.putBoolean(PROP_SHOW_ONLY_MOBILE_NUMBERS, newValue); }
     
     public String getSignature()
     { return mSettings.getString(PROP_SIGNATURE, ""); }
@@ -135,6 +141,7 @@ public class AppPreferencesDao
 	{
     	editorBackup.putBoolean(PROP_AUTO_CLEAR_MESSAGE, getAutoClearMessage());
     	editorBackup.putBoolean(PROP_INSERT_MESSAGE_INTO_PIM, getInsertMessageIntoPim());
+        editorBackup.putBoolean(PROP_SHOW_ONLY_MOBILE_NUMBERS, getShowOnlyMobileNumbers());
     	editorBackup.putString(PROP_SIGNATURE, getSignature());
     	editorBackup.putString(PROP_DEFAULT_INTERNATIONAL_PREFIX, getDefaultInternationalPrefix());
     	editorBackup.putString(PROP_LASTUSED_PROVIDERID, getLastUsedProviderId());
@@ -157,5 +164,6 @@ public class AppPreferencesDao
     	setLastUsedSubserviceId(settingsBackup.getString(PROP_LASTUSED_SUBSERVICEID, ""));
     	setLastUsedDestination(settingsBackup.getString(PROP_LASTUSED_DESTINATION, ""));
     	setLastUsedMessage(settingsBackup.getString(PROP_LASTUSED_MESSAGE, ""));
+    	setShowOnlyMobileNumbers(settingsBackup.getBoolean(PROP_SHOW_ONLY_MOBILE_NUMBERS, false));
 	}
 }

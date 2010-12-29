@@ -28,26 +28,45 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 
 /**
  * @author rainbowbreeze
  *
  */
-public class ContactDaoSdk5
-	extends ContactDao
+public class ContactsDaoSdk5
+	extends ContactsDao
 {
-	//---------- Ctors
-
-	
-	
-	
 	//---------- Private fields
+    /** Projection for persons query, show. */
+    private static final String[] CONTACT_NUMBERS_PROJECTION_CONTENT = new String[] {
+            BaseColumns._ID, // 0
+            ContactsContract.Data.DISPLAY_NAME, // 1
+            ContactsContract.CommonDataKinds.Phone.NUMBER, // 2
+            ContactsContract.CommonDataKinds.Phone.TYPE // 3
+        };
 
+    /** SQL to select mobile numbers only. */
+    private static final String CONTACT_NUMBERS_MOBILES_ONLY = ") AND (" + 
+            ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
+            ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE + ")";
+	
+    /** Sort Order. */
+    private static final String CONTACT_NUMBERS_QUERY_SORT_ORDER = // .
+            ContactsContract.CommonDataKinds.Phone.STARRED + " DESC, " + 
+            ContactsContract.CommonDataKinds.Phone.TIMES_CONTACTED + " DESC, " +
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC, " +
+            ContactsContract.CommonDataKinds.Phone.TYPE;
 	
 	
-	
+    //---------- Constructors
+
+    
+    
+    
 	//---------- Public properties
 	
 	
@@ -85,6 +104,54 @@ public class ContactDaoSdk5
  		return phones;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContactNumbersContentWhere(final String filter) {
+        String f = DatabaseUtils.sqlEscapeString('%' + filter.toString() + '%');
+        StringBuilder s = new StringBuilder();
+        s.append("(" + ContactsContract.Data.DISPLAY_NAME + " LIKE ");
+        s.append(f);
+        s.append(") OR (" + ContactsContract.CommonDataKinds.Phone.DATA1
+                + " LIKE ");
+        s.append(f);
+        s.append(")");
+        return s.toString();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContactNumbersMobilesOnlyString() {
+        return CONTACT_NUMBERS_MOBILES_ONLY;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Uri getContentUri() {
+        return ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] getContactNumbersContentProjection() {
+        return CONTACT_NUMBERS_PROJECTION_CONTENT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContactNumbersContentSort() {
+        return CONTACT_NUMBERS_QUERY_SORT_ORDER;
+    }
+    
 	
 	
 	

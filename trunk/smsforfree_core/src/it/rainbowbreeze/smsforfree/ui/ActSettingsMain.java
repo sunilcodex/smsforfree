@@ -43,10 +43,11 @@ public class ActSettingsMain
 	extends RainbowSettingsMainActivity
 {
 	//---------- Private fields
-	private CheckBoxPreference mChkResetData;
-	private CheckBoxPreference mChkInsertSmsIntoPim;
-	private EditTextPreference mTxtSignature;
-	private EditTextPreference mTxtPrefix;
+    protected CheckBoxPreference mChkResetData;
+	protected CheckBoxPreference mChkInsertSmsIntoPim;
+	protected CheckBoxPreference mChkShowOnlyMobileNumbers;
+	protected EditTextPreference mTxtSignature;
+	protected EditTextPreference mTxtPrefix;
 	
 	protected AppPreferencesDao mAppPreferencesDao;
 	protected ActivityHelper mActivityHelper;
@@ -72,6 +73,7 @@ public class ActSettingsMain
         
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
 		mChkInsertSmsIntoPim = (CheckBoxPreference) findPreference("actsettingsmain_chkInsertSmsIntoPim");
+        mChkShowOnlyMobileNumbers = (CheckBoxPreference) findPreference("actsettingsmain_chkShowOnlyMobileNumbers");
 		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
 		mTxtPrefix = (EditTextPreference) findPreference("actsettingsmain_txtDefaultInternationalPrefix");
 		
@@ -85,12 +87,14 @@ public class ActSettingsMain
 		//set value of other preferences
 		mChkResetData.setChecked(mAppPreferencesDao.getAutoClearMessage());
 		mChkInsertSmsIntoPim.setChecked(mAppPreferencesDao.getInsertMessageIntoPim());
+        mChkShowOnlyMobileNumbers.setChecked(mAppPreferencesDao.getShowOnlyMobileNumbers());
 		mTxtSignature.setText(mAppPreferencesDao.getSignature());
 		mTxtPrefix.setText(mAppPreferencesDao.getDefaultInternationalPrefix());
 		
 		//register listeners
 		mChkResetData.setOnPreferenceChangeListener(mChkResetDataChangeListener);
 		mChkInsertSmsIntoPim.setOnPreferenceChangeListener(mChkInsertSmsIntoPimChangeListener);
+        mChkShowOnlyMobileNumbers.setOnPreferenceChangeListener(mChkShowOnlyMobileNumbersChangeListener);
 		mTxtSignature.setOnPreferenceChangeListener(mTxtSignatureChangeListener);
 		mTxtPrefix.setOnPreferenceChangeListener(mTxtPrefixChangeListener);
 		
@@ -138,7 +142,6 @@ public class ActSettingsMain
 	
 	
 	private OnPreferenceChangeListener mTxtPrefixChangeListener = new OnPreferenceChangeListener() {
-		
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			mAppPreferencesDao.setDefaultInternationalPrefix(newValue.toString());
 			return mAppPreferencesDao.save();
@@ -147,7 +150,6 @@ public class ActSettingsMain
 	
 	
 	private OnPreferenceChangeListener mChkResetDataChangeListener = new OnPreferenceChangeListener() {
-		
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			mAppPreferencesDao.setAutoClearMessage(((Boolean)newValue).booleanValue());
 			return mAppPreferencesDao.save();
@@ -155,7 +157,6 @@ public class ActSettingsMain
 	};
 	
 	private OnPreferenceChangeListener mChkInsertSmsIntoPimChangeListener = new OnPreferenceChangeListener() {
-		
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			if (mSmsDao.isSentSmsProviderAvailable(preference.getContext())) {
                 mAppPreferencesDao.setInsertMessageIntoPim(((Boolean)newValue).booleanValue());
@@ -166,6 +167,15 @@ public class ActSettingsMain
 			}
 		}
 	};
+	
+    private OnPreferenceChangeListener mChkShowOnlyMobileNumbersChangeListener = new OnPreferenceChangeListener() {
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            App.i().setShowOnlyMobileNumbers((Boolean)newValue);
+            mAppPreferencesDao.setShowOnlyMobileNumbers(((Boolean)newValue).booleanValue());
+            return mAppPreferencesDao.save();
+        }
+    };
+
 
 
 	

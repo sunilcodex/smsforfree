@@ -109,6 +109,8 @@
     <string name="actsettingsmain_chkResetDataAfterSendSummary">Cancella destinatario e messaggio dopo aver inviato il messaggio</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Inserisci SMS in Inviati</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Quando un SMS viene spedito, inseriscilo anche nella cartella "Inviati" del dispositivo</string>
+    <string name="actsettingsmain_chkShowOnlyMobileNumbers">Mostra solo numeri mobili</string>
+    <string name="actsettingsmain_chkShowOnlyMobileNumbersSummary">Mostra solo i numeri di cellulare nell\'autocompletamento del destinatario</string>
     <string name="actsettingsmain_txtSignature">Firma</string>
     <string name="actsettingsmain_txtSignatureSummary">Firma da aggiungere al messaggio</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Prefisso di default</string>
@@ -166,7 +168,7 @@
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
     <string name="actabout_lblDescription">Spedisci messaggi SMS in tutto il mondo usando i gateways SMS online, gratuitamente o con un costo inferiore rispetto ad un normale SMS. Occore configurare almeno un provider e ogni provider ha bisogno di un suo account. Per configurarlo, dalla schermata principale, \'Menu\', \'Impostazioni\' e \'Impostazioni provider SMS\'.</string>
-    <string name="actabout_lblDescription2">Suggerimenti, traduzioni, grafica, nuovi provider? %s\n\nRingraziamenti: Ilaria Mauric (logo), Robert Harder (library)</string>
+    <string name="actabout_lblDescription2">Suggerimenti, traduzioni, grafica, nuovi provider? %s\n\nRingraziamenti: Ilaria Mauric (logo), Robert Harder e Felix Bechstein (library)</string>
     <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email allo sviluppatore</string>
