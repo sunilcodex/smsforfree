@@ -23,8 +23,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.libs.logic.RainbowSendStatisticsTask;
 import it.rainbowbreeze.libs.ui.RainbowSplashScreenActivity;
 import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
@@ -52,7 +54,27 @@ public class ActSplashScreen
     
     
     //---------- Events
-    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        //ping statistic webservice du<ing application first starts
+        AppPreferencesDao appPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
+        if (null == savedInstanceState) {
+            //send statistics data first time the app runs
+            RainbowSendStatisticsTask statsTask = new RainbowSendStatisticsTask(
+                    mBaseLogFacility,
+                    mActivityHelper,
+                    this,
+                    App.STATISTICS_WEBSERVER_URL,
+                    App.APP_INTERNAL_NAME,
+                    App.APP_INTERNAL_VERSION,
+                    String.valueOf(appPreferencesDao.getUniqueId()));
+            Thread t = new Thread(statsTask);
+            t.start();
+        }
+        
+    }
     
 
 
