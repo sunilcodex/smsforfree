@@ -106,7 +106,7 @@ public class App
 	public final static String italyInternationalPrefix = "+39";
 	
 	/** url where send statistics about device */
-	public final static String statisticsUrl = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
+	public final static String STATISTICS_WEBSERVER_URL = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
 	
 	/** string for lite version */
 	public final static String lite_description = "Lite";
