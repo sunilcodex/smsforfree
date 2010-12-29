@@ -198,9 +198,9 @@ public class VoipstuntProvider
     	//so no application errors (like network issues) should be returned, but
 		//the provider error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(errorMessage)) {
-			mLogFacility.e("VoipstuntProvider error reply");
-			mLogFacility.e(errorMessage);
-			mLogFacility.e(reply);
+			mLogFacility.e(LOG_HASH, "VoipstuntProvider error reply");
+			mLogFacility.e(LOG_HASH, " Message: " + errorMessage);
+			mLogFacility.e(LOG_HASH, " Server reply: " + reply);
 			setSmsProviderException(resultToAnalyze, errorMessage);
     		return true;
     	} else {
