@@ -34,8 +34,9 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
  */
 public class SmsDao {
 	//---------- Private fields
-	private final static Uri CONTENT_PROVIDER_SENT_SMS = Uri.parse("content://sms/sent");
-	private final static Uri CONTENT_PROVIDER_INBOX_SMS = Uri.parse("content://sms/inbox");
+    protected static final String LOG_HASH = "SmsDao"; 
+    protected static final Uri CONTENT_PROVIDER_SENT_SMS = Uri.parse("content://sms/sent");
+    protected static final Uri CONTENT_PROVIDER_INBOX_SMS = Uri.parse("content://sms/inbox");
 
 	protected final LogFacility mLogFacility;
 	
@@ -57,22 +58,22 @@ public class SmsDao {
     /**
      * Verify if standard sent sms content provider is accessible on the device
      */
-    public boolean isSentSmsProviderAvailable(Context context)
-    {
+    public boolean isSentSmsProviderAvailable(Context context) {
     	Cursor cursor = context.getContentResolver().query(CONTENT_PROVIDER_SENT_SMS, null, null, null, null);
     	boolean exists = (null != cursor);
     	if (exists) cursor.close();
+    	mLogFacility.v(LOG_HASH, "Sms sent provider availability: " + exists);
     	return exists;
     }
     
     /**
      * Verify if standard inbox sms content provider is accessible on the device
      */
-    public boolean isInboxSmsProviderAvailable(Context context)
-    {
+    public boolean isInboxSmsProviderAvailable(Context context) {
     	Cursor cursor = context.getContentResolver().query(CONTENT_PROVIDER_INBOX_SMS, null, null, null, null);
     	boolean exists = (null != cursor);
     	if (exists) cursor.close();
+        mLogFacility.v(LOG_HASH, "Sms inbox provider availability: " + exists);
     	return exists;
     }
     
@@ -86,15 +87,15 @@ public class SmsDao {
      */
     public ResultOperation<Void> saveSmsInSentFolder(Context context, String destination, String body)
     {
-    	mLogFacility.i("Adding SMS into Sent folder");
+    	mLogFacility.i(LOG_HASH, "Adding SMS into Sent folder");
     	try {
 	    	ContentValues values = new ContentValues();
 	    	values.put("address", destination);
 	    	values.put("body", body);
 	    	context.getContentResolver().insert(CONTENT_PROVIDER_SENT_SMS, values);
     	} catch (Exception e) {
-    		mLogFacility.e("Error retrieving SMS content provider");
-    		mLogFacility.e(e);
+    		mLogFacility.e(LOG_HASH, "Error retrieving SMS content provider");
+    		mLogFacility.e(LOG_HASH, e);
     		return new ResultOperation<Void>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		}
     	
@@ -119,7 +120,7 @@ public class SmsDao {
      */
     public ResultOperation<String> getLastSmsReceivedNumber(Context context)
     {
-    	mLogFacility.i("Getting number of latest SMS in the Inbox");
+    	mLogFacility.i(LOG_HASH, "Getting number of latest SMS in the Inbox");
 
     	final String[] projection = new String[] { "_id", "thread_id", "address", "date", "body" };
 		String[] selectionArgs = null;

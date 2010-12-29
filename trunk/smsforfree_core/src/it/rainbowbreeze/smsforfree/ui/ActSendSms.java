@@ -181,7 +181,7 @@ public class ActSendSms
         bindProvidersSpinner();
         
         //hide views
-        if (mSmsDao.isInboxSmsProviderAvailable(this)) {
+        if (!mSmsDao.isInboxSmsProviderAvailable(this)) {
         	mBtnGetLastSmsReceivedNumber.setVisibility(View.INVISIBLE);
         }
 
