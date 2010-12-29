@@ -531,6 +531,9 @@ public class ActSendSms
 			RainbowResultOperation<String> res;
 			switch (msg.what) {
 			case SendMessageThread.WHAT_SENDMESSAGE:
+		        removeDialog(DIALOG_SENDING_MESSAGE);
+	             //may happens that the thread is null (rotation and a call to handler in the same moment?)
+			    if (null == mSendMessageThread) break;
 				//pass data to method
 				res = mSendMessageThread.getResult();
 				mSendMessageThread = null;
@@ -538,12 +541,14 @@ public class ActSendSms
 				break;
 
 			case SendCaptchaThread.WHAT_SENDCAPTCHA:
+	            //dismiss captcha progress dialog
+	            removeDialog(DIALOG_SENDING_CAPTCHA);
+                if (null == mSendCaptchaThread) break;
 				//pass data to method
 				res = mSendCaptchaThread.getResult();
 				mSendCaptchaThread = null;
-				displayMessageSendResult(res, true);
+				displayMessageSendResult(res);
 				break;
-
 			}
 		};
 	};
@@ -976,9 +981,6 @@ public class ActSendSms
 	 */
 	private void sendMessageComplete(RainbowResultOperation<String> result)
 	{
-		//dismiss progress dialog
-		removeDialog(DIALOG_SENDING_MESSAGE);
-		
 		//captcha required
 		if (ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST == result.getReturnCode()) {
 			//save captcha data
@@ -989,7 +991,7 @@ public class ActSendSms
 		
 		//return with errors or message sent
 		} else  {
-			displayMessageSendResult(result, false);
+			displayMessageSendResult(result);
 		}
 	}
 
@@ -999,14 +1001,9 @@ public class ActSendSms
 	 * 
 	 * @param result
 	 */
-	private void displayMessageSendResult(RainbowResultOperation<String> result, boolean returnFromCaptcha)
+	private void displayMessageSendResult(RainbowResultOperation<String> result)
 	{
-		if (returnFromCaptcha) {
-			//dismiss captcha progress dialog
-			removeDialog(DIALOG_SENDING_CAPTCHA);
-		}
-		
-		//return with errors
+	    //return with errors
 		if (result.hasErrors()) {
 		    mErrorSendingMessage = mActivityHelper.getErrorMessage(result.getReturnCode(), result.getException());
 		    mLogFacility.e(LOG_HASH, "Error sending message: " + mErrorSendingMessage);
