@@ -114,6 +114,7 @@ public class LogicManager extends RainbowLogicManager {
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);
 		App.i().setAdEnables("true".equalsIgnoreCase(adEnabel));
+		App.i().setShowOnlyMobileNumbers(mAppPreferencesDao.getShowOnlyMobileNumbers());
 
 		//init some vars
 		App.i().setForceSubserviceRefresh(false);

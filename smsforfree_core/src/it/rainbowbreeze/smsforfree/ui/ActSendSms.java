@@ -32,7 +32,7 @@ import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
-import it.rainbowbreeze.smsforfree.data.ContactDao;
+import it.rainbowbreeze.smsforfree.data.ContactsDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.domain.ContactPhone;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -64,6 +64,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -107,7 +108,7 @@ public class ActSendSms
 
 	protected SmsProvider mSelectedProvider;
 	protected String mSelectedServiceId;
-	protected EditText mTxtDestination;
+	protected AutoCompleteTextView mTxtDestination;
 	protected EditText mTxtBody;
 	protected TextView mLblMessageLength;
 	protected Button mBtnSend;
@@ -154,7 +155,7 @@ public class ActSendSms
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
-        mTxtDestination = (EditText) findViewById(R.id.actsendsms_txtDestination);
+        mTxtDestination = (AutoCompleteTextView) findViewById(R.id.actsendsms_txtDestination);
         mTxtBody = (EditText) findViewById(R.id.actsendsms_txtMessage);
         mLblMessageLength = (TextView) findViewById(R.id.actsendsms_lblMessageLength);
         mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
@@ -177,6 +178,9 @@ public class ActSendSms
         mBtnGetLastSmsReceivedNumber.setOnClickListener(mBtnGetLastSmsReceivedNumberListener);
         mTxtBody.addTextChangedListener(mTxtBodyTextChangedListener);
 
+        //set autocomplete
+        mTxtDestination.setAdapter(new ContactsPhonesAdapter(this));
+        
         //populate Spinner with values
         bindProvidersSpinner();
         
@@ -194,6 +198,7 @@ public class ActSendSms
         	//show info dialog, if needed
         	if (App.i().isFirstRunAfterUpdate())
         		showDialog(DIALOG_STARTUP_INFOBOX);
+        	mSpiProviders.requestFocus();
         }
     }
 
@@ -274,7 +279,7 @@ public class ActSendSms
 	protected void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
-		String phones = ContactDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
+		String phones = ContactsDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
 		outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
 		outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
         outState.putString(BUNDLEKEY_DIALOGERRORMESSAGE, mErrorSendingMessage);
@@ -292,7 +297,7 @@ public class ActSendSms
 		super.onRestoreInstanceState(savedInstanceState);
 		//restore volatile values
 		mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
-		mPhonesToShowInDialog = ContactDao.instance().deserializeContactPhones(
+		mPhonesToShowInDialog = ContactsDao.instance().deserializeContactPhones(
 				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
         mErrorSendingMessage = savedInstanceState.getString(BUNDLEKEY_DIALOGERRORMESSAGE);
 		
@@ -502,15 +507,13 @@ public class ActSendSms
 		}
 	};
 	
+	
 	private TextWatcher mTxtBodyTextChangedListener = new TextWatcher() {
-		
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			updateMessageLength();
 		}
-		
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		}
-		
 		public void afterTextChanged(Editable s) {
 		}
 	};
@@ -658,7 +661,7 @@ public class ActSendSms
 	{
 		try{
 			//get phone numbers for selected contact
-			mPhonesToShowInDialog = ContactDao.instance().getContactNumbers(this, contactUri);
+			mPhonesToShowInDialog = ContactsDao.instance().getContactNumbers(this, contactUri);
 		} catch (Exception e) {
 			mPhonesToShowInDialog = null;
 			mActivityHelper.reportError(this, String.format(getText(R.string.common_msg_genericError).toString(), e.getMessage()));
@@ -907,7 +910,7 @@ public class ActSendSms
 		}
 		
 		//log the message sending
-		String destination = mTxtDestination.getText().toString().trim();
+		String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim();
 		String message = mTxtBody.getText().toString();
 		StringBuilder logMessage = new StringBuilder();
 		logMessage.append("Sending message to " + RainbowStringHelper.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId());

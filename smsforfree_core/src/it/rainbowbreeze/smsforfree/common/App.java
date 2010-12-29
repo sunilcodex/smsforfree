@@ -164,6 +164,13 @@ public class App
 	public void setAdEnables(boolean newValue)
 	{ mAdEnables = newValue; }
 
+    /** Show o don't show the ads */
+    protected boolean mShowOnlyMobileNumbers;
+    public boolean getShowOnlyMobileNumbers()
+    { return mShowOnlyMobileNumbers; }
+    public void setShowOnlyMobileNumbers(boolean newValue)
+    { mShowOnlyMobileNumbers = newValue; }
+
 	
 
 	

@@ -27,7 +27,7 @@ import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.data.ContactDao;
+import it.rainbowbreeze.smsforfree.data.ContactsDao;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -188,7 +188,7 @@ public class ActivityHelper
 	 */
 	public void openPickContact(Activity callerActivity)
 	{
-		Intent intent = ContactDao.instance().getPickContactIntent();
+		Intent intent = ContactsDao.instance().getPickContactIntent();
 		openActivity(intent, callerActivity, true, REQUESTCODE_PICKCONTACT);
 	}
 	

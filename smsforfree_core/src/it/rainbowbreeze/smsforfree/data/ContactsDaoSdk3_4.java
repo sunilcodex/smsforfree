@@ -28,27 +28,43 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
+import android.provider.Contacts.PeopleColumns;
+import android.provider.Contacts.PhonesColumns;
 
 @SuppressWarnings("deprecation")
-public class ContactDaoSdk3_4
-	extends ContactDao
+public class ContactsDaoSdk3_4
+	extends ContactsDao
 {
-	//---------- Ctors
-
-	
-	
-	
 	//---------- Private fields
+    /** Projection for persons query, content. */
+    private static final String[] CONTACT_NUMBERS_PROJECTION_CONTENT = new String[] {
+            BaseColumns._ID, // 0
+            PeopleColumns.NAME, // 1
+            PhonesColumns.NUMBER, // 2
+            PhonesColumns.TYPE // 3
+        };
 
-	
-	
+    /** SQL to select mobile numbers only. */
+    private static final String CONTACT_NUMBERS_MOBILES_ONLY = ") AND (" + PhonesColumns.TYPE
+            + " = " + PhonesColumns.TYPE_MOBILE + ")";
+
+    /** Sort Order. */
+    private static final String CONTACT_NUMBERS_QUERY_SORT_ORDER =
+            PeopleColumns.STARRED + " DESC, " +
+            PeopleColumns.TIMES_CONTACTED + " DESC, "+
+            PeopleColumns.NAME + " ASC, " +
+            PhonesColumns.TYPE;
+
+    
+    //---------- Constructors
+
 	
 	//---------- Public properties
-
-
 	
 	
 	//---------- Public methods
@@ -92,12 +108,56 @@ public class ContactDaoSdk3_4
  		} 
  		pCur.close();
  		
-	return phones;
+        return phones;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContactNumbersContentWhere(final String filter) {
+        String f = DatabaseUtils.sqlEscapeString('%' + filter.toString() + '%');
+        StringBuilder s = new StringBuilder();
+        s.append("(" + PeopleColumns.NAME + " LIKE ");
+        s.append(f);
+        s.append(") OR (" + PhonesColumns.NUMBER + " LIKE ");
+        s.append(f);
+        s.append(")");
+        return s.toString();
+    }	
 	
-	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContactNumbersMobilesOnlyString() {
+        return CONTACT_NUMBERS_MOBILES_ONLY;
+    }
 
-	//---------- Private methods
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Uri getContentUri() {
+        return Contacts.Phones.CONTENT_URI;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] getContactNumbersContentProjection() {
+        return CONTACT_NUMBERS_PROJECTION_CONTENT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContactNumbersContentSort() {
+        return CONTACT_NUMBERS_QUERY_SORT_ORDER;
+    }
+
+    //---------- Private methods
 
 }

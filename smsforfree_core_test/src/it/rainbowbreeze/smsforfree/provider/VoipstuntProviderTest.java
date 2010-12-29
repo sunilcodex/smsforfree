@@ -28,6 +28,8 @@ package it.rainbowbreeze.smsforfree.provider;
  *
  */
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
@@ -76,8 +78,98 @@ public class VoipstuntProviderTest
 	public void testMaxMessageLenght() {
 	}
 	
-	
-	
+    /**
+     * Test the call for right credential
+     */
+    public void testSendMessage_WrongCredential() {
+        ResultOperation<String> res;
+        String saveData;
+
+        //wrong username
+        saveData = mProvider.getParameterValue(0);
+        res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "message body");
+        mProvider.setParameterValue(0, saveData);
+        assertTrue("No errors", res.hasErrors());
+        assertEquals("Wrong return code",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+        assertEquals("Wrong error message",
+                getContext().getString(R.string.voipstunt_msg_messageNotSent),
+                res.getException().getMessage());
+
+        //wrong password
+        saveData = mProvider.getParameterValue(1);
+        res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "message body");
+        mProvider.setParameterValue(1, saveData);
+        assertTrue("No errors", res.hasErrors());
+        assertEquals("Wrong return code",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+        assertEquals("Wrong error message",
+                getContext().getString(R.string.voipstunt_msg_messageNotSent),
+                res.getException().getMessage());
+    }   
+
+    public void testSendMessage_WrongSender() {
+        ResultOperation<String> res;
+        String saveData;
+
+        //wrong destination
+        saveData = mProvider.getParameterValue(2);
+        res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "message body");
+        mProvider.setParameterValue(2, saveData);
+        assertTrue("No errors", res.hasErrors());
+        assertEquals("Wrong return code",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+        assertEquals("Wrong error message",
+                getContext().getString(R.string.voipstunt_msg_messageNotSent),
+                res.getException().getMessage());
+    }   
+
+    public void testSendMessage_WrongDestination() {
+        ResultOperation<String> res;
+
+        //wrong destination
+        res = mProvider.sendMessage(null, "adbase", "message body");
+        assertTrue("No errors", res.hasErrors());
+        assertEquals("Wrong return code",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+        assertEquals("Wrong error message",
+                getContext().getString(R.string.voipstunt_msg_messageNotSent),
+                res.getException().getMessage());
+    }   
+
+    public void testSendMessage_WithStrangeChars() {
+	    ResultOperation<String> res;
+	    
+	    res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "èàè#$");
+	    assertTrue("No errors", res.hasErrors());
+	    assertEquals("Wrong return code",
+	            ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+	            res.getReturnCode());
+        assertEquals("Wrong error message",
+                getContext().getString(R.string.voipstunt_msg_messageNotSent),
+                res.getException().getMessage());
+	}
+    
+    
+    public void testSendMessage_TooLongMessage() {
+        ResultOperation<String> res;
+        
+        res = mProvider.sendMessage(null, Def.TEST_DESTINATION, "Ehi ma ciao ti ho mandato una cifra di messaggi sulla vodafone ma ho visto che é spenta..vado a fare una doccia,se puoi ti chiamo a casa tra un quarto d'ora..");
+        assertTrue("No errors", res.hasErrors());
+        assertEquals("Wrong return code",
+                ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY,
+                res.getReturnCode());
+        assertEquals("Wrong error message",
+                getContext().getString(R.string.voipstunt_msg_messageNotSent),
+                res.getException().getMessage());
+    }
+   
+
+
 
 	//---------- Private methods
 	@Override

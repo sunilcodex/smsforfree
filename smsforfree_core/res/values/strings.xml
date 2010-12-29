@@ -109,6 +109,8 @@
     <string name="actsettingsmain_chkResetDataAfterSendSummary">Clear destination and message after send sms</string>
     <string name="actsettingsmain_chkInsertSmsIntoPim">Insert SMS into Sent</string>
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">When an SMS is sent, insert it into the Sent folder</string>
+    <string name="actsettingsmain_chkShowOnlyMobileNumbers">Show only mobile numbers</string>
+    <string name="actsettingsmain_chkShowOnlyMobileNumbersSummary">Show only mobile numbers in destination autocomplete</string>
     <string name="actsettingsmain_txtSignature">Signature</string>
     <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>
@@ -165,7 +167,7 @@
     <string name="actabout_lblAuthor">by Alfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
     <string name="actabout_lblDescription">Send SMS text messages worldwide using online SMS gateways, with free o very low cost. You need to configure at least one provider and each provider need its own account. To configure, from main screen, press \'Menu\', then \'Settings\' and select \'Providers settings\'.</string>
-    <string name="actabout_lblDescription2">Suggestions, translations, graphics, new providers? %s\n\nSpecial thanks: Ilaria Mauric (logo), Robert Harder (code)</string>
+    <string name="actabout_lblDescription2">Suggestions, translations, graphics, new providers? %s\n\nSpecial thanks: Ilaria Mauric (logo), Robert Harder and Felix Bechstein (code)</string>
     <string name="actabout_lblSentSms">SMS sent today: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email to developer</string>

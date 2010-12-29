@@ -35,7 +35,7 @@ import android.text.TextUtils;
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public abstract class ContactDao
+public abstract class ContactsDao
 {
 	//---------- Private fields
 	private static final String SEPARATOR_FIELD = "A1A2A3";
@@ -45,9 +45,17 @@ public abstract class ContactDao
 
 
 	//---------- Public properties
+    /** Index of id. */
+    public static final int FILTER_INDEX_ID = 0;
+    /** Index of name. */
+    public static final int FILTER_INDEX_NAME = 1;
+    /** Index of number. */
+    public static final int FILTER_INDEX_NUMBER = 2;
+    /** Index of type. */
+    public static final int FILTER_INDEX_TYPE = 3;
 
-	private static ContactDao mInstance;
-    public static ContactDao instance()
+	private static ContactsDao mInstance;
+    public static ContactsDao instance()
     {
     	if (null == mInstance)
     	{
@@ -64,17 +72,17 @@ public abstract class ContactDao
              */
             String className;
             if (Integer.parseInt(Build.VERSION.SDK) >= Build.VERSION_CODES.ECLAIR){
-                className = "it.rainbowbreeze.smsforfree.data.ContactDaoSdk5";
+                className = "it.rainbowbreeze.smsforfree.data.ContactsDaoSdk5";
             } else {
-                className = "it.rainbowbreeze.smsforfree.data.ContactDaoSdk3_4";
+                className = "it.rainbowbreeze.smsforfree.data.ContactsDaoSdk3_4";
             }
 
             /*
              * Find the required class by name and instantiate it.
              */
             try {
-                Class<? extends ContactDao> clazz =
-                        Class.forName(className).asSubclass(ContactDao.class);
+                Class<? extends ContactsDao> clazz =
+                        Class.forName(className).asSubclass(ContactsDao.class);
                 mInstance = clazz.newInstance();
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -104,6 +112,44 @@ public abstract class ContactDao
      */
     public abstract List<ContactPhone> getContactNumbers(Activity callerActivity,  Uri contactUri);
 
+    
+    /**
+     * Get {@link Uri} for filter contacts by address.
+     * 
+     * @return {@link Uri}
+     */
+    public abstract Uri getContentUri();
+
+    /**
+     * Get projection for filter contacts by address.
+     * 
+     * @return projection
+     */
+    public abstract String[] getContactNumbersContentProjection();
+
+    /**
+     * Get sort order for filter contacts.
+     * 
+     * @return sort
+     */
+    public abstract String getContactNumbersContentSort();
+
+    /**
+     * Get WHERE for filter.
+     * 
+     * @param filter
+     *            filter
+     * @return WHERE
+     */
+    public abstract String getContactNumbersContentWhere(final String filter);
+
+    /**
+     * Get {@link String} selecting mobiles only.
+     * 
+     * @return mobiles only {@link String}
+     */
+    public abstract String getContactNumbersMobilesOnlyString();
+    
     
     /**
      * Serialize a List of ContactPhone into a string
