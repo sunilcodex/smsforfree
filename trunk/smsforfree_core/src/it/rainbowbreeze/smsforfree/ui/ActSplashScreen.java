@@ -41,6 +41,7 @@ public class ActSplashScreen
 {
 
     //---------- Private fields
+    AppPreferencesDao mAppPreferencesDao;
     protected ActivityHelper mActivityHelper;
     protected LogicManager mLogicManager;
     protected TextMessage intentMessage;
@@ -58,24 +59,7 @@ public class ActSplashScreen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        //ping statistic webservice during application first starts
-        AppPreferencesDao appPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
-        if (null == savedInstanceState) {
-            String appName = App.i().getAppDisplayName();
-            if (App.i().isLiteVersionApp()) appName = appName + "-" + App.lite_description;
-            //send statistics data first time the app runs
-            RainbowSendStatisticsTask statsTask = new RainbowSendStatisticsTask(
-                    mBaseLogFacility,
-                    mActivityHelper,
-                    this,
-                    App.STATISTICS_WEBSERVER_URL,
-                    appName,
-                    App.APP_INTERNAL_VERSION,
-                    String.valueOf(appPreferencesDao.getUniqueId()));
-            Thread t = new Thread(statsTask);
-            t.start();
-        }
-        
+
     }
     
 
@@ -94,7 +78,7 @@ public class ActSplashScreen
     protected void additionalInitialization(Bundle savedInstanceState) {
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
         mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
-    }
+        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");    }
    
 
     /* (non-Javadoc)
@@ -102,6 +86,7 @@ public class ActSplashScreen
      */
     @Override
     protected void beginTaskFailed(RainbowResultOperation<Void> result) {
+        sendStatistics();
         mBaseLogFacility.e(LOG_HASH, "Cannot launch the application, error during initialization");
         //report the errors
         mBaseActivityHelper.reportError(this, result);
@@ -113,6 +98,7 @@ public class ActSplashScreen
      */
     @Override
     protected void beginTasksCompleted(RainbowResultOperation<Void> result) {
+        sendStatistics();
         //checks if a message is in the intent
         Intent i = getIntent();
         TextMessage message = mLogicManager.getMessageFromIntent(i);
@@ -139,5 +125,29 @@ public class ActSplashScreen
     @Override
     protected String getLogTag() {
         return App.LOG_TAG;
+    }
+
+    /**
+     * Called when the users 
+     */
+    protected void sendStatistics() {
+        try {
+            //ping statistic webservice during application first starts
+            String appName = App.i().getAppDisplayName();
+            if (App.i().isLiteVersionApp()) appName = appName + "-" + App.lite_description;
+            //send statistics data first time the app runs
+            RainbowSendStatisticsTask statsTask = new RainbowSendStatisticsTask(
+                    mBaseLogFacility,
+                    mActivityHelper,
+                    this,
+                    App.STATISTICS_WEBSERVER_URL,
+                    appName,
+                    App.APP_INTERNAL_VERSION,
+                    String.valueOf(mAppPreferencesDao.getUniqueId()));
+            Thread t = new Thread(statsTask);
+            t.start();
+        } catch (Exception e) {
+            //nothing to do
+        }
     }
 }
