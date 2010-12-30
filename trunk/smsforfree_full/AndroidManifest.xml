@@ -28,7 +28,6 @@
     	android:icon="@drawable/ic_launcher_smsforfree"
     	android:label="@string/common_appName"
     	android:name="it.rainbowbreeze.smsforfree.common.App"
-        android:debuggable="true"
    	>
    		<!-- Defines also the app name in the Android menu -->
         <activity
@@ -96,11 +95,6 @@
        	
         <activity
         	android:name="it.rainbowbreeze.smsforfree.ui.ActCompactMessage"
-        	android:label="@string/common_appNameForDisplay"
-       	/>
-       	
-        <activity
-        	android:name="it.rainbowbreeze.smsforfree.ui.ActAbout"
         	android:label="@string/common_appNameForDisplay"
        	/>
        	
