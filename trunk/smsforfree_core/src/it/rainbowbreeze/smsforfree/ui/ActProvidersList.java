@@ -60,7 +60,7 @@ public class ActProvidersList
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
 
         setTitle(String.format(
-        		getString(R.string.actproviderslist_title), App.i().getAppName()));
+        		getString(R.string.actproviderslist_title), App.i().getAppDisplayName()));
 		setContentView(R.layout.acttemplateslist);
 
 		setListAdapter(new ArrayAdapter<SmsProvider>(this, 

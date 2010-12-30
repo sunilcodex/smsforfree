@@ -25,7 +25,6 @@ import it.rainbowbreeze.libs.common.RainbowAppGlobalBag;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowCrashReporter;
-import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
@@ -65,9 +64,6 @@ public class App
     
 	/** keys for application preferences */
 	public final static String APP_PREFERENCES_KEY = "SmsForFreePrefs";
-
-	/** Application name */
-	public static String APP_DISPLAY_NAME = "SmsForFree";
 
 	/** Application version displayed to the user (about activity etc) */
 	public final static String APP_DISPLAY_VERSION = "2.0";
@@ -144,11 +140,11 @@ public class App
 	{ mLiteVersionApp = newValue; }
 
 	/** Application name */
-	protected String mAppName;
-	public String getAppName()
-	{ return mAppName; }
-	public void setAppName(String newValue)
-	{ mAppName = newValue; }
+	protected String mAppDisplayName;
+	public String getAppDisplayName()
+	{ return mAppDisplayName; }
+	public void setAppDisplayName(String newValue)
+	{ mAppDisplayName = newValue; }
 
 	/** Force the refresh of subservice list */
 	protected boolean mForceSubserviceRefresh;
@@ -221,9 +217,6 @@ public class App
 		//log the begin of the application
 		logFacility.i(LOG_HASH, "App started: " + App.APP_INTERNAL_NAME);
 
-		//calculate application name
-		APP_DISPLAY_NAME = context.getString(R.string.common_appName);
-		
 		//initialize (and automatically register) crash reporter
 		RainbowCrashReporter crashReport = new RainbowCrashReporter(context);
 		RainbowServiceLocator.put(crashReport);

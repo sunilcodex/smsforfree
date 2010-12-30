@@ -260,7 +260,7 @@ public class ActSettingsSmsService
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_title),
-        		App.i().getAppName(),
+        		App.i().getAppDisplayName(),
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice

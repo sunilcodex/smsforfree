@@ -40,6 +40,7 @@ import android.text.TextUtils;
 public class ActivityHelper
 	extends RainbowActivityHelper {
 	//---------- Private fields
+    private static final String LOG_HASH = "ActivityHelper";
     protected static final int MSG_INDEX_ERROR_EMPTY_REPLY = MSG_INDEX_FIRST_USER;
     protected static final int MSG_INDEX_ERROR_LOAD_PROVIDER_DATA = MSG_INDEX_FIRST_USER + 1;
     protected static final int MSG_INDEX_ERROR_IMPORT_FROM_RESOURCE = MSG_INDEX_FIRST_USER + 2;
@@ -107,7 +108,7 @@ public class ActivityHelper
 	 */
 	public void openSettingsSmsService(Activity callerActivity, String providerId, String templateId, String serviceId)
 	{
-		mBaseLogFacility.i("Launching activity SettingSmsService for provider " + providerId + " template " + templateId + " service " + serviceId);
+		mBaseLogFacility.i(LOG_HASH, "Launching activity SettingSmsService for provider " + providerId + " template " + templateId + " service " + serviceId);
         Intent intent = new Intent(callerActivity, ActSettingsSmsService.class);
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		intent.putExtra(INTENTKEY_SMSTEMPLATEID, templateId);
@@ -203,7 +204,7 @@ public class ActivityHelper
                 ActSettingsMain.class,
                 callerActivity,
                 false,
-                App.APP_DISPLAY_NAME,
+                App.i().getAppDisplayName(),
                 App.APP_INTERNAL_VERSION,
                 App.EMAIL_FOR_LOG,
                 App.LOG_TAG);
@@ -264,7 +265,7 @@ public class ActivityHelper
 		} else {
 			if (!TextUtils.isEmpty(result.getResult())){
 				//shows the output of the command
-				mBaseLogFacility.i(result.getResult());
+				mBaseLogFacility.i(LOG_HASH, result.getResult());
 				showInfo(context, result.getResult());
 			}
 		}		
