@@ -64,7 +64,7 @@ public class ActTemplatesList
 
 		getDataFromIntent(getIntent());
         setTitle(String.format(
-        		getString(R.string.acttemplateslist_title), App.i().getAppName()));
+        		getString(R.string.acttemplateslist_title), App.i().getAppDisplayName()));
 		setContentView(R.layout.acttemplateslist);
 		
 		if (null == mProvider) return;

@@ -108,8 +108,8 @@ public class LogicManager extends RainbowLogicManager {
 			return res;
 
 		//set application name
-		App.i().setAppName(context.getString(R.string.common_appNameForDisplay));
-		mLogFacility.v(LOG_HASH, "App name: " + App.i().getAppName());
+		App.i().setAppDisplayName(context.getString(R.string.common_appNameForDisplay));
+		mLogFacility.v(LOG_HASH, "App display name: " + App.i().getAppDisplayName());
 		
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);

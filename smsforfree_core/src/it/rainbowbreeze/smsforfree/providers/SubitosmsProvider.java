@@ -255,7 +255,7 @@ public class SubitosmsProvider
     	ResultOperation<String> res = doSingleHttpRequest(url, null, params);
     	//checks for errors
 		if (parseReplyForErrors(res)){
-			mLogFacility.e("Error in command verifyCredit");
+			mLogFacility.e(LOG_HASH, "Error in command verifyCredit");
 			//log action data for a better error management
 			logRequest(url, null, params);
 			return res;
@@ -317,7 +317,7 @@ public class SubitosmsProvider
     	//so no application errors (like network issues) should be returned, but
 		//the provider error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(errorMessage)) {
-			mLogFacility.e("SubitosmsProvider error reply");
+			mLogFacility.e(LOG_HASH, "SubitosmsProvider error reply");
 			mLogFacility.e(errorMessage);
 			mLogFacility.e(reply);
 			setSmsProviderException(resultToAnalyze, errorMessage);

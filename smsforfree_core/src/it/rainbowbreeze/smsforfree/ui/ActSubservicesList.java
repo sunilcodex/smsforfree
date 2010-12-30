@@ -97,7 +97,7 @@ public class ActSubservicesList
 		//update title
         setTitle(String.format(
         		getString(R.string.actsubserviceslist_title),
-        		App.i().getAppName(),
+        		App.i().getAppDisplayName(),
         		mProvider.getName()));
 
         mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);

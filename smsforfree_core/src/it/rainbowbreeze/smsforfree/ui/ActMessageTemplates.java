@@ -70,7 +70,7 @@ public class ActMessageTemplates
         mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferences");
 
         setTitle(String.format(
-        		getString(R.string.actmessagetemplates_title), App.i().getAppName()));
+        		getString(R.string.actmessagetemplates_title), App.i().getAppDisplayName()));
 		addPreferencesFromResource(R.layout.actmessagetemplates);
 		
 		//load message templates into internal value

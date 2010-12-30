@@ -58,16 +58,18 @@ public class ActSplashScreen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        //ping statistic webservice du<ing application first starts
+        //ping statistic webservice during application first starts
         AppPreferencesDao appPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
         if (null == savedInstanceState) {
+            String appName = App.i().getAppDisplayName();
+            if (App.i().isLiteVersionApp()) appName = appName + "-" + App.lite_description;
             //send statistics data first time the app runs
             RainbowSendStatisticsTask statsTask = new RainbowSendStatisticsTask(
                     mBaseLogFacility,
                     mActivityHelper,
                     this,
                     App.STATISTICS_WEBSERVER_URL,
-                    App.APP_INTERNAL_NAME,
+                    appName,
                     App.APP_INTERNAL_VERSION,
                     String.valueOf(appPreferencesDao.getUniqueId()));
             Thread t = new Thread(statsTask);
@@ -93,13 +95,14 @@ public class ActSplashScreen
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
         mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
     }
+   
 
     /* (non-Javadoc)
      * @see it.rainbowbreeze.libs.ui.BaseSplashScreenActivity#beginTaskFailed(it.rainbowbreeze.libs.common.BaseResultOperation)
      */
     @Override
     protected void beginTaskFailed(RainbowResultOperation<Void> result) {
-        mBaseLogFacility.e("Cannot launch the application, error during initialization");
+        mBaseLogFacility.e(LOG_HASH, "Cannot launch the application, error during initialization");
         //report the errors
         mBaseActivityHelper.reportError(this, result);
     }

@@ -63,7 +63,7 @@ public class ActAbout
 
         setContentView(R.layout.actabout);
         setTitle(String.format(
-        		getString(R.string.actabout_title), App.i().getAppName()));
+        		getString(R.string.actabout_title), App.i().getAppDisplayName()));
         
         TextView lblVersion = (TextView)findViewById(R.id.actabout_lblAppVersion);
         String version = App.APP_DISPLAY_VERSION;
@@ -103,7 +103,7 @@ public class ActAbout
 		case OPTIONMENU_EMAIL:
 			mActivityHelper.sendEmail(this,
 					App.EMAIL_FOR_LOG,
-					String.format(getString(R.string.actabout_msgEmailSubject), App.i().getAppName()),
+					String.format(getString(R.string.actabout_msgEmailSubject), App.i().getAppDisplayName()),
 					getString(R.string.actabout_msgEmailBody));
 			break;
 		}

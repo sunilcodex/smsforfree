@@ -506,7 +506,7 @@ public class JacksmsProvider
 			if (!existsTemplate) {
 				canAdd = false;
 				//log the error, because is not normal that the template doesn't exist
-				mLogFacility.e("Template " + newServiceToAdd.getTemplateId() + " for JackSMS doesn't exist in the provider's templates");
+				mLogFacility.e(LOG_HASH, "Template " + newServiceToAdd.getTemplateId() + " for JackSMS doesn't exist in the provider's templates");
 			}
 		}
 		

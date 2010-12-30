@@ -50,6 +50,7 @@ public class AimonProvider
 	extends SmsMultiProvider
 {
 	//---------- Private fields
+    private static final String LOG_HASH = "AimonProvider";
 	private final static int PARAM_NUMBER = 3;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
@@ -528,7 +529,7 @@ public class AimonProvider
     	//so no application errors (like network issues) should be returned, but
 		//the Aimon error must stops the execution of the calling method
     	if (!TextUtils.isEmpty(errorMessage)) {
-			mLogFacility.e("AimonProvider api error reply");
+			mLogFacility.e(LOG_HASH, "AimonProvider api error reply");
 			mLogFacility.e(errorMessage);
 			mLogFacility.e(reply);
 			setSmsProviderException(resultToAnalyze, errorMessage);
