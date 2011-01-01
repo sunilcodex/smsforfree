@@ -1,0 +1,38 @@
+TODOLIST
+-icone mancanti credits aimon
+-mettere bottone che ripresenta ultimo messaggio di invio sms
+-sostituire caratteri illegali su corpo messaggio aimon
+
+
+
+FUTURE IMPLEMENTAZIONI
+
+
+per creare nuovo tag
+				svn copy https://smsforfree.googlecode.com/svn/trunk https://smsforfree.googlecode.com/svn/tags/v_0102 -m "Creating a v_0102 release" --username alfredo.morresi
+
+
+
+http://groups.google.com/group/android-developers/browse_thread/thread/c364a663ebe901fe/e0a2daa190421465?hide_quotes=no
+	<intent-filter>
+	    <action android:name="android.intent.action.VIEW" />
+	    <action android:name="android.intent.action.SENDTO" />
+	    <category android:name="android.intent.category.DEFAULT" />
+	    <category android:name="android.intent.category.BROWSABLE" />
+	    <data android:scheme="sms" />
+	    <data android:scheme="smsto" />
+	</intent-filter>
+
+    <intent-filter>
+		<action android:name="android.intent.action.SEND" />
+		<category android:name="android.intent.category.DEFAULT" />
+		<data android:mimeType="text/plain" />
+	</intent-filter> 
+
+
+http://github.com/cyanogen/android_packages_apps_Mms/blob/eclair/AndroidManifest.xml
+
+http://android.git.kernel.org/?p=platform/packages/apps/Mms.git;a=blob;f=AndroidManifest.xml;h=5c18a2226d3d0014c330a621329a3854b1d5acd3;hb=master#l87
+
+
+       

@@ -1,0 +1,46 @@
+http://www.voipstunt.com/en/sms_instructions.html
+
+Using HTML SMSlink
+
+You can also send text messages (SMS) without using our software or accessing the website. Use the following link and fill in the desired data:
+https://www.voipstunt.com/myaccount/sendsms.php?username=xxxxxxxxxx ​ &password=xxxxxxxxxx&from=xxxxxxxxxx&to=xxxxxxxxxx&text=xxxxxxxxxx
+
+
+Explanation of the variables:
+
+    * username: your VoipStunt username
+    * password: your VoipStunt password
+    * from: your username or your verified phone number. Always use international format for the number starting with +, for instance +491701234567
+    * to: the number you wish to send the sms to. Always use international format starting with +, for instance +491701234567
+    * text: the message you want to send 
+
+
+After creating the link in a text editor you can copy it into your internet browser's address bar:
+
+
+risposta alla richiesta:
+
+
+useraname errato
+<?phpxml version="1.0" encoding="utf-8"?> 
+<SmsResponse>
+	<version>1</version>
+	<result>0</result> 
+	<resultstring>failure</resultstring>
+	<description>error</description>
+	<endcause></endcause>
+</SmsResponse>
+
+
+
+
+ok
+<?phpxml version="1.0" encoding="utf-8"?> 
+<SmsResponse>
+	<version>1</version>
+	<result>1</result> 
+	<resultstring>success</resultstring>
+	<description></description>
+	<endcause></endcause>
+</SmsResponse>
+				
