@@ -38,6 +38,7 @@
     <string name="aimon_msg_invalidMessageEncodingOrTooLong">Invalid message encoding or message is too long</string>
     <string name="aimon_msg_freeSmsDailyLimitReached">Aimon daily limit of free SMS to same number reached, wait until tomorrow</string>
     <string name="aimon_msg_freeSmsMonthlyLimitReached">Aimon monthly limit of free SMS reached to same number, sorry</string>
+    <string name="aimon_msg_freeSmsMaxLimitReached">Aimon max limit of free SMS reached</string>
     <string name="aimon_msg_notEnoughFreeSmsCredit">Not enough credit for sending free SMS</string>
     <string name="aimon_msg_notEnoughCredit">Not enough credit for sending SMS. Recharge our account on Aimon</string>
     <string name="aimon_msg_messageQueued">Message sent.\n %s</string>

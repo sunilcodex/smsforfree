@@ -19,5 +19,5 @@
  -->
 
 <resources>
-    <string name="actabout_msgChangeslog">v2.0\nDestination autocomplete, better error management\n\nv1.8\nMessage templates\n\nv1.7\nSave SMS into device\'s Sent folder, retrieve last received SMS number, better log management\n\nv1.6\nBugfixes\n\nv1.5\nImport user services saved on JackSMS site, bugfixes\n\nv1.4\nFixed issues with Android 1.6\n\nv1.3\n -Send error via email, bugfixes\n\nv1.2:\n -Bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
+    <string name="actabout_msgChangeslog">v2.1\nSeparate clean of destination and message, bugfixes\n\nv2.0\nDestination autocomplete, better error management\n\nv1.8\nMessage templates\n\nv1.7\nSave SMS into device\'s Sent folder, retrieve last received SMS number, better log management\n\nv1.6\nBugfixes\n\nv1.5\nImport user services saved on JackSMS site, bugfixes\n\nv1.4\nFixed issues with Android 1.6\n\nv1.3\n -Send error via email, bugfixes\n\nv1.2:\n -Bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
 </resources>

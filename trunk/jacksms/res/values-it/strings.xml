@@ -19,5 +19,5 @@
  -->
 
 <resources>
-    <string name="actabout_msgChangeslog">v2.0\nCompletamente automatico del destinatario, gestione migliorata degli errori\n\nv1.8\nGestione template messaggio\n\nv1.7\nSalva SMS tra quelli inviati dal dispositivo, lettura del numero dell\'ultimo SMS ricevuto, gestine del log migliorata\n\nv1.6\nBugfixes\n\nv1.5\nImport dei servizi utente salvati sul sito di JackSMS, bugfixes\n\nv1.4\nFissata incompatibilita\' con Android 1.6\n\nv1.3\n -Invio dei log per email, bugfixes\n\nv1.2:\n -Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
+    <string name="actabout_msgChangeslog">v2.1\nCancellazione separata di destinatario e messaggio, bugfixes\n\nv2.0\nCompletamente automatico del destinatario, gestione migliorata degli errori\n\nv1.8\nGestione template messaggio\n\nv1.7\nSalva SMS tra quelli inviati dal dispositivo, lettura del numero dell\'ultimo SMS ricevuto, gestine del log migliorata\n\nv1.6\nBugfixes\n\nv1.5\nImport dei servizi utente salvati sul sito di JackSMS, bugfixes\n\nv1.4\nFissata incompatibilita\' con Android 1.6\n\nv1.3\n -Invio dei log per email, bugfixes\n\nv1.2:\n -Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
 </resources>

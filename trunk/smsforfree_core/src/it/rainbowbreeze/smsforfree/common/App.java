@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.rainbowbreeze.libs.common.RainbowAppGlobalBag;
@@ -66,13 +67,13 @@ public class App
 	public final static String APP_PREFERENCES_KEY = "SmsForFreePrefs";
 
 	/** Application version displayed to the user (about activity etc) */
-	public final static String APP_DISPLAY_VERSION = "2.0";
+	public final static String APP_DISPLAY_VERSION = "2.1";
 
 	/** Application name used during the ping of update site */
 	public final static String APP_INTERNAL_NAME = "SmsForFree";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "02.00.00";
+	public final static String APP_INTERNAL_VERSION = "02.01.00";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
@@ -119,11 +120,9 @@ public class App
 	{ return mFirstRunAfterUpdate; }
 
 	/** List of providers */
-	protected List<SmsProvider> mProviderList;
+	protected final List<SmsProvider> mProviderList = new ArrayList<SmsProvider>();
 	public List<SmsProvider> getProviderList()
 	{ return mProviderList; }
-	public void setProviderList(List<SmsProvider> newValue)
-	{ mProviderList = newValue; }
 	
 	/** Max allowed SMS for each day */
 	protected int mAllowedSmsForDay;
