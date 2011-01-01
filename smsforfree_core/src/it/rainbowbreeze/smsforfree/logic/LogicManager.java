@@ -20,7 +20,6 @@
 package it.rainbowbreeze.smsforfree.logic;
 
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
@@ -276,13 +275,11 @@ public class LogicManager extends RainbowLogicManager {
 	 * Add providers to the list of available providers, according with configurations
 	 * @param context
 	 */
-	private ResultOperation<Void> addProvidersToList(Context context)
-	{
+	private ResultOperation<Void> addProvidersToList(Context context) {
 		ResultOperation<Void> res = null;
 		
 		//initialize provider list
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
-		App.i().setProviderList(new ArrayList<SmsProvider>());
 		
 		//cycles thru all providers and initializes only the required providers
 		String[] allSupportedProviders = "AIMON,JACKSMS,SUBITOSMS,VOIPSTUNT".split(",");

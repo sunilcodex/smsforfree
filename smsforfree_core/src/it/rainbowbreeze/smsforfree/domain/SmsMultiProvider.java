@@ -146,6 +146,10 @@ public abstract class SmsMultiProvider
 		return mProviderDao.saveProviderSubservices(context, getSubservicesFileName(), this);
 	}
 	
+	
+	/**
+	 * Add template data to a service
+	 */
 	public SmsService integrateSubserviceWithTemplateData(SmsConfigurableService originalService, String templateId) {
 		//find the template
 		SmsService template = getTemplate(templateId);

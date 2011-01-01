@@ -114,6 +114,8 @@ public class ActSendSms
 	protected Button mBtnSend;
 	protected ImageButton mBtnPickContact;
 	protected ImageButton mBtnGetLastSmsReceivedNumber;
+    protected ImageButton mBtnClearDestination;
+    protected ImageButton mBtnClearMessage;
 	protected TextView mLblProvider;
 
 	protected List<ContactPhone> mPhonesToShowInDialog;
@@ -161,6 +163,8 @@ public class ActSendSms
         mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
         mBtnSend = (Button) findViewById(R.id.actsendsms_btnSend);
         mBtnPickContact = (ImageButton) findViewById(R.id.actsendsms_btnPickContact);
+        mBtnClearDestination = (ImageButton) findViewById(R.id.actsendsms_btnClearDestination);
+        mBtnClearMessage = (ImageButton) findViewById(R.id.actsendsms_btnClearMessage);
         mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
         
         //eventually remove ad view
@@ -176,6 +180,8 @@ public class ActSendSms
         mBtnSend.setOnClickListener(mBtnSendClickListener);
         mBtnPickContact.setOnClickListener(mBtnPickContactListener);
         mBtnGetLastSmsReceivedNumber.setOnClickListener(mBtnGetLastSmsReceivedNumberListener);
+        mBtnClearDestination.setOnClickListener(mBtnClearDestinationListener);
+        mBtnClearMessage.setOnClickListener(mBtnClearMessageListener);
         mTxtBody.addTextChangedListener(mTxtBodyTextChangedListener);
 
         //set autocomplete
@@ -322,8 +328,8 @@ public class ActSendSms
 			.setIcon(R.drawable.ic_menu_friendslist);
     	menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress)
     		.setIcon(R.drawable.ic_menu_cut);
-		menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
-			.setIcon(android.R.drawable.ic_menu_delete);
+		//menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
+		//	.setIcon(android.R.drawable.ic_menu_delete);
     	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
 		.setIcon(android.R.drawable.ic_menu_preferences);
 		
@@ -508,6 +514,20 @@ public class ActSendSms
 	};
 	
 	
+    private OnClickListener mBtnClearDestinationListener = new OnClickListener() {
+        public void onClick(View v) {
+            mTxtDestination.setText("");
+        }
+    };
+    
+    
+    private OnClickListener mBtnClearMessageListener = new OnClickListener() {
+        public void onClick(View v) {
+            mTxtBody.setText("");
+        }
+    };
+    
+    
 	private TextWatcher mTxtBodyTextChangedListener = new TextWatcher() {
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			updateMessageLength();
