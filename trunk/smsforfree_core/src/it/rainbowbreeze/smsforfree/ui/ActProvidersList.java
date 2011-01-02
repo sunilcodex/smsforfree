@@ -60,16 +60,16 @@ public class ActProvidersList
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
 
         setTitle(String.format(
-        		getString(R.string.actproviderslist_title), App.i().getAppDisplayName()));
+        		getString(R.string.actproviderslist_title), App.appDisplayName));
 		setContentView(R.layout.acttemplateslist);
 
 		setListAdapter(new ArrayAdapter<SmsProvider>(this, 
-	              android.R.layout.simple_list_item_1, App.i().getProviderList()));
+	              android.R.layout.simple_list_item_1, App.providerList));
 	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		SmsProvider provider = App.i().getProviderList().get(position);
+		SmsProvider provider = App.providerList.get(position);
 		
 		mActivityHelper.openSettingsSmsService(this, provider.getId());
 	}

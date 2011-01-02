@@ -97,7 +97,7 @@ public class ActSubservicesList
 		//update title
         setTitle(String.format(
         		getString(R.string.actsubserviceslist_title),
-        		App.i().getAppDisplayName(),
+        		App.appDisplayName,
         		mProvider.getName()));
 
         mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);
@@ -304,7 +304,7 @@ public class ActSubservicesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), id);
+			mProvider = GlobalHelper.findProviderInList(App.providerList, id);
 		} else {
 			mProvider = null;
 		}

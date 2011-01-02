@@ -57,6 +57,7 @@ public class ActSettingsSmsService
 	extends RainbowBaseDataEntryActivity
 {
 	//---------- Private fields
+    private static final String LOG_HASH = "ActSettingsSmsService";
 	private final static int MAXFIELDS = 10;
 
 	private SmsService mEditedService;
@@ -97,6 +98,7 @@ public class ActSettingsSmsService
 		super.onCreate(savedInstanceState);
 
 		mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+		mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
         mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
 
         setContentView(R.layout.actsettingssmsservice);
@@ -217,7 +219,7 @@ public class ActSettingsSmsService
 			}
 			
 			//store that at least one of the providers' subservices list was accessed
-			App.i().setForceSubserviceRefresh(true);
+			App.forceSubserviceRefresh = true;
 			
 			//open the subservice configuration activity
 			mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
@@ -260,7 +262,7 @@ public class ActSettingsSmsService
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_title),
-        		App.i().getAppDisplayName(),
+        		App.appDisplayName,
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice
@@ -336,7 +338,7 @@ public class ActSettingsSmsService
 		//checks if current editing is for a provider or a subservice
 		if(extras != null) {
 			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), providerId);
+			mProvider = GlobalHelper.findProviderInList(App.providerList, providerId);
 			String subserviceId = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
 			if (TextUtils.isEmpty(subserviceId)) {
 				//edit a provider preferences
@@ -344,6 +346,7 @@ public class ActSettingsSmsService
 				//template and service to edit are always the same provider
 				mTemplateService = mProvider;
 				mEditedService = mProvider;
+				mLogFacility.v(LOG_HASH, "Editing provider " + mProvider.getName() + " (" + providerId + ")");
 			} else {
 				//editing a subservice
 				mIsEditingAProvider = false;
@@ -353,14 +356,17 @@ public class ActSettingsSmsService
 				if (SmsService.NEWSERVICEID.equals(subserviceId)) {
 					//edit a new subservice
 					mEditedService = null;
+	                mLogFacility.v(LOG_HASH, "Editing a new service with template " + templateId);
 				} else {
 					//edit an existing subservice preferences
 					mEditedService = mProvider.getSubservice(subserviceId);
+                    mLogFacility.v(LOG_HASH, "Editing existing service " + mEditedService.getName() + " (id: " + subserviceId + ", template id " + templateId + ")");
 				}
 			}
 
 		} else {
 			mEditedService = null;
+			mLogFacility.v(LOG_HASH, "Nothing to edit, strange!");
 		}
 	}
 

@@ -93,7 +93,7 @@ public class ContactsPhonesAdapter extends ResourceCursorAdapter {
 		String where = null;
 		if (constraint != null) {
 			StringBuilder s = new StringBuilder(WRAPPER.getContactNumbersContentWhere(constraint.toString()));
-			if (App.i().getShowOnlyMobileNumbers()) {
+			if (App.showOnlyMobileNumbers) {
 				s.insert(0, "(");
 				s.append(WRAPPER.getContactNumbersMobilesOnlyString());
 			}

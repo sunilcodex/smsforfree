@@ -153,7 +153,7 @@ public class ActSendSms
 
         setContentView(R.layout.actsendsms);
         setTitle(String.format(
-        		getString(R.string.actsendsms_title), App.i().getAppDisplayName()));
+        		getString(R.string.actsendsms_title), App.appDisplayName));
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
@@ -168,7 +168,7 @@ public class ActSendSms
         mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
         
         //eventually remove ad view
-        if (!App.i().isAdEnables()) {
+        if (!App.adEnables) {
         	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
         	LinearLayout parent = (LinearLayout) adView.getParent();
         	parent.removeView(adView);
@@ -202,7 +202,7 @@ public class ActSendSms
         	//check if the application was called as intent action
         	processIntentData(getIntent());
         	//show info dialog, if needed
-        	if (App.i().isFirstRunAfterUpdate())
+        	if (mLogicManager.isFirstStartOfAppNewVersion())
         		showDialog(DIALOG_STARTUP_INFOBOX);
         	mSpiProviders.requestFocus();
         }
@@ -396,8 +396,8 @@ public class ActSendSms
     		
     		case (ActivityHelper.REQUESTCODE_SETTINGS):
     			//refresh subservices list if subservices of a provider was edited
-    			if (App.i().getForceSubserviceRefresh()) {
-    				App.i().setForceSubserviceRefresh(false);
+    			if (App.forceSubserviceRefresh) {
+    				App.forceSubserviceRefresh = false;
     				changeProvider(mSelectedProvider, true);
     			}
     		break;  
@@ -588,7 +588,7 @@ public class ActSendSms
 	private void bindProvidersSpinner()
 	{
 		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
-				android.R.layout.simple_spinner_item, App.i().getProviderList());
+				android.R.layout.simple_spinner_item, App.providerList);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpiProviders.setAdapter(adapter);
 	}
@@ -850,12 +850,12 @@ public class ActSendSms
 		String subserviceId = mAppPreferencesDao.getLastUsedSubserviceId();
 
 		//assign provider
-		SmsProvider provider = GlobalHelper.findProviderInList(App.i().getProviderList(), providerId);
+		SmsProvider provider = GlobalHelper.findProviderInList(App.providerList, providerId);
 		changeProvider(provider, false);
 		//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
 		//in the provider spinner, because is execute at the end of this method, but i need it
 		//before assign subservice
-		int providerPos = GlobalHelper.findProviderPositionInList(App.i().getProviderList(), providerId);
+		int providerPos = GlobalHelper.findProviderPositionInList(App.providerList, providerId);
 		if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
 		
 		if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
@@ -1053,9 +1053,10 @@ public class ActSendSms
 	private void insertSmsIntoPim() {
 		//insert SMS into PIM
 		if (mAppPreferencesDao.getInsertMessageIntoPim()) {
+            String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim();
 			ResultOperation<Void> res = mSmsDao.saveSmsInSentFolder(
 					getApplicationContext(),
-					mTxtDestination.getText().toString(),
+					destination,
 					mTxtBody.getText().toString());
 
 			if (res.hasErrors()) {

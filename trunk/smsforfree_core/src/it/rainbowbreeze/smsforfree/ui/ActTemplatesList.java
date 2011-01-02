@@ -64,7 +64,7 @@ public class ActTemplatesList
 
 		getDataFromIntent(getIntent());
         setTitle(String.format(
-        		getString(R.string.acttemplateslist_title), App.i().getAppDisplayName()));
+        		getString(R.string.acttemplateslist_title), App.appDisplayName));
 		setContentView(R.layout.acttemplateslist);
 		
 		if (null == mProvider) return;
@@ -98,7 +98,7 @@ public class ActTemplatesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), id);
+			mProvider = GlobalHelper.findProviderInList(App.providerList, id);
 		} else {
 			mProvider = null;
 		}
