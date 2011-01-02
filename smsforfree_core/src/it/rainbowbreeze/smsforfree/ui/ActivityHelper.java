@@ -204,7 +204,7 @@ public class ActivityHelper
                 ActSettingsMain.class,
                 callerActivity,
                 false,
-                App.i().getAppDisplayName(),
+                App.appDisplayName,
                 App.APP_INTERNAL_VERSION,
                 App.EMAIL_FOR_LOG,
                 App.LOG_TAG);

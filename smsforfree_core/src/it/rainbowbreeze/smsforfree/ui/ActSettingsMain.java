@@ -109,9 +109,9 @@ public class ActSettingsMain
 		public boolean onPreferenceClick(Preference preference) {
 			//checks if only on provider is configured
 			
-			if (1 == App.i().getProviderList().size()) {
+			if (1 == App.providerList.size()) {
 				//open directly the setting for the only provider present
-				mActivityHelper.openSettingsSmsService(ActSettingsMain.this, App.i().getProviderList().get(0).getId());
+				mActivityHelper.openSettingsSmsService(ActSettingsMain.this, App.providerList.get(0).getId());
 			} else {
 				//open providers list
 				mActivityHelper.openProvidersList(ActSettingsMain.this);
@@ -170,7 +170,7 @@ public class ActSettingsMain
 	
     private OnPreferenceChangeListener mChkShowOnlyMobileNumbersChangeListener = new OnPreferenceChangeListener() {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            App.i().setShowOnlyMobileNumbers((Boolean)newValue);
+            App.showOnlyMobileNumbers = (Boolean)newValue;
             mAppPreferencesDao.setShowOnlyMobileNumbers(((Boolean)newValue).booleanValue());
             return mAppPreferencesDao.save();
         }

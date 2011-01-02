@@ -55,7 +55,7 @@ public class ActCompactMessage
 		super.onCreate(savedInstanceState);
 
         setTitle(String.format(
-        		getString(R.string.actcompactmessage_title), App.i().getAppDisplayName()));
+        		getString(R.string.actcompactmessage_title), App.appDisplayName));
         setContentView(R.layout.actcompactmessage);
         
 		//retrieve the message to compact

@@ -22,7 +22,6 @@ package it.rainbowbreeze.smsforfree.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.rainbowbreeze.libs.common.RainbowAppGlobalBag;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowCrashReporter;
@@ -38,7 +37,6 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class App
 	extends Application
-	implements RainbowAppGlobalBag
 {
     //---------- Private fields
     private static final String LOG_HASH = "App";
@@ -46,21 +44,10 @@ public class App
     
     
 	//---------- Constructor
-	public App()
-	{
-		super();
-		//this is the first instruction, so no fear that mInstance is null is following calls
-		mInstance = this;
-	}
 	
 	
 	
 	//---------- Public properties
-
-	//singleton, modified for testing purposes
-    private static App mInstance;
-    public static App i()
-    { return mInstance; }
 	
     
 	/** keys for application preferences */
@@ -73,7 +60,7 @@ public class App
 	public final static String APP_INTERNAL_NAME = "SmsForFree";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "02.01.00";
+	public final static String APP_INTERNAL_VERSION = "02.01.01";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
@@ -112,59 +99,59 @@ public class App
 	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
 	
 	
-	/** First run after an update of the application */
-	protected boolean mFirstRunAfterUpdate;
-	public RainbowAppGlobalBag setFirstRunAfterUpdate(boolean newValue)
-	{ mFirstRunAfterUpdate = newValue; return this; }
-	public boolean isFirstRunAfterUpdate()
-	{ return mFirstRunAfterUpdate; }
-
 	/** List of providers */
-	protected final List<SmsProvider> mProviderList = new ArrayList<SmsProvider>();
-	public List<SmsProvider> getProviderList()
-	{ return mProviderList; }
+    public static final List<SmsProvider> providerList = new ArrayList<SmsProvider>();
+//	protected final List<SmsProvider> mProviderList = new ArrayList<SmsProvider>();
+//	public List<SmsProvider> getProviderList()
+//	{ return mProviderList; }
 	
 	/** Max allowed SMS for each day */
-	protected int mAllowedSmsForDay;
-	public int getAllowedSmsForDay()
-	{ return mAllowedSmsForDay; }
-	public void setAllowedSmsForDay(int newValue)
-	{ mAllowedSmsForDay = newValue; }
+	public static int allowedSmsForDay;
+//    protected int mAllowedSmsForDay;
+//	public int getAllowedSmsForDay()
+//	{ return mAllowedSmsForDay; }
+//	public void setAllowedSmsForDay(int newValue)
+//	{ mAllowedSmsForDay = newValue; }
 
 	/** Application is demo, not full version */
-	protected boolean mLiteVersionApp;
-	public boolean isLiteVersionApp()
-	{ return mLiteVersionApp; }
-	public void setLiteVersionApp(boolean newValue)
-	{ mLiteVersionApp = newValue; }
+    public static boolean liteVersionApp;
+//	protected boolean mLiteVersionApp;
+//	public boolean isLiteVersionApp()
+//	{ return mLiteVersionApp; }
+//	public void setLiteVersionApp(boolean newValue)
+//	{ mLiteVersionApp = newValue; }
 
 	/** Application name */
-	protected String mAppDisplayName;
-	public String getAppDisplayName()
-	{ return mAppDisplayName; }
-	public void setAppDisplayName(String newValue)
-	{ mAppDisplayName = newValue; }
+    public static String appDisplayName;
+//	protected String mAppDisplayName;
+//	public String getAppDisplayName()
+//	{ return mAppDisplayName; }
+//	public void setAppDisplayName(String newValue)
+//	{ mAppDisplayName = newValue; }
 
 	/** Force the refresh of subservice list */
-	protected boolean mForceSubserviceRefresh;
-	public boolean getForceSubserviceRefresh()
-	{ return mForceSubserviceRefresh; }
-	public void setForceSubserviceRefresh(boolean newValue)
-	{ mForceSubserviceRefresh = newValue; }
+    public static boolean forceSubserviceRefresh;
+//	protected boolean mForceSubserviceRefresh;
+//	public boolean getForceSubserviceRefresh()
+//	{ return mForceSubserviceRefresh; }
+//	public void setForceSubserviceRefresh(boolean newValue)
+//	{ mForceSubserviceRefresh = newValue; }
 	
 	/** Show o don't show the ads */
-	protected boolean mAdEnables;
-	public boolean isAdEnables()
-	{ return mAdEnables; }
-	public void setAdEnables(boolean newValue)
-	{ mAdEnables = newValue; }
+    public static boolean adEnables;
+//    protected boolean mAdEnables;
+//	public boolean isAdEnables()
+//	{ return mAdEnables; }
+//	public void setAdEnables(boolean newValue)
+//	{ mAdEnables = newValue; }
 
     /** Show o don't show the ads */
-    protected boolean mShowOnlyMobileNumbers;
-    public boolean getShowOnlyMobileNumbers()
-    { return mShowOnlyMobileNumbers; }
-    public void setShowOnlyMobileNumbers(boolean newValue)
-    { mShowOnlyMobileNumbers = newValue; }
+    public static boolean showOnlyMobileNumbers;
+//    protected boolean mShowOnlyMobileNumbers;
+//    public boolean getShowOnlyMobileNumbers()
+//    { return mShowOnlyMobileNumbers; }
+//    public void setShowOnlyMobileNumbers(boolean newValue)
+//    { mShowOnlyMobileNumbers = newValue; }
 
 	
 
@@ -229,7 +216,7 @@ public class App
 		RainbowServiceLocator.put(appPreferencesDao);
 		ProviderDao providerDao = new ProviderDao();
 		RainbowServiceLocator.put(providerDao);
-		LogicManager logicManager = new LogicManager(logFacility, appPreferencesDao, this, APP_INTERNAL_VERSION, providerDao, activityHelper);
+		LogicManager logicManager = new LogicManager(logFacility, appPreferencesDao, APP_INTERNAL_VERSION, providerDao, activityHelper);
 		RainbowServiceLocator.put(logicManager);
 		SmsDao smsDao = new SmsDao(logFacility);
         RainbowServiceLocator.put(smsDao);

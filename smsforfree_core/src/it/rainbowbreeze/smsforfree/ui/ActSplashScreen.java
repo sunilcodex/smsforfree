@@ -133,8 +133,8 @@ public class ActSplashScreen
     protected void sendStatistics() {
         try {
             //ping statistic webservice during application first starts
-            String appName = App.i().getAppDisplayName();
-            if (App.i().isLiteVersionApp()) appName = appName + "-" + App.lite_description;
+            String appName = App.appDisplayName;
+            if (App.liteVersionApp) appName = appName + "-" + App.lite_description;
             //send statistics data first time the app runs
             RainbowSendStatisticsTask statsTask = new RainbowSendStatisticsTask(
                     mBaseLogFacility,

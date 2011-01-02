@@ -27,7 +27,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
-import it.rainbowbreeze.libs.common.RainbowAppGlobalBag;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.libs.logic.RainbowLogicManager;
@@ -72,12 +71,11 @@ public class LogicManager extends RainbowLogicManager {
 	public LogicManager(
 			LogFacility logFacility,
 			AppPreferencesDao appPreferencesDao,
-			RainbowAppGlobalBag globalBag,
 			String currentAppVersion,
 			ProviderDao providerDao,
 			ActivityHelper activityHelper)
 	{
-		super(logFacility, appPreferencesDao, globalBag, currentAppVersion);
+		super(logFacility, appPreferencesDao, currentAppVersion);
 		mAppPreferencesDao = appPreferencesDao;
 		mLogFacility = logFacility;
 		mProviderDao = checkNotNull(providerDao, "ProviderDao");
@@ -107,22 +105,22 @@ public class LogicManager extends RainbowLogicManager {
 			return res;
 
 		//set application name
-		App.i().setAppDisplayName(context.getString(R.string.common_appNameForDisplay));
-		mLogFacility.v(LOG_HASH, "App display name: " + App.i().getAppDisplayName());
+		App.appDisplayName = context.getString(R.string.common_appNameForDisplay);
+		mLogFacility.v(LOG_HASH, "App display name: " + App.appDisplayName);
 		
 		//find if ads should be enabled
 		String adEnabel = context.getString(R.string.config_ShowAd);
-		App.i().setAdEnables("true".equalsIgnoreCase(adEnabel));
-		App.i().setShowOnlyMobileNumbers(mAppPreferencesDao.getShowOnlyMobileNumbers());
+		App.adEnables = "true".equalsIgnoreCase(adEnabel);
+		App.showOnlyMobileNumbers = mAppPreferencesDao.getShowOnlyMobileNumbers();
 
 		//init some vars
-		App.i().setForceSubserviceRefresh(false);
+		App.forceSubserviceRefresh = false;
 		
 		//load some application license setting
-		App.i().setLiteVersionApp(
-				App.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType)));
-		App.i().setAllowedSmsForDay(
-				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
+		App.liteVersionApp =
+		    App.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType));
+		App.allowedSmsForDay =
+		    Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay));
 		
 		//update the daily number of sms
 		updateSmsCounter(0);
@@ -173,12 +171,12 @@ public class LogicManager extends RainbowLogicManager {
 	public boolean checkIfCanSendSms()
 	{
 		//unlimited sms for normal app
-		if (!App.i().isLiteVersionApp()) return true;
+		if (!App.liteVersionApp) return true;
 		
 		//0: no send limit
-		if (0 == App.i().getAllowedSmsForDay()) return true;
+		if (0 == App.allowedSmsForDay) return true;
 		
-		return getSmsSentToday() <= App.i().getAllowedSmsForDay();
+		return getSmsSentToday() <= App.allowedSmsForDay;
 	}
 	
 	/**
@@ -295,14 +293,14 @@ public class LogicManager extends RainbowLogicManager {
 				if (null != provider) {
 					mLogFacility.i(LOG_HASH, "Inizializing provider " + providerName);
 					res = provider.initProvider(context);
-					App.i().getProviderList().add(provider);
+					App.providerList.add(provider);
 				}
 				if (res.hasErrors()) break;
 			}
 		}
 		
 		//sort the collection of provider
-		Collections.sort(App.i().getProviderList());
+		Collections.sort(App.providerList);
 		return res;
 	}
 	
