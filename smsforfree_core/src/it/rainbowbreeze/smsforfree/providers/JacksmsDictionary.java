@@ -351,7 +351,7 @@ public class JacksmsDictionary
 	 * @return
 	 */
     public boolean isCaptchaCorrectlySent(String webserviceReply) {
-        return TextUtils.isEmpty(webserviceReply);
+        return isSmsCorrectlySent(webserviceReply);
     }
 
 	/**

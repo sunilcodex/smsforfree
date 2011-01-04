@@ -235,7 +235,7 @@ public class JacksmsProvider
     	//at this point, no error happened, so the reply contains captcha submission result
     	String reply = res.getResult();
     	String returnMessage = mDictionary.getTextPartFromReply(reply);
-    	if (mDictionary.isCaptchaCorrectlySent(returnMessage)) {
+    	if (mDictionary.isCaptchaCorrectlySent(reply)) {
     	    returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
             res.setResult(returnMessage);
     	} else {
