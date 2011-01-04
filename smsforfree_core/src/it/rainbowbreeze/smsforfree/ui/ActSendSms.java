@@ -394,7 +394,7 @@ public class ActSendSms
     				mTxtBody.setText(message);
     		break;
     		
-    		case (ActivityHelper.REQUESTCODE_SETTINGS):
+    		case (ActivityHelper.REQUESTCODE_MAINSETTINGS):
     			//refresh subservices list if subservices of a provider was edited
     			if (App.forceSubserviceRefresh) {
     				App.forceSubserviceRefresh = false;

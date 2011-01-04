@@ -53,12 +53,10 @@ public class ActivityHelper
 
 
 	//---------- Public properties
-	public final static int REQUESTCODE_NONE = 0;
-	public final static int REQUESTCODE_PICKCONTACT = 3;
-	public final static int REQUESTCODE_PICKTEMPLATE = 4;
-	public final static int REQUESTCODE_COMPACTMESSAGE = 5;
-	public final static int REQUESTCODE_SETTINGS = 6;
-	public final static int REQUESTCODE_SERVICESETTINGS = 7;
+	public final static int REQUESTCODE_PICKCONTACT = REQUESTCODE_FIRST_USER + 1;
+	public final static int REQUESTCODE_PICKTEMPLATE = REQUESTCODE_FIRST_USER+ 2;
+	public final static int REQUESTCODE_COMPACTMESSAGE = REQUESTCODE_FIRST_USER + 3;
+	public final static int REQUESTCODE_SERVICESETTINGS = REQUESTCODE_FIRST_USER + 4;
 	
 	public final static String INTENTKEY_SMSSERVICEID = "SmsService";
 	public final static String INTENTKEY_SMSPROVIDERID = "SmsProvider";
