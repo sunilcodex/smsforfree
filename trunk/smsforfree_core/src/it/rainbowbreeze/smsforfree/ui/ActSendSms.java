@@ -271,7 +271,12 @@ public class ActSendSms
     			TextUtils.isEmpty(mTxtBody.getText()) ? "" : mTxtBody.getText().toString());
 		
 		//and save new selected provider
-		mAppPreferencesDao.setLastUsedProviderId(mSelectedProvider.getId());
+    	if (null != mSelectedProvider) {
+    		mAppPreferencesDao.setLastUsedProviderId(mSelectedProvider.getId());
+    	} else {
+    		mAppPreferencesDao.setLastUsedProviderId("");
+    	}
+    			
 		mAppPreferencesDao.setLastUsedSubserviceId(mSelectedServiceId);
     	mAppPreferencesDao.save();
     }
@@ -849,19 +854,37 @@ public class ActSendSms
 		String providerId = mAppPreferencesDao.getLastUsedProviderId();
 		String subserviceId = mAppPreferencesDao.getLastUsedSubserviceId();
 
-		//assign provider
-		SmsProvider provider = GlobalHelper.findProviderInList(App.providerList, providerId);
-		changeProvider(provider, false);
-		//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
-		//in the provider spinner, because is execute at the end of this method, but i need it
-		//before assign subservice
-		int providerPos = GlobalHelper.findProviderPositionInList(App.providerList, providerId);
-		if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
+		SmsProvider provider = null;
+		if (TextUtils.isEmpty(providerId)) {
+			mLogFacility.v(LOG_HASH, "Must reassign providerId, because it's empty");
+		} else {
+			//find provider provider
+			provider = GlobalHelper.findProviderInList(App.providerList, providerId);
+		}
 		
-		if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
-			int subservicePos = mSelectedProvider.findSubservicePositionInList(subserviceId);
-			if (subservicePos >= 0) mSpiSubservices.setSelection(subservicePos);
-			//call changeSubservice after this function, but it's ok now
+		//if provider is null, assign first provider as default value
+		if (null == provider) {
+			mLogFacility.v(LOG_HASH, "Cannot find provider for providerId " + providerId);
+			//get first provider of the list as fallback
+			if (!App.providerList.isEmpty())
+				provider = App.providerList.get(0);
+		}
+		
+		if (null != provider) {
+			changeProvider(provider, false);
+			//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
+			//in the provider spinner, because is execute at the end of this method, but i need it
+			//before assign subservice
+			int providerPos = GlobalHelper.findProviderPositionInList(App.providerList, providerId);
+			if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
+			
+			if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
+				int subservicePos = mSelectedProvider.findSubservicePositionInList(subserviceId);
+				if (subservicePos >= 0) mSpiSubservices.setSelection(subservicePos);
+				//call changeSubservice after this function, but it's ok now
+			}
+		} else {
+			mLogFacility.v(LOG_HASH, "Cannot find a suitable provider for the list");
 		}
 	}
 
