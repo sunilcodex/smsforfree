@@ -278,6 +278,7 @@ public class LogicManager extends RainbowLogicManager {
 		
 		//initialize provider list
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
+		App.providerList.clear();
 		
 		//cycles thru all providers and initializes only the required providers
 		String[] allSupportedProviders = "AIMON,JACKSMS,SUBITOSMS,VOIPSTUNT".split(",");
