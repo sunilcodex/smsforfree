@@ -22,7 +22,6 @@ package it.rainbowbreeze.smsforfree.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowCrashReporter;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -33,7 +32,6 @@ import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 import android.app.Application;
 import android.content.Context;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class App
 	extends Application
@@ -163,25 +161,6 @@ public class App
 		super.onCreate();
 		
 		setupEnvironment(getApplicationContext());
-	}
-	
-	
-	
-	@Override
-	public void onTerminate()
-	{
-		LogicManager logicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
-		//execute end tasks
-		RainbowResultOperation<Void> res = logicManager.executeEndTasks(this);
-		if (res.hasErrors()) {
-			RainbowServiceLocator.get(ActivityHelper.class).reportError(this, res.getException(), res.getReturnCode());
-		}
-
-		
-		//log the end of the application
-		LogFacility logFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
-		logFacility.i(LOG_HASH, "App ending: " + App.APP_INTERNAL_NAME);
-		super.onTerminate();
 	}
 	
 	
