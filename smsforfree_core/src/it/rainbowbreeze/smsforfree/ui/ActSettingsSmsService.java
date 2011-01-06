@@ -201,6 +201,23 @@ public class ActSettingsSmsService
 
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
+			//checks for null values of parameters
+			boolean blank_values = false;
+			//assigns user-edited values to service parameter's values
+			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
+        		findLabelAndEditTextViewsForParameter(i);
+        		if (TextUtils.isEmpty(mTxtValue.getText())) {
+        			blank_values = true;
+        			break;
+        		}
+			}
+			
+            if (blank_values) {
+                //display an error message
+            	mActivityHelper.showInfo(getApplicationContext(), R.string.jacksms_msg_blankfielderror);
+            	return;
+            }
+
 			//backup data of services
 			if (!mAssignedValues) {
 				mAssignedValues = true;
@@ -211,22 +228,17 @@ public class ActSettingsSmsService
 					}
 				}
 			}
-			//local variable to see if the text fields are blanks or not
-			boolean blank_values = false;
 			//assigns user-edited values to service parameter's values
 			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
         		findLabelAndEditTextViewsForParameter(i);
-        		if (!TextUtils.isEmpty(mTxtValue.getText())) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
-        		else blank_values = true;
+        		mEditedService.setParameterValue(i, mTxtValue.getText().toString());
 			}
 			
 			//store that at least one of the providers' subservices list was accessed
 			App.forceSubserviceRefresh = true;
 			
 			//open the subservice configuration activity if the fields are not blank
-            if(!blank_values)mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
-            //or display an error message stored in strings.xml
-            else mActivityHelper.showInfo(getApplicationContext(), R.string.jacksms_msg_blankfielderror);
+        	mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
 		}
 	};
 
