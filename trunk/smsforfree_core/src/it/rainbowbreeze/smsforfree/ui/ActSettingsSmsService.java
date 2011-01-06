@@ -47,7 +47,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
@@ -55,10 +54,10 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
  *
  */
 public class ActSettingsSmsService
-extends RainbowBaseDataEntryActivity
+	extends RainbowBaseDataEntryActivity
 {
 	//---------- Private fields
-	private static final String LOG_HASH = "ActSettingsSmsService";
+    private static final String LOG_HASH = "ActSettingsSmsService";
 	private final static int MAXFIELDS = 10;
 
 	private SmsService mEditedService;
@@ -69,7 +68,7 @@ extends RainbowBaseDataEntryActivity
 	private TextView mLblServiceName;
 	private TextView mTxtServiceName;
 	private TextView mLblServiceDesc;
-
+	
 	private ActivityHelper mActivityHelper;
 
 	//fuck java only passing parameters by value :(
@@ -79,9 +78,9 @@ extends RainbowBaseDataEntryActivity
 	//save originals values of the service
 	private String[] mValuesBackup;
 	private boolean mAssignedValues;
-
+	
 	private ExecuteServiceCommandThread mExecutedServiceCommandThread;
-
+	
 	private ProgressDialog mProgressDialog;
 	private LogFacility mLogFacility;
 
@@ -90,9 +89,9 @@ extends RainbowBaseDataEntryActivity
 
 	//---------- Public properties
 
-
-
-
+	
+	
+	
 	//---------- Events
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,29 +99,29 @@ extends RainbowBaseDataEntryActivity
 
 		mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
 		mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-		mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
 
-		setContentView(R.layout.actsettingssmsservice);
-		getDataFromIntent(getIntent());
-
-		//Debug: check if the service has more parameters than ones that this activity can handle
-		if (null != mEditedService && mEditedService.getParametersNumber() > MAXFIELDS) return;
-		if (null == mProvider) return;
-
-		mBtnConfigureSubservices = (Button) findViewById(R.id.actsettingssmsservice_btnConfigsubservices);
-		mBtnConfigureSubservices.setOnClickListener(mBtnConfigureSubservicesClickListener);
-		mLblServiceName = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceName);
-		mTxtServiceName = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceName);
-		mLblServiceDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceDesc);
-
+        setContentView(R.layout.actsettingssmsservice);
+        getDataFromIntent(getIntent());
+        
+        //Debug: check if the service has more parameters than ones that this activity can handle
+        if (null != mEditedService && mEditedService.getParametersNumber() > MAXFIELDS) return;
+        if (null == mProvider) return;
+        
+        mBtnConfigureSubservices = (Button) findViewById(R.id.actsettingssmsservice_btnConfigsubservices);
+        mBtnConfigureSubservices.setOnClickListener(mBtnConfigureSubservicesClickListener);
+        mLblServiceName = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceName);
+        mTxtServiceName = (EditText) findViewById(R.id.actsettingssmsservice_txtServiceName);
+        mLblServiceDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblServiceDesc);
+        
 		showAndHideViews();
 
 		if (null == savedInstanceState) {
-			//no service parameters saved inside the collection
-			mAssignedValues = false;
-		}
+	        //no service parameters saved inside the collection
+	        mAssignedValues = false;
+        }
 	}
-
+		
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -143,14 +142,14 @@ extends RainbowBaseDataEntryActivity
 		}
 		super.onStop();
 	}
-
+		
 	@Override
 	public Object onRetainNonConfigurationInstance() {
 		//save eventually open background thread
 		return mExecutedServiceCommandThread;
 	}
 
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean canContinue = super.onCreateOptionsMenu(menu);
@@ -165,7 +164,7 @@ extends RainbowBaseDataEntryActivity
 		}
 		return true;
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -175,14 +174,14 @@ extends RainbowBaseDataEntryActivity
 
 		//exit if the command was processed
 		if (result) return result;
-
+		
 		//save EditText values
 		Bundle bundle = new Bundle();
 		for (int i = 0; i < mEditedService.getParametersNumber(); i++) {
-			findLabelAndEditTextViewsForParameter(i);
-			bundle.putString(String.valueOf(i), mTxtValue.getText().toString());
+    		findLabelAndEditTextViewsForParameter(i);
+    		bundle.putString(String.valueOf(i), mTxtValue.getText().toString());
 		}
-
+		
 		//create new progress dialog
 		mProgressDialog = mActivityHelper.createAndShowProgressDialog(this, 0, R.string.common_msg_executingCommand);
 
@@ -216,25 +215,18 @@ extends RainbowBaseDataEntryActivity
 			boolean blank_values = false;
 			//assigns user-edited values to service parameter's values
 			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
-				findLabelAndEditTextViewsForParameter(i);
-				if (!mTxtValue.getText().toString().equals("")) {
-					mEditedService.setParameterValue(i, mTxtValue.getText().toString());
-					mLogFacility.v(LOG_HASH, "mBtnConfigureSubservicesClickListener() passing value:"+ mTxtValue.getText().toString());
-				}
-				else{
-					//change the value of local variable
-					blank_values = true;
-					mLogFacility.v(LOG_HASH, "mBtnConfigureSubservicesClickListener() blank field detected");
-				}
+        		findLabelAndEditTextViewsForParameter(i);
+        		if (!TextUtils.isEmpty(mTxtValue.getText())) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
+        		else blank_values = true;
 			}
-
+			
 			//store that at least one of the providers' subservices list was accessed
 			App.forceSubserviceRefresh = true;
-
+			
 			//open the subservice configuration activity if the fields are not blank
-			if(!blank_values)mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
-			//or display an error message stored in strings.xml
-			else Toast.makeText(ActSettingsSmsService.this, getText(it.rainbowbreeze.jacksms.R.string.actSettingService_errorMsg) , Toast.LENGTH_LONG).show();
+            if(!blank_values)mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
+            //or display an error message stored in strings.xml
+            else mActivityHelper.showInfo(getApplicationContext(), R.string.jacksms_msg_blankfielderror);
 		}
 	};
 
@@ -248,7 +240,7 @@ extends RainbowBaseDataEntryActivity
 			//check if the message is for this handler
 			if (msg.what != ExecuteServiceCommandThread.WHAT_EXECUTESERVICECOMMAND)
 				return;
-
+			
 			//dismisses progress dialog
 			if (null != mProgressDialog && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
@@ -259,25 +251,25 @@ extends RainbowBaseDataEntryActivity
 			mExecutedServiceCommandThread = null;
 		};
 	};
-
+	
 
 
 
 	//---------- Public methods
+	
 
-
-
-
+	
+	
 	//---------- Private methods
-	@Override
+    @Override
 	protected void loadDataIntoViews() {
 		//update title
-		this.setTitle(String.format(
-				getString(R.string.actsettingssmsservice_title),
-				App.appDisplayName,
-				mTemplateService.getName()));
+        this.setTitle(String.format(
+        		getString(R.string.actsettingssmsservice_title),
+        		App.appDisplayName,
+        		mTemplateService.getName()));
 
-		//set the name, if the object edited is a subservice
+        //set the name, if the object edited is a subservice
 		if (!mIsEditingAProvider) {
 			if (null == mEditedService)
 				//use the name of the provider for a new service
@@ -286,15 +278,15 @@ extends RainbowBaseDataEntryActivity
 				//use the service name
 				mTxtServiceName.setText(mEditedService.getName());
 		}
-
+		
 		//update data inside views, if the object edited isn't a new subservice
 		if (null != mEditedService) {
-			//update values of parameters views
+	        //update values of parameters views
 			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
-				findLabelAndEditTextViewsForParameter(i);
-				//set the content of the view
-				if (null != mTxtValue) mTxtValue.setText(mEditedService.getParameterValue(i));
-			}
+	        	findLabelAndEditTextViewsForParameter(i);
+	        	//set the content of the view
+    			if (null != mTxtValue) mTxtValue.setText(mEditedService.getParameterValue(i));
+	        }
 		}
 	}
 
@@ -302,9 +294,9 @@ extends RainbowBaseDataEntryActivity
 	protected boolean saveDataFromViews()
 	{
 		boolean isNewService;
-
+		
 		isNewService = null == mEditedService;
-
+		
 		if (isNewService) {
 			//create new service
 			mEditedService = mProvider.integrateSubserviceWithTemplateData(null, mTemplateService.getId());
@@ -314,11 +306,11 @@ extends RainbowBaseDataEntryActivity
 			((SmsConfigurableService)mEditedService).setName(mTxtServiceName.getText().toString().trim());
 
 		for (int i = 0; i < mEditedService.getParametersNumber(); i++){
-			//save the data inside the object
-			findLabelAndEditTextViewsForParameter(i);
-			if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString().trim());
+        	//save the data inside the object
+    		findLabelAndEditTextViewsForParameter(i);
+    		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString().trim());
 		}
-
+		
 		//persist the parameters
 		ResultOperation<Void> res;
 		if (mIsEditingAProvider) {
@@ -332,13 +324,13 @@ extends RainbowBaseDataEntryActivity
 			//update subservice
 			res = mProvider.saveSubservices(this);
 		}
-
+		
 		if (res.hasErrors()) {
 			mActivityHelper.reportError(this, res.getException(), res.getReturnCode());
 			return false;
 		}
-
-		return true;
+		
+    	return true;
 	}
 
 	/**
@@ -364,15 +356,15 @@ extends RainbowBaseDataEntryActivity
 				mIsEditingAProvider = false;
 				String templateId = extras.getString(ActivityHelper.INTENTKEY_SMSTEMPLATEID);
 				mTemplateService = mProvider.getTemplate(templateId);
-
+				
 				if (SmsService.NEWSERVICEID.equals(subserviceId)) {
 					//edit a new subservice
 					mEditedService = null;
-					mLogFacility.v(LOG_HASH, "Editing a new service with template " + templateId);
+	                mLogFacility.v(LOG_HASH, "Editing a new service with template " + templateId);
 				} else {
 					//edit an existing subservice preferences
 					mEditedService = mProvider.getSubservice(subserviceId);
-					mLogFacility.v(LOG_HASH, "Editing existing service " + mEditedService.getName() + " (id: " + subserviceId + ", template id " + templateId + ")");
+                    mLogFacility.v(LOG_HASH, "Editing existing service " + mEditedService.getName() + " (id: " + subserviceId + ", template id " + templateId + ")");
 				}
 			}
 
@@ -401,27 +393,27 @@ extends RainbowBaseDataEntryActivity
 			mTxtServiceName.setVisibility(View.VISIBLE);
 			mBtnConfigureSubservices.setVisibility(View.GONE);
 		}
+		
 
-
-		//update views visibility
+        //update views visibility
 		for (int i = 0; i < MAXFIELDS; i++){
 			findLabelAndEditTextViewsForParameter(i);
-
-			//set the content of the view
-			if (i >= mTemplateService.getParametersNumber()) {
-				if (null != mLblDesc) mLblDesc.setVisibility(View.GONE);
-				if (null != mTxtValue) mTxtValue.setVisibility(View.GONE);
-			} else {
-				if (null != mLblDesc) {
-					mLblDesc.setText(mTemplateService.getParameterDesc(i));
-					if (mTemplateService.getParameter(i).isPassword()) {
-						mTxtValue.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-						mTxtValue.setTransformationMethod(new PasswordTransformationMethod());
-					}
-				}
-			}
-		}
-
+        	
+        	//set the content of the view
+        	if (i >= mTemplateService.getParametersNumber()) {
+        		if (null != mLblDesc) mLblDesc.setVisibility(View.GONE);
+        		if (null != mTxtValue) mTxtValue.setVisibility(View.GONE);
+        	} else {
+        		if (null != mLblDesc) {
+        			mLblDesc.setText(mTemplateService.getParameterDesc(i));
+        			if (mTemplateService.getParameter(i).isPassword()) {
+        				mTxtValue.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        				mTxtValue.setTransformationMethod(new PasswordTransformationMethod());
+        			}
+        		}
+        	}
+        }
+		
 		//Service description status
 		String description;
 		if (mIsEditingAProvider) {
@@ -434,16 +426,16 @@ extends RainbowBaseDataEntryActivity
 		} else {
 			mLblServiceDesc.setVisibility(View.VISIBLE);
 			mLblServiceDesc.setText(description);
-
+			
 		}
-
+		
 	}
-
-
+	
+	
 	private void findLabelAndEditTextViewsForParameter(int parameterNumber)
 	{
-		//get description and value views
-		switch (parameterNumber) {
+    	//get description and value views
+    	switch (parameterNumber) {
 		case 0:
 			mLblDesc = (TextView) findViewById(R.id.actsettingssmsservice_lblParameter00);
 			mTxtValue = (EditText) findViewById(R.id.actsettingssmsservice_txtParameter00);
@@ -486,7 +478,7 @@ extends RainbowBaseDataEntryActivity
 			break;
 		}
 	}
-
+	
 
 	@Override
 	protected void cancelEdit() {
@@ -511,7 +503,7 @@ extends RainbowBaseDataEntryActivity
 				mValuesBackup[i] = savedInstanceState.getString(String.valueOf(i));
 		}
 	}
-
+	
 	@Override
 	protected void saveVolatileData(Bundle outState) {
 		super.saveVolatileData(outState);

@@ -37,4 +37,5 @@
     <string name="jacksms_msg_userServicesListUpdated">Servizi utente memorizzati nel sito JackSMS aggiunti alla lista.</string>
     <string name="jacksms_msg_noUserServices">Non ci sono servizi utente memorizzati nel sito di JackSMS.</string>
     <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
+    <string name="jacksms_msg_blankfielderror">Per favore non lasciare campi vuoti, inserisci i dati del tuo account.</string>
 </resources>
