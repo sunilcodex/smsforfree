@@ -1,0 +1,22 @@
+#labels tutorial,importproject,jacksms
+= Introduction =
+
+This is a quick and simple tutorial to import the JackSms project and start to code. 
+
+
+= Details =
+
+    #CCheckout the whole project (thanks to Alfredo) with SVN on your computer.
+    #OOpen Eclipse and do: File-->Import-->Existing Projects into Workspace
+    #IImport in Eclipse the following projects: *smsforfree_core, smsforfree_core_test, rainbowlibs, jacksms*
+    #IIn Eclipse's Project Explorer (Left tab with projects) right-click on Jacksms click-->Properties
+    #OOn the left white column open *Java Build Path*, select the first tab on right called *Source* and delete from the box above all the folders except */src* and */gen*. Press OK
+    #OOpen again the Properties of JackSms project, and select in the left column the voice *Android*, on the right side there should be a box called *Library*, if not present press Add and select the *smsforfree_core* Project. Press OK.
+    #DDo a clean (In eclipse, Project-->Clean-->select imported Projects)
+
+If the *smsforfree_core* project gives some Admob error, do this:
+
+    #RRight click on smsforfree_core project, then click properties
+    #SSelect in the left column the Java Build Path voice and on the right side the third tab (Libraries)
+    #CClick the *Add JARs* button and search in */SmsForFreeCore/libs/ path the admob-sdk-android.jar file.
+    #Do a clean and all should work now.
