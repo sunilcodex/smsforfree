@@ -207,6 +207,7 @@ public class ActSendSms
         	mSpiProviders.requestFocus();
         }
     }
+    
 
 	@Override
 	protected void onStart() {
@@ -233,6 +234,21 @@ public class ActSendSms
 			//register new handler
 			mSendCaptchaThread.registerCallerHandler(mActivityHandler);
 		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		if (isFinishing()) {
+			RainbowResultOperation<Void> res = mLogicManager.executeEndTasks(this);
+			if (res.hasErrors()) {
+				mActivityHelper.reportError(this, res);
+			}
+			
+			//log the end of the application
+			mLogFacility.i(LOG_HASH, "App end");
+		}
+
+		super.onDestroy();
 	}
 
 	@Override

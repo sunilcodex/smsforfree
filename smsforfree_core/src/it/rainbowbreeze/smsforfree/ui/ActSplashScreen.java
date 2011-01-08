@@ -105,6 +105,7 @@ public class ActSplashScreen
 
         //call main activity
         mActivityHelper.openSendSms(this, message);
+        finish();
     }
 
     @Override
