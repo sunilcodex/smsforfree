@@ -24,28 +24,42 @@ import java.util.List;
 
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowCrashReporter;
+import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
-import android.app.Application;
 import android.content.Context;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
 
-public class App
-	extends Application
+
+public class AppEnv
 {
     //---------- Private fields
-    private static final String LOG_HASH = "App";
+    private static final String LOG_HASH = "AppEnv";
+    private static final Object mSyncObject = new Object();
     
     
     
 	//---------- Constructor
+    public AppEnv(Context context) {
+        setupVolatileData(context);
+    }
 	
 	
 	
 	//---------- Public properties
+    /** lazy loading singleton */
+    public static AppEnv i(Context context) {
+        synchronized (mSyncObject) {
+            if (null == mInstance)
+                mInstance = new AppEnv(context);
+        }
+        return mInstance;
+    }
+    private static AppEnv mInstance;
 	
     
 	/** keys for application preferences */
@@ -58,16 +72,13 @@ public class App
 	public final static String APP_INTERNAL_NAME = "SmsForFree";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "02.01.03";
+	public final static String APP_INTERNAL_VERSION = "02.01.04";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
 	
 	/** Tag to use in the log */
 	public final static String LOG_TAG = "SmsForFree";
-
-	/** keys for application preferences */
-	public final static String appPreferencesKeys = "SmsForFreePrefs"; 
 	
 	/** file name for providers preferences */
 	public final static String jacksmsParametersFileName = "jacksms_parameters.xml"; 
@@ -85,109 +96,92 @@ public class App
 	public final static String subitosmsParametersFileName = "subitosms_parameters.xml";
 
 	/** international prefix for Italy */
-	public final static String italyInternationalPrefix = "+39";
+	public final static String ITALY_INTERNATIONAL_PREFIX = "+39";
 	
 	/** url where send statistics about device */
 	public final static String STATISTICS_WEBSERVER_URL = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
 	
 	/** string for lite version */
-	public final static String lite_description = "Lite";
+	public final static String LITE_DESCRIPTION = "Lite";
 
 	/** platform - dependent newline char */
 	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
 	
 	
 	/** List of providers */
-    public static final List<SmsProvider> providerList = new ArrayList<SmsProvider>();
-//	protected final List<SmsProvider> mProviderList = new ArrayList<SmsProvider>();
-//	public List<SmsProvider> getProviderList()
-//	{ return mProviderList; }
+	protected final List<SmsProvider> mProviderList = new ArrayList<SmsProvider>();
+	public List<SmsProvider> getProviderList()
+	{ return mProviderList; }
 	
 	/** Max allowed SMS for each day */
-	public static int allowedSmsForDay;
-//    protected int mAllowedSmsForDay;
-//	public int getAllowedSmsForDay()
-//	{ return mAllowedSmsForDay; }
-//	public void setAllowedSmsForDay(int newValue)
-//	{ mAllowedSmsForDay = newValue; }
+    protected int mAllowedSmsForDay;
+	public int getAllowedSmsForDay()
+	{ return mAllowedSmsForDay; }
 
 	/** Application is demo, not full version */
-    public static boolean liteVersionApp;
-//	protected boolean mLiteVersionApp;
-//	public boolean isLiteVersionApp()
-//	{ return mLiteVersionApp; }
-//	public void setLiteVersionApp(boolean newValue)
-//	{ mLiteVersionApp = newValue; }
+	protected boolean mLiteVersionApp;
+	public boolean isLiteVersionApp()
+	{ return mLiteVersionApp; }
 
 	/** Application name */
-    public static String appDisplayName;
-//	protected String mAppDisplayName;
-//	public String getAppDisplayName()
-//	{ return mAppDisplayName; }
-//	public void setAppDisplayName(String newValue)
-//	{ mAppDisplayName = newValue; }
+	protected String mAppDisplayName;
+	public String getAppDisplayName()
+	{ return mAppDisplayName; }
 
 	/** Force the refresh of subservice list */
-    public static boolean forceSubserviceRefresh;
-//	protected boolean mForceSubserviceRefresh;
-//	public boolean getForceSubserviceRefresh()
-//	{ return mForceSubserviceRefresh; }
-//	public void setForceSubserviceRefresh(boolean newValue)
-//	{ mForceSubserviceRefresh = newValue; }
+	protected boolean mForceSubserviceRefresh;
+	public boolean getForceSubserviceRefresh()
+	{ return mForceSubserviceRefresh; }
+	public void setForceSubserviceRefresh(boolean newValue)
+	{ mForceSubserviceRefresh = newValue; }
 	
 	/** Show o don't show the ads */
-    public static boolean adEnables;
-//    protected boolean mAdEnables;
-//	public boolean isAdEnables()
-//	{ return mAdEnables; }
-//	public void setAdEnables(boolean newValue)
-//	{ mAdEnables = newValue; }
+    protected boolean mAdEnables;
+	public boolean isAdEnables()
+	{ return mAdEnables; }
 
-    /** Show o don't show the ads */
-    public static boolean showOnlyMobileNumbers;
-//    protected boolean mShowOnlyMobileNumbers;
-//    public boolean getShowOnlyMobileNumbers()
-//    { return mShowOnlyMobileNumbers; }
-//    public void setShowOnlyMobileNumbers(boolean newValue)
-//    { mShowOnlyMobileNumbers = newValue; }
-
-	
-
-	
-	//---------- Events
-	
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		
-		setupEnvironment(getApplicationContext());
-	}
 	
 	
 
 	
 	//---------- Public methods
 
-	
-	
-	
-	//---------- Private methods
-	/**
-	 * Setup the application environment.
+    public LogFacility getLogFacility()
+    { return checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility"); }
+    
+    public LogicManager getLogicManager()
+    { return checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager"); }
+
+    public ActivityHelper getActivityHelper()
+    { return checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper"); }
+
+    public AppPreferencesDao getAppPreferencesDao()
+    { return checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao"); }
+
+    public SmsDao getSmsDao()
+    { return checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao"); }
+
+    /**
+	 * Setup the volatile data of application.
+	 * This is needed because sometime the system release memory
+	 * without completely close the application, so all static fields
+	 * will become null :(
+	 * 
 	 * Public only for test purpose
 	 */
-	public void setupEnvironment(Context context) {
+	public void setupVolatileData(Context context) {
 		//set the log tag
-		LogFacility logFacility = new LogFacility(LOG_TAG);
-		//log the begin of the application
-		logFacility.i(LOG_HASH, "App started: " + App.APP_INTERNAL_NAME);
+		LogFacility logFacility = new LogFacility(LOG_HASH);
+	    logFacility.i(LOG_HASH, "Initializing environment");
 
-		//initialize (and automatically register) crash reporter
+        //empty service locator
+        RainbowServiceLocator.clear();
+        //put log facility
+        RainbowServiceLocator.put(logFacility);
+
+        //initialize (and automatically register) crash reporter
 		RainbowCrashReporter crashReport = new RainbowCrashReporter(context);
 		RainbowServiceLocator.put(crashReport);
-		
-		RainbowServiceLocator.put(logFacility);
-		
 		//create services and helper respecting IoC dependencies
 		ActivityHelper activityHelper = new ActivityHelper(logFacility, context);
 		RainbowServiceLocator.put(activityHelper);
@@ -199,5 +193,35 @@ public class App
 		RainbowServiceLocator.put(logicManager);
 		SmsDao smsDao = new SmsDao(logFacility);
         RainbowServiceLocator.put(smsDao);
+        
+        //set application name
+        mAppDisplayName = context.getString(R.string.common_appNameForDisplay);
+        logFacility.v(LOG_HASH, "App display name: " + mAppDisplayName);
+        
+        //find if ads should be enabled
+        String adEnabel = context.getString(R.string.config_ShowAd);
+        mAdEnables = "true".equalsIgnoreCase(adEnabel);
+
+        //init some vars
+        setForceSubserviceRefresh(false);
+        
+        //load some application license setting
+        mLiteVersionApp =
+            LITE_DESCRIPTION.equalsIgnoreCase(context.getString(R.string.config_AppType));
+        mAllowedSmsForDay =
+            Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay));
+
+        //init providers
+        ResultOperation<Void> res;
+        res = logicManager.addProvidersToList(context);
+        if (res.hasErrors()) {
+            //FIXME better error management
+            activityHelper.reportError(context, res);
+        }
 	}
+ 
+    
+    
+    
+    //---------- Private methods
 }

@@ -26,7 +26,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -213,7 +213,7 @@ public class SubitosmsProvider
 	//---------- Private methods
 	@Override
 	protected String getParametersFileName()
-	{ return App.subitosmsParametersFileName; }
+	{ return AppEnv.subitosmsParametersFileName; }
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {

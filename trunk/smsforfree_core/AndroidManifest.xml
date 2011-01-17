@@ -27,7 +27,7 @@
     <application
         android:icon="@drawable/ic_launcher_smsforfree"
         android:label="@string/common_appName"
-        android:name="it.rainbowbreeze.smsforfree.common.App"
+        android:name="it.rainbowbreeze.smsforfree.common.MyApplication"
     >
         <!-- Defines also the app name in the Android menu -->
         <activity

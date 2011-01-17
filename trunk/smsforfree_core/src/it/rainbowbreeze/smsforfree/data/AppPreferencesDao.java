@@ -21,7 +21,7 @@ package it.rainbowbreeze.smsforfree.data;
 
 import it.rainbowbreeze.libs.data.RainbowAppPreferencesDao;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -86,7 +86,7 @@ public class AppPreferencesDao
     { mEditor.putString(PROP_SIGNATURE, newValue); }
 
     public String getDefaultInternationalPrefix()
-    { return mSettings.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, App.italyInternationalPrefix); }
+    { return mSettings.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, AppEnv.ITALY_INTERNATIONAL_PREFIX); }
     public void setDefaultInternationalPrefix(String newValue)
     { mEditor.putString(PROP_DEFAULT_INTERNATIONAL_PREFIX, newValue); }
 

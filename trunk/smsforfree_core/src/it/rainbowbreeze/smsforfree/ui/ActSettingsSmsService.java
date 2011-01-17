@@ -20,12 +20,11 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.ui.RainbowBaseDataEntryActivity;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
@@ -47,7 +46,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -97,9 +95,9 @@ public class ActSettingsSmsService
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+		mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
 		mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
 
         setContentView(R.layout.actsettingssmsservice);
         getDataFromIntent(getIntent());
@@ -235,7 +233,7 @@ public class ActSettingsSmsService
 			}
 			
 			//store that at least one of the providers' subservices list was accessed
-			App.forceSubserviceRefresh = true;
+			AppEnv.i(getBaseContext()).setForceSubserviceRefresh(true);
 			
 			//open the subservice configuration activity if the fields are not blank
         	mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
@@ -278,7 +276,7 @@ public class ActSettingsSmsService
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_title),
-        		App.appDisplayName,
+        		AppEnv.i(getBaseContext()).getAppDisplayName(),
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice
@@ -354,7 +352,7 @@ public class ActSettingsSmsService
 		//checks if current editing is for a provider or a subservice
 		if(extras != null) {
 			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalHelper.findProviderInList(App.providerList, providerId);
+			mProvider = GlobalHelper.findProviderInList(AppEnv.i(getBaseContext()).getProviderList(), providerId);
 			String subserviceId = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
 			if (TextUtils.isEmpty(subserviceId)) {
 				//edit a provider preferences

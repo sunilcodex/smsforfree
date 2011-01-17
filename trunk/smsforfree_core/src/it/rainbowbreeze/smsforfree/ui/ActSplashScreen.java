@@ -25,7 +25,7 @@ import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowSendStatisticsTask;
 import it.rainbowbreeze.libs.ui.RainbowSplashScreenActivity;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
@@ -110,22 +110,22 @@ public class ActSplashScreen
 
     @Override
     protected String getApplicationInternalName() {
-        return App.APP_INTERNAL_NAME;
+        return AppEnv.APP_INTERNAL_NAME;
     }
 
     @Override
     protected String getApplicationInternalVersion() {
-        return App.APP_INTERNAL_VERSION;
+        return AppEnv.APP_INTERNAL_VERSION;
     }
 
     @Override
     protected String getEmailForLog() {
-        return App.EMAIL_FOR_LOG;
+        return AppEnv.EMAIL_FOR_LOG;
     }
 
     @Override
     protected String getLogTag() {
-        return App.LOG_TAG;
+        return AppEnv.LOG_TAG;
     }
 
     /**
@@ -134,16 +134,16 @@ public class ActSplashScreen
     protected void sendStatistics() {
         try {
             //ping statistic webservice during application first starts
-            String appName = App.appDisplayName;
-            if (App.liteVersionApp) appName = appName + "-" + App.lite_description;
+            String appName = AppEnv.i(getBaseContext()).getAppDisplayName();
+            if (AppEnv.i(getBaseContext()).isLiteVersionApp()) appName = appName + "-" + AppEnv.LITE_DESCRIPTION;
             //send statistics data first time the app runs
             RainbowSendStatisticsTask statsTask = new RainbowSendStatisticsTask(
                     mBaseLogFacility,
                     mActivityHelper,
                     this,
-                    App.STATISTICS_WEBSERVER_URL,
+                    AppEnv.STATISTICS_WEBSERVER_URL,
                     appName,
-                    App.APP_INTERNAL_VERSION,
+                    AppEnv.APP_INTERNAL_VERSION,
                     String.valueOf(mAppPreferencesDao.getUniqueId()));
             Thread t = new Thread(statsTask);
             t.start();

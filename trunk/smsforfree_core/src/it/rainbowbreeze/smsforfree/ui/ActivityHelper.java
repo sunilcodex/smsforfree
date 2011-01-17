@@ -24,7 +24,7 @@ import java.util.Map;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.ui.RainbowActivityHelper;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ContactsDao;
@@ -202,10 +202,10 @@ public class ActivityHelper
                 ActSettingsMain.class,
                 callerActivity,
                 false,
-                App.appDisplayName,
-                App.APP_INTERNAL_VERSION,
-                App.EMAIL_FOR_LOG,
-                App.LOG_TAG);
+                AppEnv.i(callerActivity).getAppDisplayName(),
+                AppEnv.APP_INTERNAL_VERSION,
+                AppEnv.EMAIL_FOR_LOG,
+                AppEnv.LOG_TAG);
     }
     
 

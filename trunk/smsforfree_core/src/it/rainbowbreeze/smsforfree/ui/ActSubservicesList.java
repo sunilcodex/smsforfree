@@ -20,9 +20,8 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -45,7 +44,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -83,9 +81,9 @@ public class ActSubservicesList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
         mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
 		
 		setContentView(R.layout.actsubserviceslist);
 		
@@ -97,7 +95,7 @@ public class ActSubservicesList
 		//update title
         setTitle(String.format(
         		getString(R.string.actsubserviceslist_title),
-        		App.appDisplayName,
+        		AppEnv.i(getBaseContext()).getAppDisplayName(),
         		mProvider.getName()));
 
         mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);
@@ -304,7 +302,7 @@ public class ActSubservicesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalHelper.findProviderInList(App.providerList, id);
+			mProvider = GlobalHelper.findProviderInList(AppEnv.i(getBaseContext()).getProviderList(), id);
 		} else {
 			mProvider = null;
 		}

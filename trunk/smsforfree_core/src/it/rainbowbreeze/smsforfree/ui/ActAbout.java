@@ -19,9 +19,8 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import android.app.Activity;
@@ -30,7 +29,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class ActAbout
 	extends Activity
@@ -56,28 +54,29 @@ public class ActAbout
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+		AppEnv appEnv = AppEnv.i(getBaseContext());
+        mLogFacility = appEnv.getLogFacility();
         mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
-        mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
+        mActivityHelper = appEnv.getActivityHelper();
+        mLogicManager = appEnv.getLogicManager();
 
         setContentView(R.layout.actabout);
         setTitle(String.format(
-        		getString(R.string.actabout_title), App.appDisplayName));
+        		getString(R.string.actabout_title), appEnv.getAppDisplayName()));
         
         TextView lblVersion = (TextView)findViewById(R.id.actabout_lblAppVersion);
-        String version = App.APP_DISPLAY_VERSION;
-        if (App.liteVersionApp) version = version + " " + App.lite_description;
+        String version = AppEnv.APP_DISPLAY_VERSION;
+        if (appEnv.isLiteVersionApp()) version = version + " " + AppEnv.LITE_DESCRIPTION;
         lblVersion.setText(version);
 
         TextView lblSentSms = (TextView)findViewById(R.id.actabout_lblSentSms);
         String sentSms = String.valueOf(mLogicManager.getSmsSentToday());
-        if (App.liteVersionApp) sentSms = sentSms + "/" + App.allowedSmsForDay;
+        if (appEnv.isLiteVersionApp()) sentSms = sentSms + "/" + appEnv.getAllowedSmsForDay();
         lblSentSms.setText(String.format(
         		getString(R.string.actabout_lblSentSms), sentSms));
         
         TextView lblDescription2 = (TextView) findViewById(R.id.actabout_lblDescription2);
-        lblDescription2.setText(String.format(getString(R.string.actabout_lblDescription2), App.EMAIL_FOR_LOG));
+        lblDescription2.setText(String.format(getString(R.string.actabout_lblDescription2), AppEnv.EMAIL_FOR_LOG));
 	}
 	
 	
@@ -102,8 +101,10 @@ public class ActAbout
 		
 		case OPTIONMENU_EMAIL:
 			mActivityHelper.sendEmail(this,
-					App.EMAIL_FOR_LOG,
-					String.format(getString(R.string.actabout_msgEmailSubject), App.appDisplayName),
+					AppEnv.EMAIL_FOR_LOG,
+					String.format(
+					        getString(R.string.actabout_msgEmailSubject),
+					        AppEnv.i(getBaseContext()).getAppDisplayName()),
 					getString(R.string.actabout_msgEmailBody));
 			break;
 		}
