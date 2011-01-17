@@ -171,7 +171,7 @@ public class AppEnv
 	 */
 	public void setupVolatileData(Context context) {
 		//set the log tag
-		LogFacility logFacility = new LogFacility(LOG_HASH);
+		LogFacility logFacility = new LogFacility(LOG_TAG);
 	    logFacility.i(LOG_HASH, "Initializing environment");
 
         //empty service locator
@@ -213,7 +213,7 @@ public class AppEnv
 
         //init providers
         ResultOperation<Void> res;
-        res = logicManager.addProvidersToList(context);
+        res = logicManager.addProvidersToList(context, mProviderList);
         if (res.hasErrors()) {
             //FIXME better error management
             activityHelper.reportError(context, res);

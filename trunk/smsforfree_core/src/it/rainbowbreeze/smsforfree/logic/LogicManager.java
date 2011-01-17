@@ -119,7 +119,8 @@ public class LogicManager extends RainbowLogicManager {
 	 */
 	@Override
 	public RainbowResultOperation<Void> executeEndTasks(Context context) {
-	    return super.executeEndTasks(context);
+		mLogFacility.v(LOG_HASH, "Executing end tasks");
+		return super.executeEndTasks(context);
 	}
 
 
@@ -240,12 +241,11 @@ public class LogicManager extends RainbowLogicManager {
 	 * Add providers to the list of available providers, according with configurations
 	 * @param context
 	 */
-	public ResultOperation<Void> addProvidersToList(Context context) {
+	public ResultOperation<Void> addProvidersToList(Context context, List<SmsProvider> providers) {
 		ResultOperation<Void> res = null;
 		
 		//initialize provider list
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
-		List<SmsProvider> providers = AppEnv.i(context).getProviderList();
 		providers.clear();
 		
 		//cycles thru all providers and initializes only the required providers
