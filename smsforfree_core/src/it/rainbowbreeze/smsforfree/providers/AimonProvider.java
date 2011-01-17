@@ -28,7 +28,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -309,7 +309,7 @@ public class AimonProvider
 
 	@Override
 	protected String getParametersFileName()
-	{ return App.aimonParametersFileName; }
+	{ return AppEnv.aimonParametersFileName; }
 
 	@Override
 	protected String getTemplatesFileName()

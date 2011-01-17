@@ -25,12 +25,11 @@ import java.util.List;
 import com.admob.android.ads.AdView;
 
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactsDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
@@ -74,7 +73,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class ActSendSms
 	extends Activity
@@ -125,6 +123,7 @@ public class ActSendSms
 	protected SendMessageThread mSendMessageThread;
 	protected SendCaptchaThread mSendCaptchaThread;
 	
+	protected AppEnv mAppEnv;
 	protected LogFacility mLogFacility;
 	protected ActivityHelper mActivityHelper;
 	protected AppPreferencesDao mAppPreferencesDao;
@@ -144,16 +143,18 @@ public class ActSendSms
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        
+        mAppEnv = AppEnv.i(getBaseContext());
+        mLogFacility = mAppEnv.getLogFacility();
         mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
-        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
-        mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
-        mSmsDao = checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao");
+        mActivityHelper = mAppEnv.getActivityHelper();
+        mAppPreferencesDao = mAppEnv.getAppPreferencesDao();
+        mLogicManager = mAppEnv.getLogicManager();
+        mSmsDao = mAppEnv.getSmsDao();
 
         setContentView(R.layout.actsendsms);
         setTitle(String.format(
-        		getString(R.string.actsendsms_title), App.appDisplayName));
+        		getString(R.string.actsendsms_title), mAppEnv.getAppDisplayName()));
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
@@ -168,7 +169,7 @@ public class ActSendSms
         mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
         
         //eventually remove ad view
-        if (!App.adEnables) {
+        if (!mAppEnv.isAdEnables()) {
         	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
         	LinearLayout parent = (LinearLayout) adView.getParent();
         	parent.removeView(adView);
@@ -185,7 +186,7 @@ public class ActSendSms
         mTxtBody.addTextChangedListener(mTxtBodyTextChangedListener);
 
         //set autocomplete
-        mTxtDestination.setAdapter(new ContactsPhonesAdapter(this));
+        mTxtDestination.setAdapter(new ContactsPhonesAdapter(this, mAppPreferencesDao));
         
         //populate Spinner with values
         bindProvidersSpinner();
@@ -417,8 +418,8 @@ public class ActSendSms
     		
     		case (ActivityHelper.REQUESTCODE_MAINSETTINGS):
     			//refresh subservices list if subservices of a provider was edited
-    			if (App.forceSubserviceRefresh) {
-    				App.forceSubserviceRefresh = false;
+    			if (mAppEnv.getForceSubserviceRefresh()) {
+    			    mAppEnv.setForceSubserviceRefresh(false);
     				changeProvider(mSelectedProvider, true);
     			}
     		break;  
@@ -609,7 +610,7 @@ public class ActSendSms
 	private void bindProvidersSpinner()
 	{
 		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
-				android.R.layout.simple_spinner_item, App.providerList);
+				android.R.layout.simple_spinner_item, mAppEnv.getProviderList());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpiProviders.setAdapter(adapter);
 	}
@@ -875,15 +876,15 @@ public class ActSendSms
 			mLogFacility.v(LOG_HASH, "Must reassign providerId, because it's empty");
 		} else {
 			//find provider provider
-			provider = GlobalHelper.findProviderInList(App.providerList, providerId);
+			provider = GlobalHelper.findProviderInList(mAppEnv.getProviderList(), providerId);
 		}
 		
 		//if provider is null, assign first provider as default value
 		if (null == provider) {
 			mLogFacility.v(LOG_HASH, "Cannot find provider for providerId " + providerId);
 			//get first provider of the list as fallback
-			if (!App.providerList.isEmpty())
-				provider = App.providerList.get(0);
+			if (!mAppEnv.getProviderList().isEmpty())
+				provider = mAppEnv.getProviderList().get(0);
 		}
 		
 		if (null != provider) {
@@ -891,7 +892,7 @@ public class ActSendSms
 			//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
 			//in the provider spinner, because is execute at the end of this method, but i need it
 			//before assign subservice
-			int providerPos = GlobalHelper.findProviderPositionInList(App.providerList, providerId);
+			int providerPos = GlobalHelper.findProviderPositionInList(mAppEnv.getProviderList(), providerId);
 			if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
 			
 			if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
@@ -911,7 +912,7 @@ public class ActSendSms
 	private void sendMessage()
 	{
 		//check if can send another SMS
-		if (!mLogicManager.checkIfCanSendSms()) {
+		if (!mLogicManager.checkIfCanSendSms(getBaseContext())) {
 			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
 			return;
 		}

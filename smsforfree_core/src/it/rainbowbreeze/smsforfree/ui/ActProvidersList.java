@@ -19,9 +19,8 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import android.app.ListActivity;
@@ -29,7 +28,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -55,21 +53,24 @@ public class ActProvidersList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
         mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
 
         setTitle(String.format(
-        		getString(R.string.actproviderslist_title), App.appDisplayName));
+        		getString(R.string.actproviderslist_title),
+        		AppEnv.i(getBaseContext()).getAppDisplayName()));
 		setContentView(R.layout.acttemplateslist);
 
-		setListAdapter(new ArrayAdapter<SmsProvider>(this, 
-	              android.R.layout.simple_list_item_1, App.providerList));
+		setListAdapter(new ArrayAdapter<SmsProvider>(
+		        this,
+		        android.R.layout.simple_list_item_1,
+		        AppEnv.i(getBaseContext()).getProviderList()));
 	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		SmsProvider provider = App.providerList.get(position);
+		SmsProvider provider = AppEnv.i(getBaseContext()).getProviderList().get(position);
 		
 		mActivityHelper.openSettingsSmsService(this, provider.getId());
 	}

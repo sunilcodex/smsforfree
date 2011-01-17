@@ -19,10 +19,9 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.ui.RainbowSettingsMainActivity;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
 import android.os.Bundle;
@@ -31,7 +30,6 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * Application main settings
@@ -66,9 +64,9 @@ public class ActSettingsMain
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
-        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "AppPreferencesDao");
-        mSmsDao = checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao");
+		mAppPreferencesDao = AppEnv.i(getBaseContext()).getAppPreferencesDao();
+        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
+        mSmsDao = AppEnv.i(getBaseContext()).getSmsDao();
 
         
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
@@ -109,9 +107,9 @@ public class ActSettingsMain
 		public boolean onPreferenceClick(Preference preference) {
 			//checks if only on provider is configured
 			
-			if (1 == App.providerList.size()) {
+			if (1 == AppEnv.i(getBaseContext()).getProviderList().size()) {
 				//open directly the setting for the only provider present
-				mActivityHelper.openSettingsSmsService(ActSettingsMain.this, App.providerList.get(0).getId());
+				mActivityHelper.openSettingsSmsService(ActSettingsMain.this, AppEnv.i(getBaseContext()).getProviderList().get(0).getId());
 			} else {
 				//open providers list
 				mActivityHelper.openProvidersList(ActSettingsMain.this);
@@ -170,7 +168,6 @@ public class ActSettingsMain
 	
     private OnPreferenceChangeListener mChkShowOnlyMobileNumbersChangeListener = new OnPreferenceChangeListener() {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            App.showOnlyMobileNumbers = (Boolean)newValue;
             mAppPreferencesDao.setShowOnlyMobileNumbers(((Boolean)newValue).booleanValue());
             return mAppPreferencesDao.save();
         }
