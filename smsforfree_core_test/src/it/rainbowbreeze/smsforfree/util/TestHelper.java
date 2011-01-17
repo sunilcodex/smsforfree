@@ -22,7 +22,7 @@ import android.content.Context;
 import android.util.Log;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
-import it.rainbowbreeze.smsforfree.common.App;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
@@ -55,8 +55,8 @@ public class TestHelper
         //execute the following operation only one time
         if (mInitialized) return;
         
-        App app = new App();
-        app.setupEnvironment(context);
+        //initialize the environment
+        AppEnv.i(context);
         mInitialized = true;
     }
 
