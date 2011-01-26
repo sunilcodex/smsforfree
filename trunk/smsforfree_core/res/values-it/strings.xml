@@ -111,6 +111,8 @@
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Quando un SMS viene spedito, inseriscilo anche nella cartella "Inviati" del dispositivo</string>
     <string name="actsettingsmain_chkShowOnlyMobileNumbers">Mostra solo numeri mobili</string>
     <string name="actsettingsmain_chkShowOnlyMobileNumbersSummary">Mostra solo i numeri di cellulare nell\'autocompletamento del destinatario</string>
+    <string name="actsettingsmain_chkAskConfirmationForSending">Richiedi conferma di invio</string>
+    <string name="actsettingsmain_chkAskConfirmationForSendingSummary">Richiedi la conferma per l\'invio di un messaggio</string>
     <string name="actsettingsmain_txtSignature">Firma</string>
     <string name="actsettingsmain_txtSignatureSummary">Firma da aggiungere al messaggio</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Prefisso di default</string>

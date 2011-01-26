@@ -39,6 +39,7 @@ public class AppPreferencesDao
     protected static final String PROP_SMSCOUNTER_TOTAL = "smsCounterTotal";
     protected static final String PROP_MESSAGETEMPLATES = "messageTemplates";
     protected static final String PROP_SHOW_ONLY_MOBILE_NUMBERS = "showOnlyMobileNumbers";
+    protected static final String PROP_ASK_CONFIRMATION_FOR_SENDING = "AskConfirmationForSending";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
@@ -129,6 +130,11 @@ public class AppPreferencesDao
 	{ return mSettings.getString(PROP_MESSAGETEMPLATES, "").split(TEMPLATES_SEPARATOR); }
 	public void setMessageTemplates(String[] newValue)
 	{ mEditor.putString(PROP_MESSAGETEMPLATES, RainbowStringHelper.join(newValue, TEMPLATES_SEPARATOR)); }
+    
+    public boolean getAskConfirmationForSending()
+    { return mSettings.getBoolean(PROP_ASK_CONFIRMATION_FOR_SENDING, false); }
+    public void setAskConfirmationForSending(boolean newValue)
+    { mEditor.putBoolean(PROP_ASK_CONFIRMATION_FOR_SENDING, newValue); }
     
 
     //---------- Protected Methods

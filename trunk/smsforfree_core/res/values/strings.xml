@@ -111,6 +111,8 @@
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">When an SMS is sent, insert it into the Sent folder</string>
     <string name="actsettingsmain_chkShowOnlyMobileNumbers">Show only mobile numbers</string>
     <string name="actsettingsmain_chkShowOnlyMobileNumbersSummary">Show only mobile numbers in destination autocomplete</string>
+    <string name="actsettingsmain_chkAskConfirmationForSending">Ask confirmation for sending</string>
+    <string name="actsettingsmain_chkAskConfirmationForSendingSummary">Ask to confirm sending of sms</string>
     <string name="actsettingsmain_txtSignature">Signature</string>
     <string name="actsettingsmain_txtSignatureSummary">Signature to use in the message</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Default prefix</string>

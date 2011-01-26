@@ -78,6 +78,7 @@
         android:imeOptions="actionNext"
         android:singleLine="true"
         android:text=""
+        android:paddingLeft="40dp"
     />
     <ImageButton
         android:id="@+id/actsendsms_btnClearDestination"
@@ -85,8 +86,8 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/actsendsms_txtDestination"
         android:layout_alignBottom="@id/actsendsms_txtDestination"
-        android:layout_alignRight="@id/actsendsms_txtDestination"
-        android:layout_marginRight="5dp"
+        android:layout_alignLeft="@id/actsendsms_txtDestination"
+        android:layout_marginLeft="5dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_btn_cleardata"
         android:background="@android:color/transparent"

@@ -52,7 +52,7 @@ public class MyApplication extends Application {
         
         //initialize the application
         LogFacility logFacility = AppEnv.i(getBaseContext()).getLogFacility();
-        logFacility.i(LOG_HASH, "Starting application " + AppEnv.APP_INTERNAL_NAME + "v" + AppEnv.APP_INTERNAL_VERSION);
+        logFacility.i(LOG_HASH, "Starting application " + AppEnv.APP_INTERNAL_NAME + " v" + AppEnv.APP_INTERNAL_VERSION);
     }
     
     

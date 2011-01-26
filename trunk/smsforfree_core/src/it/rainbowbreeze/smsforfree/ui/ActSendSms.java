@@ -87,6 +87,7 @@ public class ActSendSms
 	protected static final int DIALOG_STARTUP_INFOBOX = 14;
 	protected static final int DIALOG_TEMPLATES = 16;
 	protected static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
+	protected static final int DIALOG_ASK_CONFIRMATION_FOR_SENDING = 18;
 	
 	protected static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
@@ -968,6 +969,8 @@ public class ActSendSms
 			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
 			return;
 		}
+		
+		//TODO add code for confirmation message
 		
 		//log the message sending
 		String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim();
