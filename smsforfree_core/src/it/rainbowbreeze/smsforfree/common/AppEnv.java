@@ -44,7 +44,7 @@ public class AppEnv
     
     
 	//---------- Constructor
-    public AppEnv(Context context) {
+    private AppEnv(Context context) {
         setupVolatileData(context);
     }
 	

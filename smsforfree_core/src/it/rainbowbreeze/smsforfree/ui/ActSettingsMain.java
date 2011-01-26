@@ -44,6 +44,7 @@ public class ActSettingsMain
     protected CheckBoxPreference mChkResetData;
 	protected CheckBoxPreference mChkInsertSmsIntoPim;
 	protected CheckBoxPreference mChkShowOnlyMobileNumbers;
+	protected CheckBoxPreference mChkAskConfirmationForSending;
 	protected EditTextPreference mTxtSignature;
 	protected EditTextPreference mTxtPrefix;
 	
@@ -72,6 +73,7 @@ public class ActSettingsMain
 		mChkResetData = (CheckBoxPreference) findPreference("actsettingsmain_chkResetDataAfterSend");
 		mChkInsertSmsIntoPim = (CheckBoxPreference) findPreference("actsettingsmain_chkInsertSmsIntoPim");
         mChkShowOnlyMobileNumbers = (CheckBoxPreference) findPreference("actsettingsmain_chkShowOnlyMobileNumbers");
+        mChkAskConfirmationForSending = (CheckBoxPreference) findPreference("actsettingsmain_chkAskConfirmationForSending");
 		mTxtSignature = (EditTextPreference) findPreference("actsettingsmain_txtSignature");
 		mTxtPrefix = (EditTextPreference) findPreference("actsettingsmain_txtDefaultInternationalPrefix");
 		
@@ -86,6 +88,7 @@ public class ActSettingsMain
 		mChkResetData.setChecked(mAppPreferencesDao.getAutoClearMessage());
 		mChkInsertSmsIntoPim.setChecked(mAppPreferencesDao.getInsertMessageIntoPim());
         mChkShowOnlyMobileNumbers.setChecked(mAppPreferencesDao.getShowOnlyMobileNumbers());
+        mChkAskConfirmationForSending.setChecked(mAppPreferencesDao.getAskConfirmationForSending());
 		mTxtSignature.setText(mAppPreferencesDao.getSignature());
 		mTxtPrefix.setText(mAppPreferencesDao.getDefaultInternationalPrefix());
 		
@@ -93,6 +96,7 @@ public class ActSettingsMain
 		mChkResetData.setOnPreferenceChangeListener(mChkResetDataChangeListener);
 		mChkInsertSmsIntoPim.setOnPreferenceChangeListener(mChkInsertSmsIntoPimChangeListener);
         mChkShowOnlyMobileNumbers.setOnPreferenceChangeListener(mChkShowOnlyMobileNumbersChangeListener);
+        mChkAskConfirmationForSending.setOnPreferenceChangeListener(mChkAskConfirmationForSendingListener);
 		mTxtSignature.setOnPreferenceChangeListener(mTxtSignatureChangeListener);
 		mTxtPrefix.setOnPreferenceChangeListener(mTxtPrefixChangeListener);
 		
@@ -169,6 +173,13 @@ public class ActSettingsMain
     private OnPreferenceChangeListener mChkShowOnlyMobileNumbersChangeListener = new OnPreferenceChangeListener() {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             mAppPreferencesDao.setShowOnlyMobileNumbers(((Boolean)newValue).booleanValue());
+            return mAppPreferencesDao.save();
+        }
+    };
+	
+    private OnPreferenceChangeListener mChkAskConfirmationForSendingListener = new OnPreferenceChangeListener() {
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            mAppPreferencesDao.setAskConfirmationForSending(((Boolean)newValue).booleanValue());
             return mAppPreferencesDao.save();
         }
     };

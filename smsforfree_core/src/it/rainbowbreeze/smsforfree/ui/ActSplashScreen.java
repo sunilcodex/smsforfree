@@ -22,14 +22,12 @@ package it.rainbowbreeze.smsforfree.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowSendStatisticsTask;
 import it.rainbowbreeze.libs.ui.RainbowSplashScreenActivity;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * 
@@ -76,9 +74,10 @@ public class ActSplashScreen
      */
     @Override
     protected void additionalInitialization(Bundle savedInstanceState) {
-        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
-        mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
-        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");    }
+        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
+        mLogicManager = AppEnv.i(getBaseContext()).getLogicManager();
+        mAppPreferencesDao = AppEnv.i(getBaseContext()).getAppPreferencesDao();
+    }
    
 
     /* (non-Javadoc)
