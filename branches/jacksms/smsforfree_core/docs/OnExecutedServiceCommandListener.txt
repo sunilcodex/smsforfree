@@ -1,0 +1,54 @@
+package it.rainbowbreeze.smsforfree.common;
+
+/**
+ * Activity to link with ASyncTask that execute a service command
+ * @author Alfredo "Rainbowbreeze" Morresi
+ *
+ */
+public interface OnExecutedServiceCommandListener {
+	
+	/**
+	 * Called by AsyncTask when the command execution completed
+	 * @param res
+	 */
+	void onExecutedCommand(ResultOperation res);
+}
+
+
+
+
+
+
+nel thread che implementera' il listener
+    public void setOnExecutedServiceCommandListener(OnExecutedServiceCommandListener newListener)
+    { mOnExecutedServiceCommandListerner = newListener; }
+    
+
+//      if (null != mOnExecutedServiceCommandListerner) {
+//          mOnExecutedServiceCommandListerner.onExecutedCommand(res);
+//      }
+
+
+
+
+
+nell'activity
+    /**
+     * Called by AsyncTask when the command execution completed
+     * @param res
+     */
+    private OnExecutedServiceCommandListener mExecutedServiceCommandListener = new OnExecutedServiceCommandListener() {
+        
+        @Override
+        public void onExecutedCommand(ResultOperation res) {
+            //dismisses progress dialog
+            if (null != mProgressDialog && mProgressDialog.isShowing())
+                mProgressDialog.dismiss();
+            //log command execution
+            Log.e("SmsForFree", "---- executeCommandComplete ----");
+            //free the thread
+            mExecuteServiceCommandThread = null;
+            //and show the result
+            ActivityHelper.showCommandExecutionResult(ActSettingsSmsService.this, res);
+        }
+    };

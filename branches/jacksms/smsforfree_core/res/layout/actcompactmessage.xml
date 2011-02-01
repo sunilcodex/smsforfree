@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  
+ Copyright (C) 2010 Alfredo Morresi
+ This file is part of SmsForFree project.
+   
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 3 of the License, or (at your option) any later
+ version.
+   
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/common_layoutBackground"
+>
+	<TextView
+		android:id="@+id/actcompactmessage_lblStatus"
+		style="@style/common_TextView"
+		android:text="@string/actcompactmessage_lblStatus"
+		android:layout_alignParentTop="true"
+		android:gravity="center_horizontal"
+		android:layout_margin="10dp"
+	/>
+
+	<TextView
+		android:id="@+id/actcompactmessage_lblHelp"
+		style="@style/common_TextView"
+		android:text="@string/actcompactmessage_lblHelp"
+		android:layout_alignParentBottom="true"
+		android:gravity="center_horizontal"
+		android:layout_marginBottom="20dp"
+	/>
+	
+	<SeekBar
+		android:id="@+id/actcompactmessage_barCompressRatio"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_above="@id/actcompactmessage_lblHelp"
+		android:layout_centerHorizontal="true"
+		android:layout_marginLeft="30dp"
+		android:layout_marginRight="30dp"
+		android:layout_marginTop="10dp"
+		android:max="2"
+	/>
+	
+	<EditText
+		android:id="@+id/actcompactmessage_txtMessage"
+		style="@style/common_TextView"
+		android:layout_below="@id/actcompactmessage_lblStatus"
+		android:layout_above="@id/actcompactmessage_barCompressRatio"
+		android:editable="false"
+		android:gravity="top|left"
+	/>
+	
+	
+</RelativeLayout>
