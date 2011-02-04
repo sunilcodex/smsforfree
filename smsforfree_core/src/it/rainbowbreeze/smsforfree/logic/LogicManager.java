@@ -19,32 +19,28 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
+import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
+import it.rainbowbreeze.libs.logic.RainbowLogicManager;
+import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.domain.TextMessage;
+import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+
 import java.net.URLDecoder;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-
-import it.rainbowbreeze.libs.common.RainbowResultOperation;
-import it.rainbowbreeze.libs.helper.RainbowStringHelper;
-import it.rainbowbreeze.libs.logic.RainbowLogicManager;
-import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.LogFacility;
-import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
-import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
-import it.rainbowbreeze.smsforfree.data.ProviderDao;
-import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.TextMessage;
-import it.rainbowbreeze.smsforfree.providers.AimonProvider;
-import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
-import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
-import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
-import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -52,15 +48,15 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
  */
 public class LogicManager extends RainbowLogicManager {
 	//---------- Private fields
-    private static final String LOG_HASH = "LogicManager";
+	private static final String LOG_HASH = "LogicManager";
 
-    protected final AppPreferencesDao mAppPreferencesDao;
+	protected final AppPreferencesDao mAppPreferencesDao;
 	protected final LogFacility mLogFacility;
 	protected final ProviderDao mProviderDao;
 	protected final ActivityHelper mActivityHelper;
-	
-	
-	
+
+
+
 	//---------- Constructors
 	/**
 	 * @param logFacility
@@ -83,16 +79,16 @@ public class LogicManager extends RainbowLogicManager {
 		mActivityHelper = checkNotNull(activityHelper, "ActivityHelper");
 	}
 
-	
-	
-	
+
+
+
 	//---------- Public properties
 
-	
-	
-	
+
+
+
 	//---------- Public methods
-	
+
 	/**
 	 * Initializes data, execute begin operation
 	 */
@@ -100,20 +96,38 @@ public class LogicManager extends RainbowLogicManager {
 	public RainbowResultOperation<Void> executeBeginTasks(Context context)
 	{
 		RainbowResultOperation<Void> res;
-		
+
 		res = super.executeBeginTasks(context);
 		if (res.hasErrors())
 			return res;
 
+		//get the loginString value
+		getLoginString(context);
+
 		//update the daily number of sms
 		updateSmsCounter(0);
-		
+
 		res = checksTemplatesValues(context);
 		if (res.hasErrors()) return res;
-			
+
 		return res;
 	}
-	
+
+	/**
+	 * Get the loginstring value
+	 * needed for web actions
+	 */
+	private void getLoginString(Context context) {
+		JacksmsProvider provider = (JacksmsProvider)AppEnv.i(context).getProviderList().get(0);
+		//FIXME non passare i parametri ma ottenerli dalle impostazioni
+		ResultOperation<String> res = provider.getLoginString("saverio87", "ubuntu7");
+
+		//get the login string and save it in AppEnv 
+		String loginString = res.getResult().split("\t")[1];
+		AppEnv.i(context).setLoginString(loginString);
+	}
+
+
 	/**
 	 * Executes final tasks (free resources, etc)
 	 */
@@ -134,7 +148,7 @@ public class LogicManager extends RainbowLogicManager {
 		//check current date hash
 		String currentDateHash = getCurrentDayHash();
 		String lastUpdate = mAppPreferencesDao.getSmsCounterDate();
-		
+
 		int smsSentToday = 0;
 		if (TextUtils.isEmpty(lastUpdate) || !lastUpdate.equals(currentDateHash)) {
 			//new day :D
@@ -145,7 +159,7 @@ public class LogicManager extends RainbowLogicManager {
 			smsSentToday = mAppPreferencesDao.getSmsCounterNumberForCurrentDay() + factorToAdd;
 		}
 		mLogFacility.v(LOG_HASH, "Set the number of SMS sent today to " + smsSentToday);
-        mAppPreferencesDao.setSmsCounterNumberForCurrentDay(smsSentToday);
+		mAppPreferencesDao.setSmsCounterNumberForCurrentDay(smsSentToday);
 		mAppPreferencesDao.save();
 	}
 
@@ -157,13 +171,13 @@ public class LogicManager extends RainbowLogicManager {
 	{
 		//unlimited sms for normal app
 		if (!AppEnv.i(context).isLiteVersionApp()) return true;
-		
+
 		//0: no send limit
 		if (0 == AppEnv.i(context).getAllowedSmsForDay()) return true;
-		
+
 		return getSmsSentToday() <= AppEnv.i(context).getAllowedSmsForDay();
 	}
-	
+
 	/**
 	 * Get the number of sms sent today
 	 */
@@ -177,7 +191,7 @@ public class LogicManager extends RainbowLogicManager {
 		if (currentDateHash.equals(lastUpdate)) {
 			sentSms = mAppPreferencesDao.getSmsCounterNumberForCurrentDay();
 		}
-		
+
 		return sentSms;
 	}
 
@@ -200,7 +214,7 @@ public class LogicManager extends RainbowLogicManager {
 		}
 		return new ResultOperation<Void>();
 	}
-	
+
 	/**
 	 * Get the message data from the intent
 	 * 
@@ -210,86 +224,70 @@ public class LogicManager extends RainbowLogicManager {
 	 *         else an object with message data
 	 */
 	public TextMessage getMessageFromIntent(Intent intent) {
-        if (null == intent) return null;
-        
-        TextMessage message = new TextMessage();
-        
-        if (Intent.ACTION_SENDTO.equals(intent.getAction())) {
-            //in the data i'll find the number of the destination
-            String destionationNumber = intent.getDataString();
-            destionationNumber = URLDecoder.decode(destionationNumber);
-            //clear the string
-            destionationNumber = destionationNumber.replace("-", "")
-                .replace("smsto:", "")
-                .replace("sms:", "");
-            //and set fields
-            mLogFacility.i(LOG_HASH, "Application called for sending number to " + RainbowStringHelper.scrambleNumber(destionationNumber));
-            message.setDestination(destionationNumber);
-            
-        } else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
-            //in the data i'll find the content of the message
-            String messageBody = intent.getStringExtra(Intent.EXTRA_TEXT);
-            mLogFacility.i(LOG_HASH, "Application called for sending message " + (messageBody.length() < 200 ? message : messageBody.substring(0, 200)));
-            //clear the string
-            message.setMessage(messageBody);
-        }
-        
-        return message;
+		if (null == intent) return null;
+
+		TextMessage message = new TextMessage();
+
+		if (Intent.ACTION_SENDTO.equals(intent.getAction())) {
+			//in the data i'll find the number of the destination
+			String destionationNumber = intent.getDataString();
+			destionationNumber = URLDecoder.decode(destionationNumber);
+			//clear the string
+			destionationNumber = destionationNumber.replace("-", "")
+			.replace("smsto:", "")
+			.replace("sms:", "");
+			//and set fields
+			mLogFacility.i(LOG_HASH, "Application called for sending number to " + RainbowStringHelper.scrambleNumber(destionationNumber));
+			message.setDestination(destionationNumber);
+
+		} else if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
+			//in the data i'll find the content of the message
+			String messageBody = intent.getStringExtra(Intent.EXTRA_TEXT);
+			mLogFacility.i(LOG_HASH, "Application called for sending message " + (messageBody.length() < 200 ? message : messageBody.substring(0, 200)));
+			//clear the string
+			message.setMessage(messageBody);
+		}
+
+		return message;
 	}
 
 	/**
-	 * Add providers to the list of available providers, according with configurations
+	 * we don't need to choose the provider since we just use JACKSMS
 	 * @param context
 	 */
 	public ResultOperation<Void> addProvidersToList(Context context, List<SmsProvider> providers) {
 		ResultOperation<Void> res = null;
-		
 		//initialize provider list
-		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
 		providers.clear();
-		
-		//cycles thru all providers and initializes only the required providers
-		String[] allSupportedProviders = "AIMON,JACKSMS,SUBITOSMS,VOIPSTUNT".split(",");
-		for (String providerName : allSupportedProviders) {
-			SmsProvider provider = null;
-			if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains(providerName)) {
-				
-				if ("AIMON".equals(providerName)) provider = new AimonProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
-				else if ("JACKSMS".equals(providerName)) provider = new JacksmsProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
-				else if ("SUBITOSMS".equals(providerName)) provider = new SubitosmsProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
-				else if ("VOIPSTUNT".equals(providerName)) provider = new VoipstuntProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
-				
-				if (null != provider) {
-					mLogFacility.i(LOG_HASH, "Inizializing provider " + providerName);
-					res = provider.initProvider(context);
-					providers.add(provider);
-				}
-				if (res.hasErrors()) break;
-			}
+
+		SmsProvider provider = new JacksmsProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
+		if (null != provider) {
+			mLogFacility.i(LOG_HASH, "Inizializing provider JACKSMS");
+			res = provider.initProvider(context);
+			providers.add(provider);
 		}
-		
-		//sort the collection of provider
-		Collections.sort(providers);
+		if (res.hasErrors()) mLogFacility.e(res.getException());
+
 		return res;
 	}
-	
 
-    
 
-    //---------- Private methods
-    private String getCurrentDayHash()
-    {
-        final Calendar c = Calendar.getInstance();
-        StringBuilder dateHash = new StringBuilder();
-        dateHash.append(c.get(Calendar.YEAR))
-            .append("-")
-            .append(c.get(Calendar.MONTH))
-            .append("-")
-            .append(c.get(Calendar.DAY_OF_MONTH));
-        return dateHash.toString();
-    }
 
-    
+
+	//---------- Private methods
+	private String getCurrentDayHash()
+	{
+		final Calendar c = Calendar.getInstance();
+		StringBuilder dateHash = new StringBuilder();
+		dateHash.append(c.get(Calendar.YEAR))
+		.append("-")
+		.append(c.get(Calendar.MONTH))
+		.append("-")
+		.append(c.get(Calendar.DAY_OF_MONTH));
+		return dateHash.toString();
+	}
+
+
 	@Override
 	protected RainbowResultOperation<Void> executeUpgradeTasks(
 			Context context,

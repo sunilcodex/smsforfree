@@ -20,16 +20,12 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
-import java.util.List;
-
-import com.admob.android.ads.AdView;
-
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactsDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
@@ -40,6 +36,9 @@ import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.logic.SendCaptchaThread;
 import it.rainbowbreeze.smsforfree.logic.SendMessageThread;
+
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -68,7 +67,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -170,11 +168,11 @@ public class ActSendSms
         mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
         
         //eventually remove ad view
-        if (!mAppEnv.isAdEnables()) {
-        	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
-        	LinearLayout parent = (LinearLayout) adView.getParent();
-        	parent.removeView(adView);
-        }
+//        if (!mAppEnv.isAdEnables()) {
+//        	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
+//        	LinearLayout parent = (LinearLayout) adView.getParent();
+//        	parent.removeView(adView);
+//        }
 
         //set listeners
         mSpiProviders.setOnItemSelectedListener(mSpiProvidersSelectedListener);
