@@ -19,9 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowCrashReporter;
 import it.rainbowbreeze.smsforfree.R;
@@ -31,8 +29,11 @@ import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
 
 
 public class AppEnv
@@ -107,6 +108,9 @@ public class AppEnv
 	/** platform - dependent newline char */
 	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
 	
+	/** loginString value for http request on stream server */
+	public static String LOGIN_STRING = null;
+	
 	
 	/** List of providers */
 	protected final List<SmsProvider> mProviderList = new ArrayList<SmsProvider>();
@@ -139,13 +143,17 @@ public class AppEnv
     protected boolean mAdEnables;
 	public boolean isAdEnables()
 	{ return mAdEnables; }
-
-	
 	
 
 	
 	//---------- Public methods
 
+	public String getLoginString()
+	{return LOGIN_STRING;}
+	
+	public void setLoginString(String value)
+	{LOGIN_STRING = value;}
+	
     public LogFacility getLogFacility()
     { return checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility"); }
     

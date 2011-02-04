@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
@@ -39,7 +40,6 @@ import org.apache.http.client.ClientProtocolException;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * Base provider for sms service
@@ -125,7 +125,6 @@ public abstract class SmsProvider
      */
     public ResultOperation<Void> initProvider(Context context) {
 		ResultOperation<Void> res;
-
 		res = loadParameters(context);
 		if (res.hasErrors()) return res;
 
@@ -363,7 +362,7 @@ public abstract class SmsProvider
 	 * @param parameters
 	 * @return
 	 */
-    protected ResultOperation<String> doSingleHttpRequest(
+    public ResultOperation<String> doSingleHttpRequest(
     		String url,
     		HashMap<String, String> headers,
     		HashMap<String, String> parameters

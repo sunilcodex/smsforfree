@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.providers;
 
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
 import it.rainbowbreeze.libs.helper.RainbowArrayHelper;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
@@ -32,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.text.TextUtils;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * 
@@ -54,6 +54,7 @@ public class JacksmsDictionary
 	private static final String ACTION_SEND_MESSAGE = "sendMessage";
 	private static final String ACTION_SEND_CAPTCHA = "continueSend";
 	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
+	private static final String ACTION_GET_USER_LOGINSTRING = "getLoginString";
 	
 	//private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
 	//private static final String PARAM_CLIENTVERSION = "clientVersion=";
@@ -100,6 +101,9 @@ public class JacksmsDictionary
 
 	public String getUrlForDownloadUserServices(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES); }
+	
+	public String getUrlForLoginString(String username, String password)
+	{ return getUrlForCommand(username, password, ACTION_GET_USER_LOGINSTRING); }
 	
 	/**
 	 * Builds headers used in send sms api
