@@ -41,6 +41,9 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.jacksms.android.gui.LoginActivity;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -101,9 +104,6 @@ public class LogicManager extends RainbowLogicManager {
 		if (res.hasErrors())
 			return res;
 
-		//get the loginString value
-		getLoginString(context);
-
 		//update the daily number of sms
 		updateSmsCounter(0);
 
@@ -115,16 +115,19 @@ public class LogicManager extends RainbowLogicManager {
 
 	/**
 	 * Get the loginstring value
-	 * needed for web actions
+	 * needed for web operations
 	 */
-	private void getLoginString(Context context) {
+	public void getLoginString(Context context, String username, String password) {
 		JacksmsProvider provider = (JacksmsProvider)AppEnv.i(context).getProviderList().get(0);
-		//FIXME non passare i parametri ma ottenerli dalle impostazioni
-		ResultOperation<String> res = provider.getLoginString("saverio87", "ubuntu7");
 
-		//get the login string and save it in AppEnv 
+		ResultOperation<String> res = provider.getLoginString(username, password);
+		//get the login string 
 		String loginString = res.getResult().split("\t")[1];
+		//save it in AppEnv
 		AppEnv.i(context).setLoginString(loginString);
+		//and save it in the shared preferences if it's different
+		if(!TextUtils.equals(loginString, mAppPreferencesDao.getLoginString()))
+			mAppPreferencesDao.setLoginString(loginString);
 	}
 
 
