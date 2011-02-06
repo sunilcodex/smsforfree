@@ -40,11 +40,17 @@ public class AppPreferencesDao
     protected static final String PROP_MESSAGETEMPLATES = "messageTemplates";
     protected static final String PROP_SHOW_ONLY_MOBILE_NUMBERS = "showOnlyMobileNumbers";
     protected static final String PROP_ASK_CONFIRMATION_FOR_SENDING = "AskConfirmationForSending";
+    protected static final String PROP_LOGIN_STRING = "loginString";
+    protected static final String PROP_JMS_RECEIVE_MODE = "jmsReceiveMode";
+    
+    protected static final String USERNAME_CREDENTIAL = "Username";
+    protected static final String PASSWORD_CREDENTIAL = "Password";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
     protected static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
     protected static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
+    
     
     protected static final String TEMPLATES_SEPARATOR = "§§§§";
     
@@ -66,6 +72,21 @@ public class AppPreferencesDao
 
 	//---------- Public Methods
 
+	public String getLoginString()
+	{return mSettings.getString(PROP_LOGIN_STRING, "");}
+	public void setLoginString(String newValue)
+	{mEditor.putString(PROP_LOGIN_STRING, newValue);}
+	
+	public String getUsername()
+	{return mSettings.getString(USERNAME_CREDENTIAL, "");}
+	public void setUsername(String newValue)
+	{mEditor.putString(USERNAME_CREDENTIAL, newValue);}
+	
+	public String getPassword()
+	{return mSettings.getString(PASSWORD_CREDENTIAL, "");}
+	public void setPassword(String newValue)
+	{mEditor.putString(PASSWORD_CREDENTIAL, newValue);}
+	
     public boolean getAutoClearMessage()
     { return mSettings.getBoolean(PROP_AUTO_CLEAR_MESSAGE, false); }
     public void setAutoClearMessage(boolean newValue)
