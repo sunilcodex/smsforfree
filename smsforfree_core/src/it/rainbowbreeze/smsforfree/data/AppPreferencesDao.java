@@ -72,6 +72,11 @@ public class AppPreferencesDao
 
 	//---------- Public Methods
 
+	public String getJmsReceiveMode()
+	{return mSettings.getString(PROP_JMS_RECEIVE_MODE, "");}
+	public void setJmsReceiveMode(String newValue)
+	{mEditor.putString(PROP_JMS_RECEIVE_MODE, newValue);}
+	
 	public String getLoginString()
 	{return mSettings.getString(PROP_LOGIN_STRING, "");}
 	public void setLoginString(String newValue)
