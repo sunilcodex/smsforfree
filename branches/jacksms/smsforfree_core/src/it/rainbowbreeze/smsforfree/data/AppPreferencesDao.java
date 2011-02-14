@@ -24,6 +24,7 @@ import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class AppPreferencesDao
 	extends RainbowAppPreferencesDao
@@ -40,8 +41,9 @@ public class AppPreferencesDao
     protected static final String PROP_MESSAGETEMPLATES = "messageTemplates";
     protected static final String PROP_SHOW_ONLY_MOBILE_NUMBERS = "showOnlyMobileNumbers";
     protected static final String PROP_ASK_CONFIRMATION_FOR_SENDING = "AskConfirmationForSending";
+    
     protected static final String PROP_LOGIN_STRING = "loginString";
-    protected static final String PROP_JMS_RECEIVE_MODE = "jmsReceiveMode";
+    protected static final String PROP_JMS_RECEIVE_MODE = "jmsMode";
     
     protected static final String USERNAME_CREDENTIAL = "Username";
     protected static final String PASSWORD_CREDENTIAL = "Password";
@@ -72,10 +74,11 @@ public class AppPreferencesDao
 
 	//---------- Public Methods
 
+	
 	public String getJmsReceiveMode()
 	{return mSettings.getString(PROP_JMS_RECEIVE_MODE, "");}
-	public void setJmsReceiveMode(String newValue)
-	{mEditor.putString(PROP_JMS_RECEIVE_MODE, newValue);}
+	public void setJmsReceiveMode(String valMode)
+	{mEditor.putString(PROP_JMS_RECEIVE_MODE, valMode);}
 	
 	public String getLoginString()
 	{return mSettings.getString(PROP_LOGIN_STRING, "");}
