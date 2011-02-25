@@ -1,0 +1,118 @@
+ (java.lang.String) <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="description" content="SMS per aziende e privati, semplice, veloce, economico. Invio e ricezione SMS, servizi SMS avanzati"/>
+<meta name="keywords" content="invio e ricezione sms, sms advtertising, sms marketing, pubblicit� via sms"/>
+<meta name="robots" content="index, follow"/>
+<meta name="Revisit-After" content="10 DAYS"/>
+<meta name="objecttype" content="Homepage"/>
+<title>Invia sms Gratis, inviosms gratis, gratis sms</title>
+<link href="style/style.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+<!--
+.Stile10 {	font-size: 14px;
+	color: #000000;
+}
+.Stile11 {	color: #000000;
+	font-size: 14px;
+	font-weight: bold;
+}
+.Stile12 {	color: #333333;
+	font-weight: bold;
+}
+.Stile5 {color: #FFFF00; font-weight: bold; font-size: 24px; background-color:#FF3300; width:740px; clear:both; margin:10px 0 0 0 ; text-align:center;}
+.Stile6 {	color: #FFFF00;
+	font-size: 14pt;
+}
+.Stile9 {font-size: 24px}
+-->
+</style>
+</head>
+
+<body>
+<div id="page">
+<h1>Invia sms Gratis, inviosms gratis, gratis sms</h1>
+<div id="header"><a href="?cmd=home"><img src="images/aimon-logo.jpg" width="250" height="105" border="0" /></a>
+<ul>
+<li><a href="/?cmd=home" title="" class="">Home</a></li><li><a href="/?cmd=azienda" title="" class="">Azienda</a></li><li><a href="/?cmd=contatti" title="" class="">Contatti</a></li><li><a href="/?cmd=supporto" title="" class="">Supporto</a></li><li><a href="/?cmd=download" title="" class="">Download</a></li><li><a href="/?cmd=mappa" title="" class="">Mappa</a></li></ul>
+
+<div id="login"><img src="images/lock.jpg" width="34" height="51" />
+	<form action="login_piattaforma.php" method="post" target="_blank">
+		<strong>LOGIN</strong> (nome@aimon.it) <strong>PASSWORD</strong><br /><input id="user" type="text" name="username" class="input">
+		<input type="password" name="password" id="password" class="input"/> <input type="submit" name="button"  id="button" value="ENTRA" class="button" /><br />
+	</form>
+	<div style="margin: 14px 0 0 10px;float:left;color:#FFFFFF"><a href="/?cmd=sms&sez=_recupera_password">Recupera Password</a>  <br />  
+	<a href="/?cmd=sms&sez=_prova_registrati">Attiva servizio: 15 SMS OMAGGIO</a>  </div>
+</div>
+</div>
+
+<div id="navcontainer">
+	<div id="nav">
+<ul>
+<li><a href="/?cmd=sms" title="" class=""><span>Sms</span></a></li><li><a href="/?cmd=promozioni" title="" class=""><span>Promozioni</span></a></li><li><a href="/?cmd=guadagna" title="" class=""><span>Guadagna</span></a></li><li><a href="/?cmd=smsgratis" title="" class="current"><span>Sms gratis</span></a></li><li><a href="/?cmd=altriservizi" title="" class=""><span>Altri servizi</span></a></li><li><a href="/?cmd=contatti" title="" class=""><span>Contattaci</span></a></li></ul></div></div>
+<div id="subnav">
+<ul>
+<li><a href="/?cmd=smsgratis&sez=smsgratis" title="" class="current"><span>Sms gratis</span></a></li>
+<li><a href="/?cmd=smsgratis&sez=affiliato_page" title="" class=""><span>Aimon Affiliati</span></a></li>
+</ul></div>
+<div id="content"><div id="colLeft">
+ 
+
+<style type="text/css">
+<!--
+.Stile1 {font-weight: bold}
+.Stile2 {color: #FF0000}
+.Stile3 {
+	color: #0000FF;
+	font-weight: bold;
+}
+.Stile4 {color: #000000}
+.Stile7 {color: #FF0000; font-weight: bold; }
+-->
+</style>
+<div id="sez">
+
+<h2></h2><div id="smsgratis"><span>OGNI GIORNO<br>SMS gratis<br>con AIMON.IT</span></div><div align="right"><table border="0" cellspacing="0" style="border: solid thin #CCCCCC">
+	<tr>
+	<td style="background-color:#DAE4F8;padding:0.4em">rainbowbreeze@aimon.it</td>
+	<td style="background-color:#DAE4F8;padding:0.4em">[<a href="/?cmd=smsgratis&sez=smsgratis&azione=logout">Logout</a>]</td>
+	</tr></table></div><p style="font-weight:bold;font-size:1.2em">Messaggio inviato con successo</p><div align="left"><table border="0" cellspacing="1" style="border: solid thin #CCCCCC">
+	<tr>
+	<td style="background-color:#DAE4F8;padding:0.4em"><a href="/index.php?cmd=smsgratis&sez=smsgratis">Invia un altro SMS gratis</a></td><td style="background-color:#DAE4F8;padding:0.4em"><a href="login_piattaforma.php?cmd=smsgratis&sez=smsgratis">Accedi alla piattaforma di invio SMS</a></td>
+	</tr></table></div>
+	</div>
+
+
+
+</div>
+
+  <div id="colRight">
+  	
+    <a href="/?cmd=supporto"><img src="images/servizioclienti.gif" width="168" height="116" border="0" class="img-ind" /></a><br />
+    <a href="/?cmd=sms&amp;sez=_prova_registrati"><img src="images/registratiadesso.gif" width="168" height="66" border="0" class="img-ind"/></a>
+    <p><strong>GRATIS e senza impegno!</strong><br />
+      e ottieni 15 SMS<br />
+      in omaggio subito</p>      
+    <a href="/?cmd=sms&amp;sez=listino"><img src="images/acquistaonline.gif" width="168" height="83" border="0" class="img-ind"/></a>
+    <p>Prezzi chiari e trasparenti. Nessun costo di attivazione e  nessun canone.<br /><br /></p>
+    <div align="center">
+      <a href="http://www.vinciweb.net" target="_blank"><img src="immagini/vinciweb-footer.gif" alt="Vinci ricariche telefoniche" width="230" height="90" border="0" /></a></div>
+  </div>  
+  
+  
+<div id="footer">
+  <p>www.aimon.it - &copy; tutti i diritti riservati P.I. e C.F: 03814240275  - info: Tel. 0415770738 - Fax 0418106721 </p>
+</div>
+     
+</div>
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-1598741-1");
+pageTracker._trackPageview();
+</script></body>
+</html>
