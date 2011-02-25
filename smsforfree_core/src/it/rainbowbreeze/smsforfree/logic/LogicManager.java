@@ -212,7 +212,7 @@ public class LogicManager extends RainbowLogicManager {
 	public TextMessage getMessageFromIntent(Intent intent) {
         if (null == intent) return null;
         
-        TextMessage message = new TextMessage();
+        TextMessage message = TextMessage.Factory.create();
         
         if (Intent.ACTION_SENDTO.equals(intent.getAction())) {
             //in the data i'll find the number of the destination

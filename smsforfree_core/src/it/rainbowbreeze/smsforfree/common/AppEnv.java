@@ -28,6 +28,7 @@ import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
+import it.rainbowbreeze.smsforfree.data.MessageQueueDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
@@ -66,13 +67,13 @@ public class AppEnv
 	public final static String APP_PREFERENCES_KEY = "SmsForFreePrefs";
 
 	/** Application version displayed to the user (about activity etc) */
-	public final static String APP_DISPLAY_VERSION = "2.1";
+	public final static String APP_DISPLAY_VERSION = "2.2";
 
 	/** Application name used during the ping of update site */
 	public final static String APP_INTERNAL_NAME = "SmsForFree";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "02.01.04";
+	public final static String APP_INTERNAL_VERSION = "02.02.00";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
@@ -161,6 +162,9 @@ public class AppEnv
     public SmsDao getSmsDao()
     { return checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao"); }
 
+    public MessageQueueDao getMessageQueueDao()
+    { return checkNotNull(RainbowServiceLocator.get(MessageQueueDao.class), "TextMessageQueue"); }
+
     /**
 	 * Setup the volatile data of application.
 	 * This is needed because sometime the system release memory
@@ -193,6 +197,8 @@ public class AppEnv
 		RainbowServiceLocator.put(logicManager);
 		SmsDao smsDao = new SmsDao(logFacility);
         RainbowServiceLocator.put(smsDao);
+        MessageQueueDao messageQueueDao = new MessageQueueDao(context, logFacility);
+        RainbowServiceLocator.put(messageQueueDao);
         
         //set application name
         mAppDisplayName = context.getString(R.string.common_appNameForDisplay);
