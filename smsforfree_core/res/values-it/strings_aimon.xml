@@ -38,7 +38,6 @@
     <string name="aimon_msg_invalidMessageEncodingOrTooLong">Caratteri del messaggio non validi oppure il messaggio e\' troppo lungo</string>
     <string name="aimon_msg_freeSmsDailyLimitReached">Il limite giornaliero impostato da Aimon per gli SMS gratuiti allo stesso numero e\' stato raggiunto</string>
     <string name="aimon_msg_freeSmsMonthlyLimitReached">Il limite mensile impostato da Aimon  per gli SMS gratuiti allo stesso numero e\' stato raggiunto</string>
-    <string name="aimon_msg_freeSmsMaxLimitReached">Limite massimo di messaggi inviabili con Aimon raggiunto</string>
     <string name="aimon_msg_notEnoughFreeSmsCredit">Non hai abbastanza credito per spedire SMS gratuiti. Aspetta fino a domani</string>
     <string name="aimon_msg_notEnoughCredit">Non hai abbastanza credito per spedire SMS. Ricarica il tuo account su Aimon</string>
     <string name="aimon_msg_messageQueued">Messaggio spedito.\n %s</string>

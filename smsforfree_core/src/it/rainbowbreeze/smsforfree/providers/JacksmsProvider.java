@@ -29,7 +29,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -235,7 +235,7 @@ public class JacksmsProvider
     	//at this point, no error happened, so the reply contains captcha submission result
     	String reply = res.getResult();
     	String returnMessage = mDictionary.getTextPartFromReply(reply);
-    	if (mDictionary.isCaptchaCorrectlySent(reply)) {
+    	if (mDictionary.isCaptchaCorrectlySent(returnMessage)) {
     	    returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
             res.setResult(returnMessage);
     	} else {
@@ -274,15 +274,15 @@ public class JacksmsProvider
 	//---------- Private methods
 	@Override
 	protected String getParametersFileName()
-	{ return AppEnv.jacksmsParametersFileName; }
+	{ return App.jacksmsParametersFileName; }
 
 	@Override
 	protected String getTemplatesFileName()
-	{ return AppEnv.jacksmsmTemplatesFileName; }
+	{ return App.jacksmsmTemplatesFileName; }
 
 	@Override
 	protected String getSubservicesFileName()
-	{ return AppEnv.jacksmsSubservicesFileName; }
+	{ return App.jacksmsSubservicesFileName; }
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {
@@ -373,14 +373,8 @@ public class JacksmsProvider
      * Downloads all services configured for the user from JackSMS site
      * @return
      */
-    private ResultOperation<String> downloadUserConfiguredServices(Context context) {
-        ResultOperation<String> res;
-        
-        //first of all, download new templates configuration, because it seems that
-        //templates schema changes in the server and this could cause problems
-        res = downloadTemplates(context);
-        if (res.hasErrors()) return res;
-        
+    private ResultOperation<String> downloadUserConfiguredServices(Context context)
+    {
         mLogFacility.v(LOG_HASH, "Download user configured service");
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
@@ -396,7 +390,7 @@ public class JacksmsProvider
     	}
 
     	String url = mDictionary.getUrlForDownloadUserServices(username, password);
-    	res = doSingleHttpRequest(url, null, null);
+    	ResultOperation<String> res = doSingleHttpRequest(url, null, null);
 
     	//checks for errors
 		if (parseReplyForErrors(res)){
@@ -486,11 +480,7 @@ public class JacksmsProvider
 	 */
 	private void searchForServicesTwinAndAdd(SmsConfigurableService newServiceToAdd)
 	{
-	    mLogFacility.v(LOG_HASH, "Search for service twins:"
-	            + "\n Service name: " + newServiceToAdd.getName()
-	            + "\n Service id: " + newServiceToAdd.getId()
-	            + "\n Service parameters: " + newServiceToAdd.getParametersNumber()
-	            + "\n Service template id: " + newServiceToAdd.getTemplateId());
+	    mLogFacility.v(LOG_HASH, "Search for service twins");
 		boolean canAdd = true;
 		
 		//twin search

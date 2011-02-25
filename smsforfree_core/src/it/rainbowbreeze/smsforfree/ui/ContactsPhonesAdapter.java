@@ -20,7 +20,7 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.ContactsDao;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -37,7 +37,6 @@ import android.widget.TextView;
 public class ContactsPhonesAdapter extends ResourceCursorAdapter {
 	/** Global ContentResolver. */
 	private ContentResolver mContentResolver;
-	private final AppPreferencesDao mAppPreferencesDao;
 
 	/** {@link ContactsWrapper} to use. */
 	private static final ContactsDao WRAPPER = ContactsDao.instance();
@@ -47,12 +46,9 @@ public class ContactsPhonesAdapter extends ResourceCursorAdapter {
 	 * 
 	 * @param context context
 	 */
-	public ContactsPhonesAdapter(
-	        final Context context,
-	        AppPreferencesDao appPreferencesDao) {
+	public ContactsPhonesAdapter(final Context context) {
 		super(context, R.layout.layoutcontactnumbers, null);
 		this.mContentResolver = context.getContentResolver();
-		this.mAppPreferencesDao = appPreferencesDao;
 	}
 
 	/**
@@ -97,7 +93,7 @@ public class ContactsPhonesAdapter extends ResourceCursorAdapter {
 		String where = null;
 		if (constraint != null) {
 			StringBuilder s = new StringBuilder(WRAPPER.getContactNumbersContentWhere(constraint.toString()));
-			if (mAppPreferencesDao.getShowOnlyMobileNumbers()) {
+			if (App.i().getShowOnlyMobileNumbers()) {
 				s.insert(0, "(");
 				s.append(WRAPPER.getContactNumbersMobilesOnlyString());
 			}

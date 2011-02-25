@@ -20,11 +20,12 @@
 package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.ui.RainbowBaseDataEntryActivity;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
@@ -46,6 +47,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -55,7 +57,6 @@ public class ActSettingsSmsService
 	extends RainbowBaseDataEntryActivity
 {
 	//---------- Private fields
-    private static final String LOG_HASH = "ActSettingsSmsService";
 	private final static int MAXFIELDS = 10;
 
 	private SmsService mEditedService;
@@ -95,9 +96,8 @@ public class ActSettingsSmsService
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
-		mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
+		mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
 
         setContentView(R.layout.actsettingssmsservice);
         getDataFromIntent(getIntent());
@@ -199,23 +199,6 @@ public class ActSettingsSmsService
 
 	private OnClickListener mBtnConfigureSubservicesClickListener = new OnClickListener() {
 		public void onClick(View v) {
-			//checks for null values of parameters
-			boolean blank_values = false;
-			//assigns user-edited values to service parameter's values
-			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
-        		findLabelAndEditTextViewsForParameter(i);
-        		if (TextUtils.isEmpty(mTxtValue.getText())) {
-        			blank_values = true;
-        			break;
-        		}
-			}
-			
-            if (blank_values) {
-                //display an error message
-            	mActivityHelper.showInfo(getApplicationContext(), R.string.jacksms_msg_blankfielderror);
-            	return;
-            }
-
 			//backup data of services
 			if (!mAssignedValues) {
 				mAssignedValues = true;
@@ -226,17 +209,18 @@ public class ActSettingsSmsService
 					}
 				}
 			}
+
 			//assigns user-edited values to service parameter's values
 			for (int i = 0; i < mEditedService.getParametersNumber(); i++){
         		findLabelAndEditTextViewsForParameter(i);
-        		mEditedService.setParameterValue(i, mTxtValue.getText().toString());
+        		if (null != mTxtValue) mEditedService.setParameterValue(i, mTxtValue.getText().toString());
 			}
 			
 			//store that at least one of the providers' subservices list was accessed
-			AppEnv.i(getBaseContext()).setForceSubserviceRefresh(true);
+			App.i().setForceSubserviceRefresh(true);
 			
-			//open the subservice configuration activity if the fields are not blank
-        	mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
+			//open the subservice configuration activity
+			mActivityHelper.openSubservicesList(ActSettingsSmsService.this, mProvider.getId());
 		}
 	};
 
@@ -276,7 +260,7 @@ public class ActSettingsSmsService
 		//update title
         this.setTitle(String.format(
         		getString(R.string.actsettingssmsservice_title),
-        		AppEnv.i(getBaseContext()).getAppDisplayName(),
+        		App.i().getAppDisplayName(),
         		mTemplateService.getName()));
 
         //set the name, if the object edited is a subservice
@@ -352,7 +336,7 @@ public class ActSettingsSmsService
 		//checks if current editing is for a provider or a subservice
 		if(extras != null) {
 			String providerId = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalHelper.findProviderInList(AppEnv.i(getBaseContext()).getProviderList(), providerId);
+			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), providerId);
 			String subserviceId = extras.getString(ActivityHelper.INTENTKEY_SMSSERVICEID);
 			if (TextUtils.isEmpty(subserviceId)) {
 				//edit a provider preferences
@@ -360,7 +344,6 @@ public class ActSettingsSmsService
 				//template and service to edit are always the same provider
 				mTemplateService = mProvider;
 				mEditedService = mProvider;
-				mLogFacility.v(LOG_HASH, "Editing provider " + mProvider.getName() + " (" + providerId + ")");
 			} else {
 				//editing a subservice
 				mIsEditingAProvider = false;
@@ -370,17 +353,14 @@ public class ActSettingsSmsService
 				if (SmsService.NEWSERVICEID.equals(subserviceId)) {
 					//edit a new subservice
 					mEditedService = null;
-	                mLogFacility.v(LOG_HASH, "Editing a new service with template " + templateId);
 				} else {
 					//edit an existing subservice preferences
 					mEditedService = mProvider.getSubservice(subserviceId);
-                    mLogFacility.v(LOG_HASH, "Editing existing service " + mEditedService.getName() + " (id: " + subserviceId + ", template id " + templateId + ")");
 				}
 			}
 
 		} else {
 			mEditedService = null;
-			mLogFacility.v(LOG_HASH, "Nothing to edit, strange!");
 		}
 	}
 

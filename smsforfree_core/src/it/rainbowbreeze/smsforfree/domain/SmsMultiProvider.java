@@ -146,10 +146,6 @@ public abstract class SmsMultiProvider
 		return mProviderDao.saveProviderSubservices(context, getSubservicesFileName(), this);
 	}
 	
-	
-	/**
-	 * Add template data to a service
-	 */
 	public SmsService integrateSubserviceWithTemplateData(SmsConfigurableService originalService, String templateId) {
 		//find the template
 		SmsService template = getTemplate(templateId);
@@ -166,10 +162,8 @@ public abstract class SmsMultiProvider
 		if (0 == subservice.getMaxMessageLenght()) subservice.setMaxMessageLenght(template.getMaxMessageLenght());
 		if (TextUtils.isEmpty(subservice.getName())) subservice.setName(template.getName());
 		subservice.setTemplateId(templateId);
-		for(int i = 0; i < template.getParametersNumber(); i++) {
+		for(int i = 0; i < template.getParametersNumber(); i++)
 			subservice.setParameterDesc(i, template.getParameterDesc(i));
-		}
-			
 		
 		return subservice;
 	}

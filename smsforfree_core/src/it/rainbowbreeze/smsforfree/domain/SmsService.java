@@ -100,24 +100,24 @@ public abstract class SmsService
 	protected SmsServiceParameter[] mParameters;
 	
 	public SmsServiceParameter getParameter(int index)
-	{ return null != mParameters && index >= 0 && index < mParameters.length ? mParameters[index] : null; }
+	{ return index >= 0 && index < mParameters.length ? mParameters[index] : null; }
 	
 	public String getParameterDesc(int index)
-	{ return null != mParameters && index >= 0 && index < mParameters.length ? mParameters[index].getDesc() : "";  }
+	{ return index >= 0 && index < mParameters.length ? mParameters[index].getDesc() : "";  }
 	public void setParameterDesc(int index, String value)
-	{ if (null != mParameters && index >= 0 && index < mParameters.length) mParameters[index].setDesc(value); }
+	{ if (index >= 0 && index < mParameters.length) mParameters[index].setDesc(value); }
 	
 	/** Value of service parameters */ 
 	public String getParameterValue(int index)
-	{ return null != mParameters && index >= 0 && index < mParameters.length ? mParameters[index].getValue() : ""; }
+	{ return index >= 0 && index < mParameters.length ? mParameters[index].getValue() : ""; }
 	public void setParameterValue(int index, String value)
-	{ if (null != mParameters && index >= 0 && index < mParameters.length) mParameters[index].setValue(value); }
+	{ if (index >= 0 && index < mParameters.length) mParameters[index].setValue(value); }
 	
 	/** Visual attributes of service parameters */ 
 	public int getParameterFormat(int index)
-	{ return null != mParameters && index >= 0 && index < mParameters.length ? mParameters[index].getFormat(): SmsServiceParameter.FORMAT_NONE ; }
+	{ return index >= 0 && index < mParameters.length ? mParameters[index].getFormat(): SmsServiceParameter.FORMAT_NONE ; }
 	public void setParameterFormat(int index, int value)
-	{ if (null != mParameters && index >= 0 && index < mParameters.length) mParameters[index].setFormat(value); }
+	{ if (index >= 0 && index < mParameters.length) mParameters[index].setFormat(value); }
 	
 	/**
 	 * Returns the list of commands to add to option menu of ActSmsServiceSetting

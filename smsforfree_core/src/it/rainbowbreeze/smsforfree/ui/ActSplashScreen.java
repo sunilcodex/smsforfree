@@ -22,12 +22,14 @@ package it.rainbowbreeze.smsforfree.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowSendStatisticsTask;
 import it.rainbowbreeze.libs.ui.RainbowSplashScreenActivity;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * 
@@ -74,10 +76,9 @@ public class ActSplashScreen
      */
     @Override
     protected void additionalInitialization(Bundle savedInstanceState) {
-        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
-        mLogicManager = AppEnv.i(getBaseContext()).getLogicManager();
-        mAppPreferencesDao = AppEnv.i(getBaseContext()).getAppPreferencesDao();
-    }
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
+        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");    }
    
 
     /* (non-Javadoc)
@@ -104,27 +105,26 @@ public class ActSplashScreen
 
         //call main activity
         mActivityHelper.openSendSms(this, message);
-        finish();
     }
 
     @Override
     protected String getApplicationInternalName() {
-        return AppEnv.APP_INTERNAL_NAME;
+        return App.APP_INTERNAL_NAME;
     }
 
     @Override
     protected String getApplicationInternalVersion() {
-        return AppEnv.APP_INTERNAL_VERSION;
+        return App.APP_INTERNAL_VERSION;
     }
 
     @Override
     protected String getEmailForLog() {
-        return AppEnv.EMAIL_FOR_LOG;
+        return App.EMAIL_FOR_LOG;
     }
 
     @Override
     protected String getLogTag() {
-        return AppEnv.LOG_TAG;
+        return App.LOG_TAG;
     }
 
     /**
@@ -133,16 +133,16 @@ public class ActSplashScreen
     protected void sendStatistics() {
         try {
             //ping statistic webservice during application first starts
-            String appName = AppEnv.i(getBaseContext()).getAppDisplayName();
-            if (AppEnv.i(getBaseContext()).isLiteVersionApp()) appName = appName + "-" + AppEnv.LITE_DESCRIPTION;
+            String appName = App.i().getAppDisplayName();
+            if (App.i().isLiteVersionApp()) appName = appName + "-" + App.lite_description;
             //send statistics data first time the app runs
             RainbowSendStatisticsTask statsTask = new RainbowSendStatisticsTask(
                     mBaseLogFacility,
                     mActivityHelper,
                     this,
-                    AppEnv.STATISTICS_WEBSERVER_URL,
+                    App.STATISTICS_WEBSERVER_URL,
                     appName,
-                    AppEnv.APP_INTERNAL_VERSION,
+                    App.APP_INTERNAL_VERSION,
                     String.valueOf(mAppPreferencesDao.getUniqueId()));
             Thread t = new Thread(statsTask);
             t.start();

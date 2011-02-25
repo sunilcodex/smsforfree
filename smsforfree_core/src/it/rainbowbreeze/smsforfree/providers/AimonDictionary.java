@@ -41,7 +41,6 @@ public class AimonDictionary
 	private static final String RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED = "limite massimo di sms inviabili gratis in 30 giorni";
 	private static final String RESULT_FREE_WELCOME_MESSAGE_FOR_THE_USER = "Ciao <b>%s</b>!";
 	private static final String RESULT_FREE_SENT_OK = "Messaggio inviato con successo";
-	private static final String RESULT_FREE_MAX_SMS_LIMIT = "stato raggiunto il limite massimo di sms inviabili gratis.";
 
 	private static final String SEARCH_CREDITI_SMS_START = "Credito residuo giornaliero: ";
 	private static final String SEARCH_CREDITI_SMS_END = "crediti/sms";
@@ -159,9 +158,6 @@ public class AimonDictionary
 	public boolean isFreeSmsMonthlyLimitReached(String message)
 	{ return message.contains(RESULT_FREE_ERROR_MONTHLY_LIMIT_REACHED); }
 	
-    public boolean isFreeSmsMaxLimitReached(String message)
-    { return message.contains(RESULT_FREE_MAX_SMS_LIMIT); }
-    
 	
 	public boolean isLoginInvalidCredentials(String webserviceReply)
 	{ return webserviceReply.startsWith(RESULT_ERRORMSG_ACCESS_DENIED); }

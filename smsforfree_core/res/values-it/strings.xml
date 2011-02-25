@@ -111,8 +111,6 @@
     <string name="actsettingsmain_chkInsertSmsIntoPimSummary">Quando un SMS viene spedito, inseriscilo anche nella cartella "Inviati" del dispositivo</string>
     <string name="actsettingsmain_chkShowOnlyMobileNumbers">Mostra solo numeri mobili</string>
     <string name="actsettingsmain_chkShowOnlyMobileNumbersSummary">Mostra solo i numeri di cellulare nell\'autocompletamento del destinatario</string>
-    <string name="actsettingsmain_chkAskConfirmationForSending">Richiedi conferma di invio</string>
-    <string name="actsettingsmain_chkAskConfirmationForSendingSummary">Richiedi la conferma per l\'invio di un messaggio</string>
     <string name="actsettingsmain_txtSignature">Firma</string>
     <string name="actsettingsmain_txtSignatureSummary">Firma da aggiungere al messaggio</string>
     <string name="actsettingsmain_txtDefaultInternationalPrefix">Prefisso di default</string>
@@ -175,7 +173,7 @@
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email allo sviluppatore</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
-    <string name="actabout_msgChangeslog">v2.1\nCancellazione separata di mittente e messaggio, bugfixes\n\nv2.0\nCompletamente automatico del destinatario, gestione migliorata degli errori\n\nv1.8\nGestione template messaggio\n\nv1.7\nSalva SMS tra quelli inviati dal dispositivo, lettura del numero dell\'ultimo SMS ricevuto, gestine del log migliorata\n\nv1.6\nBugfixes\n\nv1.5\nImport dei servizi utente salvati sul sito di JackSMS, bugfixes\n\nv1.4\nFissate incompatibilita\' con Android 1.6\n\nv1.3\n -Aggiunto SubitoSMS, invio dei log per email, bugfixes\n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
+    <string name="actabout_msgChangeslog">v2.0\nCompletamente automatico del destinatario, gestione migliorata degli errori\n\nv1.8\nGestione template messaggio\n\nv1.7\nSalva SMS tra quelli inviati dal dispositivo, lettura del numero dell\'ultimo SMS ricevuto, gestine del log migliorata\n\nv1.6\nBugfixes\n\nv1.5\nImport dei servizi utente salvati sul sito di JackSMS, bugfixes\n\nv1.4\nFissate incompatibilita\' con Android 1.6\n\nv1.3\n -Aggiunto SubitoSMS, invio dei log per email, bugfixes\n\nv1.2:\n -Aggiunti i messaggi gratuiti ad Aimon, Captcha piu\' grande\n\nv1.1:\n -Fix per grandezza captcha\n\nv1.0:\n -Prima release</string>
     <string name="actabout_msgEmailSubject">Informazioni sull\'applicazione %s...</string>
     <string name="actabout_msgEmailBody">Ciao Alfredo,\n\n</string>
 

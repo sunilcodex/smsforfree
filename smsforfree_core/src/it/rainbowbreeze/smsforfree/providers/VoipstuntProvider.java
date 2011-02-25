@@ -22,7 +22,7 @@ package it.rainbowbreeze.smsforfree.providers;
 import android.content.Context;
 import android.text.TextUtils;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -162,7 +162,7 @@ public class VoipstuntProvider
 
 	@Override
 	protected String getParametersFileName()
-	{ return AppEnv.voipstuntParametersFileName; }
+	{ return App.voipstuntParametersFileName; }
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {

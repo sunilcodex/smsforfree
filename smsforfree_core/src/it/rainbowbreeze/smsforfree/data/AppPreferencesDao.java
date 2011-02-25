@@ -21,7 +21,7 @@ package it.rainbowbreeze.smsforfree.data;
 
 import it.rainbowbreeze.libs.data.RainbowAppPreferencesDao;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -39,7 +39,6 @@ public class AppPreferencesDao
     protected static final String PROP_SMSCOUNTER_TOTAL = "smsCounterTotal";
     protected static final String PROP_MESSAGETEMPLATES = "messageTemplates";
     protected static final String PROP_SHOW_ONLY_MOBILE_NUMBERS = "showOnlyMobileNumbers";
-    protected static final String PROP_ASK_CONFIRMATION_FOR_SENDING = "AskConfirmationForSending";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
@@ -87,7 +86,7 @@ public class AppPreferencesDao
     { mEditor.putString(PROP_SIGNATURE, newValue); }
 
     public String getDefaultInternationalPrefix()
-    { return mSettings.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, AppEnv.ITALY_INTERNATIONAL_PREFIX); }
+    { return mSettings.getString(PROP_DEFAULT_INTERNATIONAL_PREFIX, App.italyInternationalPrefix); }
     public void setDefaultInternationalPrefix(String newValue)
     { mEditor.putString(PROP_DEFAULT_INTERNATIONAL_PREFIX, newValue); }
 
@@ -130,11 +129,6 @@ public class AppPreferencesDao
 	{ return mSettings.getString(PROP_MESSAGETEMPLATES, "").split(TEMPLATES_SEPARATOR); }
 	public void setMessageTemplates(String[] newValue)
 	{ mEditor.putString(PROP_MESSAGETEMPLATES, RainbowStringHelper.join(newValue, TEMPLATES_SEPARATOR)); }
-    
-    public boolean getAskConfirmationForSending()
-    { return mSettings.getBoolean(PROP_ASK_CONFIRMATION_FOR_SENDING, false); }
-    public void setAskConfirmationForSending(boolean newValue)
-    { mEditor.putBoolean(PROP_ASK_CONFIRMATION_FOR_SENDING, newValue); }
     
 
     //---------- Protected Methods

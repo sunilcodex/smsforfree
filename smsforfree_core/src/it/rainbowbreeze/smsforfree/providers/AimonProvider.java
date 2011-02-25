@@ -28,7 +28,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
@@ -74,11 +74,10 @@ public class AimonProvider
 	private static final int MSG_INDEX_INVALID_MESSAGE_ENCODING = 15;
 	private static final int MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED = 16;
 	private static final int MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED = 17;
-	private static final int MSG_INDEX_FREE_SMS_MAX_LIMIT_REACHED = 18;
-	private static final int MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT = 19;
-	private static final int MSG_INDEX_NOT_ENOUGH_CREDIT = 20;
-	private static final int MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG = 21;
-	private static final int MSG_INDEX_UNMANAGED_SERVER_ERROR = 22;
+	private static final int MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT = 18;
+	private static final int MSG_INDEX_NOT_ENOUGH_CREDIT = 19;
+	private static final int MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG = 20;
+	private static final int MSG_INDEX_UNMANAGED_SERVER_ERROR = 21;
 	
 	public final static int COMMAND_CHECKCREDENTIALS = 1000;
 	public final static int COMMAND_CHECKCREDITS = 1001;
@@ -136,7 +135,7 @@ public class AimonProvider
 		setDescription(context.getString(R.string.aimon_description));
 		
 		//save some messages
-		mMessages = new String[23];
+		mMessages = new String[22];
 		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.aimon_msg_invalidCredentials);
 		mMessages[MSG_INDEX_VALID_CREDENTIALS] = context.getString(R.string.aimon_msg_validCredentials);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.aimon_msg_serverError);
@@ -155,7 +154,6 @@ public class AimonProvider
 		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING] = context.getString(R.string.aimon_msg_invalidMessageEncoding);
 		mMessages[MSG_INDEX_FREE_SMS_DAILY_LIMIT_REACHED] = context.getString(R.string.aimon_msg_freeSmsDailyLimitReached);
 		mMessages[MSG_INDEX_FREE_SMS_MONTHLY_LIMIT_REACHED] = context.getString(R.string.aimon_msg_freeSmsMonthlyLimitReached);
-        mMessages[MSG_INDEX_FREE_SMS_MAX_LIMIT_REACHED] = context.getString(R.string.aimon_msg_freeSmsMaxLimitReached);
 		mMessages[MSG_INDEX_NOT_ENOUGH_FREE_SMS_CREDIT] = context.getString(R.string.aimon_msg_notEnoughFreeSmsCredit);
 		mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT] = context.getString(R.string.aimon_msg_notEnoughCredit);
 		mMessages[MSG_INDEX_INVALID_MESSAGE_ENCODING_OR_TOO_LONG] = context.getString(R.string.aimon_msg_invalidMessageEncodingOrTooLong);
@@ -309,7 +307,7 @@ public class AimonProvider
 
 	@Override
 	protected String getParametersFileName()
-	{ return AppEnv.aimonParametersFileName; }
+	{ return App.aimonParametersFileName; }
 
 	@Override
 	protected String getTemplatesFileName()
@@ -645,8 +643,6 @@ public class AimonProvider
 		if (mDictionary.isFreeSmsCorrectlySent(reply) || mDictionary.isFreeSmsLoginOk(reply, username)) {
 			errorMessage = "";
 		//other possible errors
-        } else if (mDictionary.isFreeSmsMaxLimitReached(reply)) {
-            errorMessage = mMessages[MSG_INDEX_FREE_SMS_MAX_LIMIT_REACHED];
 		} else if (mDictionary.isFreeSmsLoginInvalidCredentials(reply)) {
 			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 		} else if (mDictionary.isFreeSmsInvalidDestination(reply)) {

@@ -37,5 +37,4 @@
     <string name="jacksms_msg_userServicesListUpdated">User services stored in the JackSMS site added to the list.</string>
     <string name="jacksms_msg_noUserServices">No user services stored in the JackSMS found.</string>
     <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
-    <string name="jacksms_msg_blankfielderror">Please do not leave blank fields, fill them with your account details.</string>
 </resources>

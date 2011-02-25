@@ -19,8 +19,9 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -31,6 +32,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -57,13 +59,12 @@ public class ActTemplatesList
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
         mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
 
 		getDataFromIntent(getIntent());
         setTitle(String.format(
-        		getString(R.string.acttemplateslist_title),
-        		AppEnv.i(getBaseContext()).getAppDisplayName()));
+        		getString(R.string.acttemplateslist_title), App.i().getAppDisplayName()));
 		setContentView(R.layout.acttemplateslist);
 		
 		if (null == mProvider) return;
@@ -97,7 +98,7 @@ public class ActTemplatesList
 		//checks if intent 
 		if(extras != null) {
 			String id = extras.getString(ActivityHelper.INTENTKEY_SMSPROVIDERID);
-			mProvider = GlobalHelper.findProviderInList(AppEnv.i(getBaseContext()).getProviderList(), id);
+			mProvider = GlobalHelper.findProviderInList(App.i().getProviderList(), id);
 		} else {
 			mProvider = null;
 		}

@@ -20,21 +20,22 @@
 package it.rainbowbreeze.smsforfree.logic;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import it.rainbowbreeze.libs.common.RainbowAppGlobalBag;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.libs.logic.RainbowLogicManager;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
@@ -72,11 +73,12 @@ public class LogicManager extends RainbowLogicManager {
 	public LogicManager(
 			LogFacility logFacility,
 			AppPreferencesDao appPreferencesDao,
+			RainbowAppGlobalBag globalBag,
 			String currentAppVersion,
 			ProviderDao providerDao,
 			ActivityHelper activityHelper)
 	{
-		super(logFacility, appPreferencesDao, currentAppVersion);
+		super(logFacility, appPreferencesDao, globalBag, currentAppVersion);
 		mAppPreferencesDao = appPreferencesDao;
 		mLogFacility = logFacility;
 		mProviderDao = checkNotNull(providerDao, "ProviderDao");
@@ -105,9 +107,29 @@ public class LogicManager extends RainbowLogicManager {
 		if (res.hasErrors())
 			return res;
 
+		//set application name
+		App.i().setAppDisplayName(context.getString(R.string.common_appNameForDisplay));
+		mLogFacility.v(LOG_HASH, "App display name: " + App.i().getAppDisplayName());
+		
+		//find if ads should be enabled
+		String adEnabel = context.getString(R.string.config_ShowAd);
+		App.i().setAdEnables("true".equalsIgnoreCase(adEnabel));
+		App.i().setShowOnlyMobileNumbers(mAppPreferencesDao.getShowOnlyMobileNumbers());
+
+		//init some vars
+		App.i().setForceSubserviceRefresh(false);
+		
+		//load some application license setting
+		App.i().setLiteVersionApp(
+				App.lite_description.equalsIgnoreCase(context.getString(R.string.config_AppType)));
+		App.i().setAllowedSmsForDay(
+				Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay)));
+		
 		//update the daily number of sms
 		updateSmsCounter(0);
 		
+		res = addProvidersToList(context);
+		if (res.hasErrors()) return res;
 		res = checksTemplatesValues(context);
 		if (res.hasErrors()) return res;
 			
@@ -119,8 +141,7 @@ public class LogicManager extends RainbowLogicManager {
 	 */
 	@Override
 	public RainbowResultOperation<Void> executeEndTasks(Context context) {
-		mLogFacility.v(LOG_HASH, "Executing end tasks");
-		return super.executeEndTasks(context);
+	    return super.executeEndTasks(context);
 	}
 
 
@@ -135,17 +156,14 @@ public class LogicManager extends RainbowLogicManager {
 		String currentDateHash = getCurrentDayHash();
 		String lastUpdate = mAppPreferencesDao.getSmsCounterDate();
 		
-		int smsSentToday = 0;
 		if (TextUtils.isEmpty(lastUpdate) || !lastUpdate.equals(currentDateHash)) {
 			//new day :D
 			mAppPreferencesDao.setSmsCounterDate(currentDateHash);
-			smsSentToday = factorToAdd;
+			mAppPreferencesDao.setSmsCounterNumberForCurrentDay(factorToAdd);
 		} else {
 			//update sms sent in the day
-			smsSentToday = mAppPreferencesDao.getSmsCounterNumberForCurrentDay() + factorToAdd;
+			mAppPreferencesDao.setSmsCounterNumberForCurrentDay(mAppPreferencesDao.getSmsCounterNumberForCurrentDay() + factorToAdd);
 		}
-		mLogFacility.v(LOG_HASH, "Set the number of SMS sent today to " + smsSentToday);
-        mAppPreferencesDao.setSmsCounterNumberForCurrentDay(smsSentToday);
 		mAppPreferencesDao.save();
 	}
 
@@ -153,15 +171,15 @@ public class LogicManager extends RainbowLogicManager {
 	/**
 	 * Checks if sms message sent in the current day is still under the allowed limit
 	 */
-	public boolean checkIfCanSendSms(Context context)
+	public boolean checkIfCanSendSms()
 	{
 		//unlimited sms for normal app
-		if (!AppEnv.i(context).isLiteVersionApp()) return true;
+		if (!App.i().isLiteVersionApp()) return true;
 		
 		//0: no send limit
-		if (0 == AppEnv.i(context).getAllowedSmsForDay()) return true;
+		if (0 == App.i().getAllowedSmsForDay()) return true;
 		
-		return getSmsSentToday() <= AppEnv.i(context).getAllowedSmsForDay();
+		return getSmsSentToday() <= App.i().getAllowedSmsForDay();
 	}
 	
 	/**
@@ -237,16 +255,34 @@ public class LogicManager extends RainbowLogicManager {
         return message;
 	}
 
+	
+
+
+	//---------- Private methods
+	private String getCurrentDayHash()
+	{
+        final Calendar c = Calendar.getInstance();
+        StringBuilder dateHash = new StringBuilder();
+        dateHash.append(c.get(Calendar.YEAR))
+        	.append("-")
+        	.append(c.get(Calendar.MONTH))
+        	.append("-")
+        	.append(c.get(Calendar.DAY_OF_MONTH));
+        return dateHash.toString();
+	}
+
+	
 	/**
 	 * Add providers to the list of available providers, according with configurations
 	 * @param context
 	 */
-	public ResultOperation<Void> addProvidersToList(Context context, List<SmsProvider> providers) {
+	private ResultOperation<Void> addProvidersToList(Context context)
+	{
 		ResultOperation<Void> res = null;
 		
 		//initialize provider list
 		String restrictToProviders = context.getString(R.string.config_RestrictToProviders);
-		providers.clear();
+		App.i().setProviderList(new ArrayList<SmsProvider>());
 		
 		//cycles thru all providers and initializes only the required providers
 		String[] allSupportedProviders = "AIMON,JACKSMS,SUBITOSMS,VOIPSTUNT".split(",");
@@ -262,34 +298,17 @@ public class LogicManager extends RainbowLogicManager {
 				if (null != provider) {
 					mLogFacility.i(LOG_HASH, "Inizializing provider " + providerName);
 					res = provider.initProvider(context);
-					providers.add(provider);
+					App.i().getProviderList().add(provider);
 				}
 				if (res.hasErrors()) break;
 			}
 		}
 		
 		//sort the collection of provider
-		Collections.sort(providers);
+		Collections.sort(App.i().getProviderList());
 		return res;
 	}
 	
-
-    
-
-    //---------- Private methods
-    private String getCurrentDayHash()
-    {
-        final Calendar c = Calendar.getInstance();
-        StringBuilder dateHash = new StringBuilder();
-        dateHash.append(c.get(Calendar.YEAR))
-            .append("-")
-            .append(c.get(Calendar.MONTH))
-            .append("-")
-            .append(c.get(Calendar.DAY_OF_MONTH));
-        return dateHash.toString();
-    }
-
-    
 	@Override
 	protected RainbowResultOperation<Void> executeUpgradeTasks(
 			Context context,

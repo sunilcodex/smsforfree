@@ -18,8 +18,9 @@
  */
 package it.rainbowbreeze.smsforfree.ui;
 
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * 
@@ -63,13 +65,12 @@ public class ActMessageTemplates
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
         mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mAppPreferencesDao = AppEnv.i(getBaseContext()).getAppPreferencesDao();
+        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferences");
 
         setTitle(String.format(
-        		getString(R.string.actmessagetemplates_title),
-        		AppEnv.i(getBaseContext()).getAppDisplayName()));
+        		getString(R.string.actmessagetemplates_title), App.i().getAppDisplayName()));
 		addPreferencesFromResource(R.layout.actmessagetemplates);
 		
 		//load message templates into internal value

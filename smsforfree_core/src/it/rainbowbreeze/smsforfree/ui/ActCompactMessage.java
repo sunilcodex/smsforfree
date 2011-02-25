@@ -21,8 +21,7 @@ package it.rainbowbreeze.smsforfree.ui;
 
 import it.rainbowbreeze.libs.ui.RainbowBaseDataEntryActivity;
 import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
-import it.rainbowbreeze.smsforfree.common.LogFacility;
+import it.rainbowbreeze.smsforfree.common.App;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -37,13 +36,10 @@ public class ActCompactMessage
 	extends RainbowBaseDataEntryActivity
 {
 	//---------- Private fields
-    private static final String LOG_HASH = "ActCompactMessage";
-    
 	private String mOriginalText;
 	private EditText mTxtMessage;
 	private SeekBar mBarCompressRatio;
 	private TextView mLblStatus;
-	private LogFacility mLogFacility;
 
 
 
@@ -58,11 +54,8 @@ public class ActCompactMessage
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
-		mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-		
         setTitle(String.format(
-        		getString(R.string.actcompactmessage_title), AppEnv.i(getBaseContext()).getAppDisplayName()));
+        		getString(R.string.actcompactmessage_title), App.i().getAppDisplayName()));
         setContentView(R.layout.actcompactmessage);
         
 		//retrieve the message to compact

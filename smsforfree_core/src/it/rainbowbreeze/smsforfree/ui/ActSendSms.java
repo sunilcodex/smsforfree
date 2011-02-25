@@ -25,11 +25,12 @@ import java.util.List;
 import com.admob.android.ads.AdView;
 
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.App;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactsDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
@@ -73,6 +74,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 public class ActSendSms
 	extends Activity
@@ -87,7 +89,6 @@ public class ActSendSms
 	protected static final int DIALOG_STARTUP_INFOBOX = 14;
 	protected static final int DIALOG_TEMPLATES = 16;
 	protected static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
-	protected static final int DIALOG_ASK_CONFIRMATION_FOR_SENDING = 18;
 	
 	protected static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
@@ -113,8 +114,6 @@ public class ActSendSms
 	protected Button mBtnSend;
 	protected ImageButton mBtnPickContact;
 	protected ImageButton mBtnGetLastSmsReceivedNumber;
-    protected ImageButton mBtnClearDestination;
-    protected ImageButton mBtnClearMessage;
 	protected TextView mLblProvider;
 
 	protected List<ContactPhone> mPhonesToShowInDialog;
@@ -124,7 +123,6 @@ public class ActSendSms
 	protected SendMessageThread mSendMessageThread;
 	protected SendCaptchaThread mSendCaptchaThread;
 	
-	protected AppEnv mAppEnv;
 	protected LogFacility mLogFacility;
 	protected ActivityHelper mActivityHelper;
 	protected AppPreferencesDao mAppPreferencesDao;
@@ -144,18 +142,16 @@ public class ActSendSms
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        mAppEnv = AppEnv.i(getBaseContext());
-        mLogFacility = mAppEnv.getLogFacility();
+        mLogFacility = checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility");
         mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = mAppEnv.getActivityHelper();
-        mAppPreferencesDao = mAppEnv.getAppPreferencesDao();
-        mLogicManager = mAppEnv.getLogicManager();
-        mSmsDao = mAppEnv.getSmsDao();
+        mActivityHelper = checkNotNull(RainbowServiceLocator.get(ActivityHelper.class), "ActivityHelper");
+        mAppPreferencesDao = checkNotNull(RainbowServiceLocator.get(AppPreferencesDao.class), "AppPreferencesDao");
+        mLogicManager = checkNotNull(RainbowServiceLocator.get(LogicManager.class), "LogicManager");
+        mSmsDao = checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao");
 
         setContentView(R.layout.actsendsms);
         setTitle(String.format(
-        		getString(R.string.actsendsms_title), mAppEnv.getAppDisplayName()));
+        		getString(R.string.actsendsms_title), App.i().getAppDisplayName()));
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
@@ -165,12 +161,10 @@ public class ActSendSms
         mLblProvider = (TextView) findViewById(R.id.actsendsms_lblProvider);
         mBtnSend = (Button) findViewById(R.id.actsendsms_btnSend);
         mBtnPickContact = (ImageButton) findViewById(R.id.actsendsms_btnPickContact);
-        mBtnClearDestination = (ImageButton) findViewById(R.id.actsendsms_btnClearDestination);
-        mBtnClearMessage = (ImageButton) findViewById(R.id.actsendsms_btnClearMessage);
         mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
         
         //eventually remove ad view
-        if (!mAppEnv.isAdEnables()) {
+        if (!App.i().isAdEnables()) {
         	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
         	LinearLayout parent = (LinearLayout) adView.getParent();
         	parent.removeView(adView);
@@ -182,12 +176,10 @@ public class ActSendSms
         mBtnSend.setOnClickListener(mBtnSendClickListener);
         mBtnPickContact.setOnClickListener(mBtnPickContactListener);
         mBtnGetLastSmsReceivedNumber.setOnClickListener(mBtnGetLastSmsReceivedNumberListener);
-        mBtnClearDestination.setOnClickListener(mBtnClearDestinationListener);
-        mBtnClearMessage.setOnClickListener(mBtnClearMessageListener);
         mTxtBody.addTextChangedListener(mTxtBodyTextChangedListener);
 
         //set autocomplete
-        mTxtDestination.setAdapter(new ContactsPhonesAdapter(this, mAppPreferencesDao));
+        mTxtDestination.setAdapter(new ContactsPhonesAdapter(this));
         
         //populate Spinner with values
         bindProvidersSpinner();
@@ -204,12 +196,11 @@ public class ActSendSms
         	//check if the application was called as intent action
         	processIntentData(getIntent());
         	//show info dialog, if needed
-        	if (mLogicManager.isFirstStartOfAppNewVersion())
+        	if (App.i().isFirstRunAfterUpdate())
         		showDialog(DIALOG_STARTUP_INFOBOX);
         	mSpiProviders.requestFocus();
         }
     }
-    
 
 	@Override
 	protected void onStart() {
@@ -236,21 +227,6 @@ public class ActSendSms
 			//register new handler
 			mSendCaptchaThread.registerCallerHandler(mActivityHandler);
 		}
-	}
-	
-	@Override
-	protected void onDestroy() {
-		if (isFinishing()) {
-			RainbowResultOperation<Void> res = mLogicManager.executeEndTasks(this);
-			if (res.hasErrors()) {
-				mActivityHelper.reportError(this, res);
-			}
-			
-			//log the end of the application
-			mLogFacility.i(LOG_HASH, "App end");
-		}
-
-		super.onDestroy();
 	}
 
 	@Override
@@ -289,12 +265,7 @@ public class ActSendSms
     			TextUtils.isEmpty(mTxtBody.getText()) ? "" : mTxtBody.getText().toString());
 		
 		//and save new selected provider
-    	if (null != mSelectedProvider) {
-    		mAppPreferencesDao.setLastUsedProviderId(mSelectedProvider.getId());
-    	} else {
-    		mAppPreferencesDao.setLastUsedProviderId("");
-    	}
-    			
+		mAppPreferencesDao.setLastUsedProviderId(mSelectedProvider.getId());
 		mAppPreferencesDao.setLastUsedSubserviceId(mSelectedServiceId);
     	mAppPreferencesDao.save();
     }
@@ -351,8 +322,8 @@ public class ActSendSms
 			.setIcon(R.drawable.ic_menu_friendslist);
     	menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress)
     		.setIcon(R.drawable.ic_menu_cut);
-		//menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
-		//	.setIcon(android.R.drawable.ic_menu_delete);
+		menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
+			.setIcon(android.R.drawable.ic_menu_delete);
     	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
 		.setIcon(android.R.drawable.ic_menu_preferences);
 		
@@ -417,10 +388,10 @@ public class ActSendSms
     				mTxtBody.setText(message);
     		break;
     		
-    		case (ActivityHelper.REQUESTCODE_MAINSETTINGS):
+    		case (ActivityHelper.REQUESTCODE_SETTINGS):
     			//refresh subservices list if subservices of a provider was edited
-    			if (mAppEnv.getForceSubserviceRefresh()) {
-    			    mAppEnv.setForceSubserviceRefresh(false);
+    			if (App.i().getForceSubserviceRefresh()) {
+    				App.i().setForceSubserviceRefresh(false);
     				changeProvider(mSelectedProvider, true);
     			}
     		break;  
@@ -537,20 +508,6 @@ public class ActSendSms
 	};
 	
 	
-    private OnClickListener mBtnClearDestinationListener = new OnClickListener() {
-        public void onClick(View v) {
-            mTxtDestination.setText("");
-        }
-    };
-    
-    
-    private OnClickListener mBtnClearMessageListener = new OnClickListener() {
-        public void onClick(View v) {
-            mTxtBody.setText("");
-        }
-    };
-    
-    
 	private TextWatcher mTxtBodyTextChangedListener = new TextWatcher() {
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			updateMessageLength();
@@ -611,7 +568,7 @@ public class ActSendSms
 	private void bindProvidersSpinner()
 	{
 		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
-				android.R.layout.simple_spinner_item, mAppEnv.getProviderList());
+				android.R.layout.simple_spinner_item, App.i().getProviderList());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpiProviders.setAdapter(adapter);
 	}
@@ -872,37 +829,19 @@ public class ActSendSms
 		String providerId = mAppPreferencesDao.getLastUsedProviderId();
 		String subserviceId = mAppPreferencesDao.getLastUsedSubserviceId();
 
-		SmsProvider provider = null;
-		if (TextUtils.isEmpty(providerId)) {
-			mLogFacility.v(LOG_HASH, "Must reassign providerId, because it's empty");
-		} else {
-			//find provider provider
-			provider = GlobalHelper.findProviderInList(mAppEnv.getProviderList(), providerId);
-		}
+		//assign provider
+		SmsProvider provider = GlobalHelper.findProviderInList(App.i().getProviderList(), providerId);
+		changeProvider(provider, false);
+		//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
+		//in the provider spinner, because is execute at the end of this method, but i need it
+		//before assign subservice
+		int providerPos = GlobalHelper.findProviderPositionInList(App.i().getProviderList(), providerId);
+		if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
 		
-		//if provider is null, assign first provider as default value
-		if (null == provider) {
-			mLogFacility.v(LOG_HASH, "Cannot find provider for providerId " + providerId);
-			//get first provider of the list as fallback
-			if (!mAppEnv.getProviderList().isEmpty())
-				provider = mAppEnv.getProviderList().get(0);
-		}
-		
-		if (null != provider) {
-			changeProvider(provider, false);
-			//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
-			//in the provider spinner, because is execute at the end of this method, but i need it
-			//before assign subservice
-			int providerPos = GlobalHelper.findProviderPositionInList(mAppEnv.getProviderList(), providerId);
-			if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
-			
-			if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
-				int subservicePos = mSelectedProvider.findSubservicePositionInList(subserviceId);
-				if (subservicePos >= 0) mSpiSubservices.setSelection(subservicePos);
-				//call changeSubservice after this function, but it's ok now
-			}
-		} else {
-			mLogFacility.v(LOG_HASH, "Cannot find a suitable provider for the list");
+		if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
+			int subservicePos = mSelectedProvider.findSubservicePositionInList(subserviceId);
+			if (subservicePos >= 0) mSpiSubservices.setSelection(subservicePos);
+			//call changeSubservice after this function, but it's ok now
 		}
 	}
 
@@ -913,7 +852,7 @@ public class ActSendSms
 	private void sendMessage()
 	{
 		//check if can send another SMS
-		if (!mLogicManager.checkIfCanSendSms(getBaseContext())) {
+		if (!mLogicManager.checkIfCanSendSms()) {
 			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
 			return;
 		}
@@ -969,8 +908,6 @@ public class ActSendSms
 			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
 			return;
 		}
-		
-		//TODO add code for confirmation message
 		
 		//log the message sending
 		String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim();
@@ -1096,10 +1033,9 @@ public class ActSendSms
 	private void insertSmsIntoPim() {
 		//insert SMS into PIM
 		if (mAppPreferencesDao.getInsertMessageIntoPim()) {
-            String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim();
 			ResultOperation<Void> res = mSmsDao.saveSmsInSentFolder(
 					getApplicationContext(),
-					destination,
+					mTxtDestination.getText().toString(),
 					mTxtBody.getText().toString());
 
 			if (res.hasErrors()) {
