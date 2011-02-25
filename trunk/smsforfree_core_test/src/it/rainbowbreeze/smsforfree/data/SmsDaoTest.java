@@ -19,8 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.data;
 
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
-import it.rainbowbreeze.smsforfree.common.LogFacility;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.util.Def;
 import it.rainbowbreeze.smsforfree.util.TestHelper;
@@ -50,8 +49,7 @@ public class SmsDaoTest extends AndroidTestCase {
         super.setUp();
         TestHelper.init(getContext());
         
-        mSmsDao = new SmsDao(
-                RainbowServiceLocator.get(LogFacility.class));
+        mSmsDao = AppEnv.i(getContext()).getSmsDao();
     }
 	
 	
