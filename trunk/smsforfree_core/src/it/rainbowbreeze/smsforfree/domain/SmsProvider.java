@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
@@ -216,7 +217,10 @@ public abstract class SmsProvider
 	 * @param destination
 	 * @param messageBody
 	 */
-	public abstract ResultOperation<String> sendMessage(String serviceId, String destination, String messageBody);
+	public ResultOperation<String> sendMessage(String serviceId, String destination, String messageBody) {
+	    logSendMessage(serviceId, destination, messageBody);
+	    return null;
+	}
 
     /**
      * Get the captcha image content from a provider reply
@@ -644,5 +648,30 @@ public abstract class SmsProvider
             res.setReturnCode(ResultOperation.RETURNCODE_ERROR_INVALID_SENDER);
         
         return res;
-    }	
+    }
+    
+    
+    /**
+     * Log the message to send
+     * 
+     * @param serviceId
+     * @param destination
+     * @param messageBody
+     */
+    protected void logSendMessage(String serviceId, String destination, String messageBody) {
+        //log the message sending
+        StringBuilder logMessage = new StringBuilder();
+        logMessage.append("Sending message to " + RainbowStringHelper.scrambleNumber(destination) + " using provider " + getId());
+        SmsService service = getSubservice(serviceId);
+        if (null != service) {
+            logMessage.append(" and service ")
+                .append(service.getName())
+                .append(" (id: ")
+                .append(serviceId)
+                .append(" - templateId ")
+                .append(service.getTemplateId())
+                .append(")");
+        }
+        mLogFacility.i(LOG_HASH, logMessage.toString());
+    }
 }

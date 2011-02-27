@@ -167,6 +167,7 @@ public class AimonProvider
     @Override
 	public ResultOperation<String> sendMessage(String serviceId, String destination, String message)
 	{
+        super.sendMessage(serviceId, destination, message);
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 		String sender = getParameterValue(PARAM_INDEX_SENDER);

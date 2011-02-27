@@ -138,7 +138,7 @@ public class SubitosmsProvider
 			String destination,
 			String messageBody)
 	{
-	    mLogFacility.v(LOG_HASH, "Send message");
+        super.sendMessage(serviceId, destination, messageBody);
     	String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 		String sender = getParameterValue(PARAM_INDEX_SENDER);
