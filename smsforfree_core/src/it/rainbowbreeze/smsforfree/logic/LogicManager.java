@@ -274,6 +274,83 @@ public class LogicManager extends RainbowLogicManager {
 	}
 	
 
+	/**
+	 * Possible values returned from {@link LogicManager.CheckMessageValidity}
+	 *
+	 */
+	public enum CheckMessageValidity {
+	    InvalidProvider,
+	    ProviderHasNoParameters,
+	    InvalidService,
+	    ServiceHasNoParameters,
+	    EmptyDestination,
+	    EmptyMessage,
+	    MessageTooLong,
+	    CanSend,
+	}
+	
+	/**
+	 * Checks for message validity before send it
+	 * 
+	 * @param provider provider for sending sms
+	 * @param serviceId service id of provider's subservice (if any)
+	 * @param destination destination number to send message
+	 * @param messageBody message body
+	 * @return
+	 */
+	public CheckMessageValidity checkMessageValidity(
+	        SmsProvider provider,
+	        String serviceId,
+	        String destination,
+	        String messageBody)
+	{
+        //check provider
+        if (null == provider) {
+            return CheckMessageValidity.InvalidProvider;
+        }
+        
+        //check provider parameters
+        if (!provider.hasParametersConfigured()) {
+            return CheckMessageValidity.ProviderHasNoParameters;
+        }
+        
+        //check service
+        if (provider.hasSubServices()){
+            //checks if a subservices is selected
+            if (TextUtils.isEmpty(serviceId)) {
+                return CheckMessageValidity.InvalidService;
+            }
+            //check if service has parameters configured
+            if (!provider.hasServiceParametersConfigured(serviceId)) {
+                return CheckMessageValidity.ServiceHasNoParameters;
+            }
+        }
+        
+        //check destination number
+        if (TextUtils.isEmpty(destination)) {
+            return CheckMessageValidity.EmptyDestination;
+        }
+        
+//      //check destination format
+//      if (!TextUtils.isDigitsOnly(mTxtDestination.getText())) {
+//          ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_wrongDestination);
+//          return;
+//      }
+        
+        //check body
+        if (TextUtils.isEmpty(messageBody)) {
+            return CheckMessageValidity.EmptyMessage;
+        }
+        
+        //check message length
+        if (messageBody.length() > provider.getMaxMessageLenght()) {
+            return CheckMessageValidity.MessageTooLong;
+        }
+
+	    return CheckMessageValidity.CanSend;
+	}
+	
+
     
 
     //---------- Private methods

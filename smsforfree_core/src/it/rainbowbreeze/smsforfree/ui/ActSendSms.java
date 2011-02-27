@@ -215,11 +215,6 @@ public class ActSendSms
 	protected void onStart() {
 		super.onStart();
 		
-//    	if (mSendCrashReport) {
-//    		showDialog(DIALOG_SEND_CRASH_REPORTS);
-//    	}
-
-		
 		Object savedThread = getLastNonConfigurationInstance();
 		//nothing saved
 		if (null == savedThread) return;
@@ -912,83 +907,56 @@ public class ActSendSms
 	 */
 	private void sendMessage()
 	{
-		//check if can send another SMS
+		//checks if can send another SMS
 		if (!mLogicManager.checkIfCanSendSms(getBaseContext())) {
+		    //TODO transform in informative dialog
 			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
 			return;
 		}
 		
-		//check provider
-		if (null == mSelectedProvider) {
-			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noProviderSelected);
-			return;
-		}
-		
-		//check provider parameters
-		if (!mSelectedProvider.hasParametersConfigured()) {
-			mActivityHelper.showInfo(ActSendSms.this, String.format(
-					getString(R.string.actsendsms_msg_providerNotConfigured), mSelectedProvider.getName()));
-			return;
-		}
-		
-		//check service
-		if (mSelectedProvider.hasSubServices()){
-			//checks if a subservices is selected
-			if (TextUtils.isEmpty(mSelectedServiceId)) {
-				mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noSubserviceSelected);
-				return;
-			}
-			//check if service has parameters configured
-			if (!mSelectedProvider.hasServiceParametersConfigured(mSelectedServiceId)) {
-				mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_subserviceNotConfigured);
-				return;
-			}
-		}
-		
-		
-		//check destination number
-		if (TextUtils.isEmpty(mTxtDestination.getText())) {
-			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noDestination);
-			return;
-		}
-		
-//		//check destination format
-//		if (!TextUtils.isDigitsOnly(mTxtDestination.getText())) {
-//			ActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_wrongDestination);
-//			return;
-//		}
-		
-		//check body
-		if (TextUtils.isEmpty(mTxtBody.getText())) {
-			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noMessage);
-			return;
-		}
-		
-		//check message length
-		if (mTxtBody.length() > mSelectedProvider.getMaxMessageLenght()) {
-			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_messageTooLong);
-			return;
-		}
-		
-		//TODO add code for confirmation message
-		
-		//log the message sending
-		String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim();
+		String errorMessage;
+		String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim(); 
 		String message = mTxtBody.getText().toString();
-		StringBuilder logMessage = new StringBuilder();
-		logMessage.append("Sending message to " + RainbowStringHelper.scrambleNumber(destination) + " using provider " + mSelectedProvider.getId());
-		SmsService service = mSelectedProvider.getSubservice(mSelectedServiceId);
-		if (null != service) {
-			logMessage.append(" and service ")
-				.append(service.getName())
-				.append(" (id: ")
-				.append(mSelectedServiceId)
-				.append(" - templateId ")
-				.append(service.getTemplateId())
-				.append(")");
-		}
-		mLogFacility.i(LOG_HASH, logMessage.toString());
 
+		//checks for other errors
+		switch (mLogicManager.checkMessageValidity(mSelectedProvider, mSelectedServiceId, destination, message)) {
+        case CanSend:
+            errorMessage = null;
+            break;
+        case EmptyDestination:
+            errorMessage = getString(R.string.actsendsms_msg_noDestination);
+            break;
+        case EmptyMessage:
+            errorMessage = getString(R.string.actsendsms_msg_noMessage);
+            break;
+        case InvalidProvider:
+            errorMessage = getString(R.string.actsendsms_msg_noProviderSelected);
+            break;
+        case InvalidService:
+            errorMessage = getString(R.string.actsendsms_msg_noSubserviceSelected);
+            break;
+        case MessageTooLong:
+            errorMessage = getString(R.string.actsendsms_msg_messageTooLong);
+            break;
+        case ProviderHasNoParameters:
+            errorMessage = String.format(
+                    getString(R.string.actsendsms_msg_providerNotConfigured),
+                    mSelectedProvider.getName());
+            break;
+        case ServiceHasNoParameters:
+            errorMessage = getString(R.string.actsendsms_msg_subserviceNotConfigured);
+            break;
+        default:
+            errorMessage = null;
+            break;
+        }
+		
+		//eventually display a error message and exit
+		if (!TextUtils.isEmpty(errorMessage)) {
+		    mActivityHelper.showInfo(this, errorMessage, Toast.LENGTH_LONG);
+		    return;
+		}
+		
 		//create new progress dialog
 		showDialog(DIALOG_SENDING_MESSAGE);
 

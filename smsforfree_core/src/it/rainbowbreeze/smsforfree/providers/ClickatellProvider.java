@@ -110,6 +110,7 @@ public class ClickatellProvider
 	@Override
 	public ResultOperation<String> sendMessage(String serviceId, String destination, String messageBody)
 	{
+        super.sendMessage(serviceId, destination, messageBody);
 		/*
 		 * https://www.voipstunt.com/myaccount/sendsms.php?username=xxxxxxxxxx&password=xxxxxxxxxx&from=xxxxxxxxxx&to=xxxxxxxxxx&text=xxxxxxxxxx
 		 * 
