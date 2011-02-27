@@ -19,6 +19,8 @@
 
 package it.rainbowbreeze.smsforfree.domain;
 
+import android.content.Intent;
+
 /**
  * A simple message representation
  * 
@@ -31,13 +33,13 @@ public class TextMessage {
     
     //---------- Constructors
     protected TextMessage() {
-    	super();
+        super();
     }
     
     
     
     
-	//---------- Public properties
+    //---------- Public properties
     //names of db columns
     public static final String TABLE_NAME = "TextMessage";
     public static final String FIELD_ID = "ID";
@@ -46,19 +48,19 @@ public class TextMessage {
     public static final String FIELD_PROVIDERID = "PROVIDERID";
     public static final String FIELD_SERVICEID = "SERVICEID";
     public static final String FIELD_PROCESSING_STATUS = "PROCESSING_STATUS";
-	public static final String DEFAULT_SORT_ORDER = "ID ASC";
-	
-	public static final int PROCESSING_NONE = 0;
-	public static final int PROCESSING_QUEUED = 1;
-	public static final int PROCESSING_SENT = 2;
-	public static final int PROCESSING_ERROR_SENDING = 3;
+    public static final String DEFAULT_SORT_ORDER = "ID ASC";
+    
+    public static final int PROCESSING_NONE = 0;
+    public static final int PROCESSING_QUEUED = 1;
+    public static final int PROCESSING_SENT = 2;
+    public static final int PROCESSING_ERROR_SENDING = 3;
     
     
     protected long mId;
-	public long getId()
-	{ return mId; }
-	public TextMessage setId(long newValue)
-	{ mId = newValue; return this; }
+    public long getId()
+    { return mId; }
+    public TextMessage setId(long newValue)
+    { mId = newValue; return this; }
 
     protected String mDestination;
     public String getDestination()
@@ -73,58 +75,97 @@ public class TextMessage {
     { mMessage = newValue; return this; }
     
     protected String mProviderId;
-	public String getProviderId()
-	{ return mProviderId; }
-	public TextMessage setProviderId(String newValue)
-	{ mProviderId = newValue; return this; }
+    public String getProviderId()
+    { return mProviderId; }
+    public TextMessage setProviderId(String newValue)
+    { mProviderId = newValue; return this; }
 
     protected String mServiceId;
-	public String getServiceId()
-	{ return mServiceId; }
-	public TextMessage setServiceId(String newValue)
-	{ mServiceId = newValue; return this; }
+    public String getServiceId()
+    { return mServiceId; }
+    public TextMessage setServiceId(String newValue)
+    { mServiceId = newValue; return this; }
 
     protected int mProcessingStatus;
-	public int getProcessingStatus()
-	{ return mProcessingStatus; }
-	public TextMessage setProcessingStatus(int newValue)
-	{ mProcessingStatus = newValue; return this; }
+    public int getProcessingStatus()
+    { return mProcessingStatus; }
+    public TextMessage setProcessingStatus(int newValue)
+    { mProcessingStatus = newValue; return this; }
 
 
-	//---------- Public methods
-	
-	/**
-	 * Creates new text messages
-	 */
-	public static class Factory {
-	    public static TextMessage create(
-	    		long id,
-	    		String destination,
-	    		String message,
-				String providerId,
-				String serviceId,
-				int processingStatus) {
-	    	TextMessage textMessage = new TextMessage()
-	    		.setId(id)
-	    		.setDestination(destination)
-	    		.setMessage(message)
-	    		.setProviderId(providerId)
-	    		.setServiceId(serviceId)
-	    		.setProcessingStatus(processingStatus);
-	    	
-	    	return textMessage;
-		}
+    //---------- Public methods
+    
+    /**
+     * Creates new text messages
+     */
+    public static class Factory {
+        public static TextMessage create(
+                long id,
+                String destination,
+                String message,
+                String providerId,
+                String serviceId,
+                int processingStatus) {
+            TextMessage textMessage = new TextMessage()
+                .setId(id)
+                .setDestination(destination)
+                .setMessage(message)
+                .setProviderId(providerId)
+                .setServiceId(serviceId)
+                .setProcessingStatus(processingStatus);
+            
+            return textMessage;
+        }
 
-	    public static TextMessage create() {
-	    	TextMessage textMessage = new TextMessage()
-	    		.setProcessingStatus(PROCESSING_NONE);
-	    	
-	    	return textMessage;
-		}
-	}
+        public static TextMessage create() {
+            TextMessage textMessage = new TextMessage()
+                .setProcessingStatus(PROCESSING_NONE);
+            
+            return textMessage;
+        }
+        
+        public static TextMessage create(Intent intent) {
+            TextMessage textMessage = new TextMessage();
+            textMessage.deserializeFromIntent(intent);
+            return textMessage;
+        }
+    }
 
-	
-	
-	
+    /**
+     * Serialize the message inside an intent
+     * 
+     * @param intent the intent where serialize the message. {@code null} to create a new intent
+     * @return the intent with the result
+     */
+    public Intent serializeToIntent(Intent intent) {
+        if (null == intent) intent = new Intent();
+        
+        intent.putExtra(FIELD_ID, getId());
+        intent.putExtra(FIELD_DESTINATION, getDestination());
+        intent.putExtra(FIELD_MESSAGE, getMessage());
+        intent.putExtra(FIELD_PROVIDERID, getProviderId());
+        intent.putExtra(FIELD_SERVICEID, getServiceId());
+        intent.putExtra(FIELD_PROCESSING_STATUS, getProcessingStatus());
+        return intent;
+    }
+
+    /**
+     * Retrieves message values from an intent
+     * 
+     * @param intent
+     */
+    public void deserializeFromIntent(Intent intent) {
+        if (null == intent) return;
+        
+        setId(intent.getLongExtra(FIELD_ID, 0));
+        setDestination(intent.getStringExtra(FIELD_DESTINATION));
+        setMessage(intent.getStringExtra(FIELD_MESSAGE));
+        setProviderId(intent.getStringExtra(FIELD_PROVIDERID));
+        setServiceId(intent.getStringExtra(FIELD_SERVICEID));
+        setProcessingStatus(intent.getIntExtra(FIELD_PROCESSING_STATUS, PROCESSING_NONE));
+    }
+    
+    
+    
     //---------- Private methods
 }
