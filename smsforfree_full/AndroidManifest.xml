@@ -29,6 +29,7 @@
     	android:label="@string/common_appName"
     	android:name="it.rainbowbreeze.smsforfree.common.MyApplication"
         android:debuggable="false"
+        android:theme="@android:style/Theme.Light"
    	>
    		<!-- Defines also the app name in the Android menu -->
         <activity

@@ -75,71 +75,71 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ActSendSms
-	extends Activity
+    extends Activity
 {
-	//---------- Private fields
+    //---------- Private fields
     protected static final String LOG_HASH = "ActSendSms";
     
-	protected static final int DIALOG_PHONES = 10;
-	protected static final int DIALOG_CAPTCHA_REQUEST = 11;
-	protected static final int DIALOG_SENDING_MESSAGE = 12;
-	protected static final int DIALOG_SENDING_CAPTCHA = 13;
-	protected static final int DIALOG_STARTUP_INFOBOX = 14;
-	protected static final int DIALOG_TEMPLATES = 16;
-	protected static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
-	protected static final int DIALOG_ASK_CONFIRMATION_FOR_SENDING = 18;
-	
-	protected static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
-	protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
+    protected static final int DIALOG_PHONES = 10;
+    protected static final int DIALOG_CAPTCHA_REQUEST = 11;
+    protected static final int DIALOG_SENDING_MESSAGE = 12;
+    protected static final int DIALOG_SENDING_CAPTCHA = 13;
+    protected static final int DIALOG_STARTUP_INFOBOX = 14;
+    protected static final int DIALOG_TEMPLATES = 16;
+    protected static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
+    protected static final int DIALOG_ASK_CONFIRMATION_FOR_SENDING = 18;
+    
+    protected static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
+    protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
     protected static final String BUNDLEKEY_DIALOGERRORMESSAGE = "DialogErrorMessage";
 
-	protected static final int OPTIONMENU_SETTINGS = 2;
-	protected static final int OPTIONMENU_SIGNATURE = 3;
-	protected static final int OPTIONMENU_ABOUT = 4;
-	protected static final int OPTIONMENU_RESETDATA = 5;
-	protected static final int OPTIONMENU_COMPRESS = 6;
-	protected static final int OPTIONMENU_TEMPLATES = 7;
+    protected static final int OPTIONMENU_SETTINGS = 2;
+    protected static final int OPTIONMENU_SIGNATURE = 3;
+    protected static final int OPTIONMENU_ABOUT = 4;
+    protected static final int OPTIONMENU_RESETDATA = 5;
+    protected static final int OPTIONMENU_COMPRESS = 6;
+    protected static final int OPTIONMENU_TEMPLATES = 7;
 
 
-	
-	protected Spinner mSpiProviders;
-	protected Spinner mSpiSubservices;
+    
+    protected Spinner mSpiProviders;
+    protected Spinner mSpiSubservices;
 
-	protected SmsProvider mSelectedProvider;
-	protected String mSelectedServiceId;
-	protected AutoCompleteTextView mTxtDestination;
-	protected EditText mTxtBody;
-	protected TextView mLblMessageLength;
-	protected Button mBtnSend;
-	protected ImageButton mBtnPickContact;
-	protected ImageButton mBtnGetLastSmsReceivedNumber;
+    protected SmsProvider mSelectedProvider;
+    protected String mSelectedServiceId;
+    protected AutoCompleteTextView mTxtDestination;
+    protected EditText mTxtBody;
+    protected TextView mLblMessageLength;
+    protected Button mBtnSend;
+    protected ImageButton mBtnPickContact;
+    protected ImageButton mBtnGetLastSmsReceivedNumber;
     protected ImageButton mBtnClearDestination;
     protected ImageButton mBtnClearMessage;
-	protected TextView mLblProvider;
+    protected TextView mLblProvider;
 
-	protected List<ContactPhone> mPhonesToShowInDialog;
-	protected String mCaptchaStorage;
+    protected List<ContactPhone> mPhonesToShowInDialog;
+    protected String mCaptchaStorage;
     protected String mErrorSendingMessage;
 
-	protected SendMessageThread mSendMessageThread;
-	protected SendCaptchaThread mSendCaptchaThread;
-	
-	protected AppEnv mAppEnv;
-	protected LogFacility mLogFacility;
-	protected ActivityHelper mActivityHelper;
-	protected AppPreferencesDao mAppPreferencesDao;
-	protected LogicManager mLogicManager;
-	protected SmsDao mSmsDao;
+    protected SendMessageThread mSendMessageThread;
+    protected SendCaptchaThread mSendCaptchaThread;
+    
+    protected AppEnv mAppEnv;
+    protected LogFacility mLogFacility;
+    protected ActivityHelper mActivityHelper;
+    protected AppPreferencesDao mAppPreferencesDao;
+    protected LogicManager mLogicManager;
+    protected SmsDao mSmsDao;
 
 
-	
-	
-	//---------- Public properties
+    
+    
+    //---------- Public properties
 
 
 
 
-	//---------- Events
+    //---------- Events
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,7 +155,7 @@ public class ActSendSms
 
         setContentView(R.layout.actsendsms);
         setTitle(String.format(
-        		getString(R.string.actsendsms_title), mAppEnv.getAppDisplayName()));
+                getString(R.string.actsendsms_title), mAppEnv.getAppDisplayName()));
 
         mSpiProviders = (Spinner) findViewById(R.id.actsendsms_spiProviders);
         mSpiSubservices = (Spinner) findViewById(R.id.actsendsms_spiServices);
@@ -171,14 +171,14 @@ public class ActSendSms
         
         //eventually remove ad view
         if (!mAppEnv.isAdEnables()) {
-        	AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
-        	LinearLayout parent = (LinearLayout) adView.getParent();
-        	parent.removeView(adView);
+            AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
+            LinearLayout parent = (LinearLayout) adView.getParent();
+            parent.removeView(adView);
         }
 
         //set listeners
         mSpiProviders.setOnItemSelectedListener(mSpiProvidersSelectedListener);
-		mSpiSubservices.setOnItemSelectedListener(mSpiSubservicesSelectedListener);
+        mSpiSubservices.setOnItemSelectedListener(mSpiSubservicesSelectedListener);
         mBtnSend.setOnClickListener(mBtnSendClickListener);
         mBtnPickContact.setOnClickListener(mBtnPickContactListener);
         mBtnGetLastSmsReceivedNumber.setOnClickListener(mBtnGetLastSmsReceivedNumberListener);
@@ -194,233 +194,233 @@ public class ActSendSms
         
         //hide views
         if (!mSmsDao.isInboxSmsProviderAvailable(this)) {
-        	mBtnGetLastSmsReceivedNumber.setVisibility(View.INVISIBLE);
+            mBtnGetLastSmsReceivedNumber.setVisibility(View.INVISIBLE);
         }
 
-    	//executed when the application first runs
+        //executed when the application first runs
         if (null == savedInstanceState) {
             //load values of view from previous application execution
-        	restoreLastRunViewValues();
-        	//check if the application was called as intent action
-        	processIntentData(getIntent());
-        	//show info dialog, if needed
-        	if (mLogicManager.isFirstStartOfAppNewVersion())
-        		showDialog(DIALOG_STARTUP_INFOBOX);
-        	mSpiProviders.requestFocus();
+            restoreLastRunViewValues();
+            //check if the application was called as intent action
+            processIntentData(getIntent());
+            //show info dialog, if needed
+            if (mLogicManager.isFirstStartOfAppNewVersion())
+                showDialog(DIALOG_STARTUP_INFOBOX);
+            mSpiProviders.requestFocus();
         }
     }
     
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		Object savedThread = getLastNonConfigurationInstance();
-		//nothing saved
-		if (null == savedThread) return;
-	
-		//saved object is a SendMessageThread
-		if (savedThread instanceof SendMessageThread) {
-			mSendMessageThread = (SendMessageThread) savedThread;
-			//register new handler
-			mSendMessageThread.registerCallerHandler(mActivityHandler);
-		
-		//saved object is a SendCaptchaThread
-		} else {
-			mSendCaptchaThread = (SendCaptchaThread) savedThread;
-			//register new handler
-			mSendCaptchaThread.registerCallerHandler(mActivityHandler);
-		}
-	}
-	
-	@Override
-	protected void onDestroy() {
-		if (isFinishing()) {
-			RainbowResultOperation<Void> res = mLogicManager.executeEndTasks(this);
-			if (res.hasErrors()) {
-				mActivityHelper.reportError(this, res);
-			}
-			
-			//log the end of the application
-			mLogFacility.i(LOG_HASH, "App end");
-		}
+    @Override
+    protected void onStart() {
+        super.onStart();
+        
+        Object savedThread = getLastNonConfigurationInstance();
+        //nothing saved
+        if (null == savedThread) return;
+    
+        //saved object is a SendMessageThread
+        if (savedThread instanceof SendMessageThread) {
+            mSendMessageThread = (SendMessageThread) savedThread;
+            //register new handler
+            mSendMessageThread.registerCallerHandler(mActivityHandler);
+        
+        //saved object is a SendCaptchaThread
+        } else {
+            mSendCaptchaThread = (SendCaptchaThread) savedThread;
+            //register new handler
+            mSendCaptchaThread.registerCallerHandler(mActivityHandler);
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        if (isFinishing()) {
+            RainbowResultOperation<Void> res = mLogicManager.executeEndTasks(this);
+            if (res.hasErrors()) {
+                mActivityHelper.reportError(this, res);
+            }
+            
+            //log the end of the application
+            mLogFacility.i(LOG_HASH, "App end");
+        }
 
-		super.onDestroy();
-	}
+        super.onDestroy();
+    }
 
-	@Override
-	protected void onStop() {
-		if (null != mSendMessageThread) {
-			//unregister handler from background thread
-			mSendMessageThread.registerCallerHandler(null);
-		} else if (null != mSendCaptchaThread) {
-			//unregister handler from background thread
-			mSendCaptchaThread.registerCallerHandler(null);
-		}
-		super.onStop();
-	}
-		
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		//save eventually open background thread
-		if (null != mSendMessageThread) {
-			return mSendMessageThread;
-		} else if (null != mSendCaptchaThread) {
-			return mSendCaptchaThread;
-		}
-		return null;
-	}
+    @Override
+    protected void onStop() {
+        if (null != mSendMessageThread) {
+            //unregister handler from background thread
+            mSendMessageThread.registerCallerHandler(null);
+        } else if (null != mSendCaptchaThread) {
+            //unregister handler from background thread
+            mSendCaptchaThread.registerCallerHandler(null);
+        }
+        super.onStop();
+    }
+        
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        //save eventually open background thread
+        if (null != mSendMessageThread) {
+            return mSendMessageThread;
+        } else if (null != mSendCaptchaThread) {
+            return mSendCaptchaThread;
+        }
+        return null;
+    }
     
     
     @Override
     protected void onPause() {
-    	super.onPause();
-    	
-    	//save current fields value to prefs
-    	//provider and subservice was already saved in change event of the spinner
-    	mAppPreferencesDao.setLastUsedDestination(
-    			TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
-    	mAppPreferencesDao.setLastUsedMessage(
-    			TextUtils.isEmpty(mTxtBody.getText()) ? "" : mTxtBody.getText().toString());
-		
-		//and save new selected provider
-    	if (null != mSelectedProvider) {
-    		mAppPreferencesDao.setLastUsedProviderId(mSelectedProvider.getId());
-    	} else {
-    		mAppPreferencesDao.setLastUsedProviderId("");
-    	}
-    			
-		mAppPreferencesDao.setLastUsedSubserviceId(mSelectedServiceId);
-    	mAppPreferencesDao.save();
+        super.onPause();
+        
+        //save current fields value to prefs
+        //provider and subservice was already saved in change event of the spinner
+        mAppPreferencesDao.setLastUsedDestination(
+                TextUtils.isEmpty(mTxtDestination.getText()) ? "" : mTxtDestination.getText().toString());
+        mAppPreferencesDao.setLastUsedMessage(
+                TextUtils.isEmpty(mTxtBody.getText()) ? "" : mTxtBody.getText().toString());
+        
+        //and save new selected provider
+        if (null != mSelectedProvider) {
+            mAppPreferencesDao.setLastUsedProviderId(mSelectedProvider.getId());
+        } else {
+            mAppPreferencesDao.setLastUsedProviderId("");
+        }
+                
+        mAppPreferencesDao.setLastUsedSubserviceId(mSelectedServiceId);
+        mAppPreferencesDao.save();
     }
-	
-	
-	/**
-	 * Save volatile data (for example, when the activity is
-	 * rotated
-	 */
-	@Override
-	protected void onSaveInstanceState(Bundle outState)
-	{
-		super.onSaveInstanceState(outState);
-		String phones = ContactsDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
-		outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
-		outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
+    
+    
+    /**
+     * Save volatile data (for example, when the activity is
+     * rotated
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        String phones = ContactsDao.instance().SerializeContactPhones(mPhonesToShowInDialog);
+        outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
+        outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
         outState.putString(BUNDLEKEY_DIALOGERRORMESSAGE, mErrorSendingMessage);
-	};
+    };
 
-	
-	@Override
-	/**
-	 * Load volatile data into inner fields, for example when the
-	 * activity is rotated
-	 * 
-	 * @param savedInstanceState
-	 */
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		//restore volatile values
-		mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
-		mPhonesToShowInDialog = ContactsDao.instance().deserializeContactPhones(
-				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
+    
+    @Override
+    /**
+     * Load volatile data into inner fields, for example when the
+     * activity is rotated
+     * 
+     * @param savedInstanceState
+     */
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //restore volatile values
+        mCaptchaStorage = savedInstanceState.getString(BUNDLEKEY_CAPTCHASTORAGE);
+        mPhonesToShowInDialog = ContactsDao.instance().deserializeContactPhones(
+                savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
         mErrorSendingMessage = savedInstanceState.getString(BUNDLEKEY_DIALOGERRORMESSAGE);
-		
-		//when the activity is rotated, in the onPause event the values of
-		//provider, text values and subservice are persisted, so i can rely on this value
-		//for reassigning them
-		restoreLastRunViewValues();
-	}
+        
+        //when the activity is rotated, in the onPause event the values of
+        //provider, text values and subservice are persisted, so i can rely on this value
+        //for reassigning them
+        restoreLastRunViewValues();
+    }
 
-	
-	@Override
+    
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	if (!super.onCreateOptionsMenu(menu)) return false;
-    	
-    	menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
-    		.setIcon(android.R.drawable.ic_menu_info_details);
-    	//menu ends here if the application is expired
+        if (!super.onCreateOptionsMenu(menu)) return false;
+        
+        menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
+            .setIcon(android.R.drawable.ic_menu_info_details);
+        //menu ends here if the application is expired
 
-    	menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
-			.setIcon(android.R.drawable.ic_menu_edit);
-    	menu.add(0, OPTIONMENU_TEMPLATES, 0, R.string.actsendsms_mnuTemplates)
-			.setIcon(R.drawable.ic_menu_friendslist);
-    	menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress)
-    		.setIcon(R.drawable.ic_menu_cut);
-		//menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
-		//	.setIcon(android.R.drawable.ic_menu_delete);
-    	menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
-		.setIcon(android.R.drawable.ic_menu_preferences);
-		
-		return true;    	
+        menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
+            .setIcon(android.R.drawable.ic_menu_edit);
+        menu.add(0, OPTIONMENU_TEMPLATES, 0, R.string.actsendsms_mnuTemplates)
+            .setIcon(R.drawable.ic_menu_friendslist);
+        menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress)
+            .setIcon(R.drawable.ic_menu_cut);
+        //menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
+        //    .setIcon(android.R.drawable.ic_menu_delete);
+        menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
+        .setIcon(android.R.drawable.ic_menu_preferences);
+        
+        return true;        
     }
     
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case OPTIONMENU_SETTINGS:
-			mActivityHelper.openSettingsMain(this);
-			break;
-			
-		case OPTIONMENU_ABOUT:
-			mActivityHelper.openAbout(this);
-			break;
+        switch (item.getItemId()) {
+        case OPTIONMENU_SETTINGS:
+            mActivityHelper.openSettingsMain(this);
+            break;
+            
+        case OPTIONMENU_ABOUT:
+            mActivityHelper.openAbout(this);
+            break;
 
-		case OPTIONMENU_SIGNATURE:
-			addSignature();
-			break;
+        case OPTIONMENU_SIGNATURE:
+            addSignature();
+            break;
 
-		case OPTIONMENU_COMPRESS:
-			String message = mTxtBody.getText().toString();
-			mActivityHelper.openCompactMessage(this, message);
-			break;
+        case OPTIONMENU_COMPRESS:
+            String message = mTxtBody.getText().toString();
+            mActivityHelper.openCompactMessage(this, message);
+            break;
 
-		case OPTIONMENU_RESETDATA:
-			cleanDataFields(true);
-			break;
-			
-		case OPTIONMENU_TEMPLATES:
-			showDialog(DIALOG_TEMPLATES);
-			break;
-			
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        case OPTIONMENU_RESETDATA:
+            cleanDataFields(true);
+            break;
+            
+        case OPTIONMENU_TEMPLATES:
+            showDialog(DIALOG_TEMPLATES);
+            break;
+            
+        }
+        return super.onOptionsItemSelected(item);
+    }
     
 
-	@Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	super.onActivityResult(requestCode, resultCode, data);
-    	
-    	//process cancel action from various activities
-    	if (RESULT_OK != resultCode) {
-    		if (ActivityHelper.REQUESTCODE_PICKCONTACT == requestCode ||
-    				ActivityHelper.REQUESTCODE_COMPACTMESSAGE == requestCode) {
-    			return;
-    		}
-    	}
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        //process cancel action from various activities
+        if (RESULT_OK != resultCode) {
+            if (ActivityHelper.REQUESTCODE_PICKCONTACT == requestCode ||
+                    ActivityHelper.REQUESTCODE_COMPACTMESSAGE == requestCode) {
+                return;
+            }
+        }
 
-    	switch (requestCode) {
-    		case (ActivityHelper.REQUESTCODE_PICKCONTACT):  
-				Uri contactData = data.getData();
-    			assignContactPhone(contactData);
-    		break;  
-    		
-    		case (ActivityHelper.REQUESTCODE_COMPACTMESSAGE):  
-				String message = data.getStringExtra(ActivityHelper.INTENTKEY_MESSAGE);
-    			if (!TextUtils.isEmpty(message))
-    				mTxtBody.setText(message);
-    		break;
-    		
-    		case (ActivityHelper.REQUESTCODE_MAINSETTINGS):
-    			//refresh subservices list if subservices of a provider was edited
-    			if (mAppEnv.getForceSubserviceRefresh()) {
-    			    mAppEnv.setForceSubserviceRefresh(false);
-    				changeProvider(mSelectedProvider, true);
-    			}
-    		break;  
-    	}  
-	}
+        switch (requestCode) {
+            case (ActivityHelper.REQUESTCODE_PICKCONTACT):  
+                Uri contactData = data.getData();
+                assignContactPhone(contactData);
+            break;  
+            
+            case (ActivityHelper.REQUESTCODE_COMPACTMESSAGE):  
+                String message = data.getStringExtra(ActivityHelper.INTENTKEY_MESSAGE);
+                if (!TextUtils.isEmpty(message))
+                    mTxtBody.setText(message);
+            break;
+            
+            case (ActivityHelper.REQUESTCODE_MAINSETTINGS):
+                //refresh subservices list if subservices of a provider was edited
+                if (mAppEnv.getForceSubserviceRefresh()) {
+                    mAppEnv.setForceSubserviceRefresh(false);
+                    changeProvider(mSelectedProvider, true);
+                }
+            break;  
+        }  
+    }
 
 
     /* (non-Javadoc)
@@ -428,110 +428,110 @@ public class ActSendSms
      */
     @Override
     protected Dialog onCreateDialog(int id) {
-    	Dialog retDialog = null;
-    	
-    	switch (id) {
-    	case DIALOG_PHONES:
-    		retDialog = createPhonesDialog();
-    		break;
-    		
-    	case DIALOG_TEMPLATES:
-    		retDialog = createTemplatesDialog();
-    		break;
-    		
-    	case DIALOG_CAPTCHA_REQUEST:
-    		retDialog = createCaptchaDialog(mCaptchaStorage);
-    		break;
-    		
-    	case DIALOG_SENDING_MESSAGE:
-    		retDialog = mActivityHelper.createProgressDialog(this, 0, R.string.actsendsms_msg_sendingMessage);
-    		break;
-    		
-    	case DIALOG_SENDING_CAPTCHA:
-    		retDialog = mActivityHelper.createProgressDialog(this, 0, R.string.actsendsms_msg_sendingCaptcha);
-    		break;
-    		
-    	case DIALOG_STARTUP_INFOBOX:
-    		retDialog = mActivityHelper.createInformativeDialog(this,
-    				getString(R.string.actsendsms_msg_infobox_title),
-    				getString(R.string.actabout_lblDescription) + "\n\n" + this.getString(R.string.actabout_msgChangeslog),
-    				getString(R.string.common_btnOk));
-    		break;
-    	
-    	case DIALOG_SENDING_MESSAGE_ERROR:
-    	    retDialog = mActivityHelper.createInformativeDialog(this,
-    	            getString(R.string.actsendsms_msg_errorSendingMessageTitle),
-    	            mErrorSendingMessage,
-    	            getString(R.string.common_btnOk));
-    	    retDialog.setOnDismissListener(new Dialog.OnDismissListener() {
+        Dialog retDialog = null;
+        
+        switch (id) {
+        case DIALOG_PHONES:
+            retDialog = createPhonesDialog();
+            break;
+            
+        case DIALOG_TEMPLATES:
+            retDialog = createTemplatesDialog();
+            break;
+            
+        case DIALOG_CAPTCHA_REQUEST:
+            retDialog = createCaptchaDialog(mCaptchaStorage);
+            break;
+            
+        case DIALOG_SENDING_MESSAGE:
+            retDialog = mActivityHelper.createProgressDialog(this, 0, R.string.actsendsms_msg_sendingMessage);
+            break;
+            
+        case DIALOG_SENDING_CAPTCHA:
+            retDialog = mActivityHelper.createProgressDialog(this, 0, R.string.actsendsms_msg_sendingCaptcha);
+            break;
+            
+        case DIALOG_STARTUP_INFOBOX:
+            retDialog = mActivityHelper.createInformativeDialog(this,
+                    getString(R.string.actsendsms_msg_infobox_title),
+                    getString(R.string.actabout_lblDescription) + "\n\n" + this.getString(R.string.actabout_msgChangeslog),
+                    getString(R.string.common_btnOk));
+            break;
+        
+        case DIALOG_SENDING_MESSAGE_ERROR:
+            retDialog = mActivityHelper.createInformativeDialog(this,
+                    getString(R.string.actsendsms_msg_errorSendingMessageTitle),
+                    mErrorSendingMessage,
+                    getString(R.string.common_btnOk));
+            retDialog.setOnDismissListener(new Dialog.OnDismissListener() {
                 public void onDismiss(DialogInterface dialog) {
                     removeDialog(DIALOG_SENDING_MESSAGE_ERROR);
                 }
             });
-    	    break;
-    	
-		default:
-			retDialog = super.onCreateDialog(id);
-    	}
-    	
-    	return retDialog;
+            break;
+        
+        default:
+            retDialog = super.onCreateDialog(id);
+        }
+        
+        return retDialog;
     }
     
     
     private OnItemSelectedListener mSpiProvidersSelectedListener = new OnItemSelectedListener() {
-		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-			SmsProvider provider = (SmsProvider) parent.getItemAtPosition(pos);
-			changeProvider(provider, false);
-		}
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            SmsProvider provider = (SmsProvider) parent.getItemAtPosition(pos);
+            changeProvider(provider, false);
+        }
 
-		public void onNothingSelected(AdapterView<?> parent) {
+        public void onNothingSelected(AdapterView<?> parent) {
           // Do nothing.
-		}
-	};    
+        }
+    };    
     
     private OnItemSelectedListener mSpiSubservicesSelectedListener = new OnItemSelectedListener() {
-		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-			SmsService service = (SmsService) parent.getItemAtPosition(pos);
-			changeService(service);
-		}
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            SmsService service = (SmsService) parent.getItemAtPosition(pos);
+            changeService(service);
+        }
 
-		public void onNothingSelected(AdapterView<?> parent) {
+        public void onNothingSelected(AdapterView<?> parent) {
           // Do nothing.
-		}
-	};
-	
-	private OnClickListener mBtnPickContactListener = new OnClickListener() {
-		public void onClick(View v) {
-    		//launch the pick contact intent
-        	mActivityHelper.openPickContact(ActSendSms.this);
-		}
-	};
-	
-	
-	private OnClickListener mBtnGetLastSmsReceivedNumberListener = new OnClickListener() {
-		public void onClick(View v) {
-			ResultOperation<String> res = mSmsDao.getLastSmsReceivedNumber(ActSendSms.this);
-			if (res.hasErrors()) {
-				mActivityHelper.reportError(ActSendSms.this, R.string.actsendsms_msg_error_retrieving_inbox_sms);
-				return;
-			}
-			
-			if (TextUtils.isEmpty(res.getResult())) {
-				mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_empty_inbox_sms);
-			} else {
-				mTxtDestination.setText(res.getResult());
-			}
-		}
-	};
-	
-	
-	private OnClickListener mBtnSendClickListener = new OnClickListener() {
-		public void onClick(View v) {
-			sendMessage();
-		}
-	};
-	
-	
+        }
+    };
+    
+    private OnClickListener mBtnPickContactListener = new OnClickListener() {
+        public void onClick(View v) {
+            //launch the pick contact intent
+            mActivityHelper.openPickContact(ActSendSms.this);
+        }
+    };
+    
+    
+    private OnClickListener mBtnGetLastSmsReceivedNumberListener = new OnClickListener() {
+        public void onClick(View v) {
+            ResultOperation<String> res = mSmsDao.getLastSmsReceivedNumber(ActSendSms.this);
+            if (res.hasErrors()) {
+                mActivityHelper.reportError(ActSendSms.this, R.string.actsendsms_msg_error_retrieving_inbox_sms);
+                return;
+            }
+            
+            if (TextUtils.isEmpty(res.getResult())) {
+                mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_empty_inbox_sms);
+            } else {
+                mTxtDestination.setText(res.getResult());
+            }
+        }
+    };
+    
+    
+    private OnClickListener mBtnSendClickListener = new OnClickListener() {
+        public void onClick(View v) {
+            sendMessage();
+        }
+    };
+    
+    
     private OnClickListener mBtnClearDestinationListener = new OnClickListener() {
         public void onClick(View v) {
             mTxtDestination.setText("");
@@ -546,380 +546,380 @@ public class ActSendSms
     };
     
     
-	private TextWatcher mTxtBodyTextChangedListener = new TextWatcher() {
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-			updateMessageLength();
-		}
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-		}
-		public void afterTextChanged(Editable s) {
-		}
-	};
+    private TextWatcher mTxtBodyTextChangedListener = new TextWatcher() {
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            updateMessageLength();
+        }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+        public void afterTextChanged(Editable s) {
+        }
+    };
 
 
-	/**
-	 * Hander to call when a message is sent or a captcha code is inserted
-	 */
-	private Handler mActivityHandler = new Handler() {
-		public void handleMessage(Message msg)
-		{
-			mLogFacility.i(LOG_HASH, "Returned to ActSendSms from external thread");
-			//check if the message is for this handler
-			if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
-					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
-				return;
-			
-			RainbowResultOperation<String> res;
-			switch (msg.what) {
-			case SendMessageThread.WHAT_SENDMESSAGE:
-		        removeDialog(DIALOG_SENDING_MESSAGE);
-	             //may happens that the thread is null (rotation and a call to handler in the same moment?)
-			    if (null == mSendMessageThread) break;
-				//pass data to method
-				res = mSendMessageThread.getResult();
-				mSendMessageThread = null;
-				sendMessageComplete(res);
-				break;
+    /**
+     * Hander to call when a message is sent or a captcha code is inserted
+     */
+    private Handler mActivityHandler = new Handler() {
+        public void handleMessage(Message msg)
+        {
+            mLogFacility.i(LOG_HASH, "Returned to ActSendSms from external thread");
+            //check if the message is for this handler
+            if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
+                    msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
+                return;
+            
+            RainbowResultOperation<String> res;
+            switch (msg.what) {
+            case SendMessageThread.WHAT_SENDMESSAGE:
+                removeDialog(DIALOG_SENDING_MESSAGE);
+                 //may happens that the thread is null (rotation and a call to handler in the same moment?)
+                if (null == mSendMessageThread) break;
+                //pass data to method
+                res = mSendMessageThread.getResult();
+                mSendMessageThread = null;
+                sendMessageComplete(res);
+                break;
 
-			case SendCaptchaThread.WHAT_SENDCAPTCHA:
-	            //dismiss captcha progress dialog
-	            removeDialog(DIALOG_SENDING_CAPTCHA);
+            case SendCaptchaThread.WHAT_SENDCAPTCHA:
+                //dismiss captcha progress dialog
+                removeDialog(DIALOG_SENDING_CAPTCHA);
                 if (null == mSendCaptchaThread) break;
-				//pass data to method
-				res = mSendCaptchaThread.getResult();
-				mSendCaptchaThread = null;
-				displayMessageSendResult(res);
-				break;
-			}
-		};
-	};
+                //pass data to method
+                res = mSendCaptchaThread.getResult();
+                mSendCaptchaThread = null;
+                displayMessageSendResult(res);
+                break;
+            }
+        };
+    };
 
 
 
 
-	//---------- Public methods
+    //---------- Public methods
 
 
 
 
     //---------- Private methods
-	private void bindProvidersSpinner()
-	{
-		ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
-				android.R.layout.simple_spinner_item, mAppEnv.getProviderList());
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		mSpiProviders.setAdapter(adapter);
-	}
+    private void bindProvidersSpinner()
+    {
+        ArrayAdapter<SmsProvider> adapter = new ArrayAdapter<SmsProvider>(this,
+                android.R.layout.simple_spinner_item, mAppEnv.getProviderList());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpiProviders.setAdapter(adapter);
+    }
     
-	private void bindSubservicesSpinner(SmsProvider provider)
-	{
-		List<SmsService> subservices = provider.getAllSubservices();
+    private void bindSubservicesSpinner(SmsProvider provider)
+    {
+        List<SmsService> subservices = provider.getAllSubservices();
 
-		//display a message when subservices are not configured
-		if (null == subservices || subservices.size() <= 0)
-			mActivityHelper.showInfo(this, String.format(
-					getString(R.string.actsendsms_msg_subservicesNotPresent), mSelectedProvider.getName()));
-		
-		ArrayAdapter<SmsService> adapter = new ArrayAdapter<SmsService>(this,
-				android.R.layout.simple_spinner_item, subservices);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		mSpiSubservices.setAdapter(adapter);
-	}
+        //display a message when subservices are not configured
+        if (null == subservices || subservices.size() <= 0)
+            mActivityHelper.showInfo(this, String.format(
+                    getString(R.string.actsendsms_msg_subservicesNotPresent), mSelectedProvider.getName()));
+        
+        ArrayAdapter<SmsService> adapter = new ArrayAdapter<SmsService>(this,
+                android.R.layout.simple_spinner_item, subservices);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpiSubservices.setAdapter(adapter);
+    }
 
-	/**
-	 * Called when the selected provider changes
-	 * @param provider
-	 * @param forceRefresh refresh the provider and service list also if
-	 *        the same provider was selected
-	 */
-	private void changeProvider(SmsProvider provider, boolean forceRefresh)
-	{
-		//already selected provider
-		if (!forceRefresh && provider == mSelectedProvider) return;
-		
-		//first, check if selected service has subservices
-		if (provider.hasSubServices()) {
-			mSelectedProvider = provider;
-			changeService(null);
-			
-			//configure subservice spinner
-			bindSubservicesSpinner(provider);
-			mSpiSubservices.setVisibility(View.VISIBLE);
-			mLblProvider.setText(R.string.actsendsms_lblProviderMulti);
+    /**
+     * Called when the selected provider changes
+     * @param provider
+     * @param forceRefresh refresh the provider and service list also if
+     *        the same provider was selected
+     */
+    private void changeProvider(SmsProvider provider, boolean forceRefresh)
+    {
+        //already selected provider
+        if (!forceRefresh && provider == mSelectedProvider) return;
+        
+        //first, check if selected service has subservices
+        if (provider.hasSubServices()) {
+            mSelectedProvider = provider;
+            changeService(null);
+            
+            //configure subservice spinner
+            bindSubservicesSpinner(provider);
+            mSpiSubservices.setVisibility(View.VISIBLE);
+            mLblProvider.setText(R.string.actsendsms_lblProviderMulti);
 
-		} else {
-			mSelectedProvider = provider;
-			mSelectedServiceId = provider.getId();
+        } else {
+            mSelectedProvider = provider;
+            mSelectedServiceId = provider.getId();
 
-			mSpiSubservices.setVisibility(View.GONE);
-			mLblProvider.setText(R.string.actsendsms_lblProviderSingle);
-			updateMessageLength();
-		}
-	}
+            mSpiSubservices.setVisibility(View.GONE);
+            mLblProvider.setText(R.string.actsendsms_lblProviderSingle);
+            updateMessageLength();
+        }
+    }
 
-	/**
-	 * Called when the selected subservice changes
-	 * @param service
-	 */
-	private void changeService(SmsService service)
-	{
-		String newServiceId = null != service ? service.getId() : null;
+    /**
+     * Called when the selected subservice changes
+     * @param service
+     */
+    private void changeService(SmsService service)
+    {
+        String newServiceId = null != service ? service.getId() : null;
 
-		//already selected subservice
-		if (newServiceId == mSelectedServiceId) return;
-		
-		mSelectedProvider.setSelectedSubservice(newServiceId);
-		mSelectedServiceId = newServiceId;
-		updateMessageLength();
-	}
+        //already selected subservice
+        if (newServiceId == mSelectedServiceId) return;
+        
+        mSelectedProvider.setSelectedSubservice(newServiceId);
+        mSelectedServiceId = newServiceId;
+        updateMessageLength();
+    }
 
-	
-	private void updateMessageLength(){
-		int maxLength = 0;
+    
+    private void updateMessageLength(){
+        int maxLength = 0;
 
-		if (null != mSelectedProvider)
-			maxLength = mSelectedProvider.getMaxMessageLenght();
+        if (null != mSelectedProvider)
+            maxLength = mSelectedProvider.getMaxMessageLenght();
 
-		//set length text
-		mLblMessageLength.setText(mTxtBody.length() + "/" + maxLength);
-		//set text color
-		boolean tooLong = mTxtBody.length() > maxLength;
-		if (tooLong)
-			mLblMessageLength.setTextColor(Color.RED);
-		else
-			mLblMessageLength.setTextColor(Color.GRAY);
-	}
-	
-	
-	/**
-	 * Assign an phone number to destination view
-	 * @param contactUri 
-	 */
-	private void assignContactPhone(Uri contactUri)
-	{
-		try{
-			//get phone numbers for selected contact
-			mPhonesToShowInDialog = ContactsDao.instance().getContactNumbers(this, contactUri);
-		} catch (Exception e) {
-			mPhonesToShowInDialog = null;
-			mActivityHelper.reportError(this, String.format(getText(R.string.common_msg_genericError).toString(), e.getMessage()));
-		}
-		
-		if (null == mPhonesToShowInDialog)
-			return;
-		
-		switch (mPhonesToShowInDialog.size()){
+        //set length text
+        mLblMessageLength.setText(mTxtBody.length() + "/" + maxLength);
+        //set text color
+        boolean tooLong = mTxtBody.length() > maxLength;
+        if (tooLong)
+            mLblMessageLength.setTextColor(Color.RED);
+        else
+            mLblMessageLength.setTextColor(Color.GRAY);
+    }
+    
+    
+    /**
+     * Assign an phone number to destination view
+     * @param contactUri 
+     */
+    private void assignContactPhone(Uri contactUri)
+    {
+        try{
+            //get phone numbers for selected contact
+            mPhonesToShowInDialog = ContactsDao.instance().getContactNumbers(this, contactUri);
+        } catch (Exception e) {
+            mPhonesToShowInDialog = null;
+            mActivityHelper.reportError(this, String.format(getText(R.string.common_msg_genericError).toString(), e.getMessage()));
+        }
+        
+        if (null == mPhonesToShowInDialog)
+            return;
+        
+        switch (mPhonesToShowInDialog.size()){
 
-			//no phones for the contact selected
-			case 0:
-				mActivityHelper.showInfo(this, R.string.actsendsms_msg_noPhoneNumber);
-				break;
+            //no phones for the contact selected
+            case 0:
+                mActivityHelper.showInfo(this, R.string.actsendsms_msg_noPhoneNumber);
+                break;
 
-			//contact has only one phone number
-			case 1:
-				mTxtDestination.setText(mPhonesToShowInDialog.get(0).getNumber());
-				break;
-		
-			//contact has more than one phone number
-			default:
-				showDialog(DIALOG_PHONES);
-				break;
-		}
-		
-	}
-	
-	/**
-	 * Create a list dialog box that shows all the contact phone numbers
-	 * @return
-	 */
-	private Dialog createPhonesDialog()
-	{
-		//create the phone numbers selections
-		//final CharSequence[] items = {"Red", "Green", "Blue"};
-		int i=0;
-		CharSequence[] items = new CharSequence[mPhonesToShowInDialog.size()];
-		
-		for (ContactPhone phone : mPhonesToShowInDialog) {
-			items[i++] = getTranslationForPhoneType(phone.getType()) + ": " + phone.getNumber();
-		}
+            //contact has only one phone number
+            case 1:
+                mTxtDestination.setText(mPhonesToShowInDialog.get(0).getNumber());
+                break;
+        
+            //contact has more than one phone number
+            default:
+                showDialog(DIALOG_PHONES);
+                break;
+        }
+        
+    }
+    
+    /**
+     * Create a list dialog box that shows all the contact phone numbers
+     * @return
+     */
+    private Dialog createPhonesDialog()
+    {
+        //create the phone numbers selections
+        //final CharSequence[] items = {"Red", "Green", "Blue"};
+        int i=0;
+        CharSequence[] items = new CharSequence[mPhonesToShowInDialog.size()];
+        
+        for (ContactPhone phone : mPhonesToShowInDialog) {
+            items[i++] = getTranslationForPhoneType(phone.getType()) + ": " + phone.getNumber();
+        }
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getText(R.string.actsendsms_dlgPickNumber));
-		builder.setItems(items, new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int item) {
-		        mTxtDestination.setText(mPhonesToShowInDialog.get(item).getNumber());
-		        removeDialog(DIALOG_PHONES);
-		    }
-		});
-		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			public void onCancel(DialogInterface dialog) {
-		        removeDialog(DIALOG_PHONES);
-			}
-		});
-		AlertDialog alert = builder.create();
-		
-		return alert;
-	}
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getText(R.string.actsendsms_dlgPickNumber));
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                mTxtDestination.setText(mPhonesToShowInDialog.get(item).getNumber());
+                removeDialog(DIALOG_PHONES);
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                removeDialog(DIALOG_PHONES);
+            }
+        });
+        AlertDialog alert = builder.create();
+        
+        return alert;
+    }
 
 
-	/**
-	 * Create dialog for captcha code
-	 * 
-	 * @return
-	 */
-	private Dialog createCaptchaDialog(final String providerReply)
-	{
-		ResultOperation<Object> res = mSelectedProvider.getCaptchaContentFromProviderReply(providerReply);
-		if (res.hasErrors()) {
-			//show errors
-			mActivityHelper.showInfo(this, res.getResult().toString());
-			//and returns with no dialog created
-			return null;
-		}
+    /**
+     * Create dialog for captcha code
+     * 
+     * @return
+     */
+    private Dialog createCaptchaDialog(final String providerReply)
+    {
+        ResultOperation<Object> res = mSelectedProvider.getCaptchaContentFromProviderReply(providerReply);
+        if (res.hasErrors()) {
+            //show errors
+            mActivityHelper.showInfo(this, res.getResult().toString());
+            //and returns with no dialog created
+            return null;
+        }
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		AlertDialog alertDialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog alertDialog;
 
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(
-				R.layout.dlgcaptcha, (ViewGroup) findViewById(R.id.dlgcaptcha_layoutroot));
-		
-		//load the image
-		ImageView mImgCaptcha = (ImageView) layout.findViewById(R.id.dlgcaptcha_imgCaptcha);
-		byte[] imageData = (byte[]) res.getResult();
-		mLogFacility.i(LOG_HASH, "Captcha lenght: " + imageData.length);
-		BitmapFactory.Options options = new BitmapFactory.Options();
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(
+                R.layout.dlgcaptcha, (ViewGroup) findViewById(R.id.dlgcaptcha_layoutroot));
+        
+        //load the image
+        ImageView mImgCaptcha = (ImageView) layout.findViewById(R.id.dlgcaptcha_imgCaptcha);
+        byte[] imageData = (byte[]) res.getResult();
+        mLogFacility.i(LOG_HASH, "Captcha lenght: " + imageData.length);
+        BitmapFactory.Options options = new BitmapFactory.Options();
         //options.inSampleSize = 1;
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
-		mImgCaptcha.setImageBitmap(bitmap);
-		
-		//
-		final EditText mTxtCode = (EditText) layout.findViewById(R.id.dlgcaptcha_txtCode);
+        mImgCaptcha.setImageBitmap(bitmap);
+        
+        //
+        final EditText mTxtCode = (EditText) layout.findViewById(R.id.dlgcaptcha_txtCode);
 
         ((Button) layout.findViewById(R.id.dlgcaptcha_btnOk)).setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				removeDialog(DIALOG_CAPTCHA_REQUEST);
-				String code = mTxtCode.getText().toString();
-				sendCaptcha(providerReply, code);
-			}
-		});
+            public void onClick(View v) {
+                removeDialog(DIALOG_CAPTCHA_REQUEST);
+                String code = mTxtCode.getText().toString();
+                sendCaptcha(providerReply, code);
+            }
+        });
         ((Button) layout.findViewById(R.id.dlgcaptcha_btnCancel)).setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				removeDialog(DIALOG_CAPTCHA_REQUEST);
-			}
-		});
+            public void onClick(View v) {
+                removeDialog(DIALOG_CAPTCHA_REQUEST);
+            }
+        });
 
-		builder = new AlertDialog.Builder(this);
-		builder.setView(layout);
-		alertDialog = builder.create();
-		alertDialog.setTitle(R.string.dlgcaptcha_title);
-		return alertDialog;
-	}
-	
+        builder = new AlertDialog.Builder(this);
+        builder.setView(layout);
+        alertDialog = builder.create();
+        alertDialog.setTitle(R.string.dlgcaptcha_title);
+        return alertDialog;
+    }
+    
 
-	/**
-	 * Associates phone type to a label
-	 * 
-	 * @param type
-	 * @return
-	 */
-	private String getTranslationForPhoneType(String type)
-	{
-		if ("1".equals(type))
-			return getString(R.string.actsendsms_phoneType_home);
-		else if ("2".equals(type))
-			return getString(R.string.actsendsms_phoneType_mobile);
-		else if ("3".equals(type))
-			return getString(R.string.actsendsms_phoneType_work);
-		else if ("4".equals(type))
-			return getString(R.string.actsendsms_phoneType_workfax);
-		else if ("5".equals(type))
-			return getString(R.string.actsendsms_phoneType_homefax);
-		else
-			return getString(R.string.actsendsms_phoneType_other);
-	}
-	
-	/**
-	 * Add signature to current message
-	 */
-	private void addSignature() {
-		String signature = mAppPreferencesDao.getSignature();
-		String message = mTxtBody.getText().toString();
+    /**
+     * Associates phone type to a label
+     * 
+     * @param type
+     * @return
+     */
+    private String getTranslationForPhoneType(String type)
+    {
+        if ("1".equals(type))
+            return getString(R.string.actsendsms_phoneType_home);
+        else if ("2".equals(type))
+            return getString(R.string.actsendsms_phoneType_mobile);
+        else if ("3".equals(type))
+            return getString(R.string.actsendsms_phoneType_work);
+        else if ("4".equals(type))
+            return getString(R.string.actsendsms_phoneType_workfax);
+        else if ("5".equals(type))
+            return getString(R.string.actsendsms_phoneType_homefax);
+        else
+            return getString(R.string.actsendsms_phoneType_other);
+    }
+    
+    /**
+     * Add signature to current message
+     */
+    private void addSignature() {
+        String signature = mAppPreferencesDao.getSignature();
+        String message = mTxtBody.getText().toString();
 
-		//check if the signature was already added
-		if (!message.endsWith(signature))
-			mTxtBody.append(signature);
-	}
-	
-	
-	/**
-	 * Called when activity is first loaded, restore
-	 * previous status of input views. Called also when the activity is rotated,
-	 * because not always the text view values are preserver
-	 */
-	private void restoreLastRunViewValues()
-	{
-		//text and message
-		mTxtDestination.setText(mAppPreferencesDao.getLastUsedDestination());
-		mTxtBody.setText(mAppPreferencesDao.getLastUsedMessage());
+        //check if the signature was already added
+        if (!message.endsWith(signature))
+            mTxtBody.append(signature);
+    }
+    
+    
+    /**
+     * Called when activity is first loaded, restore
+     * previous status of input views. Called also when the activity is rotated,
+     * because not always the text view values are preserver
+     */
+    private void restoreLastRunViewValues()
+    {
+        //text and message
+        mTxtDestination.setText(mAppPreferencesDao.getLastUsedDestination());
+        mTxtBody.setText(mAppPreferencesDao.getLastUsedMessage());
 
-		//reassign spinner values and status of class inner fields
-		String providerId = mAppPreferencesDao.getLastUsedProviderId();
-		String subserviceId = mAppPreferencesDao.getLastUsedSubserviceId();
+        //reassign spinner values and status of class inner fields
+        String providerId = mAppPreferencesDao.getLastUsedProviderId();
+        String subserviceId = mAppPreferencesDao.getLastUsedSubserviceId();
 
-		SmsProvider provider = null;
-		if (TextUtils.isEmpty(providerId)) {
-			mLogFacility.v(LOG_HASH, "Must reassign providerId, because it's empty");
-		} else {
-			//find provider provider
-			provider = GlobalHelper.findProviderInList(mAppEnv.getProviderList(), providerId);
-		}
-		
-		//if provider is null, assign first provider as default value
-		if (null == provider) {
-			mLogFacility.v(LOG_HASH, "Cannot find provider for providerId " + providerId);
-			//get first provider of the list as fallback
-			if (!mAppEnv.getProviderList().isEmpty())
-				provider = mAppEnv.getProviderList().get(0);
-		}
-		
-		if (null != provider) {
-			changeProvider(provider, false);
-			//i cannot rely on the call to changeProvider inside the SelectionChangeListener event
-			//in the provider spinner, because is execute at the end of this method, but i need it
-			//before assign subservice
-			int providerPos = GlobalHelper.findProviderPositionInList(mAppEnv.getProviderList(), providerId);
-			if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
-			
-			if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
-				int subservicePos = mSelectedProvider.findSubservicePositionInList(subserviceId);
-				if (subservicePos >= 0) mSpiSubservices.setSelection(subservicePos);
-				//call changeSubservice after this function, but it's ok now
-			}
-		} else {
-			mLogFacility.v(LOG_HASH, "Cannot find a suitable provider for the list");
-		}
-	}
+        SmsProvider provider = null;
+        if (TextUtils.isEmpty(providerId)) {
+            mLogFacility.v(LOG_HASH, "Must reassign providerId, because it's empty");
+        } else {
+            //find provider provider
+            provider = GlobalHelper.findProviderInList(mAppEnv.getProviderList(), providerId);
+        }
+        
+        //if provider is null, assign first provider as default value
+        if (null == provider) {
+            mLogFacility.v(LOG_HASH, "Cannot find provider for providerId " + providerId);
+            //get first provider of the list as fallback
+            if (!mAppEnv.getProviderList().isEmpty())
+                provider = mAppEnv.getProviderList().get(0);
+        }
+        
+        if (null != provider) {
+            changeProvider(provider, false);
+            //i cannot rely on the call to changeProvider inside the SelectionChangeListener event
+            //in the provider spinner, because is execute at the end of this method, but i need it
+            //before assign subservice
+            int providerPos = GlobalHelper.findProviderPositionInList(mAppEnv.getProviderList(), providerId);
+            if (providerPos >= 0) mSpiProviders.setSelection(providerPos);
+            
+            if (null != provider && provider.hasSubServices() && !TextUtils.isEmpty(subserviceId)){
+                int subservicePos = mSelectedProvider.findSubservicePositionInList(subserviceId);
+                if (subservicePos >= 0) mSpiSubservices.setSelection(subservicePos);
+                //call changeSubservice after this function, but it's ok now
+            }
+        } else {
+            mLogFacility.v(LOG_HASH, "Cannot find a suitable provider for the list");
+        }
+    }
 
 
-	/**
-	 * Send message
-	 */
-	private void sendMessage()
-	{
-		//checks if can send another SMS
-		if (!mLogicManager.checkIfCanSendSms(getBaseContext())) {
-		    //TODO transform in informative dialog
-			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
-			return;
-		}
-		
-		String errorMessage;
-		String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim(); 
-		String message = mTxtBody.getText().toString();
+    /**
+     * Send message
+     */
+    private void sendMessage()
+    {
+        //checks if can send another SMS
+        if (!mLogicManager.checkIfCanSendSms(getBaseContext())) {
+            //TODO transform in informative dialog
+            mActivityHelper.showInfo(ActSendSms.this, R.string.common_msg_smsLimitReach, Toast.LENGTH_LONG);
+            return;
+        }
+        
+        String errorMessage;
+        String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim(); 
+        String message = mTxtBody.getText().toString();
 
-		//checks for other errors
-		switch (mLogicManager.checkMessageValidity(mSelectedProvider, mSelectedServiceId, destination, message)) {
+        //checks for other errors
+        switch (mLogicManager.checkMessageValidity(mSelectedProvider, mSelectedServiceId, destination, message)) {
         case CanSend:
             errorMessage = null;
             break;
@@ -950,183 +950,183 @@ public class ActSendSms
             errorMessage = null;
             break;
         }
-		
-		//eventually display a error message and exit
-		if (!TextUtils.isEmpty(errorMessage)) {
-		    mActivityHelper.showInfo(this, errorMessage, Toast.LENGTH_LONG);
-		    return;
-		}
-		
-		//create new progress dialog
-		showDialog(DIALOG_SENDING_MESSAGE);
+        
+        //eventually display a error message and exit
+        if (!TextUtils.isEmpty(errorMessage)) {
+            mActivityHelper.showInfo(this, errorMessage, Toast.LENGTH_LONG);
+            return;
+        }
+        
+        //create new progress dialog
+        showDialog(DIALOG_SENDING_MESSAGE);
 
-		//preparing the background task for sending message
-		mSendMessageThread = new SendMessageThread(
-				this, mActivityHandler,
-				mSelectedProvider, mSelectedServiceId,
-				destination, message);
-		mSendMessageThread.start();
-		//at the end of the execution, the activity handler will be called
-	}
-	
-	
-	/**
-	 * Send the captcha code to the server
-	 * @param providerReply
-	 * @param captchaCode
-	 */
-	private void sendCaptcha(String providerReply, String captchaCode)
-	{
-		mLogFacility.i(LOG_HASH, "Captcha code: " + captchaCode);
-		if (TextUtils.isEmpty(captchaCode)) {
-			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
-			return;
-		}
+        //preparing the background task for sending message
+        mSendMessageThread = new SendMessageThread(
+                this, mActivityHandler,
+                mSelectedProvider, mSelectedServiceId,
+                destination, message);
+        mSendMessageThread.start();
+        //at the end of the execution, the activity handler will be called
+    }
+    
+    
+    /**
+     * Send the captcha code to the server
+     * @param providerReply
+     * @param captchaCode
+     */
+    private void sendCaptcha(String providerReply, String captchaCode)
+    {
+        mLogFacility.i(LOG_HASH, "Captcha code: " + captchaCode);
+        if (TextUtils.isEmpty(captchaCode)) {
+            mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_emptyCaptchaCode);
+            return;
+        }
 
-		//create new progress dialog
-		showDialog(DIALOG_SENDING_CAPTCHA);
-		
-		//preparing the background task for sending captcha code
-		mSendCaptchaThread = new SendCaptchaThread(
-				this, mActivityHandler,
-				mSelectedProvider,
-				providerReply,
-				captchaCode);
-		//and execute the command
-		mSendCaptchaThread.start();
-		//at the end of the execution, a caller to handler will be make
-	}
-	
-	
-	/**
-	 * Reset destination and message body
-	 */
-	private void cleanDataFields(boolean force) {
-		if (force || mAppPreferencesDao.getAutoClearMessage()) {
-			mTxtDestination.setText("");
-			mTxtBody.setText("");
-		}
-	}
-	
-	
-	/**
-	 * Called when the background activity has sent the message
-	 * @param result result of sending message
-	 */
-	private void sendMessageComplete(RainbowResultOperation<String> result)
-	{
-		//captcha required
-		if (ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST == result.getReturnCode()) {
-			//save captcha data
-			mCaptchaStorage = result.getResult();
-			mLogFacility.i(LOG_HASH, "Captcha request from provider: " + mCaptchaStorage);
-			//launch captcha request
-			showDialog(DIALOG_CAPTCHA_REQUEST);
-		
-		//return with errors or message sent
-		} else  {
-			displayMessageSendResult(result);
-		}
-	}
+        //create new progress dialog
+        showDialog(DIALOG_SENDING_CAPTCHA);
+        
+        //preparing the background task for sending captcha code
+        mSendCaptchaThread = new SendCaptchaThread(
+                this, mActivityHandler,
+                mSelectedProvider,
+                providerReply,
+                captchaCode);
+        //and execute the command
+        mSendCaptchaThread.start();
+        //at the end of the execution, a caller to handler will be make
+    }
+    
+    
+    /**
+     * Reset destination and message body
+     */
+    private void cleanDataFields(boolean force) {
+        if (force || mAppPreferencesDao.getAutoClearMessage()) {
+            mTxtDestination.setText("");
+            mTxtBody.setText("");
+        }
+    }
+    
+    
+    /**
+     * Called when the background activity has sent the message
+     * @param result result of sending message
+     */
+    private void sendMessageComplete(RainbowResultOperation<String> result)
+    {
+        //captcha required
+        if (ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST == result.getReturnCode()) {
+            //save captcha data
+            mCaptchaStorage = result.getResult();
+            mLogFacility.i(LOG_HASH, "Captcha request from provider: " + mCaptchaStorage);
+            //launch captcha request
+            showDialog(DIALOG_CAPTCHA_REQUEST);
+        
+        //return with errors or message sent
+        } else  {
+            displayMessageSendResult(result);
+        }
+    }
 
-	
-	/**
-	 * Display result of the send message action, eventually processing low level errors
-	 * 
-	 * @param result
-	 */
-	private void displayMessageSendResult(RainbowResultOperation<String> result)
-	{
-	    //return with errors
-		if (result.hasErrors()) {
-		    mErrorSendingMessage = mActivityHelper.getErrorMessage(result.getReturnCode(), result.getException());
-		    mLogFacility.e(LOG_HASH, "Error sending message: " + mErrorSendingMessage);
-		    showDialog(DIALOG_SENDING_MESSAGE_ERROR);
-		    return;
+    
+    /**
+     * Display result of the send message action, eventually processing low level errors
+     * 
+     * @param result
+     */
+    private void displayMessageSendResult(RainbowResultOperation<String> result)
+    {
+        //return with errors
+        if (result.hasErrors()) {
+            mErrorSendingMessage = mActivityHelper.getErrorMessage(result.getReturnCode(), result.getException());
+            mLogFacility.e(LOG_HASH, "Error sending message: " + mErrorSendingMessage);
+            showDialog(DIALOG_SENDING_MESSAGE_ERROR);
+            return;
 
-		} else {
-			mLogFacility.i(LOG_HASH, "Send message result: " + result.getResult());
-			//display returning message of the provider
-			mActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
+        } else {
+            mLogFacility.i(LOG_HASH, "Send message result: " + result.getResult());
+            //display returning message of the provider
+            mActivityHelper.showInfo(ActSendSms.this, result.getResult(), Toast.LENGTH_LONG);
 
-			//update number of messages sent in the day
-			mLogicManager.updateSmsCounter(1);
-			//insert sms into pim, if required
-			insertSmsIntoPim();
-			//check if the text should be deleted
-			cleanDataFields(false);
-		}
-	}
+            //update number of messages sent in the day
+            mLogicManager.updateSmsCounter(1);
+            //insert sms into pim, if required
+            insertSmsIntoPim();
+            //check if the text should be deleted
+            cleanDataFields(false);
+        }
+    }
 
-	/**
-	 * Insert sent SMS into PIM of the device
-	 */
-	private void insertSmsIntoPim() {
-		//insert SMS into PIM
-		if (mAppPreferencesDao.getInsertMessageIntoPim()) {
+    /**
+     * Insert sent SMS into PIM of the device
+     */
+    private void insertSmsIntoPim() {
+        //insert SMS into PIM
+        if (mAppPreferencesDao.getInsertMessageIntoPim()) {
             String destination = RainbowStringHelper.cleanPhoneNumber(mTxtDestination.getText().toString()).trim();
-			ResultOperation<Void> res = mSmsDao.saveSmsInSentFolder(
-					getApplicationContext(),
-					destination,
-					mTxtBody.getText().toString());
+            ResultOperation<Void> res = mSmsDao.saveSmsInSentFolder(
+                    getApplicationContext(),
+                    destination,
+                    mTxtBody.getText().toString());
 
-			if (res.hasErrors()) {
-				mActivityHelper.reportError(getApplicationContext(), R.string.actsendsms_msg_error_saving_sent_sms);
-			}
-		}
-	}
-	
-	/**
-	 * Called when the activity first start, process data passed via intent in reply to
-	 * intent-filter android.intent.action.SENDTO or android.intent.action.SEND 
-	 * 
-	 * @param intent 
-	 * 
-	 */
-	private void processIntentData(Intent intent)
-	{
-		if (null == intent || null == intent.getExtras()) return;
-	
-		String destination = intent.getExtras().getString(ActivityHelper.INTENTKEY_MESSAGE_DESTIONATION);
+            if (res.hasErrors()) {
+                mActivityHelper.reportError(getApplicationContext(), R.string.actsendsms_msg_error_saving_sent_sms);
+            }
+        }
+    }
+    
+    /**
+     * Called when the activity first start, process data passed via intent in reply to
+     * intent-filter android.intent.action.SENDTO or android.intent.action.SEND 
+     * 
+     * @param intent 
+     * 
+     */
+    private void processIntentData(Intent intent)
+    {
+        if (null == intent || null == intent.getExtras()) return;
+    
+        String destination = intent.getExtras().getString(ActivityHelper.INTENTKEY_MESSAGE_DESTIONATION);
         String text = intent.getExtras().getString(ActivityHelper.INTENTKEY_MESSAGE_TEXT);
         
         if (!TextUtils.isEmpty(destination))
             mTxtDestination.setText(destination);
         if (!TextUtils.isEmpty(text))
             mTxtBody.setText(text);
-	}
+    }
 
-	
-	/**
-	 * Create a list dialog box that shows all the templates available
-	 * @return
-	 */
-	private Dialog createTemplatesDialog()
-	{
-		String[] templates = mAppPreferencesDao.getMessageTemplates();
-		CharSequence[] items = new CharSequence[templates.length];
-		
-		int i=0;
-		for (String template : templates) {
-			items[i++] = template;
-		}
+    
+    /**
+     * Create a list dialog box that shows all the templates available
+     * @return
+     */
+    private Dialog createTemplatesDialog()
+    {
+        String[] templates = mAppPreferencesDao.getMessageTemplates();
+        CharSequence[] items = new CharSequence[templates.length];
+        
+        int i=0;
+        for (String template : templates) {
+            items[i++] = template;
+        }
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getText(R.string.actsendsms_dlgPickTemplate));
-		builder.setItems(items, new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int item) {
-		        String template = (String) ((AlertDialog) dialog).getListView().getItemAtPosition(item);
-				mTxtBody.append(template);
-		        removeDialog(DIALOG_TEMPLATES);
-		    }
-		});
-		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			public void onCancel(DialogInterface dialog) {
-		        removeDialog(DIALOG_TEMPLATES);
-			}
-		});
-		AlertDialog alert = builder.create();
-		
-		return alert;
-	}
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getText(R.string.actsendsms_dlgPickTemplate));
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                String template = (String) ((AlertDialog) dialog).getListView().getItemAtPosition(item);
+                mTxtBody.append(template);
+                removeDialog(DIALOG_TEMPLATES);
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                removeDialog(DIALOG_TEMPLATES);
+            }
+        });
+        AlertDialog alert = builder.create();
+        
+        return alert;
+    }
 }

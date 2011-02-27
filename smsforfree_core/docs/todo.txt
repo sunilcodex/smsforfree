@@ -1,4 +1,7 @@
 TODOLIST
+-controllare che tutti i provider controllino i dati necessari per l'invio del messaggio
+-cambiare in notifica schedulata con classe che mostra la lista dei messaggi spediti
+-dal numero del destinatario becca il nome dalla rubrica
 -icone mancanti credits aimon
 -mettere bottone che ripresenta ultimo messaggio di invio sms
 -sostituire caratteri illegali su corpo messaggio aimon

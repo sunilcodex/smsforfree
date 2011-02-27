@@ -106,7 +106,10 @@ public class AppEnv
 	public final static String LITE_DESCRIPTION = "Lite";
 
 	/** platform - dependent newline char */
-	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
+	public final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	
+	/** Used for intent data values */
+    public static final String INTENTKEY_MESSAGEID = "TextMessageId";	
 	
 	
 	/** List of providers */
