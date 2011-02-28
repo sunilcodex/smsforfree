@@ -19,22 +19,23 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
+import it.rainbowbreeze.libs.logic.WakefulIntentService;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
-import it.rainbowbreeze.smsforfree.data.MessageQueueDao;
+import it.rainbowbreeze.smsforfree.data.IMessageQueueDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.ui.ActSendSms;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -45,12 +46,23 @@ import android.text.TextUtils;
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class SendMessageReceiver extends BroadcastReceiver {
+//public class SendMessageService extends WakefulIntentService {
+public class SendMessageService extends IntentService {
     //---------- Private fields
-    private static final String LOG_HASH = "SendMessageReceiver";
+    private static final String LOG_HASH = "SendMessageService";
     private LogFacility mLogFacility;
 
+    
+    
+
     //---------- Public properties
+    
+    
+    
+    //---------- Constructors
+    public SendMessageService() {
+        super("SendMessageService");
+    }
 
     
     
@@ -59,7 +71,9 @@ public class SendMessageReceiver extends BroadcastReceiver {
      * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
      */
     @Override
-    public void onReceive(Context context, Intent intent) {
+//    protected void doWakefulWork(Intent intent) {
+    protected void onHandleIntent(Intent intent) {
+        Context context = getApplicationContext();
         mLogFacility = AppEnv.i(context).getLogFacility();
         mLogFacility.v(LOG_HASH, "onReceive started");
 
@@ -70,7 +84,7 @@ public class SendMessageReceiver extends BroadcastReceiver {
         }
         
         //get the text message from the queue
-        MessageQueueDao dao = AppEnv.i(context).getMessageQueueDao();
+        IMessageQueueDao dao = AppEnv.i(context).getMessageQueueDao();
         final TextMessage textMessage = dao.getById(textMessageId);
         if (null == textMessage) {
             mLogFacility.i(LOG_HASH, "Unable to retrieve message with id " + textMessageId + " from queue");

@@ -55,7 +55,7 @@ public abstract class SmsProvider
 	extends SmsService
 {
 	//---------- Private fields
-    protected final static String LOG_HASH = "SmsProvider";
+    private final static String LOG_HASH = "SmsProvider";
     
 	protected final AppPreferencesDao mAppPreferencesDao;
 	protected final ProviderDao mProviderDao;

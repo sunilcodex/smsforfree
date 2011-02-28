@@ -35,6 +35,8 @@ public class ClickatellProvider
 	extends SmsSingleProvider
 {
 	//---------- Private fields
+	private final static String LOG_HASH = "ClickatellProvider";
+	
 	private final static int PARAM_NUMBER = 3;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;

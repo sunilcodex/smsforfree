@@ -26,6 +26,7 @@ import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.logic.RainbowCrashReporter;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
+import it.rainbowbreeze.smsforfree.data.IMessageQueueDao;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
 import it.rainbowbreeze.smsforfree.data.MessageQueueDao;
@@ -42,13 +43,21 @@ public class AppEnv
     private static final String LOG_HASH = "AppEnv";
     private static final Object mSyncObject = new Object();
     
+
     
-    
+        
 	//---------- Constructor
     private AppEnv(Context context) {
-        setupVolatileData(context);
+        //use default objects factory
+        this(context, getDefaultObjectsFactory());
     }
 	
+    private AppEnv(Context context, ObjectsFactory objectsFactory) {
+        //use a custom object factory
+        checkNotNull(objectsFactory, "ObjectsFactory");
+        setupVolatileData(context, objectsFactory);
+    }
+    
 	
 	
 	//---------- Public properties
@@ -57,6 +66,18 @@ public class AppEnv
         synchronized (mSyncObject) {
             if (null == mInstance)
                 mInstance = new AppEnv(context);
+        }
+        return mInstance;
+    }
+    /** lazy loading singleton, reload the environment each time (for testing purposes) */
+    public static AppEnv i(Context context, ObjectsFactory objectsFactory) {
+        synchronized (mSyncObject) {
+            if (null == mInstance) {
+                mInstance = new AppEnv(context, objectsFactory);
+            } else {
+                //force the rebuild of all the environment
+                mInstance.setupVolatileData(context, objectsFactory);
+            }
         }
         return mInstance;
     }
@@ -144,10 +165,14 @@ public class AppEnv
 	public boolean isAdEnables()
 	{ return mAdEnables; }
 
-	
-	
+    /** Default objects factory, testing purposes */
+    protected static final ObjectsFactory defaultObjectsFactory = new ObjectsFactory();
+    public static final ObjectsFactory getDefaultObjectsFactory()
+    { return defaultObjectsFactory; }
 
-	
+
+
+
 	//---------- Public methods
 
     public LogFacility getLogFacility()
@@ -165,20 +190,28 @@ public class AppEnv
     public SmsDao getSmsDao()
     { return checkNotNull(RainbowServiceLocator.get(SmsDao.class), "SmsDao"); }
 
-    public MessageQueueDao getMessageQueueDao()
-    { return checkNotNull(RainbowServiceLocator.get(MessageQueueDao.class), "TextMessageQueue"); }
+    public IMessageQueueDao getMessageQueueDao()
+    { return checkNotNull(RainbowServiceLocator.get(IMessageQueueDao.class), "TextMessageQueue"); }
 
+    public ProviderDao getProviderDao()
+    { return checkNotNull(RainbowServiceLocator.get(ProviderDao.class), "ProviderDao"); }
+    
+ 
+    
+    
+    //---------- Private methods
     /**
 	 * Setup the volatile data of application.
 	 * This is needed because sometime the system release memory
 	 * without completely close the application, so all static fields
 	 * will become null :(
 	 * 
-	 * Public only for test purpose
 	 */
-	public void setupVolatileData(Context context) {
+	private void setupVolatileData(Context context, ObjectsFactory mObjectsFactory) {
+	    ;
+	    
 		//set the log tag
-		LogFacility logFacility = new LogFacility(LOG_TAG);
+		LogFacility logFacility = mObjectsFactory.createLogFacility(LOG_TAG);
 	    logFacility.i(LOG_HASH, "Initializing environment");
 
         //empty service locator
@@ -187,20 +220,20 @@ public class AppEnv
         RainbowServiceLocator.put(logFacility);
 
         //initialize (and automatically register) crash reporter
-		RainbowCrashReporter crashReport = new RainbowCrashReporter(context);
+		RainbowCrashReporter crashReport = mObjectsFactory.createCrashReporter(context);
 		RainbowServiceLocator.put(crashReport);
 		//create services and helper respecting IoC dependencies
-		ActivityHelper activityHelper = new ActivityHelper(logFacility, context);
+		ActivityHelper activityHelper = mObjectsFactory.createActivityHelper(context, logFacility);
 		RainbowServiceLocator.put(activityHelper);
-		AppPreferencesDao appPreferencesDao = new AppPreferencesDao(context, APP_PREFERENCES_KEY);
+		AppPreferencesDao appPreferencesDao = mObjectsFactory.createAppPreferencesDao(context, APP_PREFERENCES_KEY);
 		RainbowServiceLocator.put(appPreferencesDao);
-		ProviderDao providerDao = new ProviderDao();
+		ProviderDao providerDao = mObjectsFactory.createProviderDao();
 		RainbowServiceLocator.put(providerDao);
-		LogicManager logicManager = new LogicManager(logFacility, appPreferencesDao, APP_INTERNAL_VERSION, providerDao, activityHelper);
+		LogicManager logicManager = mObjectsFactory.createLogicManager(logFacility, appPreferencesDao, APP_INTERNAL_VERSION, providerDao, activityHelper);
 		RainbowServiceLocator.put(logicManager);
-		SmsDao smsDao = new SmsDao(logFacility);
+		SmsDao smsDao = mObjectsFactory.createSmsDao(logFacility);
         RainbowServiceLocator.put(smsDao);
-        MessageQueueDao messageQueueDao = new MessageQueueDao(context, logFacility);
+        IMessageQueueDao messageQueueDao = mObjectsFactory.createMessageQueueDao(context, logFacility);
         RainbowServiceLocator.put(messageQueueDao);
         
         //set application name
@@ -232,5 +265,30 @@ public class AppEnv
     
     
     
-    //---------- Private methods
+    //---------- Private classes
+	public static class ObjectsFactory {
+	    public LogFacility createLogFacility(String logTag)
+	    { return new LogFacility(logTag); }
+	    
+        public RainbowCrashReporter createCrashReporter(Context context)
+        { return new RainbowCrashReporter(context); }
+        
+        public ActivityHelper createActivityHelper(Context context, LogFacility logFacility)
+        { return new ActivityHelper(logFacility, context); }
+        
+        public AppPreferencesDao createAppPreferencesDao(Context context, String appPreferencesKey)
+        { return new AppPreferencesDao(context, appPreferencesKey); }
+        
+	    public SmsDao createSmsDao(LogFacility logFacility)
+	    { return new SmsDao(logFacility); }
+        
+        public ProviderDao createProviderDao()
+        { return new ProviderDao(); }
+        
+        public LogicManager createLogicManager(LogFacility logFacility, AppPreferencesDao appPreferencesDao, String appInternalVersion, ProviderDao providerDao, ActivityHelper activityHelper)
+        { return new LogicManager(logFacility, appPreferencesDao, appInternalVersion, providerDao, activityHelper); }
+        
+        public IMessageQueueDao createMessageQueueDao(Context context, LogFacility logFacility)
+        { return new MessageQueueDao(context, logFacility); }
+	}
 }

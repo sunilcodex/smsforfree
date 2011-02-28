@@ -23,7 +23,7 @@ import java.util.List;
 
 import android.test.AndroidTestCase;
 
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -39,7 +39,7 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 	//---------- Private fields
 	private JacksmsDictionary mDictionary;
 	private LogFacility mLogFacility;
-
+	private boolean mForceReload = false;
 
 
 
@@ -52,9 +52,10 @@ public class JacksmsDictionaryTest extends AndroidTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		TestHelper.init(getContext(), mForceReload);
+		mForceReload = false;
 		
-		TestHelper.init(getContext());
-        mLogFacility = RainbowServiceLocator.get(LogFacility.class);
+        mLogFacility = AppEnv.i(getContext()).getLogFacility();
 		mDictionary = new JacksmsDictionary(mLogFacility);
 	}
 

@@ -18,6 +18,7 @@
 
 package it.rainbowbreeze.smsforfree.util;
 
+import junit.framework.TestCase;
 import android.content.Context;
 import android.util.Log;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
@@ -25,7 +26,9 @@ import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
+import it.rainbowbreeze.smsforfree.providers.MockSingleServiceProvider;
 
 /**
  * General helper for tests
@@ -48,16 +51,33 @@ public class TestHelper
     //---------- Public methods
     
     /**
-     * Initialize objects and put them inside
-     * {@link RainbowServiceLocator}
+     * Initialize objects and put them inside {@link RainbowServiceLocator}
+     * 
+     * @return true if initialization was done, otherwise false (data already initialized)
      */
-    public static void init(Context context) {
+    public static boolean init(Context context, boolean forceReload) {
+        return init(context, AppEnv.getDefaultObjectsFactory(), forceReload);
+    }
+    
+    public static boolean init(
+            Context context,
+            AppEnv.ObjectsFactory overriddingObjectsFactory,
+            boolean forceReload) {
         //execute the following operation only one time
-        if (mInitialized) return;
+        if (mInitialized && !forceReload) return false;
         
         //initialize the environment
-        AppEnv.i(context);
+        AppEnv.i(context, overriddingObjectsFactory);
         mInitialized = true;
+        
+        //add mock providers
+        MockSingleServiceProvider mockSingleServiceProvider = new MockSingleServiceProvider(
+                AppEnv.i(context).getLogFacility(),
+                AppEnv.i(context).getAppPreferencesDao(),
+                AppEnv.i(context).getProviderDao(),
+                AppEnv.i(context).getActivityHelper());
+        AppEnv.i(context).getProviderList().add(mockSingleServiceProvider);
+        return true;
     }
 
     
@@ -131,6 +151,74 @@ public class TestHelper
         
         return result;
     }
+    
+    /**
+     * Create an example text message
+     * @return
+     */
+	public static TextMessage createTextMessage1() {
+		return TextMessage.Factory.create(
+				123,
+				"+393331234567",
+				"Test message from Alfredo's phone! It's all ok?", 
+				"JACKSMS",
+				"Vodafone",
+				TextMessage.PROCESSING_NONE);
+	}
+
+    /**
+     * Compare a {@link TextMessage} with example text message 1
+     * @param textMessageToCompare
+     */
+    public static void compareWithTextMessage1(TextMessage textMessageToCompare) {
+    	compareWithTextMessage1(textMessageToCompare, 123);
+    }
+    
+    /**
+     * Compare a {@link TextMessage} with example text message 1
+     * @param textMessageToCompare
+     * @param newId new id to compare, not the original in example test message 1
+     */
+    public static void compareWithTextMessage1(TextMessage textMessageToCompare, long newId) {
+        TestCase.assertEquals("Wrong id", newId, textMessageToCompare.getId());
+        TestCase.assertEquals("Wrong destination", "+393331234567", textMessageToCompare.getDestination());
+        TestCase.assertEquals("Wrong message", "Test message from Alfredo's phone! It's all ok?", textMessageToCompare.getMessage());
+        TestCase.assertEquals("Wrong providerId", "JACKSMS", textMessageToCompare.getProviderId());
+        TestCase.assertEquals("Wrong serviceId", "Vodafone", textMessageToCompare.getServiceId());
+        TestCase.assertEquals("Wrong processingStatus", TextMessage.PROCESSING_NONE, textMessageToCompare.getProcessingStatus());
+    }
+    
+
+
+    /**
+     * Create an example text message
+     * @return
+     */
+    public static TextMessage createTextMessage2() {
+		return TextMessage.Factory.create(
+				76,
+				"+399877654321",
+				"Another message to test, this time!!!%%$$", 
+				"INTERNAL",
+				null,
+				TextMessage.PROCESSING_QUEUED);
+	}
+
+    /**
+     * Create an example text message
+     * @return
+     */
+    public static TextMessage createTextMessage3() {
+		return TextMessage.Factory.create(
+				99,
+				"+002-(635)21-34235",
+				"Loooong message to my american friends. how do you do? I hope well for you, it' all ok? let me know when next visit will happens. Cheers", 
+				"VOIPSTUNT",
+				null,
+				TextMessage.PROCESSING_ERROR_SENDING);
+	}
+
+    
 
     //---------- Private methods
 }

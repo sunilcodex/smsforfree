@@ -36,7 +36,8 @@ public class MessageQueueDaoTest extends AndroidTestCase {
 	
 	
 	//---------- Private fields
-    private MessageQueueDao mDao;
+    private IMessageQueueDao mDao;
+    private boolean mForceReload = false;
 
 	
 	
@@ -45,7 +46,8 @@ public class MessageQueueDaoTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        TestHelper.init(getContext());
+        TestHelper.init(getContext(), mForceReload);
+        mForceReload = false;
         
         mDao = AppEnv.i(getContext()).getMessageQueueDao();
         mDao.clearDatabaseComplete();
@@ -59,12 +61,12 @@ public class MessageQueueDaoTest extends AndroidTestCase {
         TextMessage textMessage;
 
         //insert first message
-        textMessage = createTextMessage1();
+        textMessage = TestHelper.createTextMessage1();
         long textMessageId1 = mDao.insert(textMessage);
         compareWithTextMessage1(textMessageId1);
         
         //insert second text message
-        textMessage = createTextMessage2();
+        textMessage = TestHelper.createTextMessage2();
         long textMessageId2 = mDao.insert(textMessage);
         compareWithTextMessage2(textMessageId2);
     }
@@ -75,9 +77,9 @@ public class MessageQueueDaoTest extends AndroidTestCase {
         TextMessage loadedTextMessage2;
     	
         //insert text messages
-        textMessage = createTextMessage1();
+        textMessage = TestHelper.createTextMessage1();
         long TextMessageId1 = mDao.insert(textMessage);
-        textMessage = createTextMessage2();
+        textMessage = TestHelper.createTextMessage2();
         long TextMessageId2 = mDao.insert(textMessage);
         
         //check if TextMessages could be retrieved
@@ -111,7 +113,7 @@ public class MessageQueueDaoTest extends AndroidTestCase {
     	count = mDao.setProcessingStatus(11231, 4);
     	assertEquals("Wrong count operation", 0, count);
     	
-        textMessage = createTextMessage1();
+        textMessage = TestHelper.createTextMessage1();
         long textMessageId = mDao.insert(textMessage);
     	compareWithTextMessage1(textMessageId);
 
@@ -130,7 +132,7 @@ public class MessageQueueDaoTest extends AndroidTestCase {
     	assertTrue("Database not empty", mDao.isDatabaseEmpty());
     	
     	//insert a TextMessage
-        TextMessage textMessage = createTextMessage1();
+        TextMessage textMessage = TestHelper.createTextMessage1();
         mDao.insert(textMessage);
     	assertFalse("Database is empty", mDao.isDatabaseEmpty());
     	
@@ -140,11 +142,11 @@ public class MessageQueueDaoTest extends AndroidTestCase {
     
     
     public void testClearDatabaseComplete() {
-		long textMessageId1 = mDao.insert(createTextMessage1());
+		long textMessageId1 = mDao.insert(TestHelper.createTextMessage1());
 		assertNotSame("Cannot create text message", 0, textMessageId1);
-		long textMessageId2 = mDao.insert(createTextMessage2());
+		long textMessageId2 = mDao.insert(TestHelper.createTextMessage2());
 		assertNotSame("Cannot create text message", 0, textMessageId2);
-		long textMessageId3 = mDao.insert(createTextMessage3());
+		long textMessageId3 = mDao.insert(TestHelper.createTextMessage3());
 		assertNotSame("Cannot create TextMessage", 0, textMessageId3);
 		
 		mDao.clearDatabaseComplete();
@@ -157,16 +159,6 @@ public class MessageQueueDaoTest extends AndroidTestCase {
 
     
 	//---------- Private methods
-	private TextMessage createTextMessage1() {
-		return TextMessage.Factory.create(
-				123,
-				"+393331234567",
-				"Test message from Alfredo's phone! It's all ok?", 
-				"JACKSMS",
-				"Vodafone",
-				TextMessage.PROCESSING_NONE);
-	}
-
 	/**
 	 * @param textMessageId
 	 */
@@ -181,16 +173,6 @@ public class MessageQueueDaoTest extends AndroidTestCase {
         assertEquals("Wrong processingStatus", TextMessage.PROCESSING_NONE, textMessage.getProcessingStatus());
 	}
     
-    private TextMessage createTextMessage2() {
-		return TextMessage.Factory.create(
-				76,
-				"+399877654321",
-				"Another message to test, this time!!!%%$$", 
-				"INTERNAL",
-				null,
-				TextMessage.PROCESSING_QUEUED);
-	}
-
     private void compareWithTextMessage2(long textMessageId) {
 		TextMessage textMessage;
 		textMessage = mDao.getById(textMessageId);
@@ -201,15 +183,4 @@ public class MessageQueueDaoTest extends AndroidTestCase {
         assertNull("Wrong serviceId", textMessage.getServiceId());
         assertEquals("Wrong processingStatus", TextMessage.PROCESSING_QUEUED, textMessage.getProcessingStatus());
 	}
-
-    private TextMessage createTextMessage3() {
-		return TextMessage.Factory.create(
-				99,
-				"+002-(635)21-34235",
-				"Loooong message to my american friends. how do you do? I hope well for you, it' all ok? let me know when next visit will happens. Cheers", 
-				"VOIPSTUNT",
-				null,
-				TextMessage.PROCESSING_ERROR_SENDING);
-	}
-
 }

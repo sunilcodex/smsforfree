@@ -11,16 +11,21 @@ import android.test.AndroidTestCase;
 
 public class LogicManagerTest extends AndroidTestCase {
 	//---------- Private fields
+    private boolean mForceReload = false;
 
-	//---------- Constructor
-
-	//---------- SetUp and TearDown
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		TestHelper.init(getContext());
+    
+    
+    
+    //---------- Test initialization
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        TestHelper.init(getContext(), mForceReload);
+        mForceReload = false;
 	}
+    
+    
+    
 
 	//---------- Tests methods
 	
