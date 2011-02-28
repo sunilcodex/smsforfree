@@ -37,23 +37,35 @@ import android.test.AndroidTestCase;
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public class WebserviceClientTest
-	extends AndroidTestCase
-{
-	//client used for http requests
-	private WebserviceClient mClient;
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+public class WebserviceClientTest extends AndroidTestCase {
+    //---------- Constructor
+
+    
+    
+    
+    //---------- Private fields
+    //client used for http requests
+    private WebserviceClient mClient;
+    private boolean mForceReload = false;
+
+    
+    
+    
+    //---------- Test initialization
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        TestHelper.init(getContext(), mForceReload);
+        mForceReload = false;
 		
-		TestHelper.init(getContext());
 		LogFacility logFacility = RainbowServiceLocator.get(LogFacility.class);
-		
 		mClient = new WebserviceClient(logFacility);		
 	}
 
-	
+    
+    
+    
+    //---------- Test cases 
 	/**
 	 * Test a conversation using aimon api
 	 * @throws IOException 

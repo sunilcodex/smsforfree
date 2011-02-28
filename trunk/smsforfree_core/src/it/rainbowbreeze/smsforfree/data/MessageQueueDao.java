@@ -33,11 +33,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
- * Provider for categories and webcams
+ * Provider for text messages
  * 
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public class MessageQueueDao
+public class MessageQueueDao implements IMessageQueueDao
 {
     //---------- Private fields
     private static final String DATABASE_NAME = "smsforfree.db";
@@ -112,11 +112,9 @@ public class MessageQueueDao
 
     
     //---------- Public methods
-    /**
-     * Retrieves a textMessage by its id
-     * @param webcamId
-     * @return webcam object or null
-     */
+    /* (non-Javadoc)
+	 * @see it.rainbowbreeze.smsforfree.data.IMessageQueueDao#getById(long)
+	 */
     public TextMessage getById(long messageId) {
         List<TextMessage> messages = getTextMessageFromDatabase(TextMessage.FIELD_ID + "=" + messageId);
 
@@ -124,11 +122,9 @@ public class MessageQueueDao
         return messages.size() > 0 ? messages.get(0) : null;
     }
 
-    /**
-     * Add a new text message to the queue
-     * @param message
-     * @return the id of the new webcam
-     */
+    /* (non-Javadoc)
+	 * @see it.rainbowbreeze.smsforfree.data.IMessageQueueDao#insert(it.rainbowbreeze.smsforfree.domain.TextMessage)
+	 */
     public long insert(TextMessage message) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
@@ -139,17 +135,15 @@ public class MessageQueueDao
         values.put(TextMessage.FIELD_SERVICEID, message.getServiceId());
         values.put(TextMessage.FIELD_PROCESSING_STATUS, message.getProcessingStatus());
 
-        long webcamId = db.insert(TextMessage.TABLE_NAME, null, values);
-        message.setId(webcamId);
+        long textMessageId = db.insert(TextMessage.TABLE_NAME, null, values);
+        message.setId(textMessageId);
 
-        return webcamId;
+        return textMessageId;
     }
 
-    /**
-     * Remove a text message from the queue
-     * @param textMessageId the id of the webcam to delete
-     * @return the deleted text message (1 if success, 0 if no webcams were found)
-     */
+    /* (non-Javadoc)
+	 * @see it.rainbowbreeze.smsforfree.data.IMessageQueueDao#delete(long)
+	 */
     public int delete(long textMessageId) {
         int count;
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -161,20 +155,18 @@ public class MessageQueueDao
         return count;
     }
 
-    /**
-     * Set the processing status of a text message
-     * @param textMessageId
-     * @param processingStatus
-     */
+    /* (non-Javadoc)
+	 * @see it.rainbowbreeze.smsforfree.data.IMessageQueueDao#setProcessingStatus(long, int)
+	 */
     public int setProcessingStatus(long textMessageId, int processingStatus) {
         ContentValues values = new ContentValues();
         values.put(TextMessage.FIELD_PROCESSING_STATUS, processingStatus);
         return updateTextMessageFields(textMessageId, values);
     }
 
-    /**
-     * Completely clean the database (used in tests)
-     */
+    /* (non-Javadoc)
+	 * @see it.rainbowbreeze.smsforfree.data.IMessageQueueDao#clearDatabaseComplete()
+	 */
     public int clearDatabaseComplete() {
         int count;
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -188,9 +180,9 @@ public class MessageQueueDao
     }
     
     
-    /**
-     * Return true if database is empty and initialization is needed
-     */
+    /* (non-Javadoc)
+	 * @see it.rainbowbreeze.smsforfree.data.IMessageQueueDao#isDatabaseEmpty()
+	 */
     public boolean isDatabaseEmpty() {
         boolean messagesExist;
         Cursor cur;
@@ -213,7 +205,7 @@ public class MessageQueueDao
     
     //---------- Private methods
     /**
-     * Read the requested webcams from the database
+     * Read the requested text message from the database
      * 
      * @param where
      */
@@ -256,7 +248,7 @@ public class MessageQueueDao
     }
     
     /**
-     * Changes values in a webcam item
+     * Changes values in a text message item
      * @param textMessageId id of the category
      * @param valuesToUpdate values to change
      * @return number of items updated (generally 1)

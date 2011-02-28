@@ -36,15 +36,17 @@ public class TextMessageTest extends AndroidTestCase {
     
     
     //---------- Private fields
-    
-    
+    private boolean mForceReload = false;
 
+    
+    
     
     //---------- Test initialization
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        TestHelper.init(getContext());
+        TestHelper.init(getContext(), mForceReload);
+        mForceReload = false;
     }
 
     
@@ -53,38 +55,17 @@ public class TextMessageTest extends AndroidTestCase {
     //---------- Test cases    
     public void testSerializeAndDeserializeToIntent() {
         //create first message and serialize it
-        Intent intent = createTextMessage1().serializeToIntent(null);
+        Intent intent = TestHelper.createTextMessage1().serializeToIntent(null);
         
         //now extract message from intent
         TextMessage textMessageDest = TextMessage.Factory.create(intent);
         
-        compareWithTextMessage1(textMessageDest);
+        TestHelper.compareWithTextMessage1(textMessageDest);
     }
     
     
     
 
     //---------- Private methods
-    private TextMessage createTextMessage1() {
-        return TextMessage.Factory.create(
-                123,
-                "+393331234567",
-                "Test message from Alfredo's phone! It's all ok?", 
-                "JACKSMS",
-                "Vodafone",
-                TextMessage.PROCESSING_NONE);
-    }
 
-    /**
-     * @param textMessageToCompare
-     */
-    private void compareWithTextMessage1(TextMessage textMessageToCompare) {
-        assertEquals("Wrong id", 123, textMessageToCompare.getId());
-        assertEquals("Wrong destination", "+393331234567", textMessageToCompare.getDestination());
-        assertEquals("Wrong message", "Test message from Alfredo's phone! It's all ok?", textMessageToCompare.getMessage());
-        assertEquals("Wrong providerId", "JACKSMS", textMessageToCompare.getProviderId());
-        assertEquals("Wrong serviceId", "Vodafone", textMessageToCompare.getServiceId());
-        assertEquals("Wrong processingStatus", TextMessage.PROCESSING_NONE, textMessageToCompare.getProcessingStatus());
-    }
-    
 }

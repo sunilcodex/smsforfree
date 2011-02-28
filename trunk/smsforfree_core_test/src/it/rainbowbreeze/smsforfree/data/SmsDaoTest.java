@@ -34,6 +34,8 @@ import android.util.Log;
  */
 public class SmsDaoTest extends AndroidTestCase {
 	//---------- Private fields
+	private static final String LOG_HASH = "SmsDaoTest";
+	private boolean mForceReload = false;
     SmsDao mSmsDao;
 	
 	
@@ -47,7 +49,8 @@ public class SmsDaoTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        TestHelper.init(getContext());
+        TestHelper.init(getContext(), mForceReload);
+        mForceReload = false;
         
         mSmsDao = AppEnv.i(getContext()).getSmsDao();
     }
@@ -68,7 +71,7 @@ public class SmsDaoTest extends AndroidTestCase {
 	public void testSaveSmsInSentFolder()
 	{
 		int totalSmsBefore = mSmsDao.getMessagesNumberInSentFolder(getContext());
-		Log.i("SmsForFree-Test", "SMS before the insert: " + totalSmsBefore);
+		Log.i(LOG_HASH, "SMS before the insert: " + totalSmsBefore);
 		assertTrue("Wrong number of SMS in Sent Folder", totalSmsBefore >= 0);
 		
 		ResultOperation<Void> res = mSmsDao.saveSmsInSentFolder(
@@ -76,7 +79,7 @@ public class SmsDaoTest extends AndroidTestCase {
 		assertFalse("Error in request", res.hasErrors());
 		
 		int totalSmsAfter = mSmsDao.getMessagesNumberInSentFolder(getContext());
-		Log.i("SmsForFree-Test", "SMS after the insert: " + totalSmsAfter);
+		Log.i(LOG_HASH, "SMS after the insert: " + totalSmsAfter);
 		assertTrue("Wrong number of SMS in Sent Folder", totalSmsAfter >= 0);
 		
 		assertTrue("Sms insert doesn't work", totalSmsAfter > totalSmsBefore);
@@ -90,7 +93,7 @@ public class SmsDaoTest extends AndroidTestCase {
 	{
 		ResultOperation<String> res = mSmsDao.getLastSmsReceivedNumber(getContext());
 		assertFalse("Error in request", res.hasErrors());
-		Log.i("SmsForFree-Test", "SMS last sender: " + res.getResult());
+		Log.i(LOG_HASH, "SMS last sender: " + res.getResult());
 		assertFalse("Empty message number", TextUtils.isEmpty(res.getResult()));
 	}
 	

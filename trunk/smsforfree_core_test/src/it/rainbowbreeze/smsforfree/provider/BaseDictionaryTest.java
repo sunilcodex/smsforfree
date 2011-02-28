@@ -36,6 +36,7 @@ public abstract class BaseDictionaryTest
 {
 	//---------- Private fields
     protected LogFacility mLogFacility;
+    private boolean mForceReload = false;
 	
 	
 
@@ -46,8 +47,9 @@ public abstract class BaseDictionaryTest
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-        TestHelper.init(getContext());
+        TestHelper.init(getContext(), mForceReload);
+        mForceReload = false;
+        
         mLogFacility = RainbowServiceLocator.get(LogFacility.class);
 	}
 

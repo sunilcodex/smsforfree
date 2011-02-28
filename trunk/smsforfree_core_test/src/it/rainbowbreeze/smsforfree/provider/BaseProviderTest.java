@@ -19,7 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.provider;
 
-import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.ProviderDao;
@@ -44,6 +44,7 @@ public abstract class BaseProviderTest
 	protected ProviderDao mProviderDao;
     protected LogFacility mLogFacility;
 	protected SmsServiceParameter[] mBackupParameters;
+    private boolean mForceReload = false;
 	
 	
 
@@ -56,9 +57,10 @@ public abstract class BaseProviderTest
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-        TestHelper.init(getContext());
-        mLogFacility = RainbowServiceLocator.get(LogFacility.class);
+        TestHelper.init(getContext(), mForceReload);
+        mForceReload = false;
+        
+        mLogFacility = AppEnv.i(getContext()).getLogFacility();
         mProviderDao = new ProviderDao();
 
         mProvider = createProvider();

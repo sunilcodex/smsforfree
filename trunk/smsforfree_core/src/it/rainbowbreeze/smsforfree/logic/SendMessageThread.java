@@ -30,8 +30,16 @@ import android.os.Handler;
 public class SendMessageThread
 	extends RainbowBaseBackgroundThread<String>
 {
+    //---------- Private fields
+    private SmsProvider mProvider;
+    private String mServiceId;
+    private String mDestination;
+    private String mMessage;
 
-	//---------- Ctors
+    
+    
+
+	//---------- Constructors
 	public SendMessageThread(
 			Context context,
 			Handler handler,
@@ -49,15 +57,6 @@ public class SendMessageThread
 
 
 
-
-	//---------- Private fields
-	private SmsProvider mProvider;
-	private String mServiceId;
-	private String mDestination;
-	private String mMessage;
-
-	
-	
 
 	//---------- Public fields
 	public final static int WHAT_SENDMESSAGE = 1002;
