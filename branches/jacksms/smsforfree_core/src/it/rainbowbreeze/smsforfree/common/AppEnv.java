@@ -67,13 +67,13 @@ public class AppEnv
 	public final static String APP_PREFERENCES_KEY = "SmsForFreePrefs";
 
 	/** Application version displayed to the user (about activity etc) */
-	public final static String APP_DISPLAY_VERSION = "2.1";
+	public final static String APP_DISPLAY_VERSION = "3.0";
 
 	/** Application name used during the ping of update site */
-	public final static String APP_INTERNAL_NAME = "SmsForFree";
+	public final static String APP_INTERNAL_NAME = "JackSms";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "02.01.04";
+	public final static String APP_INTERNAL_VERSION = "03.0.30";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
