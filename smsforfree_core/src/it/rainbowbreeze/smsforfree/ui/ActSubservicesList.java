@@ -90,7 +90,7 @@ public class ActSubservicesList
 		getDataFromIntent(getIntent());
 		
 		if (null == mProvider)
-			return;
+			mProvider = AppEnv.i(getApplicationContext()).getProviderList().get(0);
 		
 		//update title
         setTitle(String.format(
