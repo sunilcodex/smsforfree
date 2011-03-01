@@ -57,8 +57,19 @@ public class SendMessageServiceTest extends ServiceTestCase<SendMessageService> 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        TestHelper.init(getContext(), mCustomObjectsFactory, mForceReload);
-        mForceReload = false;
+        
+        if (mForceReload) {
+            TestHelper.init(getContext(), mCustomObjectsFactory, mForceReload);
+            mForceReload = false;
+            
+            //add mock providers
+            MockSingleServiceProvider mockSingleServiceProvider = new MockSingleServiceProvider(
+                    AppEnv.i(getContext()).getLogFacility(),
+                    AppEnv.i(getContext()).getAppPreferencesDao(),
+                    AppEnv.i(getContext()).getProviderDao(),
+                    AppEnv.i(getContext()).getActivityHelper());
+            AppEnv.i(getContext()).getProviderList().add(mockSingleServiceProvider);
+        }
 
         mSmsProvider = (MockSingleServiceProvider) GlobalHelper.findProviderInList(AppEnv.i(getContext()).getProviderList(), MockSingleServiceProvider.ID);
         assertNotNull("Wrong mock provider", mSmsProvider);

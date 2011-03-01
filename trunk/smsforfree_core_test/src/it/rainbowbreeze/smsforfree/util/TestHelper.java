@@ -28,7 +28,6 @@ import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
-import it.rainbowbreeze.smsforfree.providers.MockSingleServiceProvider;
 
 /**
  * General helper for tests
@@ -69,14 +68,6 @@ public class TestHelper
         //initialize the environment
         AppEnv.i(context, overriddingObjectsFactory);
         mInitialized = true;
-        
-        //add mock providers
-        MockSingleServiceProvider mockSingleServiceProvider = new MockSingleServiceProvider(
-                AppEnv.i(context).getLogFacility(),
-                AppEnv.i(context).getAppPreferencesDao(),
-                AppEnv.i(context).getProviderDao(),
-                AppEnv.i(context).getActivityHelper());
-        AppEnv.i(context).getProviderList().add(mockSingleServiceProvider);
         return true;
     }
 
