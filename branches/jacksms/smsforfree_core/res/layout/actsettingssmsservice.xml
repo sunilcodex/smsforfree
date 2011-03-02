@@ -22,7 +22,7 @@
 
 	<ScrollView
 		style="@style/common_scrollActivityArea"
-	>
+	android:background="@android:color/white">
 		<LinearLayout
 			style="@style/common_layoutActivityAreaScrollable"
 		>

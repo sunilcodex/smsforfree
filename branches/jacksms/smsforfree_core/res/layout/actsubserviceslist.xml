@@ -18,18 +18,12 @@
  this program; If not, see <http://www.gnu.org/licenses/>.
  -->
 
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	style="@style/common_layoutBackground"
->
-	<TextView
-		android:id="@+id/actsubservicelist_lblNoSubservices"
-		style="@style/actsubservicelist_lblNoSubservices"
-		android:text="@string/actsubserviceslist_lblNoSubservices"
-	/>
-	
-	<ListView
-		android:id="@android:id/list"
-		style="@style/actsubserviceslist_lstSubservices"
-	/>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/common_layoutBackground" android:background="@android:color/white">
+	<TextView android:id="@+id/actsubservicelist_lblNoSubservices"
+		style="@style/actsubservicelist_lblNoSubservices" android:text="@string/actsubserviceslist_lblNoSubservices"
+		android:textColor="@android:color/black" />
+
+	<ListView android:id="@android:id/list"
+		style="@style/actsubserviceslist_lstSubservices" />
 </FrameLayout>
