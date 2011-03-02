@@ -158,7 +158,8 @@
     <string name="actsubserviceslist_lblNoSubservices">Non ci sono servizi configurati.\n\n Per aggiungere un servizio, usa il tasto Menu e seleziona\n\"Aggiungi servizio\"</string>
     <string name="actsubserviceslist_mnuHeaderTitle">Scegli azione</string>
     <string name="actsubserviceslist_mnuDeleteService">Elimina</string>
-    <string name="actsubserviceslist_mnuAddService">Aggiungi servizio</string>
+    <string name="actsubserviceslist_mnuAddService">Nuovo servizio</string>
+    <string name="actsubserviceslist_mnuAddService_summary">Aggiungi un nuovo servizio sms</string>
     <string name="actsubserviceslist_mnuEditService">Modifica</string>
     <string name="actsubserviceslist_msgNoTemplates">Nessun template disponibile...\n\nPrima di aggiungere nuovi servizi, scarica i template tramite la voce nel Menu.</string>
 

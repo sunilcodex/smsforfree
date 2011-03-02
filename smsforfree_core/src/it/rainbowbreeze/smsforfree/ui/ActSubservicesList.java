@@ -87,6 +87,10 @@ public class ActSubservicesList
 		
 		setContentView(R.layout.actsubserviceslist);
 		
+		final ListView list = getListView();
+		View header = getLayoutInflater().inflate(R.layout.actsubservicelist_newservice, null);
+		list.addHeaderView(header);
+		
 		getDataFromIntent(getIntent());
 		
 		if (null == mProvider)
@@ -100,7 +104,7 @@ public class ActSubservicesList
 
         mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);
         mListAdapter = new ArrayAdapter<SmsService>(this, 
-	              android.R.layout.simple_list_item_1, mProvider.getAllSubservices());
+	              R.layout.actsubservice_item, mProvider.getAllSubservices());
 		setListAdapter(mListAdapter);
 		
 		//register the context menu to defaul ListView of the view
@@ -234,9 +238,17 @@ public class ActSubservicesList
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		SmsService service = mProvider.getAllSubservices().get(position);
+		switch (v.getId()) {
 		
-		mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());
+		case R.id.actsubservicelist_new_message_view:
+			addNewService();
+			break;
+			
+		case com.jacksms.android.R.id.actsubservice_item:
+			SmsService service = mProvider.getAllSubservices().get(position-1);
+			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());			
+			break;
+		}
 	}
 
 	

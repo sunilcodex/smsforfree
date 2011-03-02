@@ -64,7 +64,7 @@ public class AppEnv
 	
     
 	/** keys for application preferences */
-	public final static String APP_PREFERENCES_KEY = "SmsForFreePrefs";
+	public final static String APP_PREFERENCES_KEY = "JackSmsPrefs";
 
 	/** Application version displayed to the user (about activity etc) */
 	public final static String APP_DISPLAY_VERSION = "3.0";
