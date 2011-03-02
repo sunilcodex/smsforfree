@@ -63,12 +63,12 @@ public class MessageQueueDaoTest extends AndroidTestCase {
         //insert first message
         textMessage = TestHelper.createTextMessage1();
         long textMessageId1 = mDao.insert(textMessage);
-        compareWithTextMessage1(textMessageId1);
+        TestHelper.compareWithTextMessage1(mDao, textMessageId1);
         
         //insert second text message
         textMessage = TestHelper.createTextMessage2();
         long textMessageId2 = mDao.insert(textMessage);
-        compareWithTextMessage2(textMessageId2);
+        TestHelper.compareWithTextMessage2(mDao, textMessageId2);
     }
         
 	public void testDelete() {
@@ -115,7 +115,7 @@ public class MessageQueueDaoTest extends AndroidTestCase {
     	
         textMessage = TestHelper.createTextMessage1();
         long textMessageId = mDao.insert(textMessage);
-    	compareWithTextMessage1(textMessageId);
+    	TestHelper.compareWithTextMessage1(mDao, textMessageId);
 
         count = mDao.setProcessingStatus(textMessageId, TextMessage.PROCESSING_SENT);
     	assertEquals("Wrong count operation", 1, count);
@@ -159,28 +159,5 @@ public class MessageQueueDaoTest extends AndroidTestCase {
 
     
 	//---------- Private methods
-	/**
-	 * @param textMessageId
-	 */
-	private void compareWithTextMessage1(long textMessageId) {
-		TextMessage textMessage;
-		textMessage = mDao.getById(textMessageId);
-        assertEquals("Wrong id", textMessageId, textMessage.getId());
-        assertEquals("Wrong destination", "+393331234567", textMessage.getDestination());
-        assertEquals("Wrong message", "Test message from Alfredo's phone! It's all ok?", textMessage.getMessage());
-        assertEquals("Wrong providerId", "JACKSMS", textMessage.getProviderId());
-        assertEquals("Wrong serviceId", "Vodafone", textMessage.getServiceId());
-        assertEquals("Wrong processingStatus", TextMessage.PROCESSING_NONE, textMessage.getProcessingStatus());
-	}
     
-    private void compareWithTextMessage2(long textMessageId) {
-		TextMessage textMessage;
-		textMessage = mDao.getById(textMessageId);
-        assertEquals("Wrong id", textMessageId, textMessage.getId());
-        assertEquals("Wrong destination", "+399877654321", textMessage.getDestination());
-        assertEquals("Wrong message", "Another message to test, this time!!!%%$$", textMessage.getMessage());
-        assertEquals("Wrong providerId", "INTERNAL", textMessage.getProviderId());
-        assertNull("Wrong serviceId", textMessage.getServiceId());
-        assertEquals("Wrong processingStatus", TextMessage.PROCESSING_QUEUED, textMessage.getProcessingStatus());
-	}
 }

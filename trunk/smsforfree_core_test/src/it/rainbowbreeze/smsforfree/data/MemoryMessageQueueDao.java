@@ -87,4 +87,11 @@ public class MemoryMessageQueueDao implements IMessageQueueDao {
 		return mTextMessageStorage.isEmpty();
 	}
 
+
+    @Override
+    public long getNextSendInterval() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

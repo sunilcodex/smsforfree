@@ -11,41 +11,47 @@ public interface IMessageQueueDao {
 	 * @param messageId
 	 * @return message object or null if not found
 	 */
-	public abstract TextMessage getById(long messageId);
+	public TextMessage getById(long messageId);
 
 	/**
-	 * Add a new text message to the queue
+	 * Adds a new text message to the queue
 	 * 
 	 * @param message
 	 * @return the id of the new webcam
 	 */
-	public abstract long insert(TextMessage message);
+	public long insert(TextMessage message);
 
 	/**
-	 * Remove a text message from the queue
+	 * Removes a text message from the queue
 	 * 
 	 * @param textMessageId the id of the webcam to delete
 	 * @return the deleted text message (1 if success, 0 if no webcams were found)
 	 */
-	public abstract int delete(long textMessageId);
+	public int delete(long textMessageId);
 
 	/**
-	 * Set the processing status of a text message
+	 * Sets the processing status of a text message
 	 * 
 	 * @param textMessageId
 	 * @param processingStatus
 	 */
-	public abstract int setProcessingStatus(long textMessageId,
+	public int setProcessingStatus(long textMessageId,
 			int processingStatus);
 
 	/**
 	 * Completely clean the database (used in tests)
 	 */
-	public abstract int clearDatabaseComplete();
+	public int clearDatabaseComplete();
 
 	/**
-	 * Return true if database is empty and initialization is needed
+	 * Returns true if database is empty and initialization is needed
 	 */
-	public abstract boolean isDatabaseEmpty();
+	public boolean isDatabaseEmpty();
+	
+	/**
+	 * Read from the message queue the time interval of the newest message to
+	 * send and returns it
+	 */
+	public long getNextSendInterval();
 
 }
