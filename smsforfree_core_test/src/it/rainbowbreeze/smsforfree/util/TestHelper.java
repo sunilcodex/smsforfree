@@ -24,6 +24,7 @@ import android.util.Log;
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.data.IMessageQueueDao;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.TextMessage;
@@ -149,11 +150,12 @@ public class TestHelper
      */
 	public static TextMessage createTextMessage1() {
 		return TextMessage.Factory.create(
-				123,
+				123L,
 				"+393331234567",
 				"Test message from Alfredo's phone! It's all ok?", 
 				"JACKSMS",
 				"Vodafone",
+				1234567890L,
 				TextMessage.PROCESSING_NONE);
 	}
 
@@ -176,7 +178,17 @@ public class TestHelper
         TestCase.assertEquals("Wrong message", "Test message from Alfredo's phone! It's all ok?", textMessageToCompare.getMessage());
         TestCase.assertEquals("Wrong providerId", "JACKSMS", textMessageToCompare.getProviderId());
         TestCase.assertEquals("Wrong serviceId", "Vodafone", textMessageToCompare.getServiceId());
+        TestCase.assertEquals("Wrong send interval", 1234567890, textMessageToCompare.getSendInterval());
         TestCase.assertEquals("Wrong processingStatus", TextMessage.PROCESSING_NONE, textMessageToCompare.getProcessingStatus());
+    }
+    
+    /**
+     * Compare a {@link TextMessage} with the data on database
+     * @param textMessageId
+     */
+    public static void compareWithTextMessage1(IMessageQueueDao dao, long textMessageId) {
+        TextMessage textMessageToCompare = dao.getById(textMessageId);
+        compareWithTextMessage1(textMessageToCompare, textMessageId);
     }
     
 
@@ -192,8 +204,33 @@ public class TestHelper
 				"Another message to test, this time!!!%%$$", 
 				"INTERNAL",
 				null,
+				987654321,
 				TextMessage.PROCESSING_QUEUED);
 	}
+
+    /**
+     * Compare a {@link TextMessage} with example text message 1
+     * @param textMessageToCompare
+     * @param newId new id to compare, not the original in example test message 1
+     */
+    public static void compareWithTextMessage2(TextMessage textMessageToCompare, long newId) {
+        TestCase.assertEquals("Wrong id", newId, textMessageToCompare.getId());
+        TestCase.assertEquals("Wrong destination", "+399877654321", textMessageToCompare.getDestination());
+        TestCase.assertEquals("Wrong message", "Another message to test, this time!!!%%$$", textMessageToCompare.getMessage());
+        TestCase.assertEquals("Wrong providerId", "INTERNAL", textMessageToCompare.getProviderId());
+        TestCase.assertNull("Wrong serviceId", textMessageToCompare.getServiceId());
+        TestCase.assertEquals("Wrong send interval", 987654321, textMessageToCompare.getSendInterval());
+        TestCase.assertEquals("Wrong processingStatus", TextMessage.PROCESSING_QUEUED, textMessageToCompare.getProcessingStatus());
+    }
+
+    /**
+     * Compare a {@link TextMessage} with the data on database
+     * @param textMessageId
+     */
+    public static void compareWithTextMessage2(IMessageQueueDao dao, long textMessageId) {
+        TextMessage textMessageToCompare = dao.getById(textMessageId);
+        compareWithTextMessage2(textMessageToCompare, textMessageId);
+    }
 
     /**
      * Create an example text message
@@ -206,6 +243,7 @@ public class TestHelper
 				"Loooong message to my american friends. how do you do? I hope well for you, it' all ok? let me know when next visit will happens. Cheers", 
 				"VOIPSTUNT",
 				null,
+				0L,
 				TextMessage.PROCESSING_ERROR_SENDING);
 	}
 

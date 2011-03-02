@@ -48,6 +48,7 @@ public class TextMessage {
     public static final String FIELD_PROVIDERID = "PROVIDERID";
     public static final String FIELD_SERVICEID = "SERVICEID";
     public static final String FIELD_PROCESSING_STATUS = "PROCESSING_STATUS";
+    public static final String FIELD_SEND_INTERVAL = "SEND_INTERVAL";
     public static final String DEFAULT_SORT_ORDER = "ID ASC";
     
     public static final int PROCESSING_NONE = 0;
@@ -91,6 +92,12 @@ public class TextMessage {
     { return mProcessingStatus; }
     public TextMessage setProcessingStatus(int newValue)
     { mProcessingStatus = newValue; return this; }
+    
+    protected long mSendInterval;
+    public long getSendInterval()
+    { return mSendInterval; }
+    public TextMessage setSendInterval(long newValue)
+    { mSendInterval = newValue; return this; }
 
 
     //---------- Public methods
@@ -105,6 +112,7 @@ public class TextMessage {
                 String message,
                 String providerId,
                 String serviceId,
+                long sendInterval,
                 int processingStatus) {
             TextMessage textMessage = new TextMessage()
                 .setId(id)
@@ -112,6 +120,7 @@ public class TextMessage {
                 .setMessage(message)
                 .setProviderId(providerId)
                 .setServiceId(serviceId)
+                .setSendInterval(sendInterval)
                 .setProcessingStatus(processingStatus);
             
             return textMessage;
@@ -145,6 +154,7 @@ public class TextMessage {
         intent.putExtra(FIELD_MESSAGE, getMessage());
         intent.putExtra(FIELD_PROVIDERID, getProviderId());
         intent.putExtra(FIELD_SERVICEID, getServiceId());
+        intent.putExtra(FIELD_SEND_INTERVAL, getSendInterval());
         intent.putExtra(FIELD_PROCESSING_STATUS, getProcessingStatus());
         return intent;
     }
@@ -162,6 +172,7 @@ public class TextMessage {
         setMessage(intent.getStringExtra(FIELD_MESSAGE));
         setProviderId(intent.getStringExtra(FIELD_PROVIDERID));
         setServiceId(intent.getStringExtra(FIELD_SERVICEID));
+        setSendInterval(intent.getLongExtra(FIELD_SEND_INTERVAL, 0));
         setProcessingStatus(intent.getIntExtra(FIELD_PROCESSING_STATUS, PROCESSING_NONE));
     }
     
