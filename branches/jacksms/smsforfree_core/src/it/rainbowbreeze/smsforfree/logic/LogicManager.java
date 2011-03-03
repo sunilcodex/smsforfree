@@ -40,7 +40,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 /**
@@ -117,14 +116,9 @@ public class LogicManager extends RainbowLogicManager {
 	 */
 	public String getLoginString(Context context, String username, String password) {
 		JacksmsProvider provider = (JacksmsProvider)AppEnv.i(context).getProviderList().get(0);
-
 		ResultOperation<String> res = provider.getLoginString(username, password);
-		//get the login string 
-		String loginString = res.getResult().split("\t")[1];
-		//save it in AppEnv
-		AppEnv.i(context).setLoginString(loginString);
-		
-		return loginString;
+		//get and return the login string 	
+		return res.getResult();
 	}
 
 
