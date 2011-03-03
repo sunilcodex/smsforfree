@@ -35,6 +35,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 
 public class ActivityHelper
@@ -280,6 +281,24 @@ public class ActivityHelper
 	    return progressDialog;
 	}
 
+	
+	/**
+	 * if you wanna show a toast from a thread called by an activity you
+	 * must use the runOnUiThread
+	 * @param activity
+	 * @param infoMessage
+	 * @param messageLenght
+	 */
+	public void showInfoThread(final Activity activity, final String infoMessage, final int messageLenght){		
+		if(activity!=null){
+			activity.runOnUiThread(new Runnable() {
+				@Override		
+				public void run() {
+					Toast.makeText(activity, infoMessage, messageLenght).show();
+				}
+				});		
+			}		
+		}
 
 
 	
