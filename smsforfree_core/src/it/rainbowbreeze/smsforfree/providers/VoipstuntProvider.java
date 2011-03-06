@@ -31,7 +31,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
-public class VoipstuntProvider
+public abstract class VoipstuntProvider
 	extends SmsSingleProvider
 {
 	//---------- Private fields

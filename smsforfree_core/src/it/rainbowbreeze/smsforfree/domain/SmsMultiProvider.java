@@ -84,6 +84,9 @@ public abstract class SmsMultiProvider
     @Override
 	public SmsService getSubservice(String subserviceId)
     { return findServiceInList(mSubservices, subserviceId); }
+    @Override
+    public SmsService getSubserviceByName(String subserviceName) 
+    { return findServiceInListByName(mSubservices, subserviceName); }	
     
     protected SmsService mSelectedService;
     public SmsService getSelectedSubservice()
@@ -227,6 +230,14 @@ public abstract class SmsMultiProvider
 		if (TextUtils.isEmpty(serviceId)) return null;
 		for (SmsService service : list){
 			if (serviceId.equals(service.getId())) return service;
+		}
+		return null;
+	}
+	
+	protected SmsService findServiceInListByName(List<SmsService> list, String serviceId) {
+		if (TextUtils.isEmpty(serviceId)) return null;
+		for (SmsService service : list){
+			if (serviceId.equals(service.getName())) return service;
 		}
 		return null;
 	}
