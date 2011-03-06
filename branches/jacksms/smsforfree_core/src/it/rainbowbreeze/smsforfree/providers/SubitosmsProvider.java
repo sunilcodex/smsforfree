@@ -40,7 +40,7 @@ import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class SubitosmsProvider
+public abstract class SubitosmsProvider
 	extends SmsSingleProvider
 {
 

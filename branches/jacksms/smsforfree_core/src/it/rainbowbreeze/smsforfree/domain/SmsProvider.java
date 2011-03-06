@@ -101,6 +101,7 @@ public abstract class SmsProvider
 
 	public abstract List<SmsService> getAllSubservices();
 	public abstract SmsService getSubservice(String subserviceId);
+	public abstract SmsService getSubserviceByName(String subserviceName);
 
     public abstract void setSelectedSubservice(String subserviceId);
 
@@ -643,5 +644,7 @@ public abstract class SmsProvider
             res.setReturnCode(ResultOperation.RETURNCODE_ERROR_INVALID_SENDER);
         
         return res;
-    }	
+    }
+
+
 }
