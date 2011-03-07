@@ -21,12 +21,12 @@ package it.rainbowbreeze.smsforfree.logic;
 
 import java.util.List;
 
-import com.jacksms.android.gui.ComposeMessageActivity;
-
 import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 /**
  * Send a message using provider's method
@@ -62,7 +62,7 @@ extends RainbowBaseBackgroundThread<String>
 	 * @param numbers
 	 * @param message
 	 */
-	public SendMessageThread(ComposeMessageActivity context,
+	public SendMessageThread(Activity context,
 			Handler mActivityHandler,
 			SmsProvider provider,
 			String serviceId,
@@ -104,6 +104,7 @@ extends RainbowBaseBackgroundThread<String>
 		if(mMultipleSenders){
 			//execute the command for each number
 			for(int i=0;i<mListNumbers.size();i++){
+				Log.d("saverio", "invio sms a: "+mListNumbers.get(i));
 				mResultOperation = mProvider.sendMessage(mServiceId, mListNumbers.get(i), mMessage);
 			}	
 		}

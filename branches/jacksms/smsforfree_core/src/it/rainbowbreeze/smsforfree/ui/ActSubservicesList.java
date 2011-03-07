@@ -244,7 +244,7 @@ public class ActSubservicesList
 			addNewService();
 			break;
 			
-		case com.jacksms.android.R.id.actsubservice_item:
+		case R.id.actsubservice_item:
 			SmsService service = mProvider.getAllSubservices().get(position-1);
 			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());			
 			break;

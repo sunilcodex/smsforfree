@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * 
@@ -45,20 +46,22 @@ public class JacksmsDictionary
     protected static final String LOG_HASH = "JacksmsDictionary";
     protected final LogFacility mLogFacility;
     
-	private static final String FORMAT_CSV = "csv";
+	//private static final String FORMAT_CSV = "csv";
 	//private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
-	private static final String URL_BASE = "http://q.jacksms.it/";
+	private static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
+	private static final String URL_Q_BASE = "http://q.jacksms.it";
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
-	private static final String ACTION_SEND_MESSAGE = "sendMessage";
+	private static final String ACTION_SEND_MESSAGE = "send?http&";
 	private static final String ACTION_SEND_CAPTCHA = "continueSend";
 	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
 	private static final String ACTION_GET_USER_LOGINSTRING = "getLoginString";
 	
 	//private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
 	//private static final String PARAM_CLIENTVERSION = "clientVersion=";
-	private static final String PARAM_CLIENTVERSION_VALUE = "android";
+	//TODO: get version from global variable or settings
+	private static final String PARAM_CLIENTVERSION_VALUE = "android=3.0";
 	private static final String CSV_SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
@@ -90,21 +93,22 @@ public class JacksmsDictionary
 	
 
 	//---------- Public methods
-	public String getUrlForSendingMessage(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_SEND_MESSAGE); }
+	public String getUrlForSendingMessage(String loginString)
+	{ return getUrlForCommand(loginString , ACTION_SEND_MESSAGE); }
 	
-	public String getUrlForSendingCaptcha(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_SEND_CAPTCHA); }
+	public String getUrlForSendingCaptcha(String loginString)
+	{ return getUrlForCommand(loginString, ACTION_SEND_CAPTCHA); }
 	
-	public String getUrlForDownloadTemplates(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES); }
+	public String getUrlForDownloadTemplates(String loginString)
+	{ return getUrlForCommand(loginString, ACTION_GET_ALL_TEMPLATES); }
 
-	public String getUrlForDownloadUserServices(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES); }
+	public String getUrlForDownloadUserServices(String loginString)
+	{ return getUrlForCommand(loginString, ACTION_GET_USER_SERVICES); }
 	
 	public String getUrlForLoginString(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_USER_LOGINSTRING); }
-	
+
+
 	/**
 	 * Builds headers used in send sms api
 	 * 
@@ -122,22 +126,17 @@ public class JacksmsDictionary
 		String value;
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
-		//first header
-		key = "J-R";
+		//X: service_id \t recipient \t data1 \t data2 \t data3 \t data4 \t message
+		key = "X";
 		value = String.valueOf(service.getTemplateId()) + CSV_SEPARATOR + 
-				destination + CSV_SEPARATOR +
-				replaceServiceParameter(service.getParameterValue(0)) + CSV_SEPARATOR +
-				replaceServiceParameter(service.getParameterValue(1)) + CSV_SEPARATOR +
-				replaceServiceParameter(service.getParameterValue(2)) + CSV_SEPARATOR +
-				replaceServiceParameter(service.getParameterValue(3));
+		destination + CSV_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(0)) + CSV_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(1)) + CSV_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(2)) + CSV_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(3)) + CSV_SEPARATOR +
+		adjustMessageBody(message);
 		headers.put(key, value);
-		
-		
-		//second header
-		key = "J-M";
-		value = adjustMessageBody(message);
-		headers.put(key, value);
-		
+			
 		return headers;
 	}
 	
@@ -400,8 +399,23 @@ public class JacksmsDictionary
 	
 
 	//---------- Private methods
-	private String getUrlForCommand(String username, String password, String command)
+	private String getUrlForCommand(String loginString, String command)
 	{
+		String loginS = loginString;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(URL_STREAM_BASE)
+			.append(loginS)
+			.append("/")
+			.append(command)
+			.append(PARAM_CLIENTVERSION_VALUE);
+		return sb.toString();
+	}
+	
+	//Per ottenere loginString devo usare per forza username e password
+	private String getUrlForCommand(String username, String password,
+			String command) {
+		
 		String codedUser;
 		String codedPwd;
 		
@@ -413,19 +427,15 @@ public class JacksmsDictionary
 			codedPwd = replaceNotAllowedChars(Base64Helper.encodeBytes(password.getBytes()));
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append(URL_BASE)
+		sb.append(URL_Q_BASE)
+			.append("/")	
 			.append(codedUser)
 			.append("/")
 			.append(codedPwd)
 			.append("/")
-			.append(command)
-			.append("?")
-			.append(FORMAT_CSV)
-			.append(",")
-			.append(PARAM_CLIENTVERSION_VALUE);
-		return sb.toString();
+			.append(command);
+			return sb.toString();
 	}
-	
 
 	private String replaceNotAllowedChars(String sourceString)
 	{

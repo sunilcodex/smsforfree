@@ -40,6 +40,7 @@ import java.util.List;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * 
@@ -70,7 +71,8 @@ extends SmsMultiProvider
 	protected final static int MSG_INDEX_NO_USERSERVICES_TO_USE = 11;
 
 	protected JacksmsDictionary mDictionary;
-
+	protected AppPreferencesDao mappPreferenceDao;
+	
 	protected String[] mMessages;
 
 
@@ -84,6 +86,7 @@ extends SmsMultiProvider
 			ActivityHelper activityHelper)
 	{
 		super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
+		mappPreferenceDao = appPreferencesDao;
 	}
 
 
@@ -162,16 +165,17 @@ extends SmsMultiProvider
 
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+		String loginS = mappPreferenceDao.getLoginString();
 
 		ResultOperation<String> res = validateSendSmsParameters(username, password, destination, messageBody);
 		if (res.hasErrors()) return res;
 
 		//sends the sms
 		SmsService service = getSubservice(serviceId);
-		String url = mDictionary.getUrlForSendingMessage(username, password);
+		String url = mDictionary.getUrlForSendingMessage(loginS);
 		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, messageBody);
 		res = doSingleHttpRequest(url, headers, null);
-
+		
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
@@ -229,11 +233,10 @@ extends SmsMultiProvider
 			return setSmsProviderException(new ResultOperation<String>(), mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
 		}
 
-		String username = getParameterValue(PARAM_INDEX_USERNAME);
-		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+		String loginS = mappPreferenceDao.getLoginString();
 
 		//sends the captcha code
-		String url = mDictionary.getUrlForSendingCaptcha(username, password);
+		String url = mDictionary.getUrlForSendingCaptcha(loginS);
 		HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
 		ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
 
@@ -330,12 +333,13 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Download provider templates");
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+		String loginS = mappPreferenceDao.getLoginString();
 
 		//credential check
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
 
-		String url = mDictionary.getUrlForDownloadTemplates(username, password);
+		String url = mDictionary.getUrlForDownloadTemplates(loginS);
 		ResultOperation<String> res = doSingleHttpRequest(url, null, null);
 
 		//checks for errors
@@ -396,6 +400,7 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Download user configured service");
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+		String loginS = mappPreferenceDao.getLoginString();
 
 		//credential check
 		if (!checkCredentialsValidity(username, password))
@@ -407,7 +412,7 @@ extends SmsMultiProvider
 			return setSmsProviderException(new ResultOperation<String>(), mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
 		}
 
-		String url = mDictionary.getUrlForDownloadUserServices(username, password);
+		String url = mDictionary.getUrlForDownloadUserServices(loginS);
 		res = doSingleHttpRequest(url, null, null);
 
 		//checks for errors
