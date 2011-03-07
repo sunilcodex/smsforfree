@@ -54,7 +54,7 @@ public class JacksmsDictionary
 	private static final String URL_Q_BASE = "http://q.jacksms.it";
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "send?http&";
-	private static final String ACTION_SEND_CAPTCHA = "continueSend";
+	private static final String ACTION_SEND_CAPTCHA = "continue?http&";
 	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
 	private static final String ACTION_GET_USER_LOGINSTRING = "getLoginString";
 	
@@ -154,11 +154,10 @@ public class JacksmsDictionary
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
 		//first header
-		key = "J-R";
+		key = "X";
 		value = String.valueOf(sessionId) + CSV_SEPARATOR + 
 				captchaCode + CSV_SEPARATOR;
 		headers.put(key, value);
-		
 		return headers;
 	}
 	

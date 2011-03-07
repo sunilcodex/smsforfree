@@ -19,14 +19,10 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
-import java.util.List;
-
 import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 /**
  * Send a message using provider's method
@@ -49,35 +45,7 @@ extends RainbowBaseBackgroundThread<String>
 		mServiceId = serviceId;
 		mDestination = destination;
 		mMessage = message;
-		mMultipleSenders = false;
 	}
-
-
-	/**
-	 * costruttore che accetta una lista di numeri
-	 * @param context
-	 * @param mActivityHandler
-	 * @param provider
-	 * @param serviceId
-	 * @param numbers
-	 * @param message
-	 */
-	public SendMessageThread(Activity context,
-			Handler mActivityHandler,
-			SmsProvider provider,
-			String serviceId,
-			List<String> numbers,
-			String message) {
-
-		super(context, mActivityHandler);
-		mProvider = provider;
-		mServiceId = serviceId;
-		mListNumbers = numbers;
-		mMessage = message;
-		mMultipleSenders = true;
-	}
-
-
 
 
 	//---------- Private fields
@@ -85,9 +53,6 @@ extends RainbowBaseBackgroundThread<String>
 	private String mServiceId;
 	private String mDestination;
 	private String mMessage;
-	private List<String> mListNumbers;
-	private boolean mMultipleSenders;
-
 
 
 
@@ -100,18 +65,9 @@ extends RainbowBaseBackgroundThread<String>
 	//---------- Public methods
 	@Override
 	public void run() {
-		//check for single or multiple senders
-		if(mMultipleSenders){
-			//execute the command for each number
-			for(int i=0;i<mListNumbers.size();i++){
-				Log.d("saverio", "invio sms a: "+mListNumbers.get(i));
-				mResultOperation = mProvider.sendMessage(mServiceId, mListNumbers.get(i), mMessage);
-			}	
-		}
-		else{
-			//execute the command
-			mResultOperation = mProvider.sendMessage(mServiceId, mDestination, mMessage);
-		}
+
+		//execute the command
+		mResultOperation = mProvider.sendMessage(mServiceId, mDestination, mMessage);
 		//and call the caller activity handler when the execution is terminated
 		callHandlerAndRetry(WHAT_SENDMESSAGE);
 	}
