@@ -40,7 +40,6 @@ import java.util.List;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * 
@@ -161,7 +160,8 @@ extends SmsMultiProvider
 			String destination,
 			String messageBody)
 			{
-		mLogFacility.v(LOG_HASH, "Send sms message");
+		mLogFacility.v(LOG_HASH, "Send sms message to "+destination
+				+" with service "+serviceId);
 
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
@@ -333,13 +333,12 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Download provider templates");
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
-		String loginS = mappPreferenceDao.getLoginString();
-
+		
 		//credential check
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
 
-		String url = mDictionary.getUrlForDownloadTemplates(loginS);
+		String url = mDictionary.getUrlForDownloadTemplates(username, password);
 		ResultOperation<String> res = doSingleHttpRequest(url, null, null);
 
 		//checks for errors
@@ -400,8 +399,7 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Download user configured service");
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
-		String loginS = mappPreferenceDao.getLoginString();
-
+		
 		//credential check
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
@@ -412,7 +410,8 @@ extends SmsMultiProvider
 			return setSmsProviderException(new ResultOperation<String>(), mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE]);
 		}
 
-		String url = mDictionary.getUrlForDownloadUserServices(loginS);
+		String url = mDictionary.getUrlForDownloadUserServices(username, password);
+		mLogFacility.i(LOG_HASH, "--->"+url);
 		res = doSingleHttpRequest(url, null, null);
 
 		//checks for errors

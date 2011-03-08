@@ -216,12 +216,12 @@ public class ActSubservicesList
 			break;
 		case CONTEXTMENU_EDITSERVICE:
 			//find current selected service
-			service = (SmsService) getListAdapter().getItem(menuInfo.position);
+			service = (SmsService) getListAdapter().getItem(menuInfo.position-1);
 			//and edit it
 			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());
 			break;
 		case CONTEXTMENU_DELETESERVICE:
-			service = (SmsService) getListAdapter().getItem(menuInfo.position);
+			service = (SmsService) getListAdapter().getItem(menuInfo.position-1);
 			mProvider.getAllSubservices().remove(service);
 			refreshSubservicesList();
 			ResultOperation<Void> res = mProvider.saveSubservices(this);

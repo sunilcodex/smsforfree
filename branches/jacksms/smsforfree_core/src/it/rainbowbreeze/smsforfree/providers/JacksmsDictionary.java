@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * 
@@ -46,12 +45,13 @@ public class JacksmsDictionary
     protected static final String LOG_HASH = "JacksmsDictionary";
     protected final LogFacility mLogFacility;
     
-	//private static final String FORMAT_CSV = "csv";
+	private static final String FORMAT_CSV = "csv";
 	//private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
 	private static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
 	private static final String URL_Q_BASE = "http://q.jacksms.it";
+//	private static final String ACTION_GET_ALL_TEMPLATES = "getVersionedProviders?"+FORMAT_XML; TODO: cambiare in questo??
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "send?http&";
 	private static final String ACTION_SEND_CAPTCHA = "continue?http&";
@@ -99,11 +99,11 @@ public class JacksmsDictionary
 	public String getUrlForSendingCaptcha(String loginString)
 	{ return getUrlForCommand(loginString, ACTION_SEND_CAPTCHA); }
 	
-	public String getUrlForDownloadTemplates(String loginString)
-	{ return getUrlForCommand(loginString, ACTION_GET_ALL_TEMPLATES); }
+	public String getUrlForDownloadTemplates(String username, String password)
+	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES); }
 
-	public String getUrlForDownloadUserServices(String loginString)
-	{ return getUrlForCommand(loginString, ACTION_GET_USER_SERVICES); }
+	public String getUrlForDownloadUserServices(String username, String password)
+	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES); }
 	
 	public String getUrlForLoginString(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_USER_LOGINSTRING); }
@@ -432,7 +432,11 @@ public class JacksmsDictionary
 			.append("/")
 			.append(codedPwd)
 			.append("/")
-			.append(command);
+			.append(command)
+			.append("?")
+            .append(FORMAT_CSV)
+            .append(",")
+            .append(PARAM_CLIENTVERSION_VALUE);
 			return sb.toString();
 	}
 
