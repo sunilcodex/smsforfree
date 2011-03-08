@@ -79,7 +79,7 @@ public class AppEnv
 	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
 	
 	/** Tag to use in the log */
-	public final static String LOG_TAG = "SmsForFree";
+	public final static String LOG_TAG = "JackSms";
 	
 	/** file name for providers preferences */
 	public final static String jacksmsParametersFileName = "jacksms_parameters.xml"; 
