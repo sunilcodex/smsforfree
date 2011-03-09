@@ -76,7 +76,7 @@ public class AppEnv
 	public final static String APP_INTERNAL_VERSION = "03.0.30";
 
 	/** address where send log */
-	public final static String EMAIL_FOR_LOG = "devel@rainbowbreeze.it";
+	public final static String EMAIL_FOR_LOG = "sa.guarda@gmail.com";
 	
 	/** Tag to use in the log */
 	public final static String LOG_TAG = "JackSms";
