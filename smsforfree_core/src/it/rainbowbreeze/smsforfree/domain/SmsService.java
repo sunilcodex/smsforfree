@@ -67,8 +67,9 @@ public abstract class SmsService
 	
 	//---------- Public properties
 	
-	/** Id for a new service */
-	public static final String NEWSERVICEID = "-1";
+	/** Id for a new service starts from 2 because 0 and 1
+		are reserved values*/
+	public static final String NEWSERVICEID = "1";
 
 	/** The id of the service*/
 	public abstract String getId();
