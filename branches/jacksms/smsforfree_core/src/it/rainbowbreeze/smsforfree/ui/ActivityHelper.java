@@ -39,16 +39,16 @@ import android.widget.Toast;
 
 
 public class ActivityHelper
-	extends RainbowActivityHelper {
+extends RainbowActivityHelper {
 	//---------- Private fields
-    private static final String LOG_HASH = "ActivityHelper";
-    protected static final int MSG_INDEX_ERROR_EMPTY_REPLY = MSG_INDEX_FIRST_USER;
-    protected static final int MSG_INDEX_ERROR_LOAD_PROVIDER_DATA = MSG_INDEX_FIRST_USER + 1;
-    protected static final int MSG_INDEX_ERROR_IMPORT_FROM_RESOURCE = MSG_INDEX_FIRST_USER + 2;
-    protected static final int MSG_INDEX_ERROR_SAVE_PROVIDER_DATA = MSG_INDEX_FIRST_USER + 3;
-    protected static final int MSG_INDEX_ERROR_INVALID_CREDENTIAL = MSG_INDEX_FIRST_USER + 4;
-    protected static final int MSG_INDEX_ERROR_INVALID_SENDER = MSG_INDEX_FIRST_USER + 5;
-    protected static final int MSG_INDEX_ERROR_INVALID_DESTINATION = MSG_INDEX_FIRST_USER + 6;
+	private static final String LOG_HASH = "ActivityHelper";
+	protected static final int MSG_INDEX_ERROR_EMPTY_REPLY = MSG_INDEX_FIRST_USER;
+	protected static final int MSG_INDEX_ERROR_LOAD_PROVIDER_DATA = MSG_INDEX_FIRST_USER + 1;
+	protected static final int MSG_INDEX_ERROR_IMPORT_FROM_RESOURCE = MSG_INDEX_FIRST_USER + 2;
+	protected static final int MSG_INDEX_ERROR_SAVE_PROVIDER_DATA = MSG_INDEX_FIRST_USER + 3;
+	protected static final int MSG_INDEX_ERROR_INVALID_CREDENTIAL = MSG_INDEX_FIRST_USER + 4;
+	protected static final int MSG_INDEX_ERROR_INVALID_SENDER = MSG_INDEX_FIRST_USER + 5;
+	protected static final int MSG_INDEX_ERROR_INVALID_DESTINATION = MSG_INDEX_FIRST_USER + 6;
 
 
 
@@ -58,7 +58,7 @@ public class ActivityHelper
 	public final static int REQUESTCODE_PICKTEMPLATE = REQUESTCODE_FIRST_USER+ 2;
 	public final static int REQUESTCODE_COMPACTMESSAGE = REQUESTCODE_FIRST_USER + 3;
 	public final static int REQUESTCODE_SERVICESETTINGS = REQUESTCODE_FIRST_USER + 4;
-	
+
 	public final static String INTENTKEY_SMSSERVICEID = "SmsService";
 	public final static String INTENTKEY_SMSPROVIDERID = "SmsProvider";
 	public final static String INTENTKEY_SMSTEMPLATEID = "SmsTemplate";
@@ -79,22 +79,22 @@ public class ActivityHelper
 	public ActivityHelper(LogFacility logFacility, Context context) {
 		super(logFacility, context);
 	}
-	
-	
-	
+
+
+
 
 	//---------- Public methods
 
-    public void openSendSms(Activity callerActivity, TextMessage message) {
-        Bundle extras = null;
-        if (null != message) {
-            extras = new Bundle();
-            extras.putString(INTENTKEY_MESSAGE_DESTIONATION, message.getDestination());
-            extras.putString(INTENTKEY_MESSAGE_TEXT, message.getMessage());
-        }
-        openActivity(callerActivity, ActSendSms.class, extras, true, REQUESTCODE_MAINACTIVITY);
-    }
-    
+	public void openSendSms(Activity callerActivity, TextMessage message) {
+		Bundle extras = null;
+		if (null != message) {
+			extras = new Bundle();
+			extras.putString(INTENTKEY_MESSAGE_DESTIONATION, message.getDestination());
+			extras.putString(INTENTKEY_MESSAGE_TEXT, message.getMessage());
+		}
+		openActivity(callerActivity, ActSendSms.class, extras, true, REQUESTCODE_MAINACTIVITY);
+	}
+
 	/**
 	 * Open Sms settings activity for editing a subservice preferences
 	 * 
@@ -108,13 +108,13 @@ public class ActivityHelper
 	public void openSettingsSmsService(Activity callerActivity, String providerId, String templateId, String serviceId)
 	{
 		mBaseLogFacility.i(LOG_HASH, "Launching activity SettingSmsService for provider " + providerId + " template " + templateId + " service " + serviceId);
-        Intent intent = new Intent(callerActivity, ActSettingsSmsService.class);
+		Intent intent = new Intent(callerActivity, ActSettingsSmsService.class);
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		intent.putExtra(INTENTKEY_SMSTEMPLATEID, templateId);
 		intent.putExtra(INTENTKEY_SMSSERVICEID, serviceId);
 		openActivity(intent, callerActivity, true, REQUESTCODE_SERVICESETTINGS);
 	}
-	
+
 	/**
 	 * Open Sms settings activity for editing a provider preferences
 	 * 
@@ -126,7 +126,7 @@ public class ActivityHelper
 		//putting null into templateId and subserviceId, the ActSettingsSmsService knows what entity edit
 		openSettingsSmsService(callerActivity, providerId, null, null);
 	}
-	
+
 	/**
 	 * Open provider list activity
 	 */
@@ -134,7 +134,7 @@ public class ActivityHelper
 	{
 		openActivity(callerActivity, ActProvidersList.class, null, false, REQUESTCODE_NONE);
 	}
-	
+
 	/**
 	 * Open about activity
 	 */
@@ -142,7 +142,7 @@ public class ActivityHelper
 	{
 		openActivity(callerActivity, ActAbout.class, null, false, REQUESTCODE_NONE);
 	}
-	
+
 	/**
 	 * Open message templates activity
 	 */
@@ -150,7 +150,7 @@ public class ActivityHelper
 	{
 		openActivity(callerActivity, ActMessageTemplates.class, null, false, REQUESTCODE_NONE);
 	}
-	
+
 	/**
 	 * Open compact message activity
 	 * @param callerActivity
@@ -158,7 +158,7 @@ public class ActivityHelper
 	 */
 	public void openCompactMessage(Activity callerActivity, String message)
 	{
-        Intent intent = new Intent(callerActivity, ActCompactMessage.class);
+		Intent intent = new Intent(callerActivity, ActCompactMessage.class);
 		intent.putExtra(INTENTKEY_MESSAGE, message);
 		openActivity(intent, callerActivity, true, REQUESTCODE_COMPACTMESSAGE);
 	}
@@ -168,7 +168,7 @@ public class ActivityHelper
 	 */
 	public void openTemplatesList(Activity callerActivity, String providerId)
 	{
-        Intent intent = new Intent(callerActivity, ActTemplatesList.class);
+		Intent intent = new Intent(callerActivity, ActTemplatesList.class);
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		openActivity(intent, callerActivity, true, REQUESTCODE_PICKTEMPLATE);
 	}
@@ -177,11 +177,11 @@ public class ActivityHelper
 	 */
 	public void openSubservicesList(Activity callerActivity, String providerId)
 	{
-        Intent intent = new Intent(callerActivity, ActSubservicesList.class);
+		Intent intent = new Intent(callerActivity, ActSubservicesList.class);
 		intent.putExtra(INTENTKEY_SMSPROVIDERID, providerId);
 		openActivity(intent, callerActivity, false, REQUESTCODE_NONE);
 	}
-	
+
 	/**
 	 * 
 	 * @param callerActivity
@@ -191,64 +191,64 @@ public class ActivityHelper
 		Intent intent = ContactsDao.instance().getPickContactIntent();
 		openActivity(intent, callerActivity, true, REQUESTCODE_PICKCONTACT);
 	}
-	
-    /**
-     * Open Settings activity
-     * 
-     * @param callerActivity caller activity
-     */
-    public void openSettingsMain(Activity callerActivity)
-    {
-        openSettingsMain(
-                ActSettingsMain.class,
-                callerActivity,
-                false,
-                AppEnv.i(callerActivity).getAppDisplayName(),
-                AppEnv.APP_INTERNAL_VERSION,
-                AppEnv.EMAIL_FOR_LOG,
-                AppEnv.LOG_TAG);
-    }
-    
 
-    @Override
-    public String getErrorMessage(int returnCode, Exception exception) {
-        //First of all, examines return code for standard errors
-        String userMessage = null;
-        String exceptionMessage = null != exception ? exception.getMessage() : getMessage(MSG_INDEX_NO_ERROR_MESSAGE);
+	/**
+	 * Open Settings activity
+	 * 
+	 * @param callerActivity caller activity
+	 */
+	public void openSettingsMain(Activity callerActivity)
+	{
+		openSettingsMain(
+				ActSettingsMain.class,
+				callerActivity,
+				false,
+				AppEnv.i(callerActivity).getAppDisplayName(),
+				AppEnv.APP_INTERNAL_VERSION,
+				AppEnv.EMAIL_FOR_LOG,
+				AppEnv.LOG_TAG);
+	}
 
-        switch (returnCode) {
-        case ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY:
-            userMessage = getMessage(MSG_INDEX_ERROR_EMPTY_REPLY);
-            break;
-        case ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY:
-            userMessage = exceptionMessage;
-            break;
-        case ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA:
-            userMessage = String.format(
-                    getMessage(MSG_INDEX_ERROR_LOAD_PROVIDER_DATA), exceptionMessage);
-            break;
-        case ResultOperation.RETURNCODE_ERROR_SAVE_PROVIDER_DATA:
-            userMessage = String.format(
-                    getMessage(MSG_INDEX_ERROR_SAVE_PROVIDER_DATA), exceptionMessage);
-            break;
-        case ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL:
-            userMessage = getMessage(MSG_INDEX_ERROR_INVALID_CREDENTIAL);
-            break;
-        case ResultOperation.RETURNCODE_ERROR_INVALID_SENDER:
-            userMessage = getMessage(MSG_INDEX_ERROR_INVALID_SENDER);
-            break;
-        case ResultOperation.RETURNCODE_ERROR_INVALID_DESTINATION:
-            userMessage = getMessage(MSG_INDEX_ERROR_INVALID_DESTINATION);
-            break;
-            
-        default:
-            userMessage = super.getErrorMessage(returnCode, exception);
-            break;
-        }
-        
-        return userMessage;
-    }
-    
+
+	@Override
+	public String getErrorMessage(int returnCode, Exception exception) {
+		//First of all, examines return code for standard errors
+		String userMessage = null;
+		String exceptionMessage = null != exception ? exception.getMessage() : getMessage(MSG_INDEX_NO_ERROR_MESSAGE);
+
+		switch (returnCode) {
+		case ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY:
+			userMessage = getMessage(MSG_INDEX_ERROR_EMPTY_REPLY);
+			break;
+		case ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY:
+			userMessage = exceptionMessage;
+			break;
+		case ResultOperation.RETURNCODE_ERROR_LOAD_PROVIDER_DATA:
+			userMessage = String.format(
+					getMessage(MSG_INDEX_ERROR_LOAD_PROVIDER_DATA), exceptionMessage);
+			break;
+		case ResultOperation.RETURNCODE_ERROR_SAVE_PROVIDER_DATA:
+			userMessage = String.format(
+					getMessage(MSG_INDEX_ERROR_SAVE_PROVIDER_DATA), exceptionMessage);
+			break;
+		case ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL:
+			userMessage = getMessage(MSG_INDEX_ERROR_INVALID_CREDENTIAL);
+			break;
+		case ResultOperation.RETURNCODE_ERROR_INVALID_SENDER:
+			userMessage = getMessage(MSG_INDEX_ERROR_INVALID_SENDER);
+			break;
+		case ResultOperation.RETURNCODE_ERROR_INVALID_DESTINATION:
+			userMessage = getMessage(MSG_INDEX_ERROR_INVALID_DESTINATION);
+			break;
+
+		default:
+			userMessage = super.getErrorMessage(returnCode, exception);
+			break;
+		}
+
+		return userMessage;
+	}
+
 	/**
 	 * Process in a standard way the result of SmsService extended command
 	 * execution
@@ -273,15 +273,15 @@ public class ActivityHelper
 
 	@Override
 	public ProgressDialog createProgressDialog(
-	        Context context, String title, String message) {
-	    //set progress dialog as not cancelable
-	    ProgressDialog progressDialog = super.createProgressDialog(context, title, message);
-	    if (null != progressDialog)
-	        progressDialog.setCancelable(false);
-	    return progressDialog;
+			Context context, String title, String message) {
+		//set progress dialog as not cancelable
+		ProgressDialog progressDialog = super.createProgressDialog(context, title, message);
+		if (null != progressDialog)
+			progressDialog.setCancelable(false);
+		return progressDialog;
 	}
 
-	
+
 	/**
 	 * if you wanna show a toast from a thread called by an activity you
 	 * must use the runOnUiThread
@@ -289,33 +289,53 @@ public class ActivityHelper
 	 * @param infoMessage
 	 * @param messageLenght
 	 */
-	public void showInfoThread(final Activity activity, final String infoMessage, final int messageLenght){		
+	public void showInfoThread(final Activity activity, final String infoMessage,
+			final int messageLenght){		
 		if(activity!=null){
 			activity.runOnUiThread(new Runnable() {
 				@Override		
 				public void run() {
 					Toast.makeText(activity, infoMessage, messageLenght).show();
 				}
-				});		
-			}		
-		}
+			});		
+		}		
+	}
+
+	/**
+	 * if you wanna show a toast from a thread called by an activity you
+	 * must use the runOnUiThread
+	 * @param activity
+	 * @param messageResID
+	 * @param messageLenght
+	 */
+	public void showInfoThread(final Activity activity,final int messageResID,
+			final int messageLenght) {
+		if(activity!=null){
+			activity.runOnUiThread(new Runnable() {
+				@Override		
+				public void run() {
+					Toast.makeText(activity, activity.getText(messageResID),
+							messageLenght).show();
+				}
+			});		
+		}			
+	}
 
 
-	
 	//---------- Private methods
 	@Override
 	protected void loadCustomMessageStrings(
-	        Context context,
-	        Map<Integer, String> messages) {
-	    super.loadCustomMessageStrings(context, messages);
-	    messages.put(MSG_INDEX_ERROR_EMPTY_REPLY, context.getString(R.string.common_msg_noReplyFromProvider));
-        messages.put(MSG_INDEX_ERROR_LOAD_PROVIDER_DATA, context.getString(R.string.common_msg_cannotLoadProviderData));
-        messages.put(MSG_INDEX_ERROR_SAVE_PROVIDER_DATA, context.getString(R.string.common_msg_cannotSaveProviderData));
-        messages.put(MSG_INDEX_ERROR_INVALID_CREDENTIAL, context.getString(R.string.common_msg_invalidCredential));
-        messages.put(MSG_INDEX_ERROR_INVALID_SENDER, context.getString(R.string.common_msg_invalidSender));
-        messages.put(MSG_INDEX_ERROR_INVALID_DESTINATION, context.getString(R.string.common_msg_invalidSender));
-        //FIXME put right error message
-        //messages.put(MSG_INDEX_ERROR_IMPORT_FROM_RESOURCE, context.getString(R.string.common_msg_architecturalError));
+			Context context,
+			Map<Integer, String> messages) {
+		super.loadCustomMessageStrings(context, messages);
+		messages.put(MSG_INDEX_ERROR_EMPTY_REPLY, context.getString(R.string.common_msg_noReplyFromProvider));
+		messages.put(MSG_INDEX_ERROR_LOAD_PROVIDER_DATA, context.getString(R.string.common_msg_cannotLoadProviderData));
+		messages.put(MSG_INDEX_ERROR_SAVE_PROVIDER_DATA, context.getString(R.string.common_msg_cannotSaveProviderData));
+		messages.put(MSG_INDEX_ERROR_INVALID_CREDENTIAL, context.getString(R.string.common_msg_invalidCredential));
+		messages.put(MSG_INDEX_ERROR_INVALID_SENDER, context.getString(R.string.common_msg_invalidSender));
+		messages.put(MSG_INDEX_ERROR_INVALID_DESTINATION, context.getString(R.string.common_msg_invalidSender));
+		//FIXME put right error message
+		//messages.put(MSG_INDEX_ERROR_IMPORT_FROM_RESOURCE, context.getString(R.string.common_msg_architecturalError));
 	}
-	
+
 }

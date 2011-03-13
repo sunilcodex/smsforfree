@@ -73,7 +73,7 @@ public class AppEnv
 	public final static String APP_INTERNAL_NAME = "JackSms";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "03.0.30";
+	public final static String APP_INTERNAL_VERSION = "0.1";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "sa.guarda@gmail.com";

@@ -411,7 +411,6 @@ extends SmsMultiProvider
 		}
 
 		String url = mDictionary.getUrlForDownloadUserServices(username, password);
-		mLogFacility.i(LOG_HASH, "--->"+url);
 		res = doSingleHttpRequest(url, null, null);
 
 		//checks for errors
