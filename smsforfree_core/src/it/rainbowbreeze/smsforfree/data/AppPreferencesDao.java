@@ -47,6 +47,8 @@ public class AppPreferencesDao
     
     protected static final String USERNAME_CREDENTIAL = "Username";
     protected static final String PASSWORD_CREDENTIAL = "Password";
+    protected static final String PROP_FIRST_RUN = "first_run";
+    protected static final String PROP_DATABASE_SIZE = "database_size";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
@@ -55,6 +57,7 @@ public class AppPreferencesDao
     
     
     protected static final String TEMPLATES_SEPARATOR = "§§§§";
+	
     
     
     
@@ -74,6 +77,14 @@ public class AppPreferencesDao
 
 	//---------- Public Methods
 
+	public boolean getFirstRun() {return mSettings.getBoolean(PROP_FIRST_RUN, true); }
+	public void setFirstRun(boolean newValue)
+    { mEditor.putBoolean(PROP_FIRST_RUN, newValue); }
+	
+	public String getDatabaseSize()
+	{return mSettings.getString(PROP_DATABASE_SIZE, "");}
+	public void setDatabaseSize(String newValue)
+	{mEditor.putString(PROP_DATABASE_SIZE, newValue);}
 	
 	public String getJmsReceiveMode()
 	{return mSettings.getString(PROP_JMS_RECEIVE_MODE, "");}
@@ -201,4 +212,5 @@ public class AppPreferencesDao
     	setLastUsedMessage(settingsBackup.getString(PROP_LASTUSED_MESSAGE, ""));
     	setShowOnlyMobileNumbers(settingsBackup.getBoolean(PROP_SHOW_ONLY_MOBILE_NUMBERS, false));
 	}
+
 }
