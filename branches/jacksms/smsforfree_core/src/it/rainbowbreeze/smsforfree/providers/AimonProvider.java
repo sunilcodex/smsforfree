@@ -46,7 +46,7 @@ import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
  * @author Alfredo "Rainbowbreeze" Morresi
  *
  */
-public class AimonProvider
+public abstract class AimonProvider
 	extends SmsMultiProvider
 {
 	//---------- Private fields
@@ -688,5 +688,6 @@ public class AimonProvider
 	protected boolean isFreeSmsCall(String serviceId) {
 		return AimonDictionary.ID_API_FREE_ANONYMOUS_SENDER == serviceId || AimonDictionary.ID_API_FREE_NORMAL == serviceId;
 	}
+
 
 }

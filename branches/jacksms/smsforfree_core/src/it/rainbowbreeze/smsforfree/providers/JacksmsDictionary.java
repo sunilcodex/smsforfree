@@ -46,7 +46,7 @@ public class JacksmsDictionary
     protected final LogFacility mLogFacility;
     
 	private static final String FORMAT_CSV = "csv";
-	//private static final String FORMAT_XML = "xml";
+	private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
 	private static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
@@ -57,6 +57,8 @@ public class JacksmsDictionary
 	private static final String ACTION_SEND_CAPTCHA = "continue?http&";
 	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
 	private static final String ACTION_GET_USER_LOGINSTRING = "getLoginString";
+	private static final String ACTION_GET_EDITSERVICE = "editService";
+	private static final String ACTION_GET_ADDSERVICE = "addService";
 	
 	//private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
 	//private static final String PARAM_CLIENTVERSION = "clientVersion=";
@@ -100,14 +102,21 @@ public class JacksmsDictionary
 	{ return getUrlForCommand(loginString, ACTION_SEND_CAPTCHA); }
 	
 	public String getUrlForDownloadTemplates(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES); }
+	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES, FORMAT_CSV); }
 
 	public String getUrlForDownloadUserServices(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES); }
+	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES, FORMAT_CSV); }
 	
 	public String getUrlForLoginString(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_USER_LOGINSTRING); }
+	{ return getUrlForCommand(username, password, ACTION_GET_USER_LOGINSTRING, FORMAT_CSV); }
 
+	public String getUrlForSaveService(String username, String password) {
+		return getUrlForCommand(username, password, ACTION_GET_EDITSERVICE, FORMAT_CSV);
+	}
+	
+	public String getUrlForAddService(String username, String password) {
+		return getUrlForCommand(username, password, ACTION_GET_ADDSERVICE, FORMAT_CSV);
+	}
 
 	/**
 	 * Builds headers used in send sms api
@@ -139,8 +148,7 @@ public class JacksmsDictionary
 			
 		return headers;
 	}
-	
-	
+		
 	/**
 	 * Builds headers used in the captcha api
 	 * @param sessionId
@@ -413,7 +421,7 @@ public class JacksmsDictionary
 	
 	//Per ottenere loginString devo usare per forza username e password
 	private String getUrlForCommand(String username, String password,
-			String command) {
+			String command, String out_format) {
 		
 		String codedUser;
 		String codedPwd;
@@ -434,7 +442,7 @@ public class JacksmsDictionary
 			.append("/")
 			.append(command)
 			.append("?")
-            .append(FORMAT_CSV)
+			.append(out_format)
             .append(",")
             .append(PARAM_CLIENTVERSION_VALUE);
 			return sb.toString();
