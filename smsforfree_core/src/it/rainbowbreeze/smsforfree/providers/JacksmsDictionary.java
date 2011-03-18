@@ -127,7 +127,7 @@ public class JacksmsDictionary
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
 		//X: service_id \t recipient \t data1 \t data2 \t data3 \t data4 \t message
-		key = "X";
+		key = "J-X";
 		value = String.valueOf(service.getTemplateId()) + CSV_SEPARATOR + 
 		destination + CSV_SEPARATOR +
 		replaceServiceParameter(service.getParameterValue(0)) + CSV_SEPARATOR +
@@ -154,7 +154,7 @@ public class JacksmsDictionary
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
 		//first header
-		key = "X";
+		key = "J-X";
 		value = String.valueOf(sessionId) + CSV_SEPARATOR + 
 				captchaCode + CSV_SEPARATOR;
 		headers.put(key, value);
