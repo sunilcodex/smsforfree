@@ -32,10 +32,22 @@ import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -71,7 +83,7 @@ extends SmsMultiProvider
 
 	protected JacksmsDictionary mDictionary;
 	protected AppPreferencesDao mappPreferenceDao;
-	
+
 	protected String[] mMessages;
 
 
@@ -175,7 +187,7 @@ extends SmsMultiProvider
 		String url = mDictionary.getUrlForSendingMessage(loginS);
 		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, messageBody);
 		res = doSingleHttpRequest(url, headers, null);
-		
+
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
@@ -333,7 +345,7 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Download provider templates");
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
-		
+
 		//credential check
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
@@ -399,7 +411,7 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Download user configured service");
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
-		
+
 		//credential check
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
@@ -543,5 +555,78 @@ extends SmsMultiProvider
 		if (canAdd) mSubservices.add(newServiceToAdd);
 	}
 
+	/**
+	 * Save on remote account the service's 
+	 * parameters
+	 * 
+	 * @param editedService
+	 */
+	@Override
+	public void saveRemoteservice(SmsService editedService){
+
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+
+		String url = mDictionary.getUrlForSaveService(username, password);
+
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(url);
+		try {
+			//per il comando editService devo passare l'id del servizio associato all'account
+			List<NameValuePair> nameValuePairs = addRemoteRequestParameters(editedService,
+					"id", editedService.getId());
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse res = httpclient.execute(httppost);
+			inputStreamToString(res.getEntity().getContent());
+		} catch (Exception ex){mLogFacility.e(ex);} 		
+	}
+
+	/**
+	 * Add on remote account the service's 
+	 * parameters
+	 * 
+	 * @param editedService
+	 */
+	@Override
+	public void addRemoteservice(SmsService editedService) {
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+
+		String url = mDictionary.getUrlForAddService(username, password);
+
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(url);
+		try {
+			//per il comando addService devo passare l'id del template del servizio
+			List<NameValuePair> nameValuePairs = addRemoteRequestParameters(editedService,
+					"service_id", editedService.getTemplateId());
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse res = httpclient.execute(httppost);
+			inputStreamToString(res.getEntity().getContent());
+		} catch (Exception ex){mLogFacility.e(ex);}
+	}
+	
+	//FIXME come si usa il metodo di Alfredo per evitare sto bordello??
+	private List<NameValuePair> addRemoteRequestParameters(SmsService editedService,
+			String firstParam, String secondParam){
+		List<NameValuePair> nVp = new ArrayList<NameValuePair>(4);
+		nVp.add(new BasicNameValuePair(firstParam, secondParam));
+		nVp.add(new BasicNameValuePair("account_name", editedService.getName()));
+		nVp.add(new BasicNameValuePair("data_1",editedService.getParameterValue(0)));
+		nVp.add(new BasicNameValuePair("data_2",editedService.getParameterValue(1)));
+		nVp.add(new BasicNameValuePair("data_3",editedService.getParameterValue(2)));
+		nVp.add(new BasicNameValuePair("data_4",editedService.getParameterValue(3)));
+		return nVp;
+	}
+	
+	private StringBuilder inputStreamToString(InputStream is) throws IOException {
+	    String line = "";
+	    StringBuilder total = new StringBuilder();
+	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+	    while ((line = rd.readLine()) != null) { 
+	        total.append(line); }
+	    mLogFacility.v("ACCOUNT RESULT", total.toString());
+	    return total;
+	}
 
 }

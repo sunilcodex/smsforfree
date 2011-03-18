@@ -145,6 +145,22 @@ public abstract class SmsProvider
 	}
 	
 	/**
+	 * Save on remote account the service's 
+	 * parameters
+	 * 
+	 * @param editedService
+	 */
+	public abstract void saveRemoteservice(SmsService editedService) ;
+	
+	/**
+	 * Add on remote account the service's 
+	 * parameters
+	 * 
+	 * @param editedService
+	 */
+	public abstract void addRemoteservice(SmsService editedService) ;
+	
+	/**
 	 * Save provider's parameters
 	 * 
 	 * @param context
@@ -278,6 +294,7 @@ public abstract class SmsProvider
 	/** file name where save provider subservices */
 	protected abstract String getSubservicesFileName();
 	
+	
 	/**
 	 * Load provider's templates
 	 * 
@@ -360,17 +377,17 @@ public abstract class SmsProvider
 	 * 
 	 * @param url
 	 * @param headers
-	 * @param parameters
+	 * @param values
 	 * @return
 	 */
     public ResultOperation<String> doSingleHttpRequest(
     		String url,
     		HashMap<String, String> headers,
-    		HashMap<String, String> parameters
+    		HashMap<String, String> values
 		)
     {
     	WebserviceClient client = new WebserviceClient(mLogFacility);
-    	return doHttpRequest(url, headers, parameters, client);
+    	return doHttpRequest(url, headers, values, client);
     }
     
     
@@ -645,6 +662,6 @@ public abstract class SmsProvider
         
         return res;
     }
-
+  
 
 }
