@@ -50,19 +50,18 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
  *
  */
 public class ActSubservicesList
-	extends ListActivity
+extends ListActivity
 {
 	//---------- Private fields
-    protected final static String LOG_HASH = "ActSubservicesTemplates";
+	protected final static String LOG_HASH = "ActSubservicesTemplates";
 	private static final int OPTIONMENU_ADDSERVICE = 10;
 	private static final int CONTEXTMENU_ADDSERVICE = 1;
 	private static final int CONTEXTMENU_EDITSERVICE = 2;
 	private static final int CONTEXTMENU_DELETESERVICE = 3;
-	
-	private SmsProvider mProvider;
-    ArrayAdapter<SmsService> mListAdapter;
-    TextView mLblNoSubservices;
 
+	private SmsProvider mProvider;
+	ArrayAdapter<SmsService> mListAdapter;
+	
 	private ExecuteProviderCommandThread mExecutedProviderCommandThread;
 	private ProgressDialog mProgressDialog;
 	private LogFacility mLogFacility;
@@ -73,48 +72,47 @@ public class ActSubservicesList
 
 	//---------- Public properties
 
-	
-	
-	
+
+
+
 	//---------- Events
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
-        mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
-        mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
-		
+		mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
+		mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
+		mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
+
 		setContentView(R.layout.actsubserviceslist);
-		
+
 		final ListView list = getListView();
 		View header = getLayoutInflater().inflate(R.layout.actsubservicelist_newservice, null);
 		list.addHeaderView(header);
-		
+		list.setCacheColorHint(0);
+
 		getDataFromIntent(getIntent());
-		
+
 		if (null == mProvider)
 			mProvider = AppEnv.i(getApplicationContext()).getProviderList().get(0);
-		
-		//update title
-        setTitle(String.format(
-        		getString(R.string.actsubserviceslist_title),
-        		AppEnv.i(getBaseContext()).getAppDisplayName(),
-        		mProvider.getName()));
 
-        mLblNoSubservices = (TextView) findViewById(R.id.actsubservicelist_lblNoSubservices);
-        mListAdapter = new ArrayAdapter<SmsService>(this, 
-	              R.layout.actsubservice_item, mProvider.getAllSubservices());
+		//update title
+		setTitle(String.format(
+				getString(R.string.actsubserviceslist_title),
+				AppEnv.i(getBaseContext()).getAppDisplayName(),
+				mProvider.getName()));
+
+		mListAdapter = new ArrayAdapter<SmsService>(this, 
+				R.layout.actsubservice_item, mProvider.getAllSubservices());
 		setListAdapter(mListAdapter);
-		
+
 		//register the context menu to defaul ListView of the view
 		//alternative method:
 		//http://www.anddev.org/creating_a_contextmenu_on_a_listview-t2438.html
 		registerForContextMenu(getListView());
-		
-		showHideInfoLabel();
+
 	}	
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -135,23 +133,23 @@ public class ActSubservicesList
 		}
 		super.onStop();
 	}
-		
+
 	@Override
 	public Object onRetainNonConfigurationInstance() {
 		//save eventually open background thread
 		return mExecutedProviderCommandThread;
 	}
 
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		boolean canContinue = super.onCreateOptionsMenu(menu);
 		if (!canContinue) return canContinue;
-		
+
 		//creates it's own menu
 		menu.add(0, OPTIONMENU_ADDSERVICE, 0, R.string.actsubserviceslist_mnuAddService)
-			.setIcon(android.R.drawable.ic_menu_add);
+		.setIcon(android.R.drawable.ic_menu_add);
 
 		//checks for provider's extended commands
 		if (null != mProvider && mProvider.hasSubservicesListActivityCommands()) {
@@ -163,40 +161,40 @@ public class ActSubservicesList
 		}
 		return true;
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		
+
 		menu.setHeaderTitle(R.string.actsubserviceslist_mnuHeaderTitle);
 		menu.add(0, CONTEXTMENU_ADDSERVICE, 0, R.string.actsubserviceslist_mnuAddService)
-			.setIcon(android.R.drawable.ic_menu_add);
+		.setIcon(android.R.drawable.ic_menu_add);
 		menu.add(0, CONTEXTMENU_EDITSERVICE, 1, R.string.actsubserviceslist_mnuEditService)
-			.setIcon(android.R.drawable.ic_menu_edit);
+		.setIcon(android.R.drawable.ic_menu_edit);
 		menu.add(0, CONTEXTMENU_DELETESERVICE, 2, R.string.actsubserviceslist_mnuDeleteService)
-			.setIcon(android.R.drawable.ic_menu_delete);
+		.setIcon(android.R.drawable.ic_menu_delete);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		refreshSubservicesList();
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
+
 		switch (item.getItemId()) {
 		case OPTIONMENU_ADDSERVICE:
 			addNewService();
 			break;
-		
-		//execute one of the provider's command
+
+			//execute one of the provider's command
 		default:
 			execureProviderCommand(mProvider, item.getItemId(), null);
 		}
-		
+
 		return true;
 	}
 
@@ -205,11 +203,11 @@ public class ActSubservicesList
 	public boolean onContextItemSelected(MenuItem item)
 	{
 		SmsService service;
-	    // This is actually where the magic happens.
-	    // As we use an adapter view (which the ListView is)
-	    // We can cast item.getMenuInfo() to AdapterContextMenuInfo 
+		// This is actually where the magic happens.
+		// As we use an adapter view (which the ListView is)
+		// We can cast item.getMenuInfo() to AdapterContextMenuInfo 
 		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-		
+
 		switch (item.getItemId()) {
 		case CONTEXTMENU_ADDSERVICE:
 			addNewService();
@@ -232,19 +230,19 @@ public class ActSubservicesList
 			}
 			break;
 		}
-		
+
 		return true;
 	}
-		
-	
+
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		switch (v.getId()) {
-		
+
 		case R.id.actsubservicelist_new_message_view:
 			addNewService();
 			break;
-			
+
 		case R.id.actsubservice_item:
 			SmsService service = mProvider.getAllSubservices().get(position-1);
 			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());			
@@ -252,16 +250,16 @@ public class ActSubservicesList
 		}
 	}
 
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		
+
 		if (RESULT_OK != resultCode) {
 			return;
 		}
-		
+
 		switch (requestCode) {
 		case ActivityHelper.REQUESTCODE_PICKTEMPLATE:
 			//get templateId
@@ -269,9 +267,8 @@ public class ActSubservicesList
 			//and launch the creation of new subservice
 			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), templateId, SmsService.NEWSERVICEID);
 			break;
-			
+
 		case ActivityHelper.REQUESTCODE_SERVICESETTINGS:
-			showHideInfoLabel();
 			break;
 		}
 	}
@@ -286,7 +283,7 @@ public class ActSubservicesList
 			//check if the message is for this handler
 			if (msg.what != ExecuteProviderCommandThread.WHAT_EXECUTEDPROVIDERCOMMAND)
 				return;
-			
+
 			//dismisses progress dialog
 			if (null != mProgressDialog && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
@@ -304,10 +301,10 @@ public class ActSubservicesList
 
 
 	//---------- Public methods
-	
 
-	
-	
+
+
+
 	//---------- Private methods
 
 	private void getDataFromIntent(Intent intent) {
@@ -320,11 +317,11 @@ public class ActSubservicesList
 			mProvider = null;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Show or hide label with description
-	 */
+	 
 	private void showHideInfoLabel()
 	{
 		if (mProvider.getAllSubservices().size() == 0) {
@@ -332,7 +329,7 @@ public class ActSubservicesList
 		} else {
 			mLblNoSubservices.setVisibility(View.GONE);
 		}
-	}
+	}*/
 
 
 	/**
@@ -377,7 +374,6 @@ public class ActSubservicesList
 	private void refreshSubservicesList() {
 		//update the list and avoid the IllegalStateException when a new subservice is added
 		if (null != mListAdapter) mListAdapter.notifyDataSetChanged();
-		showHideInfoLabel();
 	}
-	
+
 }
