@@ -32,16 +32,11 @@ import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -573,11 +568,10 @@ extends SmsMultiProvider
 		HttpPost httppost = new HttpPost(url);
 		try {
 			//per il comando editService devo passare l'id del servizio associato all'account
-			List<NameValuePair> nameValuePairs = addRemoteRequestParameters(editedService,
+			List<NameValuePair> nameValuePairs = composeRequestParameters(editedService,
 					"id", editedService.getId());
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			HttpResponse res = httpclient.execute(httppost);
-			inputStreamToString(res.getEntity().getContent());
+			httpclient.execute(httppost);
 		} catch (Exception ex){mLogFacility.e(ex);} 		
 	}
 
@@ -598,16 +592,38 @@ extends SmsMultiProvider
 		HttpPost httppost = new HttpPost(url);
 		try {
 			//per il comando addService devo passare l'id del template del servizio
-			List<NameValuePair> nameValuePairs = addRemoteRequestParameters(editedService,
+			List<NameValuePair> nameValuePairs = composeRequestParameters(editedService,
 					"service_id", editedService.getTemplateId());
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			HttpResponse res = httpclient.execute(httppost);
-			inputStreamToString(res.getEntity().getContent());
+			httpclient.execute(httppost);
 		} catch (Exception ex){mLogFacility.e(ex);}
 	}
-	
+
+	/**
+	 * Delete a service from list stored
+	 * online on user's account
+	 * 
+	 * @param service
+	 */
+	@Override
+	public void removeRemoteService(SmsService delService) {
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+
+		String url = mDictionary.getUrlForDeleteService(username, password);
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(url);
+		try {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("ids", delService.getId()));
+
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			httpclient.execute(httppost);
+		} catch (Exception ex){mLogFacility.e(ex);}
+	}
+
 	//FIXME come si usa il metodo di Alfredo per evitare sto bordello??
-	private List<NameValuePair> addRemoteRequestParameters(SmsService editedService,
+	private List<NameValuePair> composeRequestParameters(SmsService editedService,
 			String firstParam, String secondParam){
 		List<NameValuePair> nVp = new ArrayList<NameValuePair>(4);
 		nVp.add(new BasicNameValuePair(firstParam, secondParam));
@@ -617,16 +633,6 @@ extends SmsMultiProvider
 		nVp.add(new BasicNameValuePair("data_3",editedService.getParameterValue(2)));
 		nVp.add(new BasicNameValuePair("data_4",editedService.getParameterValue(3)));
 		return nVp;
-	}
-	
-	private StringBuilder inputStreamToString(InputStream is) throws IOException {
-	    String line = "";
-	    StringBuilder total = new StringBuilder();
-	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-	    while ((line = rd.readLine()) != null) { 
-	        total.append(line); }
-	    mLogFacility.v("ACCOUNT RESULT", total.toString());
-	    return total;
 	}
 
 }
