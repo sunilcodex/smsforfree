@@ -161,6 +161,14 @@ public abstract class SmsProvider
 	public abstract void addRemoteservice(SmsService editedService) ;
 	
 	/**
+	 * Delete a service from list stored
+	 * online on user's account
+	 * 
+	 * @param service
+	 */
+	public abstract void removeRemoteService(SmsService service) ;
+	
+	/**
 	 * Save provider's parameters
 	 * 
 	 * @param context
@@ -662,6 +670,5 @@ public abstract class SmsProvider
         
         return res;
     }
-  
 
 }

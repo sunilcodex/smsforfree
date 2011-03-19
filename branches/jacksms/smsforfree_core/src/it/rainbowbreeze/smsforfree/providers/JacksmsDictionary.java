@@ -21,6 +21,7 @@ package it.rainbowbreeze.smsforfree.providers;
 
 import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
 import it.rainbowbreeze.libs.helper.RainbowArrayHelper;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
@@ -46,12 +47,11 @@ public class JacksmsDictionary
     protected final LogFacility mLogFacility;
     
 	private static final String FORMAT_CSV = "csv";
-	private static final String FORMAT_XML = "xml";
+//	private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
 	private static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
 	private static final String URL_Q_BASE = "http://q.jacksms.it";
-//	private static final String ACTION_GET_ALL_TEMPLATES = "getVersionedProviders?"+FORMAT_XML; TODO: cambiare in questo??
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "send?http&";
 	private static final String ACTION_SEND_CAPTCHA = "continue?http&";
@@ -59,11 +59,10 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_USER_LOGINSTRING = "getLoginString";
 	private static final String ACTION_GET_EDITSERVICE = "editService";
 	private static final String ACTION_GET_ADDSERVICE = "addService";
-	
-	//private static final String PARAM_OUTPUTFORMAT = "outputFormat=";
-	//private static final String PARAM_CLIENTVERSION = "clientVersion=";
+	private static final String ACTION_GET_DELSERVICE = "delService";
+
 	//TODO: get version from global variable or settings
-	private static final String PARAM_CLIENTVERSION_VALUE = "android=3.0";
+	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
 	private static final String CSV_SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
@@ -118,6 +117,10 @@ public class JacksmsDictionary
 		return getUrlForCommand(username, password, ACTION_GET_ADDSERVICE, FORMAT_CSV);
 	}
 
+	public String getUrlForDeleteService(String username, String password) {
+		return getUrlForCommand(username, password, ACTION_GET_DELSERVICE, FORMAT_CSV);
+	}
+	
 	/**
 	 * Builds headers used in send sms api
 	 * 

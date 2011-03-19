@@ -223,6 +223,7 @@ public class ActSubservicesList
 		case CONTEXTMENU_DELETESERVICE:
 			service = (SmsService) getListAdapter().getItem(menuInfo.position-1);
 			mProvider.getAllSubservices().remove(service);
+			mProvider.removeRemoteService(service);
 			refreshSubservicesList();
 			ResultOperation<Void> res = mProvider.saveSubservices(this);
 			if (res.hasErrors()) {
