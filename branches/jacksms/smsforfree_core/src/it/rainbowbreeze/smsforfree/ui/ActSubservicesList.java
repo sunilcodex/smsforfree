@@ -90,7 +90,6 @@ extends ListActivity
 		final ListView list = getListView();
 		View header = getLayoutInflater().inflate(R.layout.actsubservicelist_newservice, null);
 		list.addHeaderView(header);
-		list.setCacheColorHint(0);
 
 		getDataFromIntent(getIntent());
 
@@ -148,10 +147,6 @@ extends ListActivity
 		boolean canContinue = super.onCreateOptionsMenu(menu);
 		if (!canContinue) return canContinue;
 
-		//creates it's own menu
-		menu.add(0, OPTIONMENU_ADDSERVICE, 0, R.string.actsubserviceslist_mnuAddService)
-		.setIcon(android.R.drawable.ic_menu_add);
-
 		//checks for provider's extended commands
 		if (null != mProvider && mProvider.hasSubservicesListActivityCommands()) {
 			for (SmsServiceCommand command : mProvider.getSubservicesListActivityCommands()) {
@@ -168,11 +163,9 @@ extends ListActivity
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		menu.setHeaderTitle(R.string.actsubserviceslist_mnuHeaderTitle);
-		menu.add(0, CONTEXTMENU_ADDSERVICE, 0, R.string.actsubserviceslist_mnuAddService)
-		.setIcon(android.R.drawable.ic_menu_add);
-		menu.add(0, CONTEXTMENU_EDITSERVICE, 1, R.string.actsubserviceslist_mnuEditService)
+		menu.add(0, CONTEXTMENU_EDITSERVICE, 0, R.string.actsubserviceslist_mnuEditService)
 		.setIcon(android.R.drawable.ic_menu_edit);
-		menu.add(0, CONTEXTMENU_DELETESERVICE, 2, R.string.actsubserviceslist_mnuDeleteService)
+		menu.add(0, CONTEXTMENU_DELETESERVICE, 1, R.string.actsubserviceslist_mnuDeleteService)
 		.setIcon(android.R.drawable.ic_menu_delete);
 	}
 
