@@ -51,6 +51,7 @@ import android.text.TextUtils;
 /**
  * 
  * @author Alfredo "Rainbowbreeze" Morresi
+ * @author Saverio Guardato 
  *
  */
 public class JacksmsProvider
@@ -611,18 +612,28 @@ extends SmsMultiProvider
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String url = mDictionary.getUrlForDeleteService(username, password);
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(url);
+		final HttpClient httpclient = new DefaultHttpClient();
+		final HttpPost httppost = new HttpPost(url);
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+		nameValuePairs.add(new BasicNameValuePair("ids", delService.getId()));
 		try {
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-			nameValuePairs.add(new BasicNameValuePair("ids", delService.getId()));
-
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			httpclient.execute(httppost);
 		} catch (Exception ex){mLogFacility.e(ex);}
+		Thread t = new Thread(new Runnable(){
+			@Override
+			public void run() {
+				try {
+					for(int i=0;i<3;i++){
+						httpclient.execute(httppost);
+						Thread.sleep(1000);
+					}
+				} catch (Exception e) {mLogFacility.e(e);}
+			}				
+		});
+		t.start();
 	}
 
-	//FIXME come si usa il metodo di Alfredo per evitare sto bordello??
+	//FIXME modificare il metodo di Alfredo per evitare sto bordello??
 	private List<NameValuePair> composeRequestParameters(SmsService editedService,
 			String firstParam, String secondParam){
 		List<NameValuePair> nVp = new ArrayList<NameValuePair>(4);

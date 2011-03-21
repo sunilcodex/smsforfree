@@ -22,8 +22,8 @@
     <string name="jacksms_username_desc">Username</string>
     <string name="jacksms_password_desc">Password</string>
     <string name="jacksms_description">Con JackSMS puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
-    <string name="jacksms_commandLoadTemplateServices">Scarica i template di JackSMS</string>
-    <string name="jacksms_commandLoadUserSubservices">Carica i tuoi servizi JackSMS salvati sul sito</string>
+    <string name="jacksms_commandLoadTemplateServices">Scarica la lista completa dei servizi da configurare</string>
+    <string name="jacksms_commandLoadUserSubservices">Scarica la lista dei servizi gia\' configurati sul sito</string>
     <string name="jacksms_msg_invalidCredentials">Credenziali JackSMS non valide :(</string>
     <string name="jacksms_msg_serverErrorKnow">Error del server JackSMS.\n %s</string>
     <string name="jacksms_msg_serverErrorUnknow">Error sconosciuto del server JackSMS. Invia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
