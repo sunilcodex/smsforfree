@@ -25,12 +25,14 @@ import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
+import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandThread;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,7 +44,6 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
@@ -61,14 +62,14 @@ extends ListActivity
 
 	private SmsProvider mProvider;
 	ArrayAdapter<SmsService> mListAdapter;
-	
+
 	private ExecuteProviderCommandThread mExecutedProviderCommandThread;
 	private ProgressDialog mProgressDialog;
 	private LogFacility mLogFacility;
 	private ActivityHelper mActivityHelper;
 
 
-
+	private SmsService mTempService;
 
 	//---------- Public properties
 
@@ -220,8 +221,13 @@ extends ListActivity
 			break;
 		case CONTEXTMENU_DELETESERVICE:
 			service = (SmsService) getListAdapter().getItem(menuInfo.position-1);
+			mTempService = service;
 			mProvider.getAllSubservices().remove(service);
-			mProvider.removeRemoteService(service);
+			Dialog d = mActivityHelper.createYesNoDialog(this,
+					"JackSms",
+					"Vuoi che il servizio venga cancellato anche dall'account sul sito?",
+					deleteYesListener, null);
+			d.show();
 			refreshSubservicesList();
 			ResultOperation<Void> res = mProvider.saveSubservices(this);
 			if (res.hasErrors()) {
@@ -234,6 +240,16 @@ extends ListActivity
 		return true;
 	}
 
+	/**
+	 *	Listeners needed for the YES/NO dialog
+	 *	after a delete action
+	 */
+	Dialog.OnClickListener deleteYesListener = new Dialog.OnClickListener() {
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			mProvider.removeRemoteService(mTempService);
+		}
+	};
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -321,7 +337,7 @@ extends ListActivity
 
 	/**
 	 * Show or hide label with description
-	 
+
 	private void showHideInfoLabel()
 	{
 		if (mProvider.getAllSubservices().size() == 0) {
