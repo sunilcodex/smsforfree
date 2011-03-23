@@ -669,7 +669,7 @@ public class ActSendSms
 		String newServiceId = null != service ? service.getId() : null;
 
 		//already selected subservice
-		if (newServiceId == mSelectedServiceId) return;
+		if (TextUtils.equals(newServiceId,mSelectedServiceId)) return;
 		
 		mSelectedProvider.setSelectedSubservice(newServiceId);
 		mSelectedServiceId = newServiceId;
