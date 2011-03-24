@@ -167,17 +167,17 @@
 
     <!-- ActAbout -->
     <string name="actabout_title">%s - About</string>
-    <string name="actabout_lblAuthor">by Alfredo Morresi</string>
+    <string name="actabout_lblAuthor">by Marco, Saverio, Alfredo</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">Send SMS text messages worldwide using online SMS gateways, with free o very low cost. You need to configure at least one provider and each provider need its own account. To configure, from main screen, press \'Menu\', then \'Settings\' and select \'Providers settings\'.</string>
-    <string name="actabout_lblDescription2">Suggestions, translations, graphics, new providers? %s\n\nSpecial thanks: Ilaria Mauric (logo), Robert Harder and Felix Bechstein (code)</string>
+    <string name="actabout_lblDescription">Questa è una versione Alpha di quella che sarà la nuova versione di JackSms. Per consultare gli ultimi aggiornamenti e lo stato di avanzamento basta leggere il changelog dal menù qui in basso. Per info, segnalazioni o proposte contattare gli sviluppatori.</string>
+    <string name="actabout_lblDescription2"></string>
     <string name="actabout_lblSentSms">SMS sent today: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
     <string name="actabout_mnuEmail">Email to developer</string>
     <string name="actabout_msgChangeslogTitle">Changeslog</string>
     <string name="actabout_msgChangeslog">v2.1\nSeparate clean of destination and message, bugfixes\n\nv2.0\nDestination autocomplete, better error management\n\nv1.8\nMessage templates\n\nv1.7\nSave SMS into device\'s Sent folder, retrieve last received SMS number, better log management\n\nv1.6\nBugfixes\n\nv1.5\nImport user services saved on JackSMS site, bugfixes\n\nv1.4\nFixed issues with Android 1.6\n\nv1.3\n -Added SubitoSMS, send errors via email, bugfixes\n\nv1.2:\n -Added free sms to Aimon provider, bigger captcha\n\nv1.1:\n -Fix for captcha size\n\nv1.0:\n -First release</string>
     <string name="actabout_msgEmailSubject">About your %s application...</string>
-    <string name="actabout_msgEmailBody">Hi Saverio, \n\n</string>
+    <string name="actabout_msgEmailBody">Hi devs, \n\n</string>
 
 
 
