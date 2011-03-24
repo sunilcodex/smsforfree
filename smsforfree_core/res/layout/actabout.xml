@@ -63,15 +63,6 @@
 	/>
 	
 	<TextView
-		android:id="@+id/actabout_lblWebsite"
-		style="@style/actabout_lblTitles"
-		android:layout_below="@id/actabout_lblAuthor"
-		android:layout_alignRight="@id/actabout_lblAppName"
-		android:text="@string/actabout_lblWebsite"
-		android:autoLink="web"
-	/>
-	
-	<TextView
 		android:id="@+id/actabout_lblDescription"
 		style="@style/actabout_lblTitles"
 		android:layout_below="@id/actabout_imgLogo"
