@@ -64,14 +64,8 @@ public class ActAbout
         setTitle(String.format(
         		getString(R.string.actabout_title), appEnv.getAppDisplayName()));
         
-        TextView lblVersion = (TextView)findViewById(R.id.actabout_lblAppVersion);
-        String version = AppEnv.APP_DISPLAY_VERSION;
-        if (appEnv.isLiteVersionApp()) version = version + " " + AppEnv.LITE_DESCRIPTION;
-        lblVersion.setText(version);
-
         TextView lblSentSms = (TextView)findViewById(R.id.actabout_lblSentSms);
         String sentSms = String.valueOf(mLogicManager.getSmsSentToday());
-        if (appEnv.isLiteVersionApp()) sentSms = sentSms + "/" + appEnv.getAllowedSmsForDay();
         lblSentSms.setText(String.format(
         		getString(R.string.actabout_lblSentSms), sentSms));
         

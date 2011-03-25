@@ -103,7 +103,8 @@ extends ListActivity
 				mProvider.getName()));
 
 		mListAdapter = new ArrayAdapter<SmsService>(this, 
-				R.layout.actsubservice_item, mProvider.getAllSubservices());
+				R.layout.actsubservice_item,
+				mProvider.getAllSubservices());
 		setListAdapter(mListAdapter);
 
 		//register the context menu to defaul ListView of the view
@@ -186,6 +187,7 @@ extends ListActivity
 
 			//execute one of the provider's command
 		default:
+			mListAdapter.clear();
 			execureProviderCommand(mProvider, item.getItemId(), null);
 		}
 
@@ -330,7 +332,6 @@ extends ListActivity
 
 	/**
 	 * Show or hide label with description
-
 	private void showHideInfoLabel()
 	{
 		if (mProvider.getAllSubservices().size() == 0) {

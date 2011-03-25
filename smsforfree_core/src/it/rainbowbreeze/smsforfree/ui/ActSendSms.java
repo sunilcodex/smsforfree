@@ -909,13 +909,7 @@ public class ActSendSms
 	 * Send message
 	 */
 	private void sendMessage()
-	{
-		//check if can send another SMS
-		if (!mLogicManager.checkIfCanSendSms(getBaseContext())) {
-			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_smsLimitReach, Toast.LENGTH_LONG);
-			return;
-		}
-		
+	{		
 		//check provider
 		if (null == mSelectedProvider) {
 			mActivityHelper.showInfo(ActSendSms.this, R.string.actsendsms_msg_noProviderSelected);
