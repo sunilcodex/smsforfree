@@ -257,9 +257,11 @@ extends SmsMultiProvider
 
 		//at this point, no error happened, so the reply contains captcha submission result
 		String reply = res.getResult();
+		String [] tokens = reply.split("\t");
 		String returnMessage = mDictionary.getTextPartFromReply(reply);
 		if (mDictionary.isCaptchaCorrectlySent(reply)) {
-			returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
+			//returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
+			returnMessage = tokens[1];
 			res.setResult(returnMessage);
 		} else {
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
