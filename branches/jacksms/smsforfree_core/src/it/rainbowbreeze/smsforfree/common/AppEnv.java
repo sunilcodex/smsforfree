@@ -50,7 +50,6 @@ public class AppEnv
     }
 	
 	
-	
 	//---------- Public properties
     /** lazy loading singleton */
     public static AppEnv i(Context context) {
@@ -73,7 +72,7 @@ public class AppEnv
 	public final static String APP_INTERNAL_NAME = "JackSms";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "0324a";
+	public final static String APP_INTERNAL_VERSION = "0326";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "sa.guarda@gmail.com;jamiro.it@gmail.com";
@@ -88,23 +87,12 @@ public class AppEnv
 	/** file name for providers subservices list */
 	public final static String jacksmsSubservicesFileName = "jacksms_subservices.xml"; 
 
-	/** file name for providers preferences */
-	public final static String aimonParametersFileName = "aimon_parameters.xml"; 
-	
-	/** file name for providers preferences */
-	public final static String voipstuntParametersFileName = "voipstunt_parameters.xml";
-
-	public final static String subitosmsParametersFileName = "subitosms_parameters.xml";
-
 	/** international prefix for Italy */
 	public final static String ITALY_INTERNATIONAL_PREFIX = "+39";
 	
 	/** url where send statistics about device */
 	public final static String STATISTICS_WEBSERVER_URL = "http://www.rainbowbreeze.it/devel/getlatestversion.php";
 	
-	/** string for lite version */
-	public final static String LITE_DESCRIPTION = "Lite";
-
 	/** platform - dependent newline char */
 	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
 	
@@ -117,16 +105,6 @@ public class AppEnv
 	public List<SmsProvider> getProviderList()
 	{ return mProviderList; }
 	
-	/** Max allowed SMS for each day */
-    protected int mAllowedSmsForDay;
-	public int getAllowedSmsForDay()
-	{ return mAllowedSmsForDay; }
-
-	/** Application is demo, not full version */
-	protected boolean mLiteVersionApp;
-	public boolean isLiteVersionApp()
-	{ return mLiteVersionApp; }
-
 	/** Application name */
 	protected String mAppDisplayName;
 	public String getAppDisplayName()
@@ -139,13 +117,7 @@ public class AppEnv
 	public void setForceSubserviceRefresh(boolean newValue)
 	{ mForceSubserviceRefresh = newValue; }
 	
-	/** Show o don't show the ads */
-    protected boolean mAdEnables;
-	public boolean isAdEnables()
-	{ return mAdEnables; }
-	
-
-	
+		
 	//---------- Public methods
 
 	public String getLoginString()
@@ -206,19 +178,9 @@ public class AppEnv
         mAppDisplayName = context.getString(R.string.common_appNameForDisplay);
         logFacility.v(LOG_HASH, "App display name: " + mAppDisplayName);
         
-        //find if ads should be enabled
-        String adEnabel = context.getString(R.string.config_ShowAd);
-        mAdEnables = "true".equalsIgnoreCase(adEnabel);
-
         //init some vars
         setForceSubserviceRefresh(false);
         
-        //load some application license setting
-        mLiteVersionApp =
-            LITE_DESCRIPTION.equalsIgnoreCase(context.getString(R.string.config_AppType));
-        mAllowedSmsForDay =
-            Integer.valueOf(context.getString(R.string.config_MaxAllowedSmsForDay));
-
         //init providers
         ResultOperation<Void> res;
         res = logicManager.addProvidersToList(context, mProviderList);

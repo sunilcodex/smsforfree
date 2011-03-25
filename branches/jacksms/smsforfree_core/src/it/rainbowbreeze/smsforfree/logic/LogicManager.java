@@ -159,20 +159,6 @@ public class LogicManager extends RainbowLogicManager {
 
 
 	/**
-	 * Checks if sms message sent in the current day is still under the allowed limit
-	 */
-	public boolean checkIfCanSendSms(Context context)
-	{
-		//unlimited sms for normal app
-		if (!AppEnv.i(context).isLiteVersionApp()) return true;
-
-		//0: no send limit
-		if (0 == AppEnv.i(context).getAllowedSmsForDay()) return true;
-
-		return getSmsSentToday() <= AppEnv.i(context).getAllowedSmsForDay();
-	}
-
-	/**
 	 * Get the number of sms sent today
 	 */
 	public int getSmsSentToday()
