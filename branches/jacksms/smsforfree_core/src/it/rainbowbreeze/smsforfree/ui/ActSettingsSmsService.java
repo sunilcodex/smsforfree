@@ -326,8 +326,8 @@ extends RainbowBaseDataEntryActivity
 			}
 		}
 
-		//TODO SEI QUI
-		
+		//TODO QUI C'E' LA PARTE DI SINCRONIZZAZIONE CON IL SERVER
+
 		//persist the parameters
 		ResultOperation<Void> res;
 		if (mIsEditingAProvider) {
@@ -337,13 +337,23 @@ extends RainbowBaseDataEntryActivity
 			mProvider.getAllSubservices().add(mEditedService);
 			//save new subservice
 			res = mProvider.saveSubservices(this);
-			//add to remote account
-			mProvider.addRemoteservice(mEditedService);
+			if(GlobalHelper.isNetworkAvailable(getBaseContext())){
+				//add to remote account
+				mProvider.addRemoteservice(mEditedService);
+			}
+			else
+				mActivityHelper.showInfo(getBaseContext(), "Il servizio non e' stato aggiunto " +
+				"sul tuo account online poiche' non sei connesso");
 		} else {
 			//update subservice
 			res = mProvider.saveSubservices(this);
-			//save data to remote account
-    		mProvider.saveRemoteservice(mEditedService);
+			if(GlobalHelper.isNetworkAvailable(getBaseContext())){
+				//save data to remote account
+				mProvider.saveRemoteservice(mEditedService);
+			}
+			else
+				mActivityHelper.showInfo(getBaseContext(), "Il servizio non e' stato aggiunto" +
+				"sul tuo account online poiche' non sei connesso");
 		}
 
 		if (res.hasErrors()) {

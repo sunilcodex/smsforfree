@@ -39,9 +39,9 @@ public class ActAbout
 	private final static int OPTIONMENU_EMAIL = 2;
 	private final static int DIALOG_CHANGESLOG = 1;
 
-	private LogFacility mLogFacility;
-	private ActivityHelper mActivityHelper;
-	private LogicManager mLogicManager;
+	protected LogFacility mLogFacility;
+	protected ActivityHelper mActivityHelper;
+	protected LogicManager mLogicManager;
 	
 	
 	
