@@ -181,13 +181,14 @@ extends SmsMultiProvider
 		//sends the sms
 		SmsService service = getSubservice(serviceId);
 		String url = mDictionary.getUrlForSendingMessage(loginS);
-		HashMap<String, String> headers = mDictionary.getHeaderForSendingMessage(service, destination, messageBody);
-		res = doSingleHttpRequest(url, headers, null);
+		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
+		
+		res = doSingleHttpRequest(url, null, params);
 
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
-			logRequest(url, headers, null);
+			logRequest(url, params, null);
 			return res;
 		}
 
