@@ -162,6 +162,14 @@ extends SmsMultiProvider
 		return res;
 	}
 
+	/** Contenuto dell'array tokens dell'esito 
+	 * [0] = esito {1|0}
+	 * [1] = \t [eventuale risultato operazione] 
+	 * [2] = \t messaggi da leggere 
+	 * [3] = \t n messaggi inviati oggi con l'account usato 
+	 * [4] = \t codice identificativo operatore destinatario 
+	 * [5] = \t flag appartenenza al network JackSMS
+	 */
 	@Override
 	public ResultOperation<String> sendMessage(
 			String serviceId,
@@ -182,26 +190,36 @@ extends SmsMultiProvider
 		SmsService service = getSubservice(serviceId);
 		String url = mDictionary.getUrlForSendingMessage(loginS);
 		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
-		
+
 		res = doSingleHttpRequest(url, null, params);
+		String reply = res.getResult();
+		String [] tokens = reply.split("\t");
 
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
 			logRequest(url, params, null);
+			res.setResult(tokens[1]);
 			return res;
 		}
 
 		//at this point, no error happened, so checks if the sms was sent or
 		//a captcha code is needed
-		String reply = res.getResult();
+
 		//message sent
 		if (mDictionary.isSmsCorrectlySent(reply)) {
-			//breaks the reply and find the message
-			res.setResult(String.format(
-					mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
-			//captcha request
-		} else if (mDictionary.isCaptchaRequest(reply)) {
+			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
+			if(!TextUtils.isEmpty(tokens[1]) &&
+					tokens[1].contains("residui")){
+				res.setResult("Sms residui per questo servizio: "+
+						tokens[1].replaceAll( "[^\\d]", "" ));
+			}
+			else
+				res.setResult("Oggi hai inviato "+tokens[3]+" sms con questo servizio.");
+			//res.setResult(String.format(mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
+		}
+		//captcha request
+		else if (mDictionary.isCaptchaRequest(reply)) {
 			//returns captcha, message contains all captcha information
 			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
 		} else {
@@ -231,6 +249,14 @@ extends SmsMultiProvider
 		return new ResultOperation<Object>(content);
 	}
 
+	/** Contenuto dell'array tokens dell'esito 
+	 * [0] = esito {1|0}
+	 * [1] = \t [eventuale risultato operazione] 
+	 * [2] = \t messaggi da leggere 
+	 * [3] = \t n messaggi inviati oggi con l'account usato 
+	 * [4] = \t codice identificativo operatore destinatario 
+	 * [5] = \t flag appartenenza al network JackSMS
+	 */
 	@Override
 	public ResultOperation<String> sendCaptcha(String providerReply, String captchaCode) {
 		mLogFacility.v(LOG_HASH, "Captcha return message analysis");
@@ -258,11 +284,19 @@ extends SmsMultiProvider
 
 		//at this point, no error happened, so the reply contains captcha submission result
 		String reply = res.getResult();
-		String [] tokens = reply.split("\t");
+
 		String returnMessage = mDictionary.getTextPartFromReply(reply);
 		if (mDictionary.isCaptchaCorrectlySent(reply)) {
+			String [] tokens = reply.split("\t");
+			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
+			if(!TextUtils.isEmpty(tokens[1]) &&
+					tokens[1].contains("residui")){
+				returnMessage = "Sms residui per questo servizio: "+
+				tokens[1].replaceAll( "[^\\d]", "" );
+			}
+			else
+				returnMessage = "Oggi hai inviato "+tokens[3]+" sms con questo servizio.";
 			//returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
-			returnMessage = tokens[1];
 			res.setResult(returnMessage);
 		} else {
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
