@@ -41,7 +41,7 @@
     <string name="common_sendlogSubject">Log %s</string>
     <string name="common_sendlogBody">Ciao sviluppatori, vi mando i log dell\'applicazione perche\' (aggiungi qui il motivo della segnalazione)\n\n\n%s</string>
     <string name="common_sendEmailChooser">Scegli l\'applicazione per l\'email</string>
-    <string name="common_defaultMessageTemplates">Si§§§§No§§§§Grazie§§§§Ok, vediamoci alle§§§§Scusami, ma ora sono occupato</string>
+    <string name="common_defaultMessageTemplates">Si//No//Grazie//Ok, vediamoci alle//Scusami, ma ora sono occupato</string>
     
 
 
