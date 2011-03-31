@@ -24,7 +24,6 @@ import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class AppPreferencesDao
 	extends RainbowAppPreferencesDao
@@ -56,7 +55,7 @@ public class AppPreferencesDao
     protected static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
     
     
-    protected static final String TEMPLATES_SEPARATOR = "§§§§";
+    protected static final String TEMPLATES_SEPARATOR = "//";
 	
     
     

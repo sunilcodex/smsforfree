@@ -187,7 +187,7 @@ public class LogicManager extends RainbowLogicManager {
 		String [] templates = mAppPreferencesDao.getMessageTemplates();
 		if (null == templates || templates.length < 1 || TextUtils.isEmpty(templates[0])) {
 			//load standard templates
-			templates = context.getString(R.string.common_defaultMessageTemplates).split("§§§§");
+			templates = context.getString(R.string.common_defaultMessageTemplates).split("//");
 			mAppPreferencesDao.setMessageTemplates(templates);
 			boolean result = mAppPreferencesDao.save();
 			if (!result) return new ResultOperation<Void>(new Exception("Error saving application preferences"), ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
