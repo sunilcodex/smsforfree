@@ -190,7 +190,6 @@ extends SmsMultiProvider
 		SmsService service = getSubservice(serviceId);
 		String url = mDictionary.getUrlForSendingMessage(loginS);
 		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
-
 		res = doSingleHttpRequest(url, null, params);
 		String reply = res.getResult();
 		String [] tokens = reply.split("\t");

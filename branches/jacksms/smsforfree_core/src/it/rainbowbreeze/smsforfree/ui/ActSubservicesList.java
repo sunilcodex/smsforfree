@@ -29,6 +29,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandThread;
+import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -54,8 +55,7 @@ public class ActSubservicesList
 extends ListActivity
 {
 	//---------- Private fields
-	protected final static String LOG_HASH = "ActSubservicesTemplates";
-	private static final int OPTIONMENU_ADDSERVICE = 10;
+	protected final static String LOG_HASH = "ActSubservicesList";
 	private static final int CONTEXTMENU_ADDSERVICE = 1;
 	private static final int CONTEXTMENU_EDITSERVICE = 2;
 	private static final int CONTEXTMENU_DELETESERVICE = 3;
@@ -82,7 +82,6 @@ extends ListActivity
 		super.onCreate(savedInstanceState);
 
 		mLogFacility = AppEnv.i(getBaseContext()).getLogFacility();
-		mLogFacility.logStartOfActivity(LOG_HASH, this.getClass(), savedInstanceState);
 		mActivityHelper = AppEnv.i(getBaseContext()).getActivityHelper();
 
 		setContentView(R.layout.actsubserviceslist);
@@ -173,7 +172,6 @@ extends ListActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-
 		refreshSubservicesList();
 	}
 
@@ -181,14 +179,16 @@ extends ListActivity
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-		case OPTIONMENU_ADDSERVICE:
-			addNewService();
+		case JacksmsProvider.COMMAND_LOADTEMPLATESERVICES:
+			mLogFacility.i("Scaricamento template in corso");
+			execureProviderCommand(mProvider, item.getItemId(), null);
 			break;
 
-			//execute one of the provider's command
-		default:
+		case JacksmsProvider.COMMAND_LOADUSERSERVICES:
+			mLogFacility.i("Pulizia della lista e aggiornamento servizi");
 			mListAdapter.clear();
 			execureProviderCommand(mProvider, item.getItemId(), null);
+			break;			
 		}
 
 		return true;
@@ -206,15 +206,18 @@ extends ListActivity
 
 		switch (item.getItemId()) {
 		case CONTEXTMENU_ADDSERVICE:
+			mLogFacility.i("Scelto add service");
 			addNewService();
 			break;
 		case CONTEXTMENU_EDITSERVICE:
 			//find current selected service
+			mLogFacility.i("Scelto edit service");
 			service = (SmsService) getListAdapter().getItem(menuInfo.position-1);
 			//and edit it
 			mActivityHelper.openSettingsSmsService(this, mProvider.getId(), service.getTemplateId(), service.getId());
 			break;
 		case CONTEXTMENU_DELETESERVICE:
+			mLogFacility.i("Scelto delete service");
 			service = (SmsService) getListAdapter().getItem(menuInfo.position-1);
 			mTempService = service;
 			mProvider.getAllSubservices().remove(service);
@@ -330,8 +333,8 @@ extends ListActivity
 	}
 
 
-	/**
-	 * Show or hide label with description
+	/*
+	 Show or hide label with description
 	private void showHideInfoLabel()
 	{
 		if (mProvider.getAllSubservices().size() == 0) {

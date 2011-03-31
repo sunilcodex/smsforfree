@@ -28,18 +28,18 @@
     <string name="common_mnuCancel">Annulla</string>
     <string name="common_msg_genericError">Errore generico: %s</string>
     <string name="common_msg_cannotsavepreferences">Spiacente, impossible salvare i dati: </string>
-    <string name="common_msg_executingCommand">Esecuzione comando...</string>
+    <string name="common_msg_executingCommand">Operazione in corso...</string>
     <string name="common_msg_appExpired">Spiacente, il programma ha terminato la sua data di validita\' :(</string>
-    <string name="common_msg_noReplyFromProvider">Nessuna risposta. Riprova ancora potrebbe essere un problema intero al provider oppure il provider e\' down...</string>
-    <string name="common_msg_cannotSaveProviderData">Non posso salvare i dati del provider:\n%s\n\nSegnalalo questo errore allo sviluppatore.</string>
-    <string name="common_msg_cannotLoadProviderData">Non posso caricare i dati del provider:\n%s\n\nSegnalalo questo errore allo sviluppatore.</string>
+    <string name="common_msg_noReplyFromProvider">Nessuna risposta. Riprova ancora potrebbe essere un problema interno al provider oppure il provider e\' down...</string>
+    <string name="common_msg_cannotSaveProviderData">Non posso salvare i dati del provider:\n%s\n\nSegnala questo errore allo sviluppatore.</string>
+    <string name="common_msg_cannotLoadProviderData">Non posso caricare i dati del provider:\n%s\n\nSegnala questo errore allo sviluppatore.</string>
     <string name="common_msg_communicationError">Errore di comunicazione generico:\n%s\n\nPotrebbe essere un problema di connessione ad Internet oppure il provider non sta funzionanto...</string>
     <string name="common_msg_architecturalError">Errore interno all\'applicazione:\n%s\n\nSegnalalo allo sviluppatore.</string>
     <string name="common_msg_invalidCredential">Le credenziali non sono state specificate o sono errate.\nInseriscile nelle impostazioni del provider o del servizio.</string>
     <string name="common_msg_invalidSender">Il mittente non e\' stato specificato o non e\' corretto.\nModificalo nelle impostazioni del provider o del servizio.</string>
     <string name="common_msg_invalidDestination">Il destinatario non e\' stato specificato o non e\' corretto.</string>
     <string name="common_sendlogSubject">Log %s</string>
-    <string name="common_sendlogBody">Ciao Saverio, ti mando i log dell\'applicazione perche\' (aggiungi qui il motivo della segnalazione)\n\n\n%s</string>
+    <string name="common_sendlogBody">Ciao sviluppatori, vi mando i log dell\'applicazione perche\' (aggiungi qui il motivo della segnalazione)\n\n\n%s</string>
     <string name="common_sendEmailChooser">Scegli l\'applicazione per l\'email</string>
     <string name="common_defaultMessageTemplates">Si§§§§No§§§§Grazie§§§§Ok, vediamoci alle§§§§Scusami, ma ora sono occupato</string>
     
