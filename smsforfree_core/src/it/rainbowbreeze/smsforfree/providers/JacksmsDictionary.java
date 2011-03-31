@@ -51,6 +51,7 @@ public class JacksmsDictionary
 	//private static final String FORMAT_JSON = "jsn";
 
 	private static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
+	private static final String URL_STREAM_NETCAT = "http://stream.jacksms.it:9911/";//per i test sul server
 	private static final String URL_Q_BASE = "http://q.jacksms.it";
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "send?http&";
