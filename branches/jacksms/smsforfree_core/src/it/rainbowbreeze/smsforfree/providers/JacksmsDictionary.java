@@ -33,6 +33,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.text.TextUtils;
 
 /**
@@ -47,12 +50,12 @@ public class JacksmsDictionary
     protected final LogFacility mLogFacility;
     
 	private static final String FORMAT_CSV = "csv";
-//	private static final String FORMAT_XML = "xml";
+	//private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
-	private static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
-	private static final String URL_STREAM_NETCAT = "http://stream.jacksms.it:9911/";//per i test sul server
-	private static final String URL_Q_BASE = "http://q.jacksms.it";
+	public static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
+	public static final String URL_STREAM_TEST = "http://stream.jacksms.it:9911/";//per i test sul server
+	public static final String URL_Q_BASE = "http://q.jacksms.it";
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	private static final String ACTION_SEND_MESSAGE = "send?http&";
 	private static final String ACTION_SEND_CAPTCHA = "continue?http&";
@@ -64,7 +67,7 @@ public class JacksmsDictionary
 
 	//TODO: get version from global variable or settings
 	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
-	private static final String CSV_SEPARATOR = "\t";
+	public static final String TAB_SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
 	
@@ -72,11 +75,11 @@ public class JacksmsDictionary
 	private static final int MAX_SERVICE_PARAMETERS = 4;
 	
 	//message sent
-	private static final String PREFIX_RESULT_OK = "1" + CSV_SEPARATOR;
+	private static final String PREFIX_RESULT_OK = "1" + TAB_SEPARATOR;
 	//JackSMS has different error signatures
 	private static final String[] PREFIX_RESULT_ERROR_ARRAY = {
-		"error" + CSV_SEPARATOR,
-		"0" + CSV_SEPARATOR
+		"error" + TAB_SEPARATOR,
+		"0" + TAB_SEPARATOR
 		};
 	
 
@@ -122,8 +125,22 @@ public class JacksmsDictionary
 		return getUrlForCommand(username, password, ACTION_GET_DELSERVICE, FORMAT_CSV);
 	}
 	
+	public List<NameValuePair> getParamsForAccountOperation(SmsService editedService,
+			String firstParam, String secondParam){
+		List<NameValuePair> nVp = new ArrayList<NameValuePair>(4);
+		nVp.add(new BasicNameValuePair(firstParam, secondParam));
+		nVp.add(new BasicNameValuePair("account_name", editedService.getName()));
+		nVp.add(new BasicNameValuePair("data_1",editedService.getParameterValue(0)));
+		nVp.add(new BasicNameValuePair("data_2",editedService.getParameterValue(1)));
+		nVp.add(new BasicNameValuePair("data_3",editedService.getParameterValue(2)));
+		nVp.add(new BasicNameValuePair("data_4",editedService.getParameterValue(3)));
+		return nVp;
+	}
+	
 	/**
 	 * Builds headers used in send sms api
+	 * prototipo di richiesta:
+	 * J-X: service_id \t recipient \t data1 \t data2 \t data3 \t data4 \t message
 	 * 
 	 * @param service
 	 * @param destination
@@ -139,14 +156,14 @@ public class JacksmsDictionary
 		String value;
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
-		//X: service_id \t recipient \t data1 \t data2 \t data3 \t data4 \t message
-		key = "X";
-		value = String.valueOf(service.getTemplateId()) + CSV_SEPARATOR + 
-		destination + CSV_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(0)) + CSV_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(1)) + CSV_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(2)) + CSV_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(3)) + CSV_SEPARATOR +
+		//la key j-x e' necessaria perche' vodafone filtra i messaggi con key x
+		key = "J-X";
+		value = String.valueOf(service.getTemplateId()) + TAB_SEPARATOR + 
+		destination + TAB_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(0)) + TAB_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(1)) + TAB_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(2)) + TAB_SEPARATOR +
+		replaceServiceParameter(service.getParameterValue(3)) + TAB_SEPARATOR +
 		adjustMessageBody(message);
 		headers.put(key, value);
 			
@@ -165,10 +182,10 @@ public class JacksmsDictionary
 		String value;
 		HashMap<String, String> headers = new HashMap<String, String>();
 		
-		//first header
-		key = "X";
-		value = String.valueOf(sessionId) + CSV_SEPARATOR + 
-				captchaCode + CSV_SEPARATOR;
+		//la key j-x e' necessaria perche' vodafone filtra i messaggi con key x
+		key = "J-X";
+		value = String.valueOf(sessionId) + TAB_SEPARATOR + 
+				captchaCode + TAB_SEPARATOR;
 		headers.put(key, value);
 		return headers;
 	}
@@ -203,7 +220,7 @@ public class JacksmsDictionary
 		}
 		
 		//other reply from JackSMS
-		String[] lines = reply.split(CSV_SEPARATOR);
+		String[] lines = reply.split(TAB_SEPARATOR);
 		if (lines.length > 2)
 			//message is in the second item
 			return lines[1];
@@ -240,7 +257,7 @@ public class JacksmsDictionary
 	public String getCaptchaSessionIdFromReply(String reply)
 	{
 		//find captcha sessionId, the first part of the message
-		int separatorPos = reply.indexOf(CSV_SEPARATOR);
+		int separatorPos = reply.indexOf(TAB_SEPARATOR);
 		if (separatorPos < 0)
 			return "";
 		
@@ -257,7 +274,7 @@ public class JacksmsDictionary
 		String[] lines = providerReply.split(String.valueOf((char) 10));
 		
 		for(String templateLine : lines) {
-			String[] pieces = templateLine.split(CSV_SEPARATOR);
+			String[] pieces = templateLine.split(TAB_SEPARATOR);
 			try {
 				String serviceId = pieces[0];
 				String serviceName = pieces[1];
@@ -297,7 +314,7 @@ public class JacksmsDictionary
 		String[] lines = providerReply.split(String.valueOf((char) 10));
 		
 		for(String serviceLine : lines) {
-			String[] pieces = serviceLine.split(CSV_SEPARATOR);
+			String[] pieces = serviceLine.split(TAB_SEPARATOR);
 			try {
 				String serviceId = pieces[0];
 				String templateId = pieces[1];
@@ -343,7 +360,7 @@ public class JacksmsDictionary
 		if (TextUtils.isEmpty(webserviceReply)) return false;
 		
 		//find first part of the message
-		int pos = webserviceReply.indexOf(CSV_SEPARATOR);
+		int pos = webserviceReply.indexOf(TAB_SEPARATOR);
 		if (pos < 0) return false;
 		
 		//find the number at the start of the message
@@ -415,6 +432,9 @@ public class JacksmsDictionary
 		String loginS = loginString;
 		
 		StringBuilder sb = new StringBuilder();
+		//per le richieste di test
+		//sb.append(URL_STREAM_TEST)
+		//per le richieste normali
 		sb.append(URL_STREAM_BASE)
 			.append(loginS)
 			.append("/")

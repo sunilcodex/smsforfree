@@ -191,8 +191,18 @@ extends SmsMultiProvider
 		String url = mDictionary.getUrlForSendingMessage(loginS);
 		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
 		res = doSingleHttpRequest(url, null, params);
-		String reply = res.getResult();
-		String [] tokens = reply.split("\t");
+
+		String reply = null ;
+		String [] tokens = null ;
+		try{
+			reply = res.getResult();
+			tokens = reply.split("\t");
+		}
+		catch(NullPointerException e){
+			//per le richieste di test res e' null
+			res.setResult("Richiesta di test inviata.");
+			return res;
+		}
 
 		//checks for errors
 		if (parseReplyForErrors(res)){
@@ -588,7 +598,7 @@ extends SmsMultiProvider
 	}
 
 	/**
-	 * Save on remote account the service's 
+	 * Save on remote account the service
 	 * parameters
 	 * 
 	 * @param editedService
@@ -605,7 +615,7 @@ extends SmsMultiProvider
 		HttpPost httppost = new HttpPost(url);
 		try {
 			//per il comando editService devo passare l'id del servizio associato all'account
-			List<NameValuePair> nameValuePairs = composeRequestParameters(editedService,
+			List<NameValuePair> nameValuePairs = mDictionary.getParamsForAccountOperation(editedService,
 					"id", editedService.getId());
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			httpclient.execute(httppost);
@@ -629,7 +639,7 @@ extends SmsMultiProvider
 		HttpPost httppost = new HttpPost(url);
 		try {
 			//per il comando addService devo passare l'id del template del servizio
-			List<NameValuePair> nameValuePairs = composeRequestParameters(editedService,
+			List<NameValuePair> nameValuePairs = mDictionary.getParamsForAccountOperation(editedService,
 					"service_id", editedService.getTemplateId());
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			httpclient.execute(httppost);
@@ -661,25 +671,12 @@ extends SmsMultiProvider
 				try {
 					for(int i=0;i<3;i++){
 						httpclient.execute(httppost);
-						Thread.sleep(1000);
+						Thread.sleep(500);
 					}
 				} catch (Exception e) {mLogFacility.e(e);}
 			}				
 		});
 		t.start();
-	}
-
-	//FIXME modificare il metodo di Alfredo per evitare sto bordello??
-	private List<NameValuePair> composeRequestParameters(SmsService editedService,
-			String firstParam, String secondParam){
-		List<NameValuePair> nVp = new ArrayList<NameValuePair>(4);
-		nVp.add(new BasicNameValuePair(firstParam, secondParam));
-		nVp.add(new BasicNameValuePair("account_name", editedService.getName()));
-		nVp.add(new BasicNameValuePair("data_1",editedService.getParameterValue(0)));
-		nVp.add(new BasicNameValuePair("data_2",editedService.getParameterValue(1)));
-		nVp.add(new BasicNameValuePair("data_3",editedService.getParameterValue(2)));
-		nVp.add(new BasicNameValuePair("data_4",editedService.getParameterValue(3)));
-		return nVp;
-	}
+	}	
 
 }
