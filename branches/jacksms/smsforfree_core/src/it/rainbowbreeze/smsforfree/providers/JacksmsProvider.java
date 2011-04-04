@@ -192,18 +192,15 @@ extends SmsMultiProvider
 		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
 		res = doSingleHttpRequest(url, null, params);
 
-		String reply = null ;
-		String [] tokens = null ;
-		try{
-			reply = res.getResult();
-			tokens = reply.split("\t");
-		}
-		catch(NullPointerException e){
-			//per le richieste di test res e' null
-			res.setResult("Richiesta di test inviata.");
+		String reply = res.getResult();
+		//per qualche strano motivo a volte la risposta e' nulla...
+		if(reply == null){
+			res.setResult("Nessuna risposta dal server. Il problema non dipende dall'applicazione.");
+			res.setReturnCode(ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
 			return res;
 		}
 
+		String [] tokens = reply.split("\t");
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
@@ -293,13 +290,11 @@ extends SmsMultiProvider
 
 		//at this point, no error happened, so the reply contains captcha submission result
 		String reply = res.getResult();
-
 		String returnMessage = mDictionary.getTextPartFromReply(reply);
 		if (mDictionary.isCaptchaCorrectlySent(reply)) {
 			String [] tokens = reply.split("\t");
 			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
-			if(!TextUtils.isEmpty(tokens[1]) &&
-					tokens[1].contains("residui")){
+			if(!TextUtils.isEmpty(tokens[1])){
 				returnMessage = "Sms residui per questo servizio: "+
 				tokens[1].replaceAll( "[^\\d]", "" );
 			}
