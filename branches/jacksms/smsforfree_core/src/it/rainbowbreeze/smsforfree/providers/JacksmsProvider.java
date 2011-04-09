@@ -193,7 +193,7 @@ extends SmsMultiProvider
 		String reply = res.getResult();
 		Integer retCode = res.getReturnCode();
 		
-		//per qualche strano motivo a volte la risposta e' nulla...
+		//per qualche strano motivo a volte la risposta e' nulla... 
 		if(reply == null || retCode == null){
 			res.setResult("La risposta ricevuta dal server presenta errori."+
 					" Non e' stato possibile inviare il messaggio, invia il log agli sviluppatori.");
