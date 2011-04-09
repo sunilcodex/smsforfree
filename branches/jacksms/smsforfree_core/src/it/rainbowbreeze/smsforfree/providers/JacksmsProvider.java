@@ -190,41 +190,40 @@ extends SmsMultiProvider
 		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
 		res = doSingleHttpRequest(url, null, params);
 
-		String reply = res.getResult();
-		Integer retCode = res.getReturnCode();
+		//TODO marco
+		// quello che c'era qui sostituiva il result con un messaggio di errore non parsabile
+		// non si può fare
 		
-		//per qualche strano motivo a volte la risposta e' nulla... 
-		if(reply == null || retCode == null){
-			res.setResult("La risposta ricevuta dal server presenta errori."+
-					" Non e' stato possibile inviare il messaggio, invia il log agli sviluppatori.");
-			res.setReturnCode(ResultOperation.RETURNCODE_ERROR_RESULT_OR_RETURNCODE_NULL);
-			mLogFacility.e(LOG_HASH, "reply o retCode trovati null");
-			return res;
-		}
-
-		String [] tokens = reply.split("\t");
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
 			logRequest(url, params, null);
-			res.setResult(tokens[1]);
 			return res;
 		}
 
 		//at this point, no error happened, so checks if the sms was sent or
 		//a captcha code is needed
 
+		String reply = res.getResult();
+		
 		//message sent
 		if (mDictionary.isSmsCorrectlySent(reply)) {
+			//TODO marco questa operazione non si può fare in questo modo. Ma la puoi fare a livello più alto
+			
 			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
-			if(!TextUtils.isEmpty(tokens[1]) &&
-					tokens[1].contains("residui")){
-				res.setResult("Sms residui per questo servizio: "+
-						tokens[1].replaceAll( "[^\\d]", "" ));
-			}
-			else
-				res.setResult("Oggi hai inviato "+tokens[3]+" sms con questo servizio.");
+//			if(!TextUtils.isEmpty(tokens[1]) &&
+//					tokens[1].contains("residui")){
+//				res.setResult("Sms residui per questo servizio: "+
+//						tokens[1].replaceAll( "[^\\d]", "" ));
+//			}
+//			else
+//				res.setResult("Oggi hai inviato "+tokens[3]+" sms con questo servizio.");
+			
+			//TODO questo é l'originale
 			//res.setResult(String.format(mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
+		
+	
+			res.setResult(prepareOkMessageForUser(res));
 		}
 		//captcha request
 		else if (mDictionary.isCaptchaRequest(reply)) {
@@ -235,10 +234,15 @@ extends SmsMultiProvider
 			setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
 			mLogFacility.e(LOG_HASH, reply);
+			
+			//TODO marco
+			//qui non ci dovrebbe mai arrivare!
+			throw new RuntimeException("Assunzione errata");
+			
 		}
 
 		return res;    	
-			}
+	}
 
 	@Override
 	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
@@ -294,16 +298,25 @@ extends SmsMultiProvider
 		String reply = res.getResult();
 		String returnMessage = mDictionary.getTextPartFromReply(reply);
 		if (mDictionary.isCaptchaCorrectlySent(reply)) {
-			String [] tokens = reply.split("\t");
-			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
-			if(!TextUtils.isEmpty(tokens[1])){
-				returnMessage = "Sms residui per questo servizio: "+
-				tokens[1].replaceAll( "[^\\d]", "" );
-			}
-			else
-				returnMessage = "Oggi hai inviato "+tokens[3]+" sms con questo servizio.";
-			//returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
-			res.setResult(returnMessage);
+			
+			//TODO marco sempre solito errore
+//			String [] tokens = reply.split("\t");
+//			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
+//			if(!TextUtils.isEmpty(tokens[1])){
+//				returnMessage = "Sms residui per questo servizio: "+
+//				tokens[1].replaceAll( "[^\\d]", "" );
+//			}
+//			else
+//				returnMessage = "Oggi hai inviato "+tokens[3]+" sms con questo servizio.";
+			
+			//TODO marco modifica rispetto all'originale, non modifichiamo il messaggio ricevuto dal server
+			// non sostituire il messaggio originale!!
+			// il codice di alfredo sbaglia a fr
+//			returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
+//			res.setResult(returnMessage);
+			
+			//TODO marco
+			res.setResult(prepareOkMessageForUser(res));
 		} else {
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
 			mLogFacility.e(LOG_HASH, reply);
@@ -513,8 +526,13 @@ extends SmsMultiProvider
 	 */
 	public boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze)
 	{
+		
 		if (resultToAnalyze.hasErrors()) return true;
 
+		//TODO marco
+		if(resultToAnalyze.getResult()==null)
+			throw new RuntimeException("Errore in sviluppo, assunzione sbagliata");
+		
 		String errorMessage = "";
 		String reply = resultToAnalyze.getResult();
 
@@ -525,7 +543,13 @@ extends SmsMultiProvider
 			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 			//generic JackSMS internal error
 		} else if (mDictionary.isErrorReply(reply)) {
-			errorMessage = String.format(mMessages[MSG_INDEX_SERVER_ERROR_KNOW], mDictionary.getTextPartFromReply(reply));
+			
+			//TODO marco,
+			errorMessage = mDictionary.getTextPartFromReply(reply);
+			
+			//TODO marco originale
+			//errorMessage = String.format(mMessages[MSG_INDEX_SERVER_ERROR_KNOW], mDictionary.getTextPartFromReply(reply));
+			
 			//JackSMS unknown internal error
 		} else if (mDictionary.isUnmanagedErrorReply(reply)) {
 			errorMessage = mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW];
@@ -676,4 +700,36 @@ extends SmsMultiProvider
 		t.start();
 	}	
 
+
+	/**
+	 *
+	 * metodo che prepara il messagio per l'utente,
+	 * 
+	 * non viene mai chiamato in caso di errori!
+	 * @param result
+	 * @return
+	 * 
+	 * @author marcobettiol 
+	 */
+	private String prepareOkMessageForUser(ResultOperation<String> result){
+		result.getReturnCode();
+		result.getResult();
+		if(result.hasErrors())
+			throw new RuntimeException("Errore in sviluppo");
+		String textPartFromReply = mDictionary.getTextPartFromReply(result.getResult());
+		
+//		if(TextUtils.isEmpty(textPartFromReply)) // nessun messaggio esplicito
+//			return mMessages[MSG_INDEX_MESSAGE_SENT];
+		
+		String messageInLowerCase=textPartFromReply.toLowerCase();
+		String[] split = result.getResult().split(JacksmsDictionary.TAB_SEPARATOR);
+		//TODO marco, dovrebbe essere internazionalizzato
+		if(!messageInLowerCase.contains("residui") &&
+		   !messageInLowerCase.contains("residuo") &&
+		   !messageInLowerCase.contains("rimanenti") &&
+		   !messageInLowerCase.contains("rimanente"))
+			return "Oggi hai inviato "+split[3]+" sms con questo servizio.";	
+		else
+			return textPartFromReply;
+	}
 }

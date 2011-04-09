@@ -210,22 +210,44 @@ public class JacksmsDictionary
 	 */
 	public String getTextPartFromReply(String reply)
 	{
-		if (TextUtils.isEmpty(reply)) return "";
+		//TODO marco
+		//removed, if null must fail!
 		
-		//if strings contains error codes from JackSMS
-		for (String errorPrefix : PREFIX_RESULT_ERROR_ARRAY) {
-			if (reply.startsWith(errorPrefix)) {
-				return reply.substring(errorPrefix.length()).trim();
-			}
-		}
+		//if (TextUtils.isEmpty(reply)) return "";
 		
-		//other reply from JackSMS
-		String[] lines = reply.split(TAB_SEPARATOR);
-		if (lines.length > 2)
-			//message is in the second item
-			return lines[1];
-		else
-			return "";
+		//TODO marco 
+		// in ogni caso devo ritornare
+		// la seconda posizione
+		String[] split = reply.split(TAB_SEPARATOR);
+		return split[1];
+		
+//		//if strings contains error codes from JackSMS
+//		for (String errorPrefix : PREFIX_RESULT_ERROR_ARRAY) {
+//			if (reply.startsWith(errorPrefix)) {
+//				{
+//					
+//					
+//					// TODO marco original
+//					//return reply.substring(errorPrefix.length()).trim();
+//				
+//				}
+//			}
+//		}
+//		
+//		
+//		//TODO marco (in questo caso o è un messaggio destinato all'utente, oppure è il captcha)
+//		
+//		
+//		//other reply from JackSMS 
+//		String[] lines = reply.split(TAB_SEPARATOR);
+//		
+//		//TODO marco se non è cosi allora il server ha mandato una risposta sbagliata!
+//		// dovrebbe essere stato gestito già prima!
+//		if (lines.length > 2)
+//			//message is in the second item
+//			return lines[1];
+//		else
+//			return "";
 	}
 	
 	/**
@@ -271,9 +293,11 @@ public class JacksmsDictionary
 		List<SmsService> templates = new ArrayList<SmsService>();
 		
 		//examine the reply, line by line
-		String[] lines = providerReply.split(String.valueOf((char) 10));
+		String[] lines = providerReply.split("\n");
 		
 		for(String templateLine : lines) {
+			//TODO marco, per il momento lascio cosi com'è ma è da testare
+			// questo split non dovrebbe funzionare!!
 			String[] pieces = templateLine.split(TAB_SEPARATOR);
 			try {
 				String serviceId = pieces[0];
@@ -392,7 +416,11 @@ public class JacksmsDictionary
 	 */
 	public boolean isErrorReply(String webserviceReply)
 	{
-		if (TextUtils.isEmpty(webserviceReply)) return true;
+		//TODO marco
+		// cambiato a false, una risposta vuota non ha errori espliciti,
+		// qui si stanno cercando errori comunicati dal server!!!
+		
+		if (TextUtils.isEmpty(webserviceReply)) return false;
 		
 		//explicit error return string
 		for (String errSignature : PREFIX_RESULT_ERROR_ARRAY) {
@@ -407,6 +435,8 @@ public class JacksmsDictionary
 	public boolean isInvalidCredetials(String webserviceReply)
 	{
 		if (TextUtils.isEmpty(webserviceReply)) return false;
+		
+		//TODO marco, siamo sicuri che in questo caso non ci sia il tab???
 		
 		return ("error	Dati di accesso JackSMS non validi").equals(webserviceReply);
 	}
