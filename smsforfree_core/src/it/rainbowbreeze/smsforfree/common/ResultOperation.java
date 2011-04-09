@@ -62,7 +62,8 @@ extends RainbowResultOperation<ResultValueType>
 	public static final int RETURNCODE_ERROR_EMPTY_REPLY = RETURNCODE_ERROR_FIRST_USER + 5;
     /** Conversation with provider ends correctly, but SMS was not send or command doesn't complete for some reason */
     public static final int RETURNCODE_ERROR_PROVIDER_ERROR_REPLY = RETURNCODE_ERROR_FIRST_USER + 6;
-	
+	/** */
+    public static final int RETURNCODE_ERROR_RESULT_OR_RETURNCODE_NULL = RETURNCODE_ERROR_FIRST_USER + 7;
 
 	
 	
