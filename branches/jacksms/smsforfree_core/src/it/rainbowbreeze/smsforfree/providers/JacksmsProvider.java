@@ -176,16 +176,14 @@ extends SmsMultiProvider
 			String destination,
 			String messageBody)
 			{
-		mLogFacility.v(LOG_HASH, "Send sms message to "+destination
-				+" with service "+serviceId);
-
+		
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 		String loginS = mappPreferenceDao.getLoginString();
 
 		ResultOperation<String> res = validateSendSmsParameters(username, password, destination, messageBody);
 		if (res.hasErrors()) return res;
-
+		mLogFacility.i(LOG_HASH, "No error in res.");
 		//sends the sms
 		SmsService service = getSubservice(serviceId);
 		String url = mDictionary.getUrlForSendingMessage(loginS);
@@ -193,10 +191,14 @@ extends SmsMultiProvider
 		res = doSingleHttpRequest(url, null, params);
 
 		String reply = res.getResult();
+		Integer retCode = res.getReturnCode();
+		
 		//per qualche strano motivo a volte la risposta e' nulla...
-		if(reply == null){
-			res.setResult("Nessuna risposta dal server. Il problema non dipende dall'applicazione.");
-			res.setReturnCode(ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
+		if(reply == null || retCode == null){
+			res.setResult("La risposta ricevuta dal server presenta errori."+
+					" Non e' stato possibile inviare il messaggio, invia il log agli sviluppatori.");
+			res.setReturnCode(ResultOperation.RETURNCODE_ERROR_RESULT_OR_RETURNCODE_NULL);
+			mLogFacility.e(LOG_HASH, "reply o retCode trovati null");
 			return res;
 		}
 
