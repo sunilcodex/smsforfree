@@ -235,13 +235,13 @@ public class JacksmsDictionary
 //		}
 //		
 //		
-//		//TODO marco (in questo caso o è un messaggio destinato all'utente, oppure è il captcha)
+//		//TODO marco (in questo caso o e' un messaggio destinato all'utente, oppure e' il captcha)
 //		
 //		
 //		//other reply from JackSMS 
 //		String[] lines = reply.split(TAB_SEPARATOR);
 //		
-//		//TODO marco se non è cosi allora il server ha mandato una risposta sbagliata!
+//		//TODO marco se non e' cosi allora il server ha mandato una risposta sbagliata!
 //		// dovrebbe essere stato gestito già prima!
 //		if (lines.length > 2)
 //			//message is in the second item
@@ -296,7 +296,7 @@ public class JacksmsDictionary
 		String[] lines = providerReply.split("\n");
 		
 		for(String templateLine : lines) {
-			//TODO marco, per il momento lascio cosi com'è ma è da testare
+			//TODO marco, per il momento lascio cosi com'e' ma e' da testare
 			// questo split non dovrebbe funzionare!!
 			String[] pieces = templateLine.split(TAB_SEPARATOR);
 			try {
