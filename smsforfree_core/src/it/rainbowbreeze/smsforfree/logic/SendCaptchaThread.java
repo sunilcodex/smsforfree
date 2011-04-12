@@ -20,6 +20,7 @@
 package it.rainbowbreeze.smsforfree.logic;
 
 import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import android.content.Context;
 import android.os.Handler;
@@ -30,7 +31,7 @@ import android.os.Handler;
  * Send a captcha
  */
 public class SendCaptchaThread
-	extends RainbowBaseBackgroundThread<String>
+	extends RainbowBaseBackgroundThread<ResultOperation<String>, String>
 {
 
 	//---------- Private fields
@@ -45,11 +46,12 @@ public class SendCaptchaThread
     public SendCaptchaThread(
             Context context,
             Handler handler,
+			int handlerMessageWhat,
             SmsProvider provider,
             String providerCaptchaData,
             String captchaCode)
     {
-        super(context, handler);
+        super(context, handler, handlerMessageWhat);
         mProvider = provider;
         mProviderCaptchaData = providerCaptchaData;
         mCaptchaCode = captchaCode;
@@ -59,18 +61,17 @@ public class SendCaptchaThread
 
 
 	//---------- Public fields
-	public final static int WHAT_SENDCAPTCHA = 1003;
 	
 
 
 
 	//---------- Public methods
 	@Override
-	public void run() {
+	public ResultOperation<String> executeTask() {
 		//execute the command
-		mResultOperation = mProvider.sendCaptcha(mProviderCaptchaData, mCaptchaCode);
+		ResultOperation<String> res = mProvider.sendCaptcha(mProviderCaptchaData, mCaptchaCode);
 		//and call the caller activity handler when the execution is terminated
-		callHandlerAndRetry(WHAT_SENDCAPTCHA);
+		return res;
 	}
 	
 

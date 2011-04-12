@@ -78,27 +78,28 @@ public class ActSendSms
 	extends Activity
 {
 	//---------- Private fields
-    protected static final String LOG_HASH = "ActSendSms";
+	private static final String LOG_HASH = "ActSendSms";
+	private final static int WHAT_SENDMESSAGE = 1002;
+	private final static int WHAT_SENDCAPTCHA = 1003;
     
-	protected static final int DIALOG_PHONES = 10;
-	protected static final int DIALOG_CAPTCHA_REQUEST = 11;
-	protected static final int DIALOG_SENDING_MESSAGE = 12;
-	protected static final int DIALOG_SENDING_CAPTCHA = 13;
-	protected static final int DIALOG_STARTUP_INFOBOX = 14;
-	protected static final int DIALOG_TEMPLATES = 16;
-	protected static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
-	protected static final int DIALOG_ASK_CONFIRMATION_FOR_SENDING = 18;
+	private static final int DIALOG_PHONES = 10;
+	private static final int DIALOG_CAPTCHA_REQUEST = 11;
+	private static final int DIALOG_SENDING_MESSAGE = 12;
+	private static final int DIALOG_SENDING_CAPTCHA = 13;
+	private static final int DIALOG_STARTUP_INFOBOX = 14;
+	private static final int DIALOG_TEMPLATES = 16;
+	private static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
 	
-	protected static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
-	protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
-    protected static final String BUNDLEKEY_DIALOGERRORMESSAGE = "DialogErrorMessage";
+	private static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
+	private static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
+	private static final String BUNDLEKEY_DIALOGERRORMESSAGE = "DialogErrorMessage";
 
-	protected static final int OPTIONMENU_SETTINGS = 2;
-	protected static final int OPTIONMENU_SIGNATURE = 3;
-	protected static final int OPTIONMENU_ABOUT = 4;
-	protected static final int OPTIONMENU_RESETDATA = 5;
-	protected static final int OPTIONMENU_COMPRESS = 6;
-	protected static final int OPTIONMENU_TEMPLATES = 7;
+	private static final int OPTIONMENU_SETTINGS = 2;
+	private static final int OPTIONMENU_SIGNATURE = 3;
+	private static final int OPTIONMENU_ABOUT = 4;
+	private static final int OPTIONMENU_RESETDATA = 5;
+	private static final int OPTIONMENU_COMPRESS = 6;
+	private static final int OPTIONMENU_TEMPLATES = 7;
 
 
 	
@@ -570,13 +571,13 @@ public class ActSendSms
 		{
 			mLogFacility.i(LOG_HASH, "Returned to ActSendSms from external thread");
 			//check if the message is for this handler
-			if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
-					msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
+			if (msg.what != WHAT_SENDMESSAGE && 
+					msg.what != WHAT_SENDCAPTCHA)
 				return;
 			
 			RainbowResultOperation<String> res;
 			switch (msg.what) {
-			case SendMessageThread.WHAT_SENDMESSAGE:
+			case WHAT_SENDMESSAGE:
 		        removeDialog(DIALOG_SENDING_MESSAGE);
 	             //may happens that the thread is null (rotation and a call to handler in the same moment?)
 			    if (null == mSendMessageThread) break;
@@ -586,7 +587,7 @@ public class ActSendSms
 				sendMessageComplete(res);
 				break;
 
-			case SendCaptchaThread.WHAT_SENDCAPTCHA:
+			case WHAT_SENDCAPTCHA:
 	            //dismiss captcha progress dialog
 	            removeDialog(DIALOG_SENDING_CAPTCHA);
                 if (null == mSendCaptchaThread) break;
@@ -994,7 +995,7 @@ public class ActSendSms
 
 		//preparing the background task for sending message
 		mSendMessageThread = new SendMessageThread(
-				this, mActivityHandler,
+				this, mActivityHandler, WHAT_SENDMESSAGE,
 				mSelectedProvider, mSelectedServiceId,
 				destination, message);
 		mSendMessageThread.start();
@@ -1020,7 +1021,7 @@ public class ActSendSms
 		
 		//preparing the background task for sending captcha code
 		mSendCaptchaThread = new SendCaptchaThread(
-				this, mActivityHandler,
+				this, mActivityHandler, WHAT_SENDCAPTCHA,
 				mSelectedProvider,
 				providerReply,
 				captchaCode);
