@@ -53,7 +53,8 @@ public class ActSubservicesList
 	extends ListActivity
 {
 	//---------- Private fields
-    protected final static String LOG_HASH = "ActSubservicesTemplates";
+    private final static String LOG_HASH = "ActSubservicesTemplates";
+    private final static int WHAT_EXECUTEDPROVIDERCOMMAND = 1000;
 	private static final int OPTIONMENU_ADDSERVICE = 10;
 	private static final int CONTEXTMENU_ADDSERVICE = 1;
 	private static final int CONTEXTMENU_EDITSERVICE = 2;
@@ -271,7 +272,7 @@ public class ActSubservicesList
 		public void handleMessage(Message msg)
 		{
 			//check if the message is for this handler
-			if (msg.what != ExecuteProviderCommandThread.WHAT_EXECUTEDPROVIDERCOMMAND)
+			if (msg.what != WHAT_EXECUTEDPROVIDERCOMMAND)
 				return;
 			
 			//dismisses progress dialog
@@ -350,6 +351,7 @@ public class ActSubservicesList
 		mExecutedProviderCommandThread = new ExecuteProviderCommandThread(
 				this.getApplicationContext(),
 				mExecutedCommandHandler,
+				WHAT_EXECUTEDPROVIDERCOMMAND,
 				provider,
 				subserviceId,
 				extraData);
