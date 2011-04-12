@@ -38,7 +38,6 @@
     <string name="common_msg_invalidCredential">Le credenziali non sono state specificate o sono errate.\nInseriscile nelle impostazioni del provider o del servizio.</string>
     <string name="common_msg_invalidSender">Il mittente non e\' stato specificato o non e\' corretto.\nModificalo nelle impostazioni del provider o del servizio.</string>
     <string name="common_msg_invalidDestination">Il destinatario non e\' stato specificato o non e\' corretto.</string>
-    <string name="common_msg_smsLimitReach">Spiacente, hai raggiunto il numero massimo di SMS giornalieri permessi in questa versione Lite del programma...\n\nAcquista nell\'Android Market la versione di SmsForFree Full per non aver piu\' limiti e banner pubblicitari</string>
     <string name="common_sendlogSubject">Log %s</string>
     <string name="common_sendlogBody">Ciao Alfredo, ti mando i log dell\'applicazione perche\' (aggiungi qui il motivo della segnalazione)\n\n\n%s</string>
     <string name="common_sendEmailChooser">Scegli l\'applicazione per l\'email</string>
@@ -77,6 +76,7 @@
     <string name="actsendsms_msg_emptyCaptchaCode">Il codice Captcha e\' vuoto.\nInvio messaggio interrotto.</string>
     <string name="actsendsms_msg_sendingMessage">Invio messaggio...</string>
     <string name="actsendsms_msg_sendingCaptcha">Invio del captcha...</string>
+    <string name="actsendsms_msg_smsLimitReach">Spiacente, hai raggiunto il numero massimo di SMS giornalieri permessi in questa versione Lite del programma...\n\nAcquista nell\'Android Market la versione di SmsForFree Full per non aver piu\' limiti e banner pubblicitari</string>
     <string name="actsendsms_msg_infobox_title">Benvenuto</string>
     <string name="actsendsms_msg_askForCrashReportEmailTitle">Gestione errori</string>
     <string name="actsendsms_msg_askForCrashReportEmail">Una precedente esecuzione dell\'applicazione e\' terminata con errori imprevisti. Vuoi mandare una mail allo sviluppatore con delle informazioni su questi errori?</string>
@@ -193,15 +193,6 @@
     <!-- DlgCaptch -->
     <string name="dlgcaptcha_title">Richiesta captcha</string>
     <string name="dlgcaptcha_txtCodeHint">Inserisci il codice captcha</string>
-
-
-
-
-    <!-- SendMessageReceiver -->
-    <string name="sendmessagereceiver_msgInvalidMessage">Errore generico nel formato del messaggio</string>
-    <string name="sendmessagereceiver_msgCaptchaNotSupported">Non si possono inviare messaggi schedulato con servizi che richiedono l\'inserimento del captcha</string>
-    <string name="sendmessagereceiver_msgSendMessage">Il messaggio e\' stato spedito</string>
-    <string name="sendmessagereceiver_msgMessageResume">A: %1$s - %2$s</string>
 
 
 </resources>

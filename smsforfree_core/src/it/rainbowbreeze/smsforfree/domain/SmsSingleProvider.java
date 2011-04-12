@@ -33,12 +33,7 @@ import android.content.Context;
 public abstract class SmsSingleProvider
 	extends SmsProvider
 {
-	//---------- Private fields
-
-
-	
-	
-	//---------- Constructors
+	//---------- Ctors
 	protected SmsSingleProvider(
 			LogFacility logFacility,
 			int numberOfParameters,
@@ -49,6 +44,11 @@ public abstract class SmsSingleProvider
 	}
 	
 	
+	
+	
+	//---------- Private fields
+
+
 	
 	
 	//---------- Public properties

@@ -35,8 +35,6 @@ public class ClickatellProvider
 	extends SmsSingleProvider
 {
 	//---------- Private fields
-	private final static String LOG_HASH = "ClickatellProvider";
-	
 	private final static int PARAM_NUMBER = 3;
 	private final static int PARAM_INDEX_USERNAME = 0;
 	private final static int PARAM_INDEX_PASSWORD = 1;
@@ -112,7 +110,6 @@ public class ClickatellProvider
 	@Override
 	public ResultOperation<String> sendMessage(String serviceId, String destination, String messageBody)
 	{
-        super.sendMessage(serviceId, destination, messageBody);
 		/*
 		 * https://www.voipstunt.com/myaccount/sendsms.php?username=xxxxxxxxxx&password=xxxxxxxxxx&from=xxxxxxxxxx&to=xxxxxxxxxx&text=xxxxxxxxxx
 		 * 

@@ -146,7 +146,7 @@ public class JacksmsProvider
     		String destination,
     		String messageBody)
     {
-        super.sendMessage(serviceId, destination, messageBody);
+        mLogFacility.v(LOG_HASH, "Send sms message");
         
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);

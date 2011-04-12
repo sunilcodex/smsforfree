@@ -38,7 +38,6 @@
     <string name="common_msg_invalidCredential">Empty or invalid credential supplied.\nPlease correct them in the settings of provider or service.</string>
     <string name="common_msg_invalidSender">Empty or invalid sender supplied.\nPlease correct it in the settings of provider or service.</string>
     <string name="common_msg_invalidDestination">Empty or invalid destination supplied.\nPlease fix it.</string>
-    <string name="common_msg_smsLimitReach">Sorry, you reach the daily maximum number of allowed attempts to send SMS of this Lite version...\n\nWant unlimited SMS and no banner? Buy SmsForFree Full in the Android Market!</string>
     <string name="common_sendlogSubject">Log %s</string>
     <string name="common_sendlogBody">Dear Alfredo,\n I\'m sending application log because (add here report cause / problem encountered)\n\n\n%s</string>
     <string name="common_sendEmailChooser">Select email application</string>
@@ -77,6 +76,7 @@
     <string name="actsendsms_msg_emptyCaptchaCode">Captcha code is empty.\nMessage sending aborted.</string>
     <string name="actsendsms_msg_sendingMessage">Sending message...</string>
     <string name="actsendsms_msg_sendingCaptcha">Sending captcha code...</string>
+    <string name="actsendsms_msg_smsLimitReach">Sorry, you reach the daily maximum number of allowed attempts to send SMS of this Lite version...\n\nWant unlimited SMS and no banner? Buy SmsForFree Full in the Android Market!</string>
     <string name="actsendsms_msg_infobox_title">Welcome</string>
     <string name="actsendsms_msg_askForCrashReportEmailTitle">Error reporting</string>
     <string name="actsendsms_msg_askForCrashReportEmail">A previous run of the application crashed with errors.\nDo you want to send an email to the developer with crash information?</string>
@@ -192,15 +192,6 @@
     <!-- DlgCaptch -->
     <string name="dlgcaptcha_title">Captcha request</string>
     <string name="dlgcaptcha_txtCodeHint">Insert captcha code</string>
-
-
-
-
-    <!-- SendMessageReceiver -->
-    <string name="sendmessagereceiver_msgInvalidMessage">Generic error in message format</string>
-    <string name="sendmessagereceiver_msgCaptchaNotSupported">Unable to send scheduled message with gateways that ask for a captcha</string>
-    <string name="sendmessagereceiver_msgSendMessage">Message was sent</string>
-    <string name="sendmessagereceiver_msgMessageResume">To: %1$s - %2$s</string>
 
 
 </resources>
