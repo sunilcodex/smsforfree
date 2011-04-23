@@ -30,12 +30,14 @@ import it.rainbowbreeze.smsforfree.helper.Base64Helper;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.conn.ConnectTimeoutException;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -64,6 +66,7 @@ public abstract class SmsProvider
 	//command used to register to provider
 	protected final static int COMMAND_REGISTER = 100;
 	
+	private String ERROR_MSG_TIMEOUT;
 	
 	
 	//---------- Constructors
@@ -130,6 +133,8 @@ public abstract class SmsProvider
 		if (res.hasErrors()) return res;
 
 		mProviderSettingsActivityCommands = loadSettingsActivityCommands(context);
+		if(ERROR_MSG_TIMEOUT==null)
+			ERROR_MSG_TIMEOUT = context.getString(R.string.common_msg_timeout);
     	
     	return res;
     }
@@ -469,7 +474,11 @@ public abstract class SmsProvider
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		} catch (ClientProtocolException e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
-		} catch (IOException e) {
+		}catch (ConnectTimeoutException e){
+			return new ResultOperation<String>(new SocketTimeoutException(ERROR_MSG_TIMEOUT), ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		}catch (SocketTimeoutException e) {
+			return new ResultOperation<String>(new SocketTimeoutException(ERROR_MSG_TIMEOUT), ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		}catch (IOException e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
 		}
     	

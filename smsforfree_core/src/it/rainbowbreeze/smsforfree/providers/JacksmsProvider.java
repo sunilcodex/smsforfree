@@ -192,7 +192,7 @@ extends SmsMultiProvider
 
 		//TODO marco
 		// quello che c'era qui sostituiva il result con un messaggio di errore non parsabile
-		// non si pu� fare
+		// non si può fare
 		
 		//checks for errors
 		if (parseReplyForErrors(res)){
@@ -208,7 +208,7 @@ extends SmsMultiProvider
 		
 		//message sent
 		if (mDictionary.isSmsCorrectlySent(reply)) {
-			//TODO marco questa operazione non si pu� fare in questo modo. Ma la puoi fare a livello pi� alto
+			//TODO marco questa operazione non si può fare in questo modo. Ma la puoi fare a livello più alto
 			
 			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
 //			if(!TextUtils.isEmpty(tokens[1]) &&
@@ -219,7 +219,7 @@ extends SmsMultiProvider
 //			else
 //				res.setResult("Oggi hai inviato "+tokens[3]+" sms con questo servizio.");
 			
-			//TODO questo � l'originale
+			//TODO questo è l'originale
 			//res.setResult(String.format(mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
 		
 	
@@ -286,7 +286,7 @@ extends SmsMultiProvider
 		String url = mDictionary.getUrlForSendingCaptcha(loginS);
 		HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
 		ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
-		res.getException();
+		
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
