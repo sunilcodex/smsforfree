@@ -55,7 +55,7 @@ public class ExecuteServiceCommandThread
 			int commandToExecute,
 			Bundle extraData)
 	{
-		super(context, handler);
+		super(context, handler, "ExecuteServiceCommandThread");
 		mService = service;
 		mCommandToExecute = commandToExecute;
 		mExtraData = extraData;

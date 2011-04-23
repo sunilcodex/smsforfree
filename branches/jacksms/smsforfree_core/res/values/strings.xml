@@ -42,6 +42,7 @@
     <string name="common_sendlogBody">Dear Saverio,\n I\'m sending application log because (add here report cause / problem encountered)\n\n\n%s</string>
     <string name="common_sendEmailChooser">Select email application</string>
     <string name="common_defaultMessageTemplates">Yes//No//Thank you//Ok, see at//Sorry, but now i\'m busy</string>
+	<string name="common_msg_timeout">Timeout... :(</string>
 
 
 

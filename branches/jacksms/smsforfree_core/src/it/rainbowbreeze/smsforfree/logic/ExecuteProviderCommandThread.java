@@ -42,7 +42,7 @@ public class ExecuteProviderCommandThread
 			int commandToExecute,
 			Bundle extraData)
 	{
-		super(context, handler);
+		super(context, handler,"ExecuteProviderCommandThread");
 		mService = service;
 		mCommandToExecute = commandToExecute;
 		mExtraData = extraData;

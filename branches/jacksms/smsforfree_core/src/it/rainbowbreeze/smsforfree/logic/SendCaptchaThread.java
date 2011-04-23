@@ -49,7 +49,7 @@ public class SendCaptchaThread
             String providerCaptchaData,
             String captchaCode)
     {
-        super(context, handler);
+        super(context, handler,"SendCaptchaThread");
         mProvider = provider;
         mProviderCaptchaData = providerCaptchaData;
         mCaptchaCode = captchaCode;

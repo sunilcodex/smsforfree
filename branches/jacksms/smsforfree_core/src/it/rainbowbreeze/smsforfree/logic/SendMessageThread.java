@@ -40,7 +40,7 @@ extends RainbowBaseBackgroundThread<String>
 			String destination,
 			String message)
 	{
-		super(context, handler);
+		super(context, handler,"SendMessageThread");
 		mProvider = provider;
 		mServiceId = serviceId;
 		mDestination = destination;
