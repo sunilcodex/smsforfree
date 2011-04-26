@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -208,21 +209,6 @@ extends SmsMultiProvider
 		
 		//message sent
 		if (mDictionary.isSmsCorrectlySent(reply)) {
-			//TODO marco questa operazione non si può fare in questo modo. Ma la puoi fare a livello più alto
-			
-			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
-//			if(!TextUtils.isEmpty(tokens[1]) &&
-//					tokens[1].contains("residui")){
-//				res.setResult("Sms residui per questo servizio: "+
-//						tokens[1].replaceAll( "[^\\d]", "" ));
-//			}
-//			else
-//				res.setResult("Oggi hai inviato "+tokens[3]+" sms con questo servizio.");
-			
-			//TODO questo è l'originale
-			//res.setResult(String.format(mMessages[MSG_INDEX_MESSAGE_SENT], mDictionary.getTextPartFromReply(reply)));
-		
-	
 			res.setResult(prepareOkMessageForUser(res));
 		}
 		//captcha request
@@ -237,7 +223,7 @@ extends SmsMultiProvider
 			
 			//TODO marco
 			//qui non ci dovrebbe mai arrivare!
-			throw new RuntimeException("Assunzione errata");
+			throw new RuntimeException("Assunzione errata: la risposta ("+reply+") non è stata interpretata come errore pur non essendo valida");
 			
 		}
 
