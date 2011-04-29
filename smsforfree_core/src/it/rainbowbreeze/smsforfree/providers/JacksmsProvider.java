@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -45,7 +45,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.jacksms.android.data.DataService;
+
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -82,8 +85,10 @@ extends SmsMultiProvider
 	protected AppPreferencesDao mappPreferenceDao;
 
 	protected String[] mMessages;
+	
+	private final ReplyRequestBuffer mReplyRequestBuffer= new ReplyRequestBuffer();
 
-
+	private Context mBaseContext;
 
 
 	//---------- Constructors
@@ -126,6 +131,8 @@ extends SmsMultiProvider
 	{
 		mDictionary = new JacksmsDictionary(mLogFacility);
 
+		mBaseContext = context.getApplicationContext();
+		
 		//provider parameters
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
@@ -209,12 +216,14 @@ extends SmsMultiProvider
 		
 		//message sent
 		if (mDictionary.isSmsCorrectlySent(reply)) {
+			updatePhoneNumberData(destination, serviceId, reply);
 			res.setResult(prepareOkMessageForUser(res));
 		}
 		//captcha request
 		else if (mDictionary.isCaptchaRequest(reply)) {
 			//returns captcha, message contains all captcha information
 			res.setReturnCode(ResultOperation.RETURNCODE_SMS_CAPTCHA_REQUEST);
+			mReplyRequestBuffer.add(new ReplyRequest(mDictionary.getCaptchaSessionIdFromReply(reply), destination, serviceId));
 		} else {
 			//other generic error not handled by the parseReplyForErrors() method
 			setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
@@ -284,25 +293,11 @@ extends SmsMultiProvider
 		String reply = res.getResult();
 		String returnMessage = mDictionary.getTextPartFromReply(reply);
 		if (mDictionary.isCaptchaCorrectlySent(reply)) {
-			
-			//TODO marco sempre solito errore
-//			String [] tokens = reply.split("\t");
-//			//se il servizio risponde con un messaggio, potrebbe dirci gli sms residui
-//			if(!TextUtils.isEmpty(tokens[1])){
-//				returnMessage = "Sms residui per questo servizio: "+
-//				tokens[1].replaceAll( "[^\\d]", "" );
-//			}
-//			else
-//				returnMessage = "Oggi hai inviato "+tokens[3]+" sms con questo servizio.";
-			
-			//TODO marco modifica rispetto all'originale, non modifichiamo il messaggio ricevuto dal server
-			// non sostituire il messaggio originale!!
-			// il codice di alfredo sbaglia a fr
-//			returnMessage = mMessages[MSG_INDEX_CAPTCHA_OK];
-//			res.setResult(returnMessage);
-			
-			//TODO marco
 			res.setResult(prepareOkMessageForUser(res));
+			ReplyRequest rr = mReplyRequestBuffer.remove(mDictionary.getCaptchaSessionIdFromReply(providerReply));
+			if(rr!=null){
+				updatePhoneNumberData(rr.getNumber(), rr.getServiceId(), reply);
+			}
 		} else {
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
 			mLogFacility.e(LOG_HASH, reply);
@@ -721,4 +716,73 @@ extends SmsMultiProvider
 		else
 			return textPartFromReply;
 	}
+	
+	private void updatePhoneNumberData(String phoneNumber, String serviceId, String reply){
+		String[] split = reply.split(JacksmsDictionary.TAB_SEPARATOR);
+		String operator = null;
+		String isJack = null;
+		
+		if(split.length>=5){
+			operator=split[4];
+		}
+		
+		if(split.length>=6){
+			isJack=split[5];
+		}
+		
+		Intent intent = DataService.updatePhoneNumberIntent(mBaseContext, phoneNumber, operator, isJack, serviceId);
+		if(intent!=null)
+			mBaseContext.startService(intent);
+	}
+	
+	private static class ReplyRequest{
+		
+		private final String mToken;
+		private final String mServiceId;
+		private final String mNumber;
+		
+		public ReplyRequest(String token, String number, String serviceId) {
+			mToken = token;
+			mNumber = number;
+			mServiceId = serviceId;
+		}
+		
+		public String getToken(){
+			return mToken;
+		}
+		
+		public String getServiceId(){
+			return mServiceId;
+		}
+		
+		public String getNumber(){
+			return mNumber;
+		}
+	}
+	
+	private static class ReplyRequestBuffer{
+		
+		private static final int SIZE = 5;
+		int i=0;
+		private final ReplyRequest[] mReplyRequests = new ReplyRequest[SIZE];
+	
+		public void add(ReplyRequest rr){
+			mReplyRequests[i]=rr;
+			i= (i+1) % SIZE;
+		}
+		
+		public ReplyRequest remove(String token){
+			//dummy search
+			for(int t=0;t<SIZE;t++){
+				ReplyRequest rr=mReplyRequests[t];
+				if(rr!=null && rr.getToken().equals(token)){
+					mReplyRequests[t]=null;
+					return rr;
+				}	
+			}
+			return null;
+		}
+	
+	}
+	
 }

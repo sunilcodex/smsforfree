@@ -242,7 +242,7 @@ public class JacksmsDictionary
 //		String[] lines = reply.split(TAB_SEPARATOR);
 //		
 //		//TODO marco se non e' cosi allora il server ha mandato una risposta sbagliata!
-//		// dovrebbe essere stato gestito giˆ prima!
+//		// dovrebbe essere stato gestito giï¿½ prima!
 //		if (lines.length > 2)
 //			//message is in the second item
 //			return lines[1];
@@ -512,5 +512,4 @@ public class JacksmsDictionary
 	{
 		return TextUtils.isEmpty(parameter) ? "" : parameter;
 	}
-
 }
