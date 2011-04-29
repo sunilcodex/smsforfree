@@ -217,7 +217,7 @@ public class SubitosmsProvider
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {
-		return context.getString(R.string.aimon_registerLink);
+		return context.getString(R.string.subitosms_registerLink);
 	}
 	
 	@Override
@@ -227,10 +227,10 @@ public class SubitosmsProvider
 
 		SmsServiceCommand newCommand;
 		newCommand = new SmsServiceCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.subitosms_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
 		commands.add(newCommand);
 		newCommand = new SmsServiceCommand(
-				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 1001);
+				COMMAND_CHECKCREDITS, context.getString(R.string.subitosms_commandCheckCredits), 1001);
 		commands.add(newCommand);
 		
 		return commands;
