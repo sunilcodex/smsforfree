@@ -30,6 +30,7 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary.JackReply;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.jacksms.android.data.DataService;
+import com.jacksms.android.gui.ComposeMessageActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -129,7 +131,7 @@ extends SmsMultiProvider
 	@Override
 	public ResultOperation<Void> initProvider(Context context)
 	{
-		mDictionary = new JacksmsDictionary(mLogFacility);
+		mDictionary = JacksmsDictionary.getInstance(mLogFacility);
 
 		mBaseContext = context.getApplicationContext();
 		
@@ -722,11 +724,11 @@ extends SmsMultiProvider
 		String operator = null;
 		String isJack = null;
 		
-		if(split.length>=5){
+		if(split.length>4){
 			operator=split[4];
 		}
 		
-		if(split.length>=6){
+		if(split.length>5){
 			isJack=split[5];
 		}
 		
