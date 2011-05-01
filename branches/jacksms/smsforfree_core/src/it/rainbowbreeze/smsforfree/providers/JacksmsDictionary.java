@@ -37,6 +37,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.text.TextUtils;
+import android.widget.SlidingDrawer;
 
 /**
  * 
@@ -45,6 +46,9 @@ import android.text.TextUtils;
  */
 public class JacksmsDictionary
 {
+	
+	private static JacksmsDictionary sJacksmsDictionary ;
+	
 	//---------- Private fields
     protected static final String LOG_HASH = "JacksmsDictionary";
     protected final LogFacility mLogFacility;
@@ -83,10 +87,18 @@ public class JacksmsDictionary
 		};
 	
 
+	
+	public static JacksmsDictionary getInstance(LogFacility logFacility){
+		synchronized (JacksmsDictionary.class) {
+			if(sJacksmsDictionary==null)
+				sJacksmsDictionary = new JacksmsDictionary(logFacility);
+		}
+		return sJacksmsDictionary;
+	}
 
 
 	//---------- Constructors
-	public JacksmsDictionary(LogFacility logFacility) {
+	private JacksmsDictionary(LogFacility logFacility) {
 	    mLogFacility = checkNotNull(logFacility, "LogFacility");
 	}
 	
@@ -127,7 +139,7 @@ public class JacksmsDictionary
 	
 	public List<NameValuePair> getParamsForAccountOperation(SmsService editedService,
 			String firstParam, String secondParam){
-		List<NameValuePair> nVp = new ArrayList<NameValuePair>(4);
+		List<NameValuePair> nVp = new ArrayList<NameValuePair>(5);
 		nVp.add(new BasicNameValuePair(firstParam, secondParam));
 		nVp.add(new BasicNameValuePair("account_name", editedService.getName()));
 		nVp.add(new BasicNameValuePair("data_1",editedService.getParameterValue(0)));
@@ -296,8 +308,6 @@ public class JacksmsDictionary
 		String[] lines = providerReply.split("\n");
 		
 		for(String templateLine : lines) {
-			//TODO marco, per il momento lascio cosi com'e' ma e' da testare
-			// questo split non dovrebbe funzionare!!
 			String[] pieces = templateLine.split(TAB_SEPARATOR);
 			try {
 				String serviceId = pieces[0];
@@ -356,7 +366,7 @@ public class JacksmsDictionary
 				}
 				mLogFacility.v(LOG_HASH, "Found new service:" +
 				        "\n service id: " + serviceId +
-				        "\n yemplate id: " + templateId +
+				        "\n template id: " + templateId +
 				        "\n service name: " + serviceName +
 				        "\n parameters: " + numberOfParameters);
 				//create new service
@@ -512,4 +522,212 @@ public class JacksmsDictionary
 	{
 		return TextUtils.isEmpty(parameter) ? "" : parameter;
 	}
+	
+	
+	
+	public JackReply parseReply(String reply){
+		if(TextUtils.isEmpty(reply))
+			return null;
+		JackReply jackReply = new JackReply(reply);
+		
+
+		
+		return jackReply;
+	}
+	
+	public static enum ReplyType{
+		SEND_RESULT,
+		NEED_CAPTCHA
+	}
+	
+	public static class JackReply{
+		
+		public static final int RESULT_CODE_SUCCESS=1;
+		public static final int RESULT_CODE_ERROR = 0;
+		
+		private static final int INVALID_INT=-1;
+		
+		private ReplyType _type;
+		
+		private boolean mIsValid = true;
+		
+		private String mReply;
+		
+		private int mReplyType = INVALID_INT;
+		
+		private String mResultCode; //0
+		
+		private int mResultCodeAsInt = INVALID_INT; 
+		
+		private String mText; //1
+		
+		private String mUnread; //2
+		
+		private int mUnreadAsInt = INVALID_INT; 
+		
+		private String mSentToday; //3
+		
+		private int mSentTodayAsInt = INVALID_INT;
+		
+		private String mOperator; //4
+		
+		private int mOperatorAsInt = INVALID_INT;
+		
+		private String mIsJack; //5
+
+		private int mIsJackAsInt = INVALID_INT;
+		
+		private String mNewVersion; // 6 - new api??
+		
+		protected JackReply(String reply){
+			mReply = reply;
+			
+			String[] split = reply.split(TAB_SEPARATOR);
+			
+			//0 - result code
+			try {
+				int v = Integer.parseInt(split[0]);
+				switch(v){
+				case 0:
+				case 1:
+					mResultCode=split[0];
+					mResultCodeAsInt=v;
+					_type =ReplyType.SEND_RESULT;
+					break;
+				default:
+					if(v>1){
+						mResultCode=split[0];
+						mResultCodeAsInt=v;
+						_type = ReplyType.NEED_CAPTCHA;
+					}else
+						mIsValid = false;
+				}
+			} catch (NumberFormatException e) {
+				mIsValid = false;
+			}
+			
+			// 1 - text
+			if(split.length>1 && !TextUtils.isEmpty(split[1]))
+				mText=split[1];
+			else
+				mText="";
+			
+			// 2 - unread
+			if(split.length>2 && !TextUtils.isEmpty(split[2])){
+				mUnread=split[2];
+				try {
+					mUnreadAsInt = Integer.parseInt(mUnread);
+				} catch (NumberFormatException e) {
+					mIsValid = false;
+				}
+			}
+			
+			// 3 - sent today
+			if(split.length>3 && !TextUtils.isEmpty(split[3])){
+				mSentToday=split[3];
+				try {
+					mSentTodayAsInt = Integer.parseInt(mSentToday);
+				} catch (NumberFormatException e) {
+					mIsValid = false;
+				}
+			}
+			
+			// 4 - operator
+			if(split.length>4 && !TextUtils.isEmpty(split[4])){
+				mOperator=split[4];
+				try {
+					mOperatorAsInt = Integer.parseInt(mOperator);
+				} catch (NumberFormatException e) {
+					mIsValid = false;
+				}
+			}
+			
+			// 5 - isJack
+			if(split.length>5 && !TextUtils.isEmpty(split[5])){
+				mIsJack=split[5];
+				try {
+					mIsJackAsInt = Integer.parseInt(mOperator);
+				} catch (NumberFormatException e) {
+					mIsValid = false;
+				}
+			}
+			
+			//6 TODO
+			mNewVersion = null;
+		}
+
+		public boolean isValid() {
+			return mIsValid;
+		}
+
+		public String getReply() {
+			return mReply;
+		}
+
+		public int getReplyType() {
+			return mReplyType;
+		}
+
+		public String getResultCode() {
+			return mResultCode;
+		}
+
+		public int getResultCodeAsInt() {
+			return mResultCodeAsInt;
+		}
+
+		/**
+		 * 
+		 * @return never null
+		 */
+		public String getText() {
+			return mText;
+		}
+
+		public String getUnread() {
+			return mUnread;
+		}
+
+		public int getUnreadAsInt() {
+			return mUnreadAsInt;
+		}
+
+		public String getSentToday() {
+			return mSentToday;
+		}
+
+		public int getSentTodayAsInt() {
+			return mSentTodayAsInt;
+		}
+
+		public String getOperator() {
+			return mOperator;
+		}
+
+		public int getOperatorAsInt() {
+			return mOperatorAsInt;
+		}
+
+		public String getIsJack() {
+			return mIsJack;
+		}
+
+		public int getIsJackAsInt() {
+			return mIsJackAsInt;
+		}
+
+		public String getmNewVersion() {
+			return mNewVersion;
+		}
+		
+	}
+	
+	/** Contenuto dell'array tokens dell'esito 
+	 * [0] = esito {1|0}
+	 * [1] = \t [eventuale risultato operazione] 
+	 * [2] = \t messaggi da leggere 
+	 * [3] = \t n messaggi inviati oggi con l'account usato 
+	 * [4] = \t codice identificativo operatore destinatario 
+	 * [5] = \t flag appartenenza al network JackSMS
+	 */
 }
