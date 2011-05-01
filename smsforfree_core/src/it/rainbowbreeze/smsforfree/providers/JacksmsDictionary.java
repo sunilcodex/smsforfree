@@ -54,7 +54,7 @@ public class JacksmsDictionary
     protected final LogFacility mLogFacility;
     
 	private static final String FORMAT_CSV = "csv";
-	//private static final String FORMAT_XML = "xml";
+	private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
 	public static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
@@ -68,6 +68,7 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_EDITSERVICE = "editService";
 	private static final String ACTION_GET_ADDSERVICE = "addService";
 	private static final String ACTION_GET_DELSERVICE = "delService";
+	private static final String ACTION_GET_ADDRESSBOOK = "getFlaggedAddressBook";
 
 	//TODO: get version from global variable or settings
 	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
@@ -135,6 +136,10 @@ public class JacksmsDictionary
 
 	public String getUrlForDeleteService(String username, String password) {
 		return getUrlForCommand(username, password, ACTION_GET_DELSERVICE, FORMAT_CSV);
+	}
+	
+	public String getUrlForAddressBook(String username, String password){
+		return getUrlForCommand(username, password, ACTION_GET_ADDRESSBOOK, FORMAT_XML);
 	}
 	
 	public List<NameValuePair> getParamsForAccountOperation(SmsService editedService,

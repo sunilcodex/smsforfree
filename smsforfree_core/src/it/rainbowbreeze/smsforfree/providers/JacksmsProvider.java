@@ -30,14 +30,12 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
-import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary.JackReply;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -47,7 +45,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.jacksms.android.data.DataService;
-import com.jacksms.android.gui.ComposeMessageActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -785,6 +782,11 @@ extends SmsMultiProvider
 			return null;
 		}
 	
+	}
+
+	public ResultOperation<String> getAddressBook(Context mContext) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
