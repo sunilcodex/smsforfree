@@ -186,8 +186,14 @@ extends ListActivity
 
 		case JacksmsProvider.COMMAND_LOADUSERSERVICES:
 			mLogFacility.i("Pulizia della lista e aggiornamento servizi");
-			mListAdapter.clear();
-			execureProviderCommand(mProvider, item.getItemId(), null);
+			if(GlobalHelper.isNetworkAvailable(getApplicationContext())){
+				mListAdapter.clear();
+				execureProviderCommand(mProvider, item.getItemId(), null);
+			}
+			else{
+				mActivityHelper.createInformativeDialog(this, "",
+						getText(com.jacksms.android.R.string.connection_error).toString(), "Ok").show();
+			}
 			break;			
 		}
 
