@@ -46,13 +46,13 @@ import android.widget.SlidingDrawer;
  */
 public class JacksmsDictionary
 {
-	
+
 	private static JacksmsDictionary sJacksmsDictionary ;
-	
+
 	//---------- Private fields
-    protected static final String LOG_HASH = "JacksmsDictionary";
-    protected final LogFacility mLogFacility;
-    
+	protected static final String LOG_HASH = "JacksmsDictionary";
+	protected final LogFacility mLogFacility;
+
 	private static final String FORMAT_CSV = "csv";
 	private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
@@ -69,26 +69,27 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_ADDSERVICE = "addService";
 	private static final String ACTION_GET_DELSERVICE = "delService";
 	private static final String ACTION_GET_ADDRESSBOOK = "getFlaggedAddressBook";
+	private static final String ACTION_SEND_ADDRESSBOOK = "importAbook";
 
 	//TODO: get version from global variable or settings
 	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
 	public static final String TAB_SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
-	
+
 	/** Max number of parameters a JackSMS service can have */
 	private static final int MAX_SERVICE_PARAMETERS = 4;
-	
+
 	//message sent
 	private static final String PREFIX_RESULT_OK = "1" + TAB_SEPARATOR;
 	//JackSMS has different error signatures
 	private static final String[] PREFIX_RESULT_ERROR_ARRAY = {
 		"error" + TAB_SEPARATOR,
 		"0" + TAB_SEPARATOR
-		};
-	
+	};
 
-	
+
+
 	public static JacksmsDictionary getInstance(LogFacility logFacility){
 		synchronized (JacksmsDictionary.class) {
 			if(sJacksmsDictionary==null)
@@ -100,36 +101,36 @@ public class JacksmsDictionary
 
 	//---------- Constructors
 	private JacksmsDictionary(LogFacility logFacility) {
-	    mLogFacility = checkNotNull(logFacility, "LogFacility");
+		mLogFacility = checkNotNull(logFacility, "LogFacility");
 	}
-	
-	
+
+
 
 	//---------- Public properties
 
-	
-	
+
+
 
 	//---------- Public methods
 	public String getUrlForSendingMessage(String loginString)
 	{ return getUrlForCommand(loginString , ACTION_SEND_MESSAGE); }
-	
+
 	public String getUrlForSendingCaptcha(String loginString)
 	{ return getUrlForCommand(loginString, ACTION_SEND_CAPTCHA); }
-	
+
 	public String getUrlForDownloadTemplates(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES, FORMAT_CSV); }
 
 	public String getUrlForDownloadUserServices(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES, FORMAT_CSV); }
-	
+
 	public String getUrlForLoginString(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_USER_LOGINSTRING, FORMAT_CSV); }
 
 	public String getUrlForSaveService(String username, String password) {
 		return getUrlForCommand(username, password, ACTION_GET_EDITSERVICE, FORMAT_CSV);
 	}
-	
+
 	public String getUrlForAddService(String username, String password) {
 		return getUrlForCommand(username, password, ACTION_GET_ADDSERVICE, FORMAT_CSV);
 	}
@@ -137,11 +138,15 @@ public class JacksmsDictionary
 	public String getUrlForDeleteService(String username, String password) {
 		return getUrlForCommand(username, password, ACTION_GET_DELSERVICE, FORMAT_CSV);
 	}
-	
+
 	public String getUrlForAddressBook(String username, String password){
-		return getUrlForCommand(username, password, ACTION_GET_ADDRESSBOOK, FORMAT_XML);
+		return getUrlForCommand(username, password, ACTION_GET_ADDRESSBOOK, FORMAT_CSV);
 	}
-	
+
+	public String getUrlForSendAddressBook(String username, String password){
+		return getUrlForCommand(username, password, ACTION_SEND_ADDRESSBOOK, FORMAT_CSV);
+	}
+
 	public List<NameValuePair> getParamsForAccountOperation(SmsService editedService,
 			String firstParam, String secondParam){
 		List<NameValuePair> nVp = new ArrayList<NameValuePair>(5);
@@ -153,7 +158,27 @@ public class JacksmsDictionary
 		nVp.add(new BasicNameValuePair("data_4",editedService.getParameterValue(3)));
 		return nVp;
 	}
-	
+	/**
+	 * @param contacts
+	 * @return
+	 */
+	public List<NameValuePair> getParamsForAddressBook(String contacts){
+		//dalla stringa prelevo i tokens numero=nome
+		String [] tokens = contacts.split("&");
+		int size = tokens.length;
+		mLogFacility.v("Ci sono tokens n="+size);
+		List<NameValuePair> nVp = new ArrayList<NameValuePair>(size);
+		for(int i=0;i<size;i++){
+			//da ogni coppia numero=nome separo le due parti per formare il parametro POST
+			try{
+				String [] data = tokens[i].split("=");
+				nVp.add(new BasicNameValuePair(data[0], data[1]));
+			}
+			catch (Exception e) {e.printStackTrace();mLogFacility.e(e);}
+		}
+		return nVp;
+	}
+
 	/**
 	 * Builds headers used in send sms api
 	 * prototipo di richiesta:
@@ -168,11 +193,11 @@ public class JacksmsDictionary
 			SmsService service,
 			String destination,
 			String message)
-	{
+			{
 		String key;
 		String value;
 		HashMap<String, String> headers = new HashMap<String, String>();
-		
+
 		//la key j-x e' necessaria perche' vodafone filtra i messaggi con key x
 		key = "J-X";
 		value = String.valueOf(service.getTemplateId()) + TAB_SEPARATOR + 
@@ -183,10 +208,10 @@ public class JacksmsDictionary
 		replaceServiceParameter(service.getParameterValue(3)) + TAB_SEPARATOR +
 		adjustMessageBody(message);
 		headers.put(key, value);
-			
+
 		return headers;
-	}
-		
+			}
+
 	/**
 	 * Builds headers used in the captcha api
 	 * @param sessionId
@@ -198,15 +223,15 @@ public class JacksmsDictionary
 		String key;
 		String value;
 		HashMap<String, String> headers = new HashMap<String, String>();
-		
+
 		//la key j-x e' necessaria perche' vodafone filtra i messaggi con key x
 		key = "J-X";
 		value = String.valueOf(sessionId) + TAB_SEPARATOR + 
-				captchaCode + TAB_SEPARATOR;
+		captchaCode + TAB_SEPARATOR;
 		headers.put(key, value);
 		return headers;
 	}
-	
+
 	/**
 	 * Replace illegal chars in the message
 	 * @param body
@@ -218,8 +243,8 @@ public class JacksmsDictionary
 		body = body.replace("\r", " ");
 		return body;
 	}
-	
-	
+
+
 	/**
 	 * Extracts the message text from provider's reply
 	 * @param reply
@@ -229,44 +254,44 @@ public class JacksmsDictionary
 	{
 		//TODO marco
 		//removed, if null must fail!
-		
+
 		//if (TextUtils.isEmpty(reply)) return "";
-		
+
 		//TODO marco 
 		// in ogni caso devo ritornare
 		// la seconda posizione
 		String[] split = reply.split(TAB_SEPARATOR);
 		return split[1];
-		
-//		//if strings contains error codes from JackSMS
-//		for (String errorPrefix : PREFIX_RESULT_ERROR_ARRAY) {
-//			if (reply.startsWith(errorPrefix)) {
-//				{
-//					
-//					
-//					// TODO marco original
-//					//return reply.substring(errorPrefix.length()).trim();
-//				
-//				}
-//			}
-//		}
-//		
-//		
-//		//TODO marco (in questo caso o e' un messaggio destinato all'utente, oppure e' il captcha)
-//		
-//		
-//		//other reply from JackSMS 
-//		String[] lines = reply.split(TAB_SEPARATOR);
-//		
-//		//TODO marco se non e' cosi allora il server ha mandato una risposta sbagliata!
-//		// dovrebbe essere stato gestito gi� prima!
-//		if (lines.length > 2)
-//			//message is in the second item
-//			return lines[1];
-//		else
-//			return "";
+
+		//		//if strings contains error codes from JackSMS
+		//		for (String errorPrefix : PREFIX_RESULT_ERROR_ARRAY) {
+		//			if (reply.startsWith(errorPrefix)) {
+		//				{
+		//					
+		//					
+		//					// TODO marco original
+		//					//return reply.substring(errorPrefix.length()).trim();
+		//				
+		//				}
+		//			}
+		//		}
+		//		
+		//		
+		//		//TODO marco (in questo caso o e' un messaggio destinato all'utente, oppure e' il captcha)
+		//		
+		//		
+		//		//other reply from JackSMS 
+		//		String[] lines = reply.split(TAB_SEPARATOR);
+		//		
+		//		//TODO marco se non e' cosi allora il server ha mandato una risposta sbagliata!
+		//		// dovrebbe essere stato gestito gi� prima!
+		//		if (lines.length > 2)
+		//			//message is in the second item
+		//			return lines[1];
+		//		else
+		//			return "";
 	}
-	
+
 	/**
 	 * Extracts captcha image content from provider's reply
 	 * @param reply
@@ -276,7 +301,7 @@ public class JacksmsDictionary
 	{
 		//captcha content is the text part of the reply
 		String content = getTextPartFromReply(reply);
-		
+
 		//is encoded in base64, so decode id
 		byte[] decodedCaptcha;
 		try {
@@ -287,7 +312,7 @@ public class JacksmsDictionary
 		}
 		return decodedCaptcha;
 	}
-	
+
 	/**
 	 * Extract sessionId from captcha reply
 	 * @param reply
@@ -299,19 +324,19 @@ public class JacksmsDictionary
 		int separatorPos = reply.indexOf(TAB_SEPARATOR);
 		if (separatorPos < 0)
 			return "";
-		
+
 		String sessionId = reply.substring(0, separatorPos).trim();
 		return sessionId;
 	}
 
-	
+
 	public List<SmsService> extractTemplates(LogFacility logFacility, String providerReply)
 	{
 		List<SmsService> templates = new ArrayList<SmsService>();
-		
+
 		//examine the reply, line by line
 		String[] lines = providerReply.split("\n");
-		
+
 		for(String templateLine : lines) {
 			String[] pieces = templateLine.split(TAB_SEPARATOR);
 			try {
@@ -338,20 +363,20 @@ public class JacksmsDictionary
 				//do nothing, simply skips to next service
 			}
 		}
-		
+
 		Collections.sort(templates);
 		return templates;
 	}
-	
-	
+
+
 	public List<SmsConfigurableService> extractUserServices(String providerReply)
 	{
-	    mLogFacility.v(LOG_HASH, "Extract user services");
+		mLogFacility.v(LOG_HASH, "Extract user services");
 		List<SmsConfigurableService> services = new ArrayList<SmsConfigurableService>();
-		
+
 		//examine the reply, line by line
 		String[] lines = providerReply.split(String.valueOf((char) 10));
-		
+
 		for(String serviceLine : lines) {
 			String[] pieces = serviceLine.split(TAB_SEPARATOR);
 			try {
@@ -370,10 +395,10 @@ public class JacksmsDictionary
 					if (TextUtils.isEmpty(parametersValue[i])) numberOfParameters--;
 				}
 				mLogFacility.v(LOG_HASH, "Found new service:" +
-				        "\n service id: " + serviceId +
-				        "\n template id: " + templateId +
-				        "\n service name: " + serviceName +
-				        "\n parameters: " + numberOfParameters);
+						"\n service id: " + serviceId +
+						"\n template id: " + templateId +
+						"\n service name: " + serviceName +
+						"\n parameters: " + numberOfParameters);
 				//create new service
 				parametersValue = (String[]) RainbowArrayHelper.resizeArray(parametersValue, numberOfParameters);
 				SmsConfigurableService newService = new SmsConfigurableService(
@@ -383,7 +408,7 @@ public class JacksmsDictionary
 				//do nothing, simply skips to next service
 			}
 		}
-		
+
 		mLogFacility.v(LOG_HASH, "Total services found: " + services.size());
 		Collections.sort(services);
 		return services;
@@ -397,11 +422,11 @@ public class JacksmsDictionary
 
 	public boolean isCaptchaRequest(String webserviceReply) {
 		if (TextUtils.isEmpty(webserviceReply)) return false;
-		
+
 		//find first part of the message
 		int pos = webserviceReply.indexOf(TAB_SEPARATOR);
 		if (pos < 0) return false;
-		
+
 		//find the number at the start of the message
 		String token = webserviceReply.substring(0, pos);
 
@@ -420,9 +445,9 @@ public class JacksmsDictionary
 	 * @param webserviceReply
 	 * @return
 	 */
-    public boolean isCaptchaCorrectlySent(String webserviceReply) {
-        return isSmsCorrectlySent(webserviceReply);
-    }
+	public boolean isCaptchaCorrectlySent(String webserviceReply) {
+		return isSmsCorrectlySent(webserviceReply);
+	}
 
 	/**
 	 * Checks if the reply for webservice contains errors or not
@@ -434,25 +459,25 @@ public class JacksmsDictionary
 		//TODO marco
 		// cambiato a false, una risposta vuota non ha errori espliciti,
 		// qui si stanno cercando errori comunicati dal server!!!
-		
+
 		if (TextUtils.isEmpty(webserviceReply)) return false;
-		
+
 		//explicit error return string
 		for (String errSignature : PREFIX_RESULT_ERROR_ARRAY) {
 			if (webserviceReply.startsWith(errSignature)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean isInvalidCredetials(String webserviceReply)
 	{
 		if (TextUtils.isEmpty(webserviceReply)) return false;
-		
+
 		//TODO marco, siamo sicuri che in questo caso non ci sia il tab???
-		
+
 		return ("error	Dati di accesso JackSMS non validi").equals(webserviceReply);
 	}
 
@@ -468,33 +493,33 @@ public class JacksmsDictionary
 
 		return (webserviceReply.startsWith("<!DOCTYPE HTML PUBLIC"));
 	}
-	
-	
+
+
 
 	//---------- Private methods
 	private String getUrlForCommand(String loginString, String command)
 	{
 		String loginS = loginString;
-		
+
 		StringBuilder sb = new StringBuilder();
 		//per le richieste di test
 		//sb.append(URL_STREAM_TEST)
 		//per le richieste normali
 		sb.append(URL_STREAM_BASE)
-			.append(loginS)
-			.append("/")
-			.append(command)
-			.append(PARAM_CLIENTVERSION_VALUE);
+		.append(loginS)
+		.append("/")
+		.append(command)
+		.append(PARAM_CLIENTVERSION_VALUE);
 		return sb.toString();
 	}
-	
+
 	//Per ottenere loginString devo usare per forza username e password
 	private String getUrlForCommand(String username, String password,
 			String command, String out_format) {
-		
+
 		String codedUser;
 		String codedPwd;
-		
+
 		if (USER_TEST.equals(username)){
 			codedUser = USER_TEST;
 			codedPwd = USER_TEST;
@@ -504,17 +529,17 @@ public class JacksmsDictionary
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(URL_Q_BASE)
-			.append("/")	
-			.append(codedUser)
-			.append("/")
-			.append(codedPwd)
-			.append("/")
-			.append(command)
-			.append("?")
-			.append(out_format)
-            .append(",")
-            .append(PARAM_CLIENTVERSION_VALUE);
-			return sb.toString();
+		.append("/")	
+		.append(codedUser)
+		.append("/")
+		.append(codedPwd)
+		.append("/")
+		.append(command)
+		.append("?")
+		.append(out_format)
+		.append(",")
+		.append(PARAM_CLIENTVERSION_VALUE);
+		return sb.toString();
 	}
 
 	private String replaceNotAllowedChars(String sourceString)
@@ -522,73 +547,73 @@ public class JacksmsDictionary
 		return sourceString.replace("+", "-").replace("/", "_");
 	}
 
-	
+
 	private String replaceServiceParameter(String parameter)
 	{
 		return TextUtils.isEmpty(parameter) ? "" : parameter;
 	}
-	
-	
-	
+
+
+
 	public JackReply parseReply(String reply){
 		if(TextUtils.isEmpty(reply))
 			return null;
 		JackReply jackReply = new JackReply(reply);
-		
 
-		
+
+
 		return jackReply;
 	}
-	
+
 	public static enum ReplyType{
 		SEND_RESULT,
 		NEED_CAPTCHA
 	}
-	
+
 	public static class JackReply{
-		
+
 		public static final int RESULT_CODE_SUCCESS=1;
 		public static final int RESULT_CODE_ERROR = 0;
-		
+
 		private static final int INVALID_INT=-1;
-		
+
 		private ReplyType _type;
-		
+
 		private boolean mIsValid = true;
-		
+
 		private String mReply;
-		
+
 		private int mReplyType = INVALID_INT;
-		
+
 		private String mResultCode; //0
-		
+
 		private int mResultCodeAsInt = INVALID_INT; 
-		
+
 		private String mText; //1
-		
+
 		private String mUnread; //2
-		
+
 		private int mUnreadAsInt = INVALID_INT; 
-		
+
 		private String mSentToday; //3
-		
+
 		private int mSentTodayAsInt = INVALID_INT;
-		
+
 		private String mOperator; //4
-		
+
 		private int mOperatorAsInt = INVALID_INT;
-		
+
 		private String mIsJack; //5
 
 		private int mIsJackAsInt = INVALID_INT;
-		
+
 		private String mNewVersion; // 6 - new api??
-		
+
 		protected JackReply(String reply){
 			mReply = reply;
-			
+
 			String[] split = reply.split(TAB_SEPARATOR);
-			
+
 			//0 - result code
 			try {
 				int v = Integer.parseInt(split[0]);
@@ -610,13 +635,13 @@ public class JacksmsDictionary
 			} catch (NumberFormatException e) {
 				mIsValid = false;
 			}
-			
+
 			// 1 - text
 			if(split.length>1 && !TextUtils.isEmpty(split[1]))
 				mText=split[1];
 			else
 				mText="";
-			
+
 			// 2 - unread
 			if(split.length>2 && !TextUtils.isEmpty(split[2])){
 				mUnread=split[2];
@@ -626,7 +651,7 @@ public class JacksmsDictionary
 					mIsValid = false;
 				}
 			}
-			
+
 			// 3 - sent today
 			if(split.length>3 && !TextUtils.isEmpty(split[3])){
 				mSentToday=split[3];
@@ -636,7 +661,7 @@ public class JacksmsDictionary
 					mIsValid = false;
 				}
 			}
-			
+
 			// 4 - operator
 			if(split.length>4 && !TextUtils.isEmpty(split[4])){
 				mOperator=split[4];
@@ -646,7 +671,7 @@ public class JacksmsDictionary
 					mIsValid = false;
 				}
 			}
-			
+
 			// 5 - isJack
 			if(split.length>5 && !TextUtils.isEmpty(split[5])){
 				mIsJack=split[5];
@@ -656,7 +681,7 @@ public class JacksmsDictionary
 					mIsValid = false;
 				}
 			}
-			
+
 			//6 TODO
 			mNewVersion = null;
 		}
@@ -724,9 +749,9 @@ public class JacksmsDictionary
 		public String getmNewVersion() {
 			return mNewVersion;
 		}
-		
+
 	}
-	
+
 	/** Contenuto dell'array tokens dell'esito 
 	 * [0] = esito {1|0}
 	 * [1] = \t [eventuale risultato operazione] 

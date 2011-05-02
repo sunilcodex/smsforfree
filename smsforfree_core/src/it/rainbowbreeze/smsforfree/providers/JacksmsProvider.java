@@ -44,12 +44,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.jacksms.android.data.DataService;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
+
+import com.jacksms.android.data.DataService;
+import com.jacksms.android.gui.Rubrica;
 
 /**
  * 
@@ -606,6 +609,7 @@ extends SmsMultiProvider
 	 * parameters
 	 * 
 	 * @param editedService
+	 * @author Saverio Guardato
 	 */
 	@Override
 	public void saveRemoteservice(SmsService editedService){
@@ -631,6 +635,7 @@ extends SmsMultiProvider
 	 * parameters
 	 * 
 	 * @param editedService
+	 * @author Saverio Guardato
 	 */
 	@Override
 	public void addRemoteservice(SmsService editedService) {
@@ -655,6 +660,7 @@ extends SmsMultiProvider
 	 * online on user's account
 	 * 
 	 * @param service
+	 * @author Saverio Guardato
 	 */
 	@Override
 	public void removeRemoteService(SmsService delService) {
@@ -682,6 +688,52 @@ extends SmsMultiProvider
 		});
 		t.start();
 	}	
+	
+	/**
+	 * invia la rubrica al server, e riscaricala con i parametri quali operatore
+	 * e se è un numero jacksms
+	 * @param mContext
+	 * @param contatti : la richiesta di POST deve avere come parametro i contatti da
+	 * aggiungere nella forma numero=nome&numero=nome&numero=nome..
+	 * @return
+	 * 
+	 * @author Saverio Guardato
+	 */
+	public String getAddressBook(Handler callerHandler, String contatti) {
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+
+		//String url = mDictionary.getUrlForAddressBook(username, password);
+		String url1 = mDictionary.getUrlForSendAddressBook(username, password);
+		mLogFacility.i("Siamo pronti con l'url1:\n"+url1);
+		final HttpClient httpclient = new DefaultHttpClient();
+		final HttpPost httppost = new HttpPost(url1);
+		//compongo la richiesta POST passando la stringa dei contatti concatenati
+		try {
+			List<NameValuePair> nameValuePairs = mDictionary.getParamsForAddressBook(contatti);
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			httpclient.execute(httppost);
+		} catch (Exception ex){mLogFacility.e(ex);}
+//		try {Thread.sleep(3000);} 
+//		catch (InterruptedException e) {e.printStackTrace();}
+//		mLogFacility.i("Ho dormito 3 secondi, ora la scarico...");
+		//FIXME
+		//a questo punto devo riscaricare la lista modificata
+		String url2 = mDictionary.getUrlForAddressBook(username, password);
+		ResultOperation<String> res = doSingleHttpRequest(url2, null, null);
+		
+		if (parseReplyForErrors(res)){
+			logRequest(url2, null, null);
+		}
+		//la lista con i parametri è ora disponibile nel formato scaricato 
+		String listaContatti = res.getResult();
+		//mLogFacility.e(listaContatti);	
+		Message message = callerHandler.obtainMessage(Rubrica.WHAT_RUBRICAMESSAGE);
+		callerHandler.sendMessage(message);
+		
+		return listaContatti;
+	}
+
 
 
 	/**
@@ -782,11 +834,5 @@ extends SmsMultiProvider
 			return null;
 		}
 	
-	}
-
-	public ResultOperation<String> getAddressBook(Context mContext) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	}	
 }
