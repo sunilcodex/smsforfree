@@ -56,7 +56,7 @@
     <string name="actsendsms_spiProvidersPrompt">Scegli un provider SMS</string>
     <string name="actsendsms_spiServicesPrompt">Scegli un servizio</string>
     <string name="actsendsms_dlgPickNumber">Scegli un servizio</string>
-    <string name="actsendsms_dlgPickTemplate">Seleziona uno dei servizi disponibili</string>
+    <string name="actsendsms_dlgPickTemplate">Seleziona un messaggio preimpostato</string>
     <string name="actsendsms_mnuSignature">Aggiungi firma</string>
     <string name="actsendsms_mnuCompress">Comprimi testo</string>
     <string name="actsendsms_mnuSettings">Impostazioni</string>
