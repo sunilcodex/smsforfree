@@ -46,7 +46,7 @@ public class AppPreferencesDao
     
     protected static final String USERNAME_CREDENTIAL = "Username";
     protected static final String PASSWORD_CREDENTIAL = "Password";
-    protected static final String PROP_FIRST_RUN = "first_run";
+    protected static final String PROP_FIRST_START = "first_run";
     protected static final String PROP_DATABASE_SIZE = "database_size";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
@@ -76,9 +76,9 @@ public class AppPreferencesDao
 
 	//---------- Public Methods
 
-	public boolean getFirstRun() {return mSettings.getBoolean(PROP_FIRST_RUN, true); }
-	public void setFirstRun(boolean newValue)
-    { mEditor.putBoolean(PROP_FIRST_RUN, newValue); }
+	public boolean getFirstStart() {return mSettings.getBoolean(PROP_FIRST_START, true); }
+	public void setFirstStart(boolean newValue)
+    { mEditor.putBoolean(PROP_FIRST_START, newValue); }
 	
 	public String getDatabaseSize()
 	{return mSettings.getString(PROP_DATABASE_SIZE, "");}
