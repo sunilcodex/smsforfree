@@ -199,10 +199,6 @@ extends SmsMultiProvider
 		String url = mDictionary.getUrlForSendingMessage(loginS);
 		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
 		res = doSingleHttpRequest(url, null, params);
-
-		//TODO marco
-		// quello che c'era qui sostituiva il result con un messaggio di errore non parsabile
-		// non si può fare
 		
 		//checks for errors
 		if (parseReplyForErrors(res)){
@@ -228,14 +224,11 @@ extends SmsMultiProvider
 			mReplyRequestBuffer.add(new ReplyRequest(mDictionary.getCaptchaSessionIdFromReply(reply), destination, serviceId));
 		} else {
 			//other generic error not handled by the parseReplyForErrors() method
+			// can happen if reply is not parsable  (proxy showing the wrongpage, redirect, etc)
+			
 			setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
 			mLogFacility.e(LOG_HASH, reply);
-			
-			//TODO marco
-			//qui non ci dovrebbe mai arrivare!
-			throw new RuntimeException("Assunzione errata: la risposta ("+reply+") non è stata interpretata come errore pur non essendo valida");
-			
 		}
 
 		return res;    	
