@@ -32,17 +32,22 @@ import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -87,7 +92,7 @@ extends SmsMultiProvider
 	protected AppPreferencesDao mappPreferenceDao;
 
 	protected String[] mMessages;
-	
+
 	private final ReplyRequestBuffer mReplyRequestBuffer= new ReplyRequestBuffer();
 
 	private Context mBaseContext;
@@ -134,7 +139,7 @@ extends SmsMultiProvider
 		mDictionary = JacksmsDictionary.getInstance(mLogFacility);
 
 		mBaseContext = context.getApplicationContext();
-		
+
 		//provider parameters
 		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
 		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
@@ -186,7 +191,7 @@ extends SmsMultiProvider
 			String destination,
 			String messageBody)
 			{
-		
+
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 		String loginS = mappPreferenceDao.getLoginString();
@@ -199,7 +204,7 @@ extends SmsMultiProvider
 		String url = mDictionary.getUrlForSendingMessage(loginS);
 		HashMap<String, String> params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
 		res = doSingleHttpRequest(url, null, params);
-		
+
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
@@ -211,7 +216,7 @@ extends SmsMultiProvider
 		//a captcha code is needed
 
 		String reply = res.getResult();
-		
+
 		//message sent
 		if (mDictionary.isSmsCorrectlySent(reply)) {
 			updatePhoneNumberData(destination, serviceId, reply);
@@ -225,14 +230,14 @@ extends SmsMultiProvider
 		} else {
 			//other generic error not handled by the parseReplyForErrors() method
 			// can happen if reply is not parsable  (proxy showing the wrongpage, redirect, etc)
-			
+
 			setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
 			mLogFacility.e(LOG_HASH, reply);
 		}
 
 		return res;    	
-	}
+			}
 
 	@Override
 	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
@@ -276,7 +281,7 @@ extends SmsMultiProvider
 		String url = mDictionary.getUrlForSendingCaptcha(loginS);
 		HashMap<String, String> headers = mDictionary.getHeaderForSendingCaptcha(sessionId, captchaCode);
 		ResultOperation<String> res = doSingleHttpRequest(url, headers, null);
-		
+
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
@@ -502,13 +507,13 @@ extends SmsMultiProvider
 	 */
 	public boolean parseReplyForErrors(ResultOperation<String> resultToAnalyze)
 	{
-		
+
 		if (resultToAnalyze.hasErrors()) return true;
 
 		//TODO marco
 		if(resultToAnalyze.getResult()==null)
 			throw new RuntimeException("Errore in sviluppo, assunzione sbagliata");
-		
+
 		String errorMessage = "";
 		String reply = resultToAnalyze.getResult();
 
@@ -519,13 +524,13 @@ extends SmsMultiProvider
 			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 			//generic JackSMS internal error
 		} else if (mDictionary.isErrorReply(reply)) {
-			
+
 			//TODO marco,
 			errorMessage = mDictionary.getTextPartFromReply(reply);
-			
+
 			//TODO marco originale
 			//errorMessage = String.format(mMessages[MSG_INDEX_SERVER_ERROR_KNOW], mDictionary.getTextPartFromReply(reply));
-			
+
 			//TODO externalize
 			if(TextUtils.isEmpty(errorMessage))
 				errorMessage = "Nessun dettaglio sull'errore...";
@@ -681,7 +686,7 @@ extends SmsMultiProvider
 		});
 		t.start();
 	}	
-	
+
 	/**
 	 * invia la rubrica al server, e riscaricala con i parametri quali operatore
 	 * e se è un numero jacksms
@@ -708,14 +713,14 @@ extends SmsMultiProvider
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			httpclient.execute(httppost);
 		} catch (Exception ex){mLogFacility.e(ex);}
-//		try {Thread.sleep(3000);} 
-//		catch (InterruptedException e) {e.printStackTrace();}
-//		mLogFacility.i("Ho dormito 3 secondi, ora la scarico...");
+		//		try {Thread.sleep(3000);} 
+		//		catch (InterruptedException e) {e.printStackTrace();}
+		//		mLogFacility.i("Ho dormito 3 secondi, ora la scarico...");
 		//FIXME
 		//a questo punto devo riscaricare la lista modificata
 		String url2 = mDictionary.getUrlForAddressBook(username, password);
 		res = doSingleHttpRequest(url2, null, null);
-		
+
 		if (parseReplyForErrors(res)){
 			logRequest(url2, null, null);
 		}
@@ -724,29 +729,78 @@ extends SmsMultiProvider
 		//mLogFacility.e(listaContatti);	
 		Message message = callerHandler.obtainMessage(Rubrica.WHAT_RUBRICAMESSAGE);
 		callerHandler.sendMessage(message);
-		
+
 		return res;
 	}
 
 	/**
 	 * metodo per la registrazione di un nuovo account
+	 * che invia una richiesta HTTP post al server q e 
+	 * ottiene come risposta due possibilità:
+	 * 
+	 * <register result="0" msg="Numero di telefono gia' registrato" />
+	 * 
+	 * oppure
+	 * 
+	 * <register result="1" user_id="xxxx" code="xxxx" />
 	 * 
 	 * @author Saverio Guardato
 	 */
 	public ResultOperation<String> registerAccount(String number, String password) {
 		ResultOperation<String> res = null;
-		String url = mDictionary.getUrlForRegister(number, password);
-		mLogFacility.v("Invio la richiesta a :"+url);
-		res = doSingleHttpRequest(url, null, null);
-		
-		if (parseReplyForErrors(res)){
-			logRequest(url, null, null);
-		}
-		
-		mLogFacility.v("Esito registrazione--->\n"+res.getResult());
-		
+		String url = "http://q.jacksms.it/_/_/startRegister?csv";
+		final HttpClient httpclient = new DefaultHttpClient();
+		final HttpPost httppost = new HttpPost(url);
+		HttpResponse response = null ;
+		try {
+			List<NameValuePair> nVp = new ArrayList<NameValuePair>(2);
+			nVp.add(new BasicNameValuePair("number", number));
+			nVp.add(new BasicNameValuePair("password", password));
+			httppost.setEntity(new UrlEncodedFormEntity(nVp));
+			response = httpclient.execute(httppost);
+		} catch (Exception ex){mLogFacility.e(ex);}
+		HttpEntity ent = response.getEntity();
+		if(ent != null){
+			try {
+				String risposta = EntityUtils.toString(ent);
+				res = new ResultOperation<String>();
+				res.setResult(risposta);
+			} catch (Exception e) {e.printStackTrace();} 
+		}		
 		return res;
 	}	
+
+	/**
+	 * metodo per inviare il codice di conferma e verificare il proprio
+	 * account
+	 * 
+	 * @author Saverio Guardato
+	 */
+	public ResultOperation<String> confirmAccount(String userId, String code) {
+		ResultOperation<String> res = null;
+		String url = "http://q.jacksms.it/_/_/verifyRegister?csv";
+		final HttpClient httpclient = new DefaultHttpClient();
+		final HttpPost httppost = new HttpPost(url);
+		HttpResponse response = null ;
+		try {
+			List<NameValuePair> nVp = new ArrayList<NameValuePair>(2);
+			nVp.add(new BasicNameValuePair("user_id", userId));
+			nVp.add(new BasicNameValuePair("code", code));
+			httppost.setEntity(new UrlEncodedFormEntity(nVp));
+			response = httpclient.execute(httppost);
+		} catch (Exception ex){mLogFacility.e(ex);}
+		HttpEntity ent = response.getEntity();
+		if(ent != null){
+			try {
+				String risposta = EntityUtils.toString(ent);
+				res = new ResultOperation<String>();
+				res.setResult(risposta);
+			} catch (Exception e) {e.printStackTrace();} 
+		}		
+
+		return res;
+	}
+
 
 	/**
 	 *
@@ -764,76 +818,76 @@ extends SmsMultiProvider
 		if(result.hasErrors())
 			throw new RuntimeException("Errore in sviluppo");
 		String textPartFromReply = mDictionary.getTextPartFromReply(result.getResult());
-		
-//		if(TextUtils.isEmpty(textPartFromReply)) // nessun messaggio esplicito
-//			return mMessages[MSG_INDEX_MESSAGE_SENT];
-		
+
+		//		if(TextUtils.isEmpty(textPartFromReply)) // nessun messaggio esplicito
+		//			return mMessages[MSG_INDEX_MESSAGE_SENT];
+
 		String messageInLowerCase=textPartFromReply.toLowerCase();
 		String[] split = result.getResult().split(JacksmsDictionary.TAB_SEPARATOR);
 		//TODO marco, dovrebbe essere internazionalizzato
 		if(!messageInLowerCase.contains("residui") &&
-		   !messageInLowerCase.contains("residuo") &&
-		   !messageInLowerCase.contains("rimanenti") &&
-		   !messageInLowerCase.contains("rimanente"))
+				!messageInLowerCase.contains("residuo") &&
+				!messageInLowerCase.contains("rimanenti") &&
+				!messageInLowerCase.contains("rimanente"))
 			return "Oggi hai inviato "+split[3]+" sms con questo servizio.";	
 		else
 			return textPartFromReply;
 	}
-	
+
 	private void updatePhoneNumberData(String phoneNumber, String serviceId, String reply){
 		String[] split = reply.split(JacksmsDictionary.TAB_SEPARATOR);
 		String operator = null;
 		String isJack = null;
-		
+
 		if(split.length>4){
 			operator=split[4];
 		}
-		
+
 		if(split.length>5){
 			isJack=split[5];
 		}
-		
+
 		Intent intent = DataService.updatePhoneNumberIntent(mBaseContext, phoneNumber, operator, isJack, serviceId);
 		if(intent!=null)
 			mBaseContext.startService(intent);
 	}
-	
+
 	private static class ReplyRequest{
-		
+
 		private final String mToken;
 		private final String mServiceId;
 		private final String mNumber;
-		
+
 		public ReplyRequest(String token, String number, String serviceId) {
 			mToken = token;
 			mNumber = number;
 			mServiceId = serviceId;
 		}
-		
+
 		public String getToken(){
 			return mToken;
 		}
-		
+
 		public String getServiceId(){
 			return mServiceId;
 		}
-		
+
 		public String getNumber(){
 			return mNumber;
 		}
 	}
-	
+
 	private static class ReplyRequestBuffer{
-		
+
 		private static final int SIZE = 5;
 		int i=0;
 		private final ReplyRequest[] mReplyRequests = new ReplyRequest[SIZE];
-	
+
 		public void add(ReplyRequest rr){
 			mReplyRequests[i]=rr;
 			i= (i+1) % SIZE;
 		}
-		
+
 		public ReplyRequest remove(String token){
 			//dummy search
 			for(int t=0;t<SIZE;t++){
@@ -845,7 +899,7 @@ extends SmsMultiProvider
 			}
 			return null;
 		}
-	
+
 	}
 
 }

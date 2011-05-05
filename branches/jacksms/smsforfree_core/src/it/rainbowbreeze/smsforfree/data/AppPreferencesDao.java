@@ -48,6 +48,7 @@ public class AppPreferencesDao
     protected static final String PASSWORD_CREDENTIAL = "Password";
     protected static final String PROP_FIRST_START = "first_run";
     protected static final String PROP_DATABASE_SIZE = "database_size";
+    protected static final String PROP_USER_ID_CODE = "user_id_code";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
@@ -174,6 +175,11 @@ public class AppPreferencesDao
     { return mSettings.getBoolean(PROP_ASK_CONFIRMATION_FOR_SENDING, false); }
     public void setAskConfirmationForSending(boolean newValue)
     { mEditor.putBoolean(PROP_ASK_CONFIRMATION_FOR_SENDING, newValue); }
+    
+    public String getUserIdCode()
+    { return mSettings.getString(PROP_USER_ID_CODE, ""); }
+    public void setUserIdCode(String newValue)
+    { mEditor.putString(PROP_USER_ID_CODE, newValue); }
     
 
     //---------- Protected Methods
