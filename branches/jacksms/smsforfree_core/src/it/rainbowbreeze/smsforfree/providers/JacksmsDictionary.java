@@ -70,6 +70,7 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_DELSERVICE = "delService";
 	private static final String ACTION_GET_ADDRESSBOOK = "getFlaggedAddressBook";
 	private static final String ACTION_SEND_ADDRESSBOOK = "importAbook";
+	private static final String ACTION_REGISTER = "startRegister";
 
 	//TODO: get version from global variable or settings
 	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
@@ -146,6 +147,11 @@ public class JacksmsDictionary
 	public String getUrlForSendAddressBook(String username, String password){
 		return getUrlForCommand(username, password, ACTION_SEND_ADDRESSBOOK, FORMAT_CSV);
 	}
+	
+	public String getUrlForRegister(String number, String password){
+		return getUrlForCommand(number, password, ACTION_REGISTER, FORMAT_CSV);
+	}
+	
 
 	public List<NameValuePair> getParamsForAccountOperation(SmsService editedService,
 			String firstParam, String secondParam){
