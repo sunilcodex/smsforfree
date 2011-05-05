@@ -692,7 +692,8 @@ extends SmsMultiProvider
 	 * 
 	 * @author Saverio Guardato
 	 */
-	public String getAddressBook(Handler callerHandler, String contatti) {
+	public ResultOperation<String> getAddressBook(Handler callerHandler, String contatti) {
+		ResultOperation<String> res = null;
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
@@ -713,7 +714,7 @@ extends SmsMultiProvider
 		//FIXME
 		//a questo punto devo riscaricare la lista modificata
 		String url2 = mDictionary.getUrlForAddressBook(username, password);
-		ResultOperation<String> res = doSingleHttpRequest(url2, null, null);
+		res = doSingleHttpRequest(url2, null, null);
 		
 		if (parseReplyForErrors(res)){
 			logRequest(url2, null, null);
@@ -724,10 +725,28 @@ extends SmsMultiProvider
 		Message message = callerHandler.obtainMessage(Rubrica.WHAT_RUBRICAMESSAGE);
 		callerHandler.sendMessage(message);
 		
-		return listaContatti;
+		return res;
 	}
 
-
+	/**
+	 * metodo per la registrazione di un nuovo account
+	 * 
+	 * @author Saverio Guardato
+	 */
+	public ResultOperation<String> registerAccount(String number, String password) {
+		ResultOperation<String> res = null;
+		String url = mDictionary.getUrlForRegister(number, password);
+		mLogFacility.v("Invio la richiesta a :"+url);
+		res = doSingleHttpRequest(url, null, null);
+		
+		if (parseReplyForErrors(res)){
+			logRequest(url, null, null);
+		}
+		
+		mLogFacility.v("Esito registrazione--->\n"+res.getResult());
+		
+		return res;
+	}	
 
 	/**
 	 *
@@ -827,5 +846,6 @@ extends SmsMultiProvider
 			return null;
 		}
 	
-	}	
+	}
+
 }

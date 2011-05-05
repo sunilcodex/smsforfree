@@ -86,6 +86,8 @@ public class AppEnv
 	public final static String jacksmsmTemplatesFileName = "jacksms_templates.xml";
 	/** file name for providers subservices list */
 	public final static String jacksmsSubservicesFileName = "jacksms_subservices.xml"; 
+	/** file name for addressBook downloaded from site*/
+	public final static String jacksmsAddressBookFileName = "jacksms_addressBook.xml";
 
 	/** international prefix for Italy */
 	public final static String ITALY_INTERNATIONAL_PREFIX = "+39";
