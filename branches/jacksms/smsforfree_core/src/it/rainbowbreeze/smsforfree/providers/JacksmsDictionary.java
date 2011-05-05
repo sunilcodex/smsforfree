@@ -70,7 +70,7 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_DELSERVICE = "delService";
 	private static final String ACTION_GET_ADDRESSBOOK = "getFlaggedAddressBook";
 	private static final String ACTION_SEND_ADDRESSBOOK = "importAbook";
-	private static final String ACTION_REGISTER = "startRegister";
+	private static final String ACTION_REGISTER = "startRegister"; 
 
 	//TODO: get version from global variable or settings
 	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
