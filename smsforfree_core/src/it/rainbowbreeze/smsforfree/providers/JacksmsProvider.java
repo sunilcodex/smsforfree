@@ -697,7 +697,7 @@ extends SmsMultiProvider
 	 * 
 	 * @author Saverio Guardato
 	 */
-	public ResultOperation<String> getAddressBook(Handler callerHandler, String contatti) {
+	public ResultOperation<String> getAddressBook(String contatti) {
 		ResultOperation<String> res = null;
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
@@ -713,9 +713,6 @@ extends SmsMultiProvider
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			httpclient.execute(httppost);
 		} catch (Exception ex){mLogFacility.e(ex);}
-		//		try {Thread.sleep(3000);} 
-		//		catch (InterruptedException e) {e.printStackTrace();}
-		//		mLogFacility.i("Ho dormito 3 secondi, ora la scarico...");
 		//FIXME
 		//a questo punto devo riscaricare la lista modificata
 		String url2 = mDictionary.getUrlForAddressBook(username, password);
@@ -725,11 +722,6 @@ extends SmsMultiProvider
 			logRequest(url2, null, null);
 		}
 		//la lista con i parametri è ora disponibile nel formato scaricato 
-		String listaContatti = res.getResult();
-		//mLogFacility.e(listaContatti);	
-		Message message = callerHandler.obtainMessage(Rubrica.WHAT_RUBRICAMESSAGE);
-		callerHandler.sendMessage(message);
-
 		return res;
 	}
 
