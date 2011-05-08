@@ -779,6 +779,7 @@ public class JacksmsDictionary
 			VODA,
 			TIM,
 			H3G,
+			WIND,
 			JACK
 		};
 	}
