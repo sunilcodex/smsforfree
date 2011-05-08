@@ -70,6 +70,7 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_DELSERVICE = "delService";
 	private static final String ACTION_GET_ADDRESSBOOK = "getFlaggedAddressBook";
 	private static final String ACTION_SEND_ADDRESSBOOK = "importAbook";
+	private static final String ACTION_SET_NOTIFY_TYPE = "setNotifyType";
 	private static final String ACTION_REGISTER = "startRegister"; 
 
 	//TODO: get version from global variable or settings
@@ -150,6 +151,10 @@ public class JacksmsDictionary
 	
 	public String getUrlForRegister(String number, String password){
 		return getUrlForCommand(number, password, ACTION_REGISTER, FORMAT_CSV);
+	}
+	
+	public String getUrlForSetNotifyType(String username, String password) {
+		return getUrlForCommand(username, password, ACTION_SET_NOTIFY_TYPE, FORMAT_CSV);
 	}
 	
 
@@ -758,6 +763,34 @@ public class JacksmsDictionary
 
 	}
 
+	
+	public static class Operators {
+		
+		public static final int UNKNOWN = 0;
+		
+		public static final int VODA = 1;
+		public static final int TIM = 2;
+		public static final int H3G = 3;
+		public static final int WIND = 4;
+		public static final int JACK = 5;
+		
+		public static final int[] LIST = new int[]{
+			UNKNOWN,
+			VODA,
+			TIM,
+			H3G,
+			JACK
+		};
+	}
+	
+	public static class NotifyType{
+		
+		public static final String NONE = "0";
+		public static final String SQUILLO = "1";
+		public static final String GOOGLE_PUSH = "2";
+		
+		
+	}
 	/** Contenuto dell'array tokens dell'esito 
 	 * [0] = esito {1|0}
 	 * [1] = \t [eventuale risultato operazione] 
