@@ -894,4 +894,25 @@ extends SmsMultiProvider
 
 	}
 
+	public ResultOperation<String> setNotifiyType(String notifyType, String registration_id) {
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+
+		String url = mDictionary.getUrlForSetNotifyType(username, password);
+		final HttpClient httpclient = new DefaultHttpClient();
+		final HttpPost httppost = new HttpPost(url);
+		HttpResponse response = null ;
+		try {
+			List<NameValuePair> nVp = new ArrayList<NameValuePair>(2);
+			nVp.add(new BasicNameValuePair("notifyType", notifyType));
+			nVp.add(new BasicNameValuePair("registration_id", registration_id));
+			httppost.setEntity(new UrlEncodedFormEntity(nVp));
+			response = httpclient.execute(httppost);
+		} catch (Exception ex){mLogFacility.e(ex);}
+		
+		//HashMap<String, String> params = mDictionary.getParamsForSetNotifyType(notifyType, registration_id);
+		//ResultOperation<String> res = doSingleHttpRequest(url, null, params);
+		//res.getResult();
+		return null;
+	}	
 }
