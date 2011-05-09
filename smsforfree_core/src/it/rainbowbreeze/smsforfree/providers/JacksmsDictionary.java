@@ -786,11 +786,30 @@ public class JacksmsDictionary
 	
 	public static class NotifyType{
 		
+		public static class P{
+			public static final String NOTIFY_TYPE = "notifyType";
+			public static final String REGISTRATION_ID = "registration_id";
+		}
+		
 		public static final String NONE = "0";
 		public static final String SQUILLO = "1";
 		public static final String GOOGLE_PUSH = "2";
 		
 		
+	}
+	
+	
+	public boolean checkServerNotifyType(String reply, String expecetedType){
+		return TextUtils.equals(expecetedType, getNotifyTypeFromReply(reply));
+	} 
+	
+	public String getNotifyTypeFromReply(String reply){
+		String[] split = reply.split(TAB_SEPARATOR);
+		if(split.length>=2)
+			if(split[0].trim().equals(NotifyType.P.NOTIFY_TYPE)){
+				return split[1].trim();
+			}
+		return null; 
 	}
 	/** Contenuto dell'array tokens dell'esito 
 	 * [0] = esito {1|0}

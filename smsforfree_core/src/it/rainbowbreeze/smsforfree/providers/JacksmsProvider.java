@@ -30,23 +30,37 @@ import it.rainbowbreeze.smsforfree.domain.SmsMultiProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
+import it.rainbowbreeze.smsforfree.helper.Base64Helper;
+import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary.NotifyType;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import android.content.Context;
@@ -389,7 +403,7 @@ extends SmsMultiProvider
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
-			logRequest(url, null, null);
+			logRequest(url, (HashMap<String,String>)null, null);
 			return res;
 		}
 
@@ -461,7 +475,7 @@ extends SmsMultiProvider
 		//checks for errors
 		if (parseReplyForErrors(res)){
 			//log action data for a better error management
-			logRequest(url, null, null);
+			logRequest(url, (HashMap<String,String>)null, null);
 			return res;
 		}
 
@@ -719,7 +733,7 @@ extends SmsMultiProvider
 		res = doSingleHttpRequest(url2, null, null);
 
 		if (parseReplyForErrors(res)){
-			logRequest(url2, null, null);
+			logRequest(url2, (HashMap<String,String>)null, null);
 		}
 		//la lista con i parametri è ora disponibile nel formato scaricato 
 		return res;
@@ -894,25 +908,107 @@ extends SmsMultiProvider
 
 	}
 
-	public ResultOperation<String> setNotifiyType(String notifyType, String registration_id) {
+	public ResultOperation<String> setNotifyType(String notifyType, String registration_id) {
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String url = mDictionary.getUrlForSetNotifyType(username, password);
-		final HttpClient httpclient = new DefaultHttpClient();
-		final HttpPost httppost = new HttpPost(url);
-		HttpResponse response = null ;
-		try {
-			List<NameValuePair> nVp = new ArrayList<NameValuePair>(2);
-			nVp.add(new BasicNameValuePair("notifyType", notifyType));
-			nVp.add(new BasicNameValuePair("registration_id", registration_id));
-			httppost.setEntity(new UrlEncodedFormEntity(nVp));
-			response = httpclient.execute(httppost);
-		} catch (Exception ex){mLogFacility.e(ex);}
-		
-		//HashMap<String, String> params = mDictionary.getParamsForSetNotifyType(notifyType, registration_id);
-		//ResultOperation<String> res = doSingleHttpRequest(url, null, params);
-		//res.getResult();
-		return null;
+		final HttpClient httpclient = createDefaultClient();
+		List<NameValuePair> nvp = new ArrayList<NameValuePair>(2);
+		nvp.add(new BasicNameValuePair(NotifyType.P.NOTIFY_TYPE, notifyType));
+		nvp.add(new BasicNameValuePair(NotifyType.P.REGISTRATION_ID, registration_id));
+		ResultOperation<String> res = performPost(httpclient, url, nvp);
+
+		if(res.hasErrors())
+			return res;
+
+		if(mDictionary.checkServerNotifyType(res.getResult(), notifyType))
+			return res; // ok
+		else{
+			setSmsProviderException(res, "Risposta del server non valida");
+			logRequest(url, nvp, res);
+		}
+		return res;
 	}	
+	
+	
+	private ResultOperation<String> performPost(HttpClient client, String url, List<NameValuePair> nvp){
+    	String reply = "";
+		
+		try {
+			HttpPost httpPost = new HttpPost(url);
+			httpPost.setEntity(new UrlEncodedFormEntity(nvp));
+    		HttpResponse response = client.execute(httpPost);
+    		HttpEntity entity = response.getEntity();
+    		if(entity!=null)
+    			reply = EntityUtils.toString(entity);
+		} catch (IllegalArgumentException e) {
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
+		} catch (ClientProtocolException e) {
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		}catch (ConnectTimeoutException e){
+			return new ResultOperation<String>(new SocketTimeoutException(ERROR_MSG_TIMEOUT), ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		}catch (SocketTimeoutException e) {
+			return new ResultOperation<String>(new SocketTimeoutException(ERROR_MSG_TIMEOUT), ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		}catch (IOException e) {
+			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+		}
+    	
+    	//empty reply
+    	if (TextUtils.isEmpty(reply)) {
+			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
+		}
+
+    	//return the reply
+    	return new ResultOperation<String>(reply);
+	}
+	
+	
+	private static final int TIMEOUT = 60000;
+	
+	private HttpClient createDefaultClient(){
+		HttpParams params = new BasicHttpParams();
+		HttpConnectionParams.setSoTimeout(params, TIMEOUT);
+		HttpConnectionParams.setConnectionTimeout(params, TIMEOUT);
+		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(params);
+		return defaultHttpClient;
+	}
+	
+	
+	/**
+	 * Write headers and url in the log, so a better debugger could be made
+	 * when a report is sent to the developer
+	 * 
+	 * @param url
+	 * @param headers
+	 */
+	protected void logRequest(String url, List<NameValuePair> nvp, ResultOperation<String> res)
+	{
+		mLogFacility.e(LOG_HASH, getName() + " provider request content");
+		if (!TextUtils.isEmpty(url)) {
+			mLogFacility.e(LOG_HASH, "Url");
+			mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(url.getBytes()));
+		}
+		if (null != nvp) {
+			mLogFacility.e(LOG_HASH, "Post Params");
+			for (NameValuePair param : nvp) {
+				mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(param.getName().getBytes()));
+				mLogFacility.e(LOG_HASH, Base64Helper.encodeBytes(param.getValue().getBytes()));
+			}
+		}
+		if (null != res) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Result:\n")
+			.append(Base64Helper.encodeBytes(res.getResult().getBytes()));
+			if(res.getException()!=null)
+			sb.append("\n Exception:")
+			.append(Base64Helper.encodeBytes(res.getClass().getName().getBytes()))
+			.append("\n")
+			.append(Base64Helper.encodeBytes(res.getException().getMessage().getBytes()))
+			.append("\n ReturnCode :")
+			.append(res.getReturnCode());
+			mLogFacility.e(LOG_HASH, sb.toString());
+		}
+	}
+	
 }

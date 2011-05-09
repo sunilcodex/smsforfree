@@ -19,17 +19,25 @@
 
 package it.rainbowbreeze.smsforfree.data;
 
+import org.apache.http.params.HttpConnectionParams;
+
 import it.rainbowbreeze.libs.common.RainbowLogFacility;
 import it.rainbowbreeze.libs.data.RainbowWebserviceClient;
 
 public class WebserviceClient
     extends RainbowWebserviceClient
 {
+	/**@author marcobettiol*/
+	private final int TIMEOUT = 60000;
+	
     //---------- Private fields
 
     //---------- Constructors
     public WebserviceClient(RainbowLogFacility logFacility) {
         super(logFacility);
+        
+		HttpConnectionParams.setSoTimeout(mParams, TIMEOUT);
+		HttpConnectionParams.setConnectionTimeout(mParams, TIMEOUT);
     }
 
     //---------- Public properties
