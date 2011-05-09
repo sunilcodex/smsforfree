@@ -66,7 +66,7 @@ public abstract class SmsProvider
 	//command used to register to provider
 	protected final static int COMMAND_REGISTER = 100;
 	
-	private String ERROR_MSG_TIMEOUT;
+	protected String ERROR_MSG_TIMEOUT;
 	
 	
 	//---------- Constructors
