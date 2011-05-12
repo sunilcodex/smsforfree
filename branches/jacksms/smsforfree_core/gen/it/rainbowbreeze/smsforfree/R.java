@@ -85,16 +85,18 @@ public final class R {
         public static final int actsplashscreen_lblErrors=0x7f070033;
         public static final int actsplashscreen_lblThankYouForLogs=0x7f070031;
         public static final int actsubservice_item=0x7f070035;
-        public static final int actsubservicelist_new_message_view=0x7f070036;
-        public static final int dlgcaptcha_btnCancel=0x7f07003c;
-        public static final int dlgcaptcha_btnOk=0x7f07003b;
-        public static final int dlgcaptcha_imgCaptcha=0x7f070039;
-        public static final int dlgcaptcha_layoutroot=0x7f070038;
-        public static final int dlgcaptcha_txtCode=0x7f07003a;
-        public static final int layoutcontactnumbers_txtName=0x7f07003f;
-        public static final int layoutcontactnumbers_txtNumber=0x7f07003d;
-        public static final int layoutcontactnumbers_txtType=0x7f07003e;
-        public static final int linearLayout1=0x7f070037;
+        public static final int actsubservicelist_new_message_view=0x7f070038;
+        public static final int dlgcaptcha_btnCancel=0x7f07003e;
+        public static final int dlgcaptcha_btnOk=0x7f07003d;
+        public static final int dlgcaptcha_imgCaptcha=0x7f07003b;
+        public static final int dlgcaptcha_layoutroot=0x7f07003a;
+        public static final int dlgcaptcha_txtCode=0x7f07003c;
+        public static final int layoutcontactnumbers_txtName=0x7f070041;
+        public static final int layoutcontactnumbers_txtNumber=0x7f07003f;
+        public static final int layoutcontactnumbers_txtType=0x7f070040;
+        public static final int linearLayout1=0x7f070039;
+        public static final int services_list_service_icon=0x7f070037;
+        public static final int textView1=0x7f070036;
     }
     public static final class layout {
         public static final int actabout=0x7f030000;
