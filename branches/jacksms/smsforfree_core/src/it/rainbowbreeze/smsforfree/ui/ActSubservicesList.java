@@ -30,11 +30,18 @@ import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandThread;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
+
+import java.io.IOException;
+import java.util.List;
+
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,9 +49,13 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
@@ -61,7 +72,7 @@ extends ListActivity
 	private static final int CONTEXTMENU_DELETESERVICE = 3;
 
 	private SmsProvider mProvider;
-	ArrayAdapter<SmsService> mListAdapter;
+	private ServicesAdapter mAdapter;
 
 	private ExecuteProviderCommandThread mExecutedProviderCommandThread;
 	private ProgressDialog mProgressDialog;
@@ -101,10 +112,9 @@ extends ListActivity
 				AppEnv.i(getBaseContext()).getAppDisplayName(),
 				mProvider.getName()));
 
-		mListAdapter = new ArrayAdapter<SmsService>(this, 
-				R.layout.actsubservice_item,
-				mProvider.getAllSubservices());
-		setListAdapter(mListAdapter);
+		List<SmsService> svList = mProvider.getAllSubservices();
+		mAdapter = new ServicesAdapter(this, svList);
+		setListAdapter(mAdapter);
 
 		//register the context menu to defaul ListView of the view
 		//alternative method:
@@ -187,7 +197,6 @@ extends ListActivity
 		case JacksmsProvider.COMMAND_LOADUSERSERVICES:
 			mLogFacility.i("Pulizia della lista e aggiornamento servizi");
 			if(GlobalHelper.isNetworkAvailable(getApplicationContext())){
-				mListAdapter.clear();
 				execureProviderCommand(mProvider, item.getItemId(), null);
 			}
 			else{
@@ -392,7 +401,86 @@ extends ListActivity
 	 */
 	private void refreshSubservicesList() {
 		//update the list and avoid the IllegalStateException when a new subservice is added
-		if (null != mListAdapter) mListAdapter.notifyDataSetChanged();
+		if (null != mAdapter) mAdapter.notifyDataSetChanged();
+	}
+
+	/**
+	 * classe interna per la gestione dell'adapter
+	 * dei servizi e le loro icone
+	 * 
+	 * @author Saverio Guardato
+	 */
+	private class ServicesAdapter extends BaseAdapter {
+
+		private Context context;
+		private List<SmsService> servList;
+
+		/*
+		 * Costruttore
+		 */
+		public ServicesAdapter(ActSubservicesList actSbL,
+				List<SmsService> svList) {
+			context = actSbL;
+			servList = svList;
+		}
+
+		@Override
+		public int getCount() {
+			return servList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return servList.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			SmsService serv = servList.get(position);
+			return new ServicesAdapterView(context, serv);
+		}
+	}
+
+	/**
+	 * Altra classe interna per la lista dei servizi
+	 * questa si occupa del linearLayout 
+	 * @author Saverio Guardato
+	 */
+	private class ServicesAdapterView extends RelativeLayout{
+
+		public ServicesAdapterView(Context context, SmsService serv) {
+			super(context);
+			//this.setOrientation(HORIZONTAL); 
+
+			RelativeLayout.LayoutParams nameParams = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			nameParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+			
+			TextView name = new TextView(context);
+			name.setText(serv.getName());
+			name.setTextSize(28f);
+			name.setId(1);
+			addView(name, nameParams);
+
+			RelativeLayout.LayoutParams logoParams = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			logoParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			
+			ImageView icon = new ImageView(context);
+			icon.setId(2);
+			Bitmap logo = null;
+			try {logo = BitmapFactory.decodeStream(getAssets().open("icone_servizi/"+serv.getTemplateId()+".png"));} 
+			catch (IOException e) {e.printStackTrace();}
+			icon.setImageBitmap(logo);
+			addView(icon, logoParams);
+
+		}
+
 	}
 
 }

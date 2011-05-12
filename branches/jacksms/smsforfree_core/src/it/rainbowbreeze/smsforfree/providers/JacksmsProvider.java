@@ -716,7 +716,6 @@ extends SmsMultiProvider
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
-		//String url = mDictionary.getUrlForAddressBook(username, password);
 		String url1 = mDictionary.getUrlForSendAddressBook(username, password);
 		mLogFacility.i("Siamo pronti con l'url1:\n"+url1);
 		final HttpClient httpclient = new DefaultHttpClient();
@@ -752,16 +751,17 @@ extends SmsMultiProvider
 	 * 
 	 * @author Saverio Guardato
 	 */
-	public ResultOperation<String> registerAccount(String number, String password) {
+	public ResultOperation<String> registerAccount(String number, String password, String email) {
 		ResultOperation<String> res = null;
 		String url = "http://q.jacksms.it/_/_/startRegister?csv";
 		final HttpClient httpclient = new DefaultHttpClient();
 		final HttpPost httppost = new HttpPost(url);
 		HttpResponse response = null ;
 		try {
-			List<NameValuePair> nVp = new ArrayList<NameValuePair>(2);
+			List<NameValuePair> nVp = new ArrayList<NameValuePair>(3);
 			nVp.add(new BasicNameValuePair("number", number));
 			nVp.add(new BasicNameValuePair("password", password));
+			nVp.add(new BasicNameValuePair("email", email));
 			httppost.setEntity(new UrlEncodedFormEntity(nVp));
 			response = httpclient.execute(httppost);
 		} catch (Exception ex){mLogFacility.e(ex);}

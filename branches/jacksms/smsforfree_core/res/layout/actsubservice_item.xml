@@ -1,11 +1,8 @@
-<TextView 
- xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="10dp"
-    android:textColor="@android:color/black" 
-    android:background="@android:drawable/list_selector_background"
-    android:text="service name" 
-    android:textSize="24dip" 
-    android:id="@+id/actsubservice_item">
-</TextView>
+
+<LinearLayout android:id="@+id/linearLayout1"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<TextView android:id="@+id/textView1"
+		android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="service_name" android:textSize="26dip"></TextView>
+	<ImageView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/services_list_service_icon" android:src="@drawable/smsforfree_logo"></ImageView>
+</LinearLayout>
