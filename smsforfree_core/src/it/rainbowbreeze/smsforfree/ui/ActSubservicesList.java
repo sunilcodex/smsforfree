@@ -455,16 +455,16 @@ extends ListActivity
 
 		public ServicesAdapterView(Context context, SmsService serv) {
 			super(context);
-			//this.setOrientation(HORIZONTAL); 
-
+						
 			RelativeLayout.LayoutParams nameParams = new RelativeLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+					LayoutParams.WRAP_CONTENT, 80);//LayoutParams.WRAP_CONTENT);
 			nameParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			
 			TextView name = new TextView(context);
 			name.setText(serv.getName());
 			name.setTextSize(28f);
 			name.setId(1);
+			name.setPadding(10, 10, 10, 10);
 			addView(name, nameParams);
 
 			RelativeLayout.LayoutParams logoParams = new RelativeLayout.LayoutParams(
@@ -477,6 +477,7 @@ extends ListActivity
 			try {logo = BitmapFactory.decodeStream(getAssets().open("icone_servizi/"+serv.getTemplateId()+".png"));} 
 			catch (IOException e) {e.printStackTrace();}
 			icon.setImageBitmap(logo);
+			icon.setPadding(10, 10, 10, 10);
 			addView(icon, logoParams);
 
 		}
