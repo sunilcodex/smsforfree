@@ -11,12 +11,11 @@
 		android:layout_height="wrap_content" 
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:paddingLeft="7dip" android:textColor="@android:color/black"
-		android:textSize="28dip" android:textStyle="bold"
+		android:textStyle="bold"
 		android:text="@string/actsubserviceslist_mnuAddService" />
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:singleLine="true"
 		android:paddingLeft="7dip" 
 		android:text="@string/actsubserviceslist_mnuAddService_summary"
-		android:textColor="@android:color/black" android:textStyle="italic"
-		android:textSize="18dip" />
+		android:textColor="@android:color/black" android:textStyle="italic"/>
 </LinearLayout>

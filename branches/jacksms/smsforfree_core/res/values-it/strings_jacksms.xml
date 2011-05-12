@@ -22,8 +22,8 @@
     <string name="jacksms_username_desc">Username</string>
     <string name="jacksms_password_desc">Password</string>
     <string name="jacksms_description">Con JackSMS puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
-    <string name="jacksms_commandLoadTemplateServices">Scarica la lista completa dei servizi da configurare</string>
-    <string name="jacksms_commandLoadUserSubservices">Scarica la lista dei servizi gia\' configurati sul sito</string>
+    <string name="jacksms_commandLoadTemplateServices">Aggiorna servizi</string>
+    <string name="jacksms_commandLoadUserSubservices">Scarica i servizi gia\' configurati sul sito</string>
     <string name="jacksms_msg_invalidCredentials">Credenziali JackSMS non valide :(</string>
     <string name="jacksms_msg_serverErrorKnow">Error del server JackSMS.\n %s</string>
     <string name="jacksms_msg_serverErrorUnknow">Error sconosciuto del server JackSMS. Invia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
@@ -34,8 +34,8 @@
     <string name="jacksms_msg_noCaptcha">Strano, no c\'e\' il captcha... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
     <string name="jacksms_msg_templatesListUpdated">Lista dei template JackSMS aggiornata.</string>
     <string name="jacksms_msg_noTemplatesToUse">Non ci sono template. Scarica prima i template e poi rilancia il comando.</string>
-    <string name="jacksms_msg_userServicesListUpdated">Servizi utente memorizzati nel sito JackSMS aggiunti alla lista.</string>
-    <string name="jacksms_msg_noUserServices">Non ci sono servizi utente memorizzati nel sito di JackSMS.</string>
+    <string name="jacksms_msg_userServicesListUpdated">Servizi SMS aggiornati e aggiunti alla lista.</string>
+    <string name="jacksms_msg_noUserServices">Non ci sono servizi disponibili.</string>
     <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
     <string name="jacksms_msg_blankfielderror">Per favore non lasciare campi vuoti, inserisci i dati del tuo account.</string>
 </resources>
