@@ -457,12 +457,12 @@ extends ListActivity
 			super(context);
 						
 			RelativeLayout.LayoutParams nameParams = new RelativeLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, 80);//LayoutParams.WRAP_CONTENT);
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			nameParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			
 			TextView name = new TextView(context);
 			name.setText(serv.getName());
-			name.setTextSize(28f);
+			name.setTextSize(20f);
 			name.setId(1);
 			name.setPadding(10, 10, 10, 10);
 			addView(name, nameParams);
