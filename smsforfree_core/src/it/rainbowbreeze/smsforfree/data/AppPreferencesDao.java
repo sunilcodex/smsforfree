@@ -50,6 +50,7 @@ public class AppPreferencesDao
     protected static final String PROP_DATABASE_SIZE = "database_size";
     protected static final String PROP_USER_ID_CODE = "user_id_code";
     protected static final String PROP_CONFIRMED_ACCOUNT = "confirmed_account";
+    protected static final String PROP_CONFIRMATION_CODE = "confirmation_code";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
@@ -186,6 +187,11 @@ public class AppPreferencesDao
     {return mSettings.getBoolean(PROP_CONFIRMED_ACCOUNT, false); }
     public void setConfirmedAccount(boolean newValue)
     {mEditor.putBoolean(PROP_CONFIRMED_ACCOUNT, newValue);}
+    
+    public String getConfirmationCode()
+    {return mSettings.getString(PROP_CONFIRMATION_CODE, "");}
+    public void setConfirmationCode(String newValue) 
+    { mEditor.putString(PROP_CONFIRMATION_CODE, newValue);}
     
 
     //---------- Protected Methods
