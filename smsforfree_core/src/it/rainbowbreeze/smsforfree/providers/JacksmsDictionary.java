@@ -60,7 +60,10 @@ public class JacksmsDictionary
 	public static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
 	public static final String URL_STREAM_TEST = "http://stream.jacksms.it:9911/";//per i test sul server
 	public static final String URL_Q_BASE = "http://q.jacksms.it";
+	// simple reply
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
+	// complete reply
+	private static final String ACTION_GET_ALL_VERSIONED_TEMPLATES = "getVersionedProviders";
 	private static final String ACTION_SEND_MESSAGE = "send?http&";
 	private static final String ACTION_SEND_CAPTCHA = "continue?http&";
 	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
@@ -122,6 +125,9 @@ public class JacksmsDictionary
 
 	public String getUrlForDownloadTemplates(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES, FORMAT_CSV); }
+	
+	public String getUrlForDownloadVersionedTemplates(String username, String password)
+	{ return getUrlForCommand(username, password, ACTION_GET_ALL_VERSIONED_TEMPLATES, FORMAT_CSV); }
 
 	public String getUrlForDownloadUserServices(String username, String password)
 	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES, FORMAT_CSV); }
@@ -341,6 +347,71 @@ public class JacksmsDictionary
 	}
 
 
+	public List<SmsService> extractVersionedTemplates(LogFacility logFacility, String providerReply){
+//		type //0
+//		id   //1
+//		version  //2
+//		name  //3
+//		maxlen  //4
+//		p1, p2, p3, p4 //5,6,7,8
+//		desc  //9
+//		recipients // 10
+		//1	1	1.7	Vodafone-SMS	360	username	password	sim		Invia 10 SMS al giorno tramite il sito Vodafone. È possibile inviare SMS solo verso numeri Vodafone, occorre un numero registrato sul sito.	1
+
+		List<SmsService> templates = new ArrayList<SmsService>();
+
+		//examine the reply, line by line
+		String[] lines = providerReply.split("\n");
+
+		for(String templateLine : lines) {
+			String[] pieces = templateLine.trim().split(TAB_SEPARATOR);
+			try {
+				String type = pieces[0];
+				String serviceId = pieces[1];
+				String version = pieces[2];
+				String serviceName = pieces[3];
+				int maxChar = Integer.parseInt(pieces[4]);
+				String[] parametersDesc = new String[MAX_SERVICE_PARAMETERS];
+
+				int numberOfParameters = 0;
+				if(pieces.length>5){
+					parametersDesc[0]=pieces[5];
+					numberOfParameters++;
+				}
+				if(pieces.length>6){
+					parametersDesc[1]=pieces[6];
+					numberOfParameters++;
+				}
+				if(pieces.length>7){
+					parametersDesc[2]=pieces[7];
+					numberOfParameters++;
+				}
+				if(pieces.length>8){
+					parametersDesc[3]=pieces[8];
+					numberOfParameters++;
+				}
+				//create new service
+				parametersDesc = (String[]) RainbowArrayHelper.resizeArray(parametersDesc, numberOfParameters);
+				SmsService newTemplate = new SmsConfigurableService(
+						logFacility, serviceId, serviceName, maxChar, parametersDesc);
+				//sometimes the service description could be unavailable
+				if (pieces.length > 9)
+					newTemplate.setDescription(pieces[9]);
+				if(pieces.length>10)
+					newTemplate.setSupportedOperators(pieces[10]);
+				
+				newTemplate.setServiceType(Integer.parseInt(type));
+				newTemplate.setVersion(version);
+				templates.add(newTemplate);
+			} catch (Exception e) {
+				//do nothing, simply skips to next service
+			}
+		}
+
+		Collections.sort(templates);
+		return templates;
+	}
+	
 	public List<SmsService> extractTemplates(LogFacility logFacility, String providerReply)
 	{
 		List<SmsService> templates = new ArrayList<SmsService>();
@@ -369,7 +440,6 @@ public class JacksmsDictionary
 				//sometimes the service description could be unavailable
 				if (pieces.length > 7)
 					newTemplate.setDescription(pieces[7]);
-				templates.add(newTemplate);
 			} catch (Exception e) {
 				//do nothing, simply skips to next service
 			}
@@ -621,7 +691,7 @@ public class JacksmsDictionary
 		private String mNewVersion; // 6 - new api??
 
 		protected JackReply(String reply){
-			mReply = reply;
+			mReply = reply.trim();
 
 			String[] split = reply.split(TAB_SEPARATOR);
 
@@ -687,7 +757,7 @@ public class JacksmsDictionary
 			if(split.length>5 && !TextUtils.isEmpty(split[5])){
 				mIsJack=split[5];
 				try {
-					mIsJackAsInt = Integer.parseInt(mOperator);
+					mIsJackAsInt = Integer.parseInt(mIsJack);
 				} catch (NumberFormatException e) {
 					mIsValid = false;
 				}
@@ -774,6 +844,9 @@ public class JacksmsDictionary
 		public static final int WIND = 4;
 		public static final int JACK = 5;
 		
+		public static final String ALL_REPLY = "*";
+		public static final int ALL = Integer.MAX_VALUE;
+		
 		public static final int[] LIST = new int[]{
 			UNKNOWN,
 			VODA,
@@ -804,10 +877,10 @@ public class JacksmsDictionary
 	} 
 	
 	public String getNotifyTypeFromReply(String reply){
-		String[] split = reply.split(TAB_SEPARATOR);
+		String[] split = reply.trim().split(TAB_SEPARATOR);
 		if(split.length>=2)
 			if(split[0].trim().equals(NotifyType.P.NOTIFY_TYPE)){
-				return split[1].trim();
+				return split[1];
 			}
 		return null; 
 	}
@@ -819,4 +892,11 @@ public class JacksmsDictionary
 	 * [4] = \t codice identificativo operatore destinatario 
 	 * [5] = \t flag appartenenza al network JackSMS
 	 */
+	
+	
+	public static class ServiceType{
+		public static final int FREE =1;
+		public static final int LOWCOST =2;
+		public static final int OTHER=3;
+	}
 }

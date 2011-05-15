@@ -139,8 +139,11 @@ public class AppPreferencesDao
     public void setLastUsedProviderId(String newValue)
     { mEditor.putString(PROP_LASTUSED_PROVIDERID, newValue); }
     
+    @Deprecated
     public String getLastUsedSubserviceId()
     { return mSettings.getString(PROP_LASTUSED_SUBSERVICEID, ""); }
+    
+    @Deprecated 
     public void setLastUsedSubserviceId(String newValue)
     { mEditor.putString(PROP_LASTUSED_SUBSERVICEID, newValue); }
     

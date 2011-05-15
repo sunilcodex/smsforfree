@@ -90,6 +90,20 @@ public abstract class SmsService
 	public void setTemplateId(String value)
 	{ mTemplateId = value; }
 	
+	//jack
+	/** Supported Operators*/
+	protected String mSupportedOperators;
+	public String getSupportedOperators(){return mSupportedOperators;}
+	public void setSupportedOperators(String values){mSupportedOperators=values;}
+	
+	protected int mServiceType;
+	public int getServiceType(){return mServiceType;}
+	public void setServiceType(int value){mServiceType = value;}
+	
+	protected String mVersion;
+	public String getVersion(){return mVersion;}
+	public void setVersion(String value){mVersion = value;}
+	
 	/** Service long description */
 	protected String mDescription;
 	public String getDescription()

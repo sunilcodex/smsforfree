@@ -19,6 +19,13 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jacksms.android.data.SendService;
+import com.jacksms.android.data.SendServiceList;
+import com.jacksms.android.gui.ComposeMessageActivity;
+
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
@@ -29,8 +36,11 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -43,8 +53,7 @@ public class ActTemplatesList
     protected final static String LOG_HASH = "ActTemplatesList";
 	private SmsProvider mProvider;
 	private LogFacility mLogFacility;
-
-	
+	private List<SendService> mTemplates;
 	
 	
 	//---------- Public properties
@@ -67,18 +76,33 @@ public class ActTemplatesList
 		setContentView(R.layout.acttemplateslist);
 		
 		if (null == mProvider) return;
+		SendServiceList sendServiceList = new SendServiceList(this, mProvider.getAllTemplates(), false, false);
+		sendServiceList.setTemplateMode(true);
+		mTemplates = sendServiceList.getSimpleList();
 
-		setListAdapter(new ArrayAdapter<SmsService>(this, 
-	              android.R.layout.simple_list_item_1, mProvider.getAllTemplates()));
+		setListAdapter(new ArrayAdapter<SendService>(this, R.layout.user_service_item, mTemplates){
+
+			@Override
+			public View getView(int position, View convertView,
+					ViewGroup parent) {
+				if(convertView==null)
+					convertView = ActTemplatesList.this.getLayoutInflater().inflate(R.layout.user_service_item, null);
+				ImageView iconView = (ImageView)convertView.findViewById(R.id.service_icon);
+				TextView nameView = (TextView)convertView.findViewById(R.id.service_name);
+				iconView.setImageDrawable(mTemplates.get(position).getIcon());
+				nameView.setText(mTemplates.get(position).getName());
+				
+				return convertView;
+			}});
 	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		SmsService template = mProvider.getAllTemplates().get(position);
+		String service_id = mTemplates.get(position).getId();
 		
 		//return to caller activity the template id
 		Intent intent = new Intent();
-		intent.putExtra(ActivityHelper.INTENTKEY_SMSTEMPLATEID, template.getId());
+		intent.putExtra(ActivityHelper.INTENTKEY_SMSTEMPLATEID, service_id);
 		setResult(RESULT_OK, intent);
 		finish();
 	}
