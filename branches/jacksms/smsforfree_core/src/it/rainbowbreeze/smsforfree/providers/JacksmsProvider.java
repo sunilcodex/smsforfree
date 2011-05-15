@@ -397,7 +397,7 @@ extends SmsMultiProvider
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
 
-		String url = mDictionary.getUrlForDownloadTemplates(username, password);
+		String url = mDictionary.getUrlForDownloadVersionedTemplates(username, password);
 		ResultOperation<String> res = doSingleHttpRequest(url, null, null);
 
 		//checks for errors
@@ -411,7 +411,7 @@ extends SmsMultiProvider
 		String templatesReply = res.getResult();
 
 		//transform the reply in the list of templates
-		List<SmsService> newTemplates = mDictionary.extractTemplates(mLogFacility, templatesReply);
+		List<SmsService> newTemplates = mDictionary.extractVersionedTemplates(mLogFacility, templatesReply);
 
 		if (newTemplates.size() <= 0) {
 			//retain old templates
@@ -730,7 +730,6 @@ extends SmsMultiProvider
 		//a questo punto devo riscaricare la lista modificata
 		String url2 = mDictionary.getUrlForAddressBook(username, password);
 		res = doSingleHttpRequest(url2, null, null);
-
 		if (parseReplyForErrors(res)){
 			logRequest(url2, (HashMap<String,String>)null, null);
 		}

@@ -101,7 +101,6 @@ public class SmsConfigurableService
 	public void setMaxMessageLenght(int value)
 	{ mMaxMessageLenght = value; }
 
-
 	
 	
 	

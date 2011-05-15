@@ -69,6 +69,9 @@ public class ProviderDao
 	protected final static String XMLNODE_PARAMETERDESC = "Desc";
 	protected final static String XMLNODE_PARAMETERVALUE = "Value";
 	protected final static String XMLNODE_PARAMETERFORMAT = "Format";
+	protected final static String XMLNODE_SUPPORTED_OPERATORS = "Operators";
+	protected final static String XMLNODE_TYPE = "Type";
+	protected final static String XMLNODE_VERSION="Version";
 	protected final static String XMLATTRIBUTE_PARAMETERSNUMBER = "ParametersNumber";
 	
 	protected final static int PROVIDERDATA_PARAMETERS = 1;
@@ -330,6 +333,21 @@ public class ProviderDao
 		serializer.text(parseString(service.getTemplateId()));
 		serializer.endTag("", XMLNODE_TEMPLATEID);
 		
+		// jack
+		serializer.startTag("", XMLNODE_SUPPORTED_OPERATORS);
+		serializer.text(parseString(service.getSupportedOperators()));
+		serializer.endTag("", XMLNODE_SUPPORTED_OPERATORS);
+		
+		//jack
+		serializer.startTag("", XMLNODE_TYPE);
+		serializer.text(parseString(Integer.toString(service.getServiceType())));
+		serializer.endTag("", XMLNODE_TYPE);
+		
+		//jack
+		serializer.startTag("", XMLNODE_VERSION);
+		serializer.text(parseString(service.getVersion()));
+		serializer.endTag("", XMLNODE_VERSION);
+		
 		serializer.startTag("", XMLNODE_DESCRIPTION);
 		serializer.text(parseString(service.getDescription()));
 		serializer.endTag("", XMLNODE_DESCRIPTION);
@@ -536,6 +554,12 @@ public class ProviderDao
 					service.setParameterValue(parametersIndex, parser.nextText());
 				} else if (name.equalsIgnoreCase(XMLNODE_PARAMETERFORMAT)) {
 					service.setParameterFormat(parametersIndex, Integer.parseInt(parser.nextText()));
+				} else if(name.equalsIgnoreCase(XMLNODE_SUPPORTED_OPERATORS)){
+					service.setSupportedOperators(parser.nextText()); //jack
+				}else if(name.equalsIgnoreCase(XMLNODE_TYPE)){
+					service.setServiceType(Integer.parseInt(parser.nextText())); //jack
+				}else if(name.equalsIgnoreCase(XMLNODE_VERSION)){
+					service.setVersion(parser.nextText()); //jack
 				}
 				break;
 				
