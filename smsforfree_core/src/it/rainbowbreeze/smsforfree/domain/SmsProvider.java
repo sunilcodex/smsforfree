@@ -155,7 +155,7 @@ public abstract class SmsProvider
 	 * 
 	 * @param editedService
 	 */
-	public abstract void saveRemoteservice(SmsService editedService) ;
+	public abstract ResultOperation<String> saveRemoteservice(SmsService editedService) ;
 	
 	/**
 	 * Add on remote account the service's 
@@ -163,7 +163,7 @@ public abstract class SmsProvider
 	 * 
 	 * @param editedService
 	 */
-	public abstract void addRemoteservice(SmsService editedService) ;
+	public abstract ResultOperation<String> addRemoteservice(SmsService editedService) ;
 	
 	/**
 	 * Delete a service from list stored
@@ -171,7 +171,7 @@ public abstract class SmsProvider
 	 * 
 	 * @param service
 	 */
-	public abstract void removeRemoteService(SmsService service) ;
+	public abstract ResultOperation<String> removeRemoteService(SmsService service) ;
 	
 	/**
 	 * Save provider's parameters

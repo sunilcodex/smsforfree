@@ -72,7 +72,8 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_ADDSERVICE = "addService";
 	private static final String ACTION_GET_DELSERVICE = "delService";
 	private static final String ACTION_GET_ADDRESSBOOK = "getFlaggedAddressBook";
-	private static final String ACTION_SEND_ADDRESSBOOK = "importAbook";
+	private static final String ACTION_ADDRESSBOOK_BK = "importAbook";
+	private static final String ACTION_ADDRESSBOOK_NO_BK = "carrierAbook";
 	private static final String ACTION_SET_NOTIFY_TYPE = "setNotifyType";
 	private static final String ACTION_REGISTER = "startRegister"; 
 
@@ -152,7 +153,11 @@ public class JacksmsDictionary
 	}
 
 	public String getUrlForSendAddressBook(String username, String password){
-		return getUrlForCommand(username, password, ACTION_SEND_ADDRESSBOOK, FORMAT_CSV);
+		return getUrlForCommand(username, password, ACTION_ADDRESSBOOK_BK, FORMAT_CSV);
+	}
+	
+	public String getUrlForNoBkAddressBook(String username, String password){
+		return getUrlForCommand(username, password, ACTION_ADDRESSBOOK_NO_BK, FORMAT_CSV);
 	}
 	
 	public String getUrlForRegister(String number, String password){
