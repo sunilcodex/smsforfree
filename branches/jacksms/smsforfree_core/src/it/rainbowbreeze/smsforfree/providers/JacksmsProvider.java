@@ -624,22 +624,19 @@ extends SmsMultiProvider
 	 * @author Saverio Guardato
 	 */
 	@Override
-	public void saveRemoteservice(SmsService editedService){
-
+	public ResultOperation<String> saveRemoteservice(SmsService editedService){
+		ResultOperation<String> res ;
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String url = mDictionary.getUrlForSaveService(username, password);
 
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(url);
-		try {
-			//per il comando editService devo passare l'id del servizio associato all'account
-			List<NameValuePair> nameValuePairs = mDictionary.getParamsForAccountOperation(editedService,
-					"id", editedService.getId());
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			httpclient.execute(httppost);
-		} catch (Exception ex){mLogFacility.e(ex);} 		
+		final HttpClient httpclient = createDefaultClient();
+		//per il comando editService devo passare l'id del servizio associato all'account
+		List<NameValuePair> nameValuePairs = mDictionary.getParamsForAccountOperation(editedService,
+				"id", editedService.getId());
+		res = performPost(httpclient, url, nameValuePairs);
+		return res;
 	}
 
 	/**
@@ -650,21 +647,19 @@ extends SmsMultiProvider
 	 * @author Saverio Guardato
 	 */
 	@Override
-	public void addRemoteservice(SmsService editedService) {
+	public ResultOperation<String> addRemoteservice(SmsService editedService) {
+		ResultOperation<String> res;
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String url = mDictionary.getUrlForAddService(username, password);
 
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(url);
-		try {
-			//per il comando addService devo passare l'id del template del servizio
-			List<NameValuePair> nameValuePairs = mDictionary.getParamsForAccountOperation(editedService,
-					"service_id", editedService.getTemplateId());
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			httpclient.execute(httppost);
-		} catch (Exception ex){mLogFacility.e(ex);}
+		HttpClient httpclient = createDefaultClient();
+		//per il comando addService devo passare l'id del template del servizio
+		List<NameValuePair> nVp = mDictionary.getParamsForAccountOperation(editedService,
+				"service_id", editedService.getTemplateId());
+		res = performPost(httpclient, url, nVp);
+		return res;
 	}
 
 	/**
@@ -675,35 +670,34 @@ extends SmsMultiProvider
 	 * @author Saverio Guardato
 	 */
 	@Override
-	public void removeRemoteService(SmsService delService) {
+	public ResultOperation<String> removeRemoteService(SmsService delService) {
+		ResultOperation<String> res;
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
-		String url = mDictionary.getUrlForDeleteService(username, password);
-		final HttpClient httpclient = new DefaultHttpClient();
-		final HttpPost httppost = new HttpPost(url);
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+		final String url = mDictionary.getUrlForDeleteService(username, password);
+		final HttpClient httpclient = createDefaultClient();
+		final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 		nameValuePairs.add(new BasicNameValuePair("ids", delService.getId()));
-		try {
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-		} catch (Exception ex){mLogFacility.e(ex);}
+		res = performPost(httpclient, url, nameValuePairs);
 		Thread t = new Thread(new Runnable(){
 			@Override
 			public void run() {
 				try {
 					for(int i=0;i<3;i++){
-						httpclient.execute(httppost);
+						performPost(httpclient, url, nameValuePairs);
 						Thread.sleep(500);
 					}
 				} catch (Exception e) {mLogFacility.e(e);}
 			}				
 		});
 		t.start();
+		return res;
 	}	
 
 	/**
 	 * invia la rubrica al server, e riscaricala con i parametri quali operatore
-	 * e se è un numero jacksms
+	 * e se è un numero jacksms. Questa operazione salva la rubrica sul sito
 	 * @param mContext
 	 * @param contatti : la richiesta di POST deve avere come parametro i contatti da
 	 * aggiungere nella forma numero=nome&numero=nome&numero=nome..
@@ -711,29 +705,52 @@ extends SmsMultiProvider
 	 * 
 	 * @author Saverio Guardato
 	 */
-	public ResultOperation<String> getAddressBook(String contatti) {
+	public ResultOperation<String> getAddressBookWithBk(String contatti) {
 		ResultOperation<String> res = null;
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String url1 = mDictionary.getUrlForSendAddressBook(username, password);
 		mLogFacility.i("Siamo pronti con l'url1:\n"+url1);
-		final HttpClient httpclient = new DefaultHttpClient();
-		final HttpPost httppost = new HttpPost(url1);
+		HttpClient httpclient = createDefaultClient();
 		//compongo la richiesta POST passando la stringa dei contatti concatenati
-		try {
-			List<NameValuePair> nameValuePairs = mDictionary.getParamsForAddressBook(contatti);
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			httpclient.execute(httppost);
-		} catch (Exception ex){mLogFacility.e(ex);}
-		//FIXME
-		//a questo punto devo riscaricare la lista modificata
-		String url2 = mDictionary.getUrlForAddressBook(username, password);
-		res = doSingleHttpRequest(url2, null, null);
-		if (parseReplyForErrors(res)){
-			logRequest(url2, (HashMap<String,String>)null, null);
+		List<NameValuePair> nameValuePairs = mDictionary.getParamsForAddressBook(contatti);
+		res = performPost(httpclient, url1, nameValuePairs);
+		if (parseReplyForErrors(res))
+			logRequest(url1, (HashMap<String,String>)null, null);
+		else{
+			//questo punto devo riscaricare la lista modificata
+			String url2 = mDictionary.getUrlForAddressBook(username, password);
+			res = doSingleHttpRequest(url2, null, null);
+			if (parseReplyForErrors(res)){
+				logRequest(url2, (HashMap<String,String>)null, null);
+			}
 		}
 		//la lista con i parametri è ora disponibile nel formato scaricato 
+		return res;
+	}
+
+	/**
+	 * fondamentalmente fa la stessa operazione del metodo precedente, ma
+	 * usa un API diversa che non salva la rubrica sul server
+	 * @param contatti
+	 * @return
+	 */
+	public ResultOperation<String> getAddressBookNoBk(String contatti) {
+		ResultOperation<String> res = null;
+		String username = getParameterValue(PARAM_INDEX_USERNAME);
+		String password = getParameterValue(PARAM_INDEX_PASSWORD);
+
+		String url = mDictionary.getUrlForNoBkAddressBook(username, password);
+		mLogFacility.i("Siamo pronti con l'url:\n"+url);
+
+		final HttpClient httpclient = createDefaultClient();
+		List<NameValuePair> nvp = mDictionary.getParamsForAddressBook(contatti);
+		res = performPost(httpclient, url, nvp);
+
+		mLogFacility.e("---->"+res.getResult());
+		//la lista con i parametri è ora disponibile nel formato scaricato 
+		//FIXME: aspetta Dario con la risposta parametrizzata per bene
 		return res;
 	}
 
@@ -753,25 +770,13 @@ extends SmsMultiProvider
 	public ResultOperation<String> registerAccount(String number, String password, String email) {
 		ResultOperation<String> res = null;
 		String url = "http://q.jacksms.it/_/_/startRegister?csv";
-		final HttpClient httpclient = new DefaultHttpClient();
-		final HttpPost httppost = new HttpPost(url);
-		HttpResponse response = null ;
-		try {
-			List<NameValuePair> nVp = new ArrayList<NameValuePair>(3);
-			nVp.add(new BasicNameValuePair("number", number));
-			nVp.add(new BasicNameValuePair("password", password));
-			nVp.add(new BasicNameValuePair("email", email));
-			httppost.setEntity(new UrlEncodedFormEntity(nVp));
-			response = httpclient.execute(httppost);
-		} catch (Exception ex){mLogFacility.e(ex);}
-		HttpEntity ent = response.getEntity();
-		if(ent != null){
-			try {
-				String risposta = EntityUtils.toString(ent);
-				res = new ResultOperation<String>();
-				res.setResult(risposta);
-			} catch (Exception e) {e.printStackTrace();} 
-		}		
+		HttpClient httpclient = createDefaultClient();
+		List<NameValuePair> nVp = new ArrayList<NameValuePair>(3);
+		nVp.add(new BasicNameValuePair("number", number));
+		nVp.add(new BasicNameValuePair("password", password));
+		nVp.add(new BasicNameValuePair("email", email));
+		res = performPost(httpclient, url, nVp);
+
 		return res;
 	}	
 
@@ -784,24 +789,11 @@ extends SmsMultiProvider
 	public ResultOperation<String> confirmAccount(String userId, String code) {
 		ResultOperation<String> res = null;
 		String url = "http://q.jacksms.it/_/_/verifyRegister?csv";
-		final HttpClient httpclient = new DefaultHttpClient();
-		final HttpPost httppost = new HttpPost(url);
-		HttpResponse response = null ;
-		try {
-			List<NameValuePair> nVp = new ArrayList<NameValuePair>(2);
-			nVp.add(new BasicNameValuePair("user_id", userId));
-			nVp.add(new BasicNameValuePair("code", code));
-			httppost.setEntity(new UrlEncodedFormEntity(nVp));
-			response = httpclient.execute(httppost);
-		} catch (Exception ex){mLogFacility.e(ex);}
-		HttpEntity ent = response.getEntity();
-		if(ent != null){
-			try {
-				String risposta = EntityUtils.toString(ent);
-				res = new ResultOperation<String>();
-				res.setResult(risposta);
-			} catch (Exception e) {e.printStackTrace();} 
-		}		
+		HttpClient httpclient = createDefaultClient();
+		List<NameValuePair> nVp = new ArrayList<NameValuePair>(2);
+		nVp.add(new BasicNameValuePair("user_id", userId));
+		nVp.add(new BasicNameValuePair("code", code));
+		res = performPost(httpclient, url, nVp);
 
 		return res;
 	}
@@ -929,18 +921,18 @@ extends SmsMultiProvider
 		}
 		return res;
 	}	
-	
-	
+
+
 	private ResultOperation<String> performPost(HttpClient client, String url, List<NameValuePair> nvp){
-    	String reply = "";
-		
+		String reply = "";
+
 		try {
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.setEntity(new UrlEncodedFormEntity(nvp));
-    		HttpResponse response = client.execute(httpPost);
-    		HttpEntity entity = response.getEntity();
-    		if(entity!=null)
-    			reply = EntityUtils.toString(entity);
+			HttpResponse response = client.execute(httpPost);
+			HttpEntity entity = response.getEntity();
+			if(entity!=null)
+				reply = EntityUtils.toString(entity);
 		} catch (IllegalArgumentException e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		} catch (ClientProtocolException e) {
@@ -952,19 +944,19 @@ extends SmsMultiProvider
 		}catch (IOException e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
 		}
-    	
-    	//empty reply
-    	if (TextUtils.isEmpty(reply)) {
+
+		//empty reply
+		if (TextUtils.isEmpty(reply)) {
 			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
 		}
 
-    	//return the reply
-    	return new ResultOperation<String>(reply);
+		//return the reply
+		return new ResultOperation<String>(reply);
 	}
-	
-	
+
+
 	private static final int TIMEOUT = 60000;
-	
+
 	private HttpClient createDefaultClient(){
 		HttpParams params = new BasicHttpParams();
 		HttpConnectionParams.setSoTimeout(params, TIMEOUT);
@@ -972,8 +964,8 @@ extends SmsMultiProvider
 		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(params);
 		return defaultHttpClient;
 	}
-	
-	
+
+
 	/**
 	 * Write headers and url in the log, so a better debugger could be made
 	 * when a report is sent to the developer
@@ -1000,14 +992,14 @@ extends SmsMultiProvider
 			sb.append("Result:\n")
 			.append(Base64Helper.encodeBytes(res.getResult().getBytes()));
 			if(res.getException()!=null)
-			sb.append("\n Exception:")
-			.append(Base64Helper.encodeBytes(res.getClass().getName().getBytes()))
-			.append("\n")
-			.append(Base64Helper.encodeBytes(res.getException().getMessage().getBytes()))
-			.append("\n ReturnCode :")
-			.append(res.getReturnCode());
+				sb.append("\n Exception:")
+				.append(Base64Helper.encodeBytes(res.getClass().getName().getBytes()))
+				.append("\n")
+				.append(Base64Helper.encodeBytes(res.getException().getMessage().getBytes()))
+				.append("\n ReturnCode :")
+				.append(res.getReturnCode());
 			mLogFacility.e(LOG_HASH, sb.toString());
 		}
 	}
-	
+
 }
