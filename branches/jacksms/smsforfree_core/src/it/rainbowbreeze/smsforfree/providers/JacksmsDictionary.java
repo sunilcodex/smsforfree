@@ -71,7 +71,7 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_EDITSERVICE = "editService";
 	private static final String ACTION_GET_ADDSERVICE = "addService";
 	private static final String ACTION_GET_DELSERVICE = "delService";
-	private static final String ACTION_GET_ADDRESSBOOK = "getFlaggedAddressBook";
+	private static final String ACTION_GET_ADDRESSBOOK = "getAddressBook";
 	private static final String ACTION_ADDRESSBOOK_BK = "importAbook";
 	private static final String ACTION_ADDRESSBOOK_NO_BK = "carrierAbook";
 	private static final String ACTION_SET_NOTIFY_TYPE = "setNotifyType";
