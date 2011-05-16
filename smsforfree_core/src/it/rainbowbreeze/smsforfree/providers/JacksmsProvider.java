@@ -748,9 +748,7 @@ extends SmsMultiProvider
 		List<NameValuePair> nvp = mDictionary.getParamsForAddressBook(contatti);
 		res = performPost(httpclient, url, nvp);
 
-		mLogFacility.e("---->"+res.getResult());
-		//la lista con i parametri è ora disponibile nel formato scaricato 
-		//FIXME: aspetta Dario con la risposta parametrizzata per bene
+//		mLogFacility.e("---->"+res.getResult());
 		return res;
 	}
 
