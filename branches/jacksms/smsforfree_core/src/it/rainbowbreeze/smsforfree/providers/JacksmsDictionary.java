@@ -371,39 +371,32 @@ public class JacksmsDictionary
 		for(String templateLine : lines) {
 			String[] pieces = templateLine.trim().split(TAB_SEPARATOR);
 			try {
-				String type = pieces[0];
-				String serviceId = pieces[1];
-				String version = pieces[2];
-				String serviceName = pieces[3];
-				int maxChar = Integer.parseInt(pieces[4]);
-				String[] parametersDesc = new String[MAX_SERVICE_PARAMETERS];
+				int idx = 0; 
+				String type = pieces[idx++]; //0
+				String serviceId = pieces[idx++]; //1
+				String version = pieces[idx++];//2
+				String serviceName = pieces[idx++]; //3
+				int maxChar = Integer.parseInt(pieces[idx++]); //4
+				
 
-				int numberOfParameters = 0;
-				if(pieces.length>5){
-					parametersDesc[0]=pieces[5];
-					numberOfParameters++;
+				ArrayList<String> tmpParams = new ArrayList<String>();
+				for(int i = 0; i<MAX_SERVICE_PARAMETERS;i++){ //5,6,7,8
+					String param = pieces[idx++];
+					if(!TextUtils.isEmpty(param))
+						tmpParams.add(param);
 				}
-				if(pieces.length>6){
-					parametersDesc[1]=pieces[6];
-					numberOfParameters++;
-				}
-				if(pieces.length>7){
-					parametersDesc[2]=pieces[7];
-					numberOfParameters++;
-				}
-				if(pieces.length>8){
-					parametersDesc[3]=pieces[8];
-					numberOfParameters++;
-				}
+				
+				String[] parametersDesc = tmpParams.toArray(new String[tmpParams.size()]);
 				//create new service
-				parametersDesc = (String[]) RainbowArrayHelper.resizeArray(parametersDesc, numberOfParameters);
 				SmsService newTemplate = new SmsConfigurableService(
 						logFacility, serviceId, serviceName, maxChar, parametersDesc);
 				//sometimes the service description could be unavailable
-				if (pieces.length > 9)
-					newTemplate.setDescription(pieces[9]);
-				if(pieces.length>10)
-					newTemplate.setSupportedOperators(pieces[10]);
+				
+				if (pieces.length > idx)
+					newTemplate.setDescription(pieces[idx]);//9
+				idx++;
+				if(pieces.length>idx)
+					newTemplate.setSupportedOperators(pieces[idx]); //10
 				
 				newTemplate.setServiceType(Integer.parseInt(type));
 				newTemplate.setVersion(version);
