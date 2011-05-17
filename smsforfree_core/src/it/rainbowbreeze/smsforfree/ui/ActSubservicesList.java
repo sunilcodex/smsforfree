@@ -34,6 +34,9 @@ import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 import java.io.IOException;
 import java.util.List;
 
+import com.jacksms.android.data.SendService;
+import com.jacksms.android.data.SendServiceList;
+
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -413,7 +416,7 @@ extends ListActivity
 	private class ServicesAdapter extends BaseAdapter {
 
 		private Context context;
-		private List<SmsService> servList;
+		private SendServiceList servList;
 
 		/*
 		 * Costruttore
@@ -421,17 +424,17 @@ extends ListActivity
 		public ServicesAdapter(ActSubservicesList actSbL,
 				List<SmsService> svList) {
 			context = actSbL;
-			servList = svList;
+			servList = new SendServiceList(actSbL, svList, false, false);
 		}
 
 		@Override
 		public int getCount() {
-			return servList.size();
+			return servList.getCount();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return servList.get(position);
+			return mProvider.getSubservice(servList.getBestList().get(position).getId());
 		}
 
 		@Override
@@ -441,8 +444,15 @@ extends ListActivity
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			SmsService serv = servList.get(position);
-			return new ServicesAdapterView(context, serv);
+			if(convertView==null){
+				convertView = new ServicesAdapterView(context);
+			}
+			TextView name = (TextView)convertView.findViewById(1);
+			ImageView image = (ImageView) convertView.findViewById(2);
+			SendService sendService = servList.getSimpleList().get(position);
+			name.setText(sendService.getName());
+			image.setImageDrawable(sendService.getIcon());
+			return convertView;
 		}
 	}
 
@@ -453,7 +463,7 @@ extends ListActivity
 	 */
 	private class ServicesAdapterView extends RelativeLayout{
 
-		public ServicesAdapterView(Context context, SmsService serv) {
+		public ServicesAdapterView(Context context) {
 			super(context);
 						
 			RelativeLayout.LayoutParams nameParams = new RelativeLayout.LayoutParams(
@@ -461,7 +471,6 @@ extends ListActivity
 			nameParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			
 			TextView name = new TextView(context);
-			name.setText(serv.getName());
 			name.setTextSize(20f);
 			name.setId(1);
 			name.setPadding(10, 10, 10, 10);
@@ -473,15 +482,9 @@ extends ListActivity
 			
 			ImageView icon = new ImageView(context);
 			icon.setId(2);
-			Bitmap logo = null;
-			try {logo = BitmapFactory.decodeStream(getAssets().open("icone_servizi/"+serv.getTemplateId()+".png"));} 
-			catch (IOException e) {e.printStackTrace();}
-			icon.setImageBitmap(logo);
-			icon.setPadding(10, 10, 10, 10);
 			addView(icon, logoParams);
 
 		}
-
 	}
 
 }
