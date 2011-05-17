@@ -152,7 +152,7 @@ public class LogicManager extends RainbowLogicManager {
 			//update sms sent in the day
 			smsSentToday = mAppPreferencesDao.getSmsCounterNumberForCurrentDay() + factorToAdd;
 		}
-		mLogFacility.v(LOG_HASH, "Set the number of SMS sent today to " + smsSentToday);
+		//mLogFacility.v(LOG_HASH, "Set the number of SMS sent today to " + smsSentToday);
 		mAppPreferencesDao.setSmsCounterNumberForCurrentDay(smsSentToday);
 		mAppPreferencesDao.save();
 	}
