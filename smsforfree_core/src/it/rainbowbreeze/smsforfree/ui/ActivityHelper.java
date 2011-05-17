@@ -260,7 +260,12 @@ extends RainbowActivityHelper {
 	{
 		//show command results
 		if (result.hasErrors()) {
-			reportError(context, result);
+			if(result.getReturnCode() == ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY){
+				//errore 505 vuol dire risposta vuota, ma nel nostro caso anche LISTA vuota
+				showInfo(context, com.jacksms.android.R.string.no_configured_services_available);
+			}
+			else	
+				reportError(context, result);
 		} else {
 			if (!TextUtils.isEmpty(result.getResult())){
 				//shows the output of the command
