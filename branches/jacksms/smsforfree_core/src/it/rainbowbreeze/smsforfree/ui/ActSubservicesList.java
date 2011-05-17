@@ -434,7 +434,7 @@ extends ListActivity
 
 		@Override
 		public Object getItem(int position) {
-			return mProvider.getSubservice(servList.getBestList().get(position).getId());
+			return mProvider.getSubservice(servList.getSimpleList().get(position).getId());
 		}
 
 		@Override
