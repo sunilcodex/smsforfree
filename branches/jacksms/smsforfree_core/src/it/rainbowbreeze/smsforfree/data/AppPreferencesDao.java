@@ -52,6 +52,7 @@ public class AppPreferencesDao
     protected static final String PROP_CONFIRMED_ACCOUNT = "confirmed_account";
     protected static final String PROP_CONFIRMATION_CODE = "confirmation_code";
     protected static final String PROP_EMAIL = "email";
+    protected static final String PROP_ADBOOK_DONE = "adBook_operation";
     
     protected static final String PROP_LASTUSED_PROVIDERID = "lastusedProvider";
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
@@ -202,6 +203,13 @@ public class AppPreferencesDao
     public void setEmail(String newValue) 
     {mEditor.putString(PROP_EMAIL, newValue);}
     
+    public boolean getAdBookDone()
+    {return mSettings.getBoolean(PROP_ADBOOK_DONE, false); }
+	public void setAdBookDone(boolean newValue) 
+	{mEditor.putBoolean(PROP_ADBOOK_DONE, newValue);}
+
+	
+    
 
     //---------- Protected Methods
 
@@ -238,5 +246,4 @@ public class AppPreferencesDao
     	setLastUsedMessage(settingsBackup.getString(PROP_LASTUSED_MESSAGE, ""));
     	setShowOnlyMobileNumbers(settingsBackup.getBoolean(PROP_SHOW_ONLY_MOBILE_NUMBERS, false));
 	}
-
 }

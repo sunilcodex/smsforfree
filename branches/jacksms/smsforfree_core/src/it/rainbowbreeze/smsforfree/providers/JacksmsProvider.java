@@ -711,7 +711,7 @@ extends SmsMultiProvider
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String url1 = mDictionary.getUrlForSendAddressBook(username, password);
-		mLogFacility.i("Siamo pronti con l'url1:\n"+url1);
+		mLogFacility.v(LOG_HASH, "[getAddressBookWithBk]Invio comando a:\n"+url1);
 		HttpClient httpclient = createDefaultClient();
 		//compongo la richiesta POST passando la stringa dei contatti concatenati
 		List<NameValuePair> nameValuePairs = mDictionary.getParamsForAddressBook(contatti);
@@ -721,6 +721,7 @@ extends SmsMultiProvider
 		else{
 			//questo punto devo riscaricare la lista modificata
 			String url2 = mDictionary.getUrlForAddressBook(username, password);
+			mLogFacility.v(LOG_HASH, "[getAddressBookWithBk]Invio comando a:\n"+url2);
 			res = doSingleHttpRequest(url2, null, null);
 			if (parseReplyForErrors(res)){
 				logRequest(url2, (HashMap<String,String>)null, null);
@@ -742,13 +743,12 @@ extends SmsMultiProvider
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String url = mDictionary.getUrlForNoBkAddressBook(username, password);
-		mLogFacility.i("Siamo pronti con l'url:\n"+url);
+		mLogFacility.v(LOG_HASH, "[getAddressBookNoBk]Invio comando a:\n"+url);
 
 		final HttpClient httpclient = createDefaultClient();
 		List<NameValuePair> nvp = mDictionary.getParamsForAddressBook(contatti);
 		res = performPost(httpclient, url, nvp);
 
-//		mLogFacility.e("---->"+res.getResult());
 		return res;
 	}
 
