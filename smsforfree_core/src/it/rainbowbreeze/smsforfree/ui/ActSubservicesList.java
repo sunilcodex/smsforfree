@@ -75,7 +75,6 @@ extends ListActivity
 	private static final int CONTEXTMENU_DELETESERVICE = 3;
 
 	private SmsProvider mProvider;
-	private ServicesAdapter mAdapter;
 
 	private ExecuteProviderCommandThread mExecutedProviderCommandThread;
 	private ProgressDialog mProgressDialog;
@@ -115,10 +114,6 @@ extends ListActivity
 				AppEnv.i(getBaseContext()).getAppDisplayName(),
 				mProvider.getName()));
 
-		List<SmsService> svList = mProvider.getAllSubservices();
-		mAdapter = new ServicesAdapter(this, svList);
-		setListAdapter(mAdapter);
-
 		//register the context menu to defaul ListView of the view
 		//alternative method:
 		//http://www.anddev.org/creating_a_contextmenu_on_a_listview-t2438.html
@@ -129,6 +124,7 @@ extends ListActivity
 	@Override
 	protected void onStart() {
 		super.onStart();
+		refreshSubservicesList();
 		mExecutedProviderCommandThread = (ExecuteProviderCommandThread) getLastNonConfigurationInstance();
 		if (null != mExecutedProviderCommandThread) {
 			//create and show a new progress dialog
@@ -183,24 +179,18 @@ extends ListActivity
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		refreshSubservicesList();
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
 		case JacksmsProvider.COMMAND_LOADTEMPLATESERVICES:
 			mLogFacility.i("Scaricamento template in corso");
-			execureProviderCommand(mProvider, item.getItemId(), null);
+			executeProviderCommand(mProvider, item.getItemId(), null);
 			break;
 
 		case JacksmsProvider.COMMAND_LOADUSERSERVICES:
 			mLogFacility.i("Pulizia della lista e aggiornamento servizi");
 			if(GlobalHelper.isNetworkAvailable(getApplicationContext())){
-				execureProviderCommand(mProvider, item.getItemId(), null);
+				executeProviderCommand(mProvider, item.getItemId(), null);
 			}
 			else{
 				mActivityHelper.createInformativeDialog(this, "",
@@ -382,7 +372,7 @@ extends ListActivity
 	 * @param subserviceId
 	 * @param extraData
 	 */
-	private void execureProviderCommand(SmsProvider provider, int subserviceId, Bundle extraData)
+	private void executeProviderCommand(SmsProvider provider, int subserviceId, Bundle extraData)
 	{
 		//create new progress dialog
 		mProgressDialog = mActivityHelper.createAndShowProgressDialog(this, 0, R.string.common_msg_executingCommand);
@@ -404,7 +394,8 @@ extends ListActivity
 	 */
 	private void refreshSubservicesList() {
 		//update the list and avoid the IllegalStateException when a new subservice is added
-		if (null != mAdapter) mAdapter.notifyDataSetChanged();
+		setListAdapter(new ServicesAdapter(this, mProvider.getAllSubservices()));
+		getListView().invalidate();
 	}
 
 	/**
