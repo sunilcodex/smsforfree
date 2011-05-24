@@ -24,7 +24,7 @@
     <string name="aimon_sender_desc">Sender</string>
     <string name="aimon_description">Send SMS to Italy numbers with custom sender at less that 7 eurocents. 2 free sms every day. www.aimon.it.</string>
     <string name="aimon_commandCheckCredentials">Check credentials</string>
-    <string name="aimon_commandCheckCredits">Get credit</string>
+    <string name="aimon_commandCheckCredits">Check credit</string>
     <string name="aimon_msg_invalidCredentials">Invalid Aimon credentials :(</string>
     <string name="aimon_msg_invalidSender">Invalid sender.\nChange it in the Aimon provider settings</string>
     <string name="aimon_msg_invalidDestination">Invalid destination.\nOnly italian mobile numbers are supported</string>

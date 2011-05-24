@@ -35,8 +35,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -436,8 +438,8 @@ public class ActSettingsSmsService
 			mLblServiceDesc.setVisibility(View.GONE);
 		} else {
 			mLblServiceDesc.setVisibility(View.VISIBLE);
-			mLblServiceDesc.setText(description);
-			
+            mLblServiceDesc.setText(Html.fromHtml(description));
+			mLblServiceDesc.setMovementMethod(LinkMovementMethod.getInstance());
 		}
 		
 	}
@@ -525,5 +527,4 @@ public class ActSettingsSmsService
 				outState.putString(String.valueOf(i), mValuesBackup[i]);
 		}
 	}
-
 }

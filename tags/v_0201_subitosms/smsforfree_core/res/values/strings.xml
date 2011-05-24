@@ -61,7 +61,7 @@
     <string name="actsendsms_mnuCompress">Compress Text</string>
     <string name="actsendsms_mnuSettings">Settings</string>
     <string name="actsendsms_mnuResetData">Empty fields</string>
-    <string name="actsendsms_mnuAbout">About</string>
+    <string name="actsendsms_mnuAbout">Recharge</string>
     <string name="actsendsms_mnuTemplates">Append template</string>
     <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
     <string name="actsendsms_msg_noProviderSelected">Choose a provider...</string>
@@ -84,6 +84,7 @@
     <string name="actsendsms_msg_error_retrieving_inbox_sms">An error occurred reading latest SMS received.\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="actsendsms_msg_empty_inbox_sms">No SMS found in your received messages.</string>
     <string name="actsendsms_msg_errorSendingMessageTitle">Error in sending</string>
+    <string name="actsendsms_msg_emptyMessageToCompress">Message is empty, cannot compress.</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>

@@ -21,6 +21,8 @@ package it.rainbowbreeze.smsforfree.helper;
 
 import java.util.List;
 
+import android.content.Context;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
 import it.rainbowbreeze.libs.helper.RainbowGlobalHelper;
@@ -57,6 +59,19 @@ public class GlobalHelper extends RainbowGlobalHelper {
 		}
 		return -1;
 	}
+	
+	
+	public static String getMyPhoneNumber(Context context) {
+		try {
+	    	TelephonyManager mTelephonyMgr;
+	    	mTelephonyMgr = (TelephonyManager)
+	    		context.getSystemService(Context.TELEPHONY_SERVICE); 
+	    	return mTelephonyMgr.getLine1Number();
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+	
 
 	
 	//---------- Private methods

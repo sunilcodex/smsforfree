@@ -34,6 +34,7 @@ import it.rainbowbreeze.smsforfree.data.ProviderDao;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceCommand;
 import it.rainbowbreeze.smsforfree.domain.SmsServiceParameter;
 import it.rainbowbreeze.smsforfree.domain.SmsSingleProvider;
+import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
 /**
@@ -128,7 +129,17 @@ public class SubitosmsProvider
 		mMessages[MSG_INDEX_NOT_ENOUGH_CREDIT] = context.getString(R.string.subitosms_msg_notEnoughCredit);
 		mMessages[MSG_INDEX_SERVER_ERROR] = context.getString(R.string.subitosms_msg_serverError);
 
-		return super.initProvider(context);
+		ResultOperation<Void> res = super.initProvider(context);
+		
+		//find if a predefined phone number must be used
+		if (TextUtils.isEmpty(getParameterValue(PARAM_INDEX_SENDER))) {
+			String phoneNumber = GlobalHelper.getMyPhoneNumber(context);
+			if (TextUtils.isEmpty(phoneNumber)) phoneNumber = "SubitoSMS";
+			mLogFacility.v(LOG_HASH, "User phone number: " + phoneNumber);
+			setParameterValue(PARAM_INDEX_SENDER, phoneNumber);
+		}
+		
+		return res;
 	}
 
 	
@@ -217,7 +228,7 @@ public class SubitosmsProvider
 	
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {
-		return context.getString(R.string.aimon_registerLink);
+		return context.getString(R.string.subitosms_registerLink);
 	}
 	
 	@Override
@@ -227,10 +238,10 @@ public class SubitosmsProvider
 
 		SmsServiceCommand newCommand;
 		newCommand = new SmsServiceCommand(
-				COMMAND_CHECKCREDENTIALS, context.getString(R.string.aimon_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
+				COMMAND_CHECKCREDENTIALS, context.getString(R.string.subitosms_commandCheckCredentials), 1000, R.drawable.ic_menu_login);
 		commands.add(newCommand);
 		newCommand = new SmsServiceCommand(
-				COMMAND_CHECKCREDITS, context.getString(R.string.aimon_commandCheckCredits), 1001);
+				COMMAND_CHECKCREDITS, context.getString(R.string.subitosms_commandCheckCredits), 1001);
 		commands.add(newCommand);
 		
 		return commands;

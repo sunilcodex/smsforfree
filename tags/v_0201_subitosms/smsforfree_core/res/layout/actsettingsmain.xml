@@ -43,11 +43,13 @@
             android:title="@string/actsettingsmain_chkShowOnlyMobileNumbers"
             android:summary="@string/actsettingsmain_chkShowOnlyMobileNumbersSummary"
         />
+<!-- 
         <CheckBoxPreference
             android:key="actsettingsmain_chkAskConfirmationForSending"
             android:title="@string/actsettingsmain_chkAskConfirmationForSending"
             android:summary="@string/actsettingsmain_chkAskConfirmationForSendingSummary"
         />
+ -->
 		<EditTextPreference
 			android:key="actsettingsmain_txtSignature"
 			android:title="@string/actsettingsmain_txtSignature"

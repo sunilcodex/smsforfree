@@ -22,9 +22,9 @@
     <string name="subitosms_username_desc">Username</string>
     <string name="subitosms_password_desc">Password</string>
     <string name="subitosms_sender_desc">Sender</string>
-    <string name="subitosms_description">Send SMS to Italy and other 178 countries at less than 7 eurocent. www.subitosms.it.</string>
+    <string name="subitosms_description">Send SMS to Italy and other 178 countries at less than 7 eurocent. If you aren\'t registered to SubitoSMS, &lt;a href=\'http://www.subitosms.it\'&gt;click here&lt;/a&gt;.</string>
     <string name="subitosms_commandCheckCredentials">Check credentials</string>
-    <string name="subitosms_commandCheckCredits">Get credit</string>
+    <string name="subitosms_commandCheckCredits">Check credit</string>
     <string name="subitosms_msg_invalidCredentials">Invalid SubitoSMS credentials :(</string>
     <string name="subitosms_msg_invalidSender">Invalid sender.\nChange it in the SubitoSMS provider settings</string>
     <string name="subitosms_msg_invalidDestination">Invalid destination.\n</string>
@@ -34,5 +34,5 @@
     <string name="subitosms_msg_emptyMessage">Empty messagge</string>
     <string name="subitosms_msg_notEnoughCredit">Not enough credit for sending SMS. Recharge our account on SubitoSMS</string>
     <string name="subitosms_msg_messageQueued">Message sent.\n %s</string>
-    <string name="subitosms_registerLink">http://www.subitosms.it/registrazione_step1.php</string>
+    <string name="subitosms_registerLink">http://www.subito.mobi/registra</string>
 </resources>
