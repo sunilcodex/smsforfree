@@ -89,10 +89,12 @@ public class ActSendSms
 	private static final int DIALOG_STARTUP_INFOBOX = 14;
 	private static final int DIALOG_TEMPLATES = 16;
 	private static final int DIALOG_SENDING_MESSAGE_ERROR = 17;
+    private static final int DIALOG_EMPTY_MESSAGE_TO_COMPRIME = 18;
 	
 	private static final String BUNDLEKEY_CONTACTPHONES = "ContactPhones";
 	private static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
 	private static final String BUNDLEKEY_DIALOGERRORMESSAGE = "DialogErrorMessage";
+	private static final String BUNDLEKEY_PROVIDERSETTINGSSHOWN = "ProviderSettingsShown";
 
 	private static final int OPTIONMENU_SETTINGS = 2;
 	private static final int OPTIONMENU_SIGNATURE = 3;
@@ -100,37 +102,36 @@ public class ActSendSms
 	private static final int OPTIONMENU_RESETDATA = 5;
 	private static final int OPTIONMENU_COMPRESS = 6;
 	private static final int OPTIONMENU_TEMPLATES = 7;
-
-
 	
-	protected Spinner mSpiProviders;
-	protected Spinner mSpiSubservices;
+	private Spinner mSpiProviders;
+	private Spinner mSpiSubservices;
 
-	protected SmsProvider mSelectedProvider;
-	protected String mSelectedServiceId;
-	protected AutoCompleteTextView mTxtDestination;
-	protected EditText mTxtBody;
-	protected TextView mLblMessageLength;
-	protected Button mBtnSend;
-	protected ImageButton mBtnPickContact;
-	protected ImageButton mBtnGetLastSmsReceivedNumber;
-    protected ImageButton mBtnClearDestination;
-    protected ImageButton mBtnClearMessage;
-	protected TextView mLblProvider;
+	private SmsProvider mSelectedProvider;
+	private String mSelectedServiceId;
+	private AutoCompleteTextView mTxtDestination;
+	private EditText mTxtBody;
+	private TextView mLblMessageLength;
+	private Button mBtnSend;
+	private ImageButton mBtnPickContact;
+	private ImageButton mBtnGetLastSmsReceivedNumber;
+	private ImageButton mBtnClearDestination;
+	private ImageButton mBtnClearMessage;
+	private TextView mLblProvider;
 
-	protected List<ContactPhone> mPhonesToShowInDialog;
-	protected String mCaptchaStorage;
-    protected String mErrorSendingMessage;
+	private List<ContactPhone> mPhonesToShowInDialog;
+	private String mCaptchaStorage;
+	private String mErrorSendingMessage;
+	private boolean mProviderSettingsShown = false;
 
-	protected SendMessageThread mSendMessageThread;
-	protected SendCaptchaThread mSendCaptchaThread;
+	private SendMessageThread mSendMessageThread;
+	private SendCaptchaThread mSendCaptchaThread;
 	
-	protected AppEnv mAppEnv;
-	protected LogFacility mLogFacility;
-	protected ActivityHelper mActivityHelper;
-	protected AppPreferencesDao mAppPreferencesDao;
-	protected LogicManager mLogicManager;
-	protected SmsDao mSmsDao;
+	private AppEnv mAppEnv;
+	private LogFacility mLogFacility;
+	private ActivityHelper mActivityHelper;
+	private AppPreferencesDao mAppPreferencesDao;
+	private LogicManager mLogicManager;
+	private SmsDao mSmsDao;
 
 
 	
@@ -205,9 +206,15 @@ public class ActSendSms
         	//check if the application was called as intent action
         	processIntentData(getIntent());
         	//show info dialog, if needed
-        	if (mLogicManager.isFirstStartOfAppNewVersion())
-        		showDialog(DIALOG_STARTUP_INFOBOX);
-        	mSpiProviders.requestFocus();
+//        	if (mLogicManager.isFirstStartOfAppNewVersion())
+//        		showDialog(DIALOG_STARTUP_INFOBOX);
+//        	mSpiProviders.requestFocus();
+
+        	//checks if the settings activity for the provider must be opened
+			if (!mProviderSettingsShown && !mSelectedProvider.hasParametersConfigured()) {
+				mProviderSettingsShown = true;
+				mActivityHelper.openSettingsSmsService(this, mSelectedProvider.getId());
+			}
         }
     }
     
@@ -215,11 +222,6 @@ public class ActSendSms
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-//    	if (mSendCrashReport) {
-//    		showDialog(DIALOG_SEND_CRASH_REPORTS);
-//    	}
-
 		
 		Object savedThread = getLastNonConfigurationInstance();
 		//nothing saved
@@ -313,6 +315,7 @@ public class ActSendSms
 		outState.putString(BUNDLEKEY_CONTACTPHONES, phones);
 		outState.putString(BUNDLEKEY_CAPTCHASTORAGE, mCaptchaStorage);
         outState.putString(BUNDLEKEY_DIALOGERRORMESSAGE, mErrorSendingMessage);
+        outState.putBoolean(BUNDLEKEY_PROVIDERSETTINGSSHOWN, mProviderSettingsShown);
 	};
 
 	
@@ -330,6 +333,7 @@ public class ActSendSms
 		mPhonesToShowInDialog = ContactsDao.instance().deserializeContactPhones(
 				savedInstanceState.getString(BUNDLEKEY_CONTACTPHONES));
         mErrorSendingMessage = savedInstanceState.getString(BUNDLEKEY_DIALOGERRORMESSAGE);
+        mProviderSettingsShown = savedInstanceState.getBoolean(BUNDLEKEY_PROVIDERSETTINGSSHOWN, false);
 		
 		//when the activity is rotated, in the onPause event the values of
 		//provider, text values and subservice are persisted, so i can rely on this value
@@ -378,7 +382,11 @@ public class ActSendSms
 
 		case OPTIONMENU_COMPRESS:
 			String message = mTxtBody.getText().toString();
-			mActivityHelper.openCompactMessage(this, message);
+			if (TextUtils.isEmpty(message)) {
+			    showDialog(DIALOG_EMPTY_MESSAGE_TO_COMPRIME);
+			} else {
+			    mActivityHelper.openCompactMessage(this, message);
+			}
 			break;
 
 		case OPTIONMENU_RESETDATA:
@@ -474,6 +482,13 @@ public class ActSendSms
                     removeDialog(DIALOG_SENDING_MESSAGE_ERROR);
                 }
             });
+    	    break;
+    	    
+    	case DIALOG_EMPTY_MESSAGE_TO_COMPRIME:
+    	    retDialog = mActivityHelper.createInformativeDialog(this,
+    	            0,
+    	            R.string.actsendsms_msg_emptyMessageToCompress,
+    	            R.string.common_btnOk);
     	    break;
     	
 		default:
@@ -861,7 +876,7 @@ public class ActSendSms
 	/**
 	 * Called when activity is first loaded, restore
 	 * previous status of input views. Called also when the activity is rotated,
-	 * because not always the text view values are preserver
+	 * because sometimes text view values are not preserved
 	 */
 	private void restoreLastRunViewValues()
 	{

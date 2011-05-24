@@ -18,6 +18,9 @@
  this program; If not, see <http://www.gnu.org/licenses/>.
  -->
 
+
 <resources>
+    <string name="actabout_lblDescription">Send SMS from your Android smartphone with the online SMS gateway SubitoSMS! To configure your account, from main screen, press \'Menu\', \'Settings\' and select \'Providers settings\'.</string>
+    <string name="actabout_lblDescription2">New credit is available on &lt;a href=\'http://www.subito.mobi/ricarica\'&gt;subito.mobi/ricarica&lt;/a&gt;</string>
     <string name="actabout_msgChangeslog">v2.1\nFirst release</string>
 </resources>

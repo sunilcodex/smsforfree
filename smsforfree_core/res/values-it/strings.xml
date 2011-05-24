@@ -61,7 +61,7 @@
     <string name="actsendsms_mnuCompress">Comprimi testo</string>
     <string name="actsendsms_mnuSettings">Impostazioni</string>
     <string name="actsendsms_mnuResetData">Svuota campi</string>
-    <string name="actsendsms_mnuAbout">Informazioni su...</string>
+    <string name="actsendsms_mnuAbout">Ricarica</string>
     <string name="actsendsms_mnuTemplates">Aggiungi modello</string>
     <string name="actsendsms_msg_noPhoneNumber">Non ci sono numeri telefonici per il contatto selezionato...</string>
     <string name="actsendsms_msg_noProviderSelected">Scegli prima un provider...</string>
@@ -84,6 +84,7 @@
     <string name="actsendsms_msg_error_retrieving_inbox_sms">Errore leggendo l\'ultimo SMS ricevuto.\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
     <string name="actsendsms_msg_empty_inbox_sms">Nessun SMS trovato tra i messaggi ricevuti.</string>
     <string name="actsendsms_msg_errorSendingMessageTitle">Errore nell\'invio</string>
+    <string name="actsendsms_msg_emptyMessageToCompress">Il messaggio e\' vuoto, inserire del testo prima di comprimerlo.</string>
     <string name="actsendsms_phoneType_home">Casa</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Lavoro</string>

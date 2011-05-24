@@ -26,6 +26,8 @@ import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -76,7 +78,9 @@ public class ActAbout
         		getString(R.string.actabout_lblSentSms), sentSms));
         
         TextView lblDescription2 = (TextView) findViewById(R.id.actabout_lblDescription2);
-        lblDescription2.setText(String.format(getString(R.string.actabout_lblDescription2), AppEnv.EMAIL_FOR_LOG));
+        String description2 = String.format(getString(R.string.actabout_lblDescription2), AppEnv.EMAIL_FOR_LOG);
+        lblDescription2.setText(Html.fromHtml(description2));
+        lblDescription2.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 	
 	

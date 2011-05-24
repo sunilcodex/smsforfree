@@ -19,5 +19,7 @@
  -->
 
 <resources>
+    <string name="actabout_lblDescription">Invia SMS dal tuo smartphone Android utilizzando SubitoSMS! Per configurare il tuo account, dalla schermata principale premi \'Menu\', \'Impostazioni\' e \'Impostazioni provider SMS\'.</string>
+    <string name="actabout_lblDescription2">Le ricariche sono disponibili su &lt;a href=\'http://www.subito.mobi/ricarica\'&gt;subito.mobi/ricarica&lt;/a&gt;</string>
     <string name="actabout_msgChangeslog">v2.1\nPrima release</string>
 </resources>
