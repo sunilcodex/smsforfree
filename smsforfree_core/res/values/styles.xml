@@ -196,6 +196,11 @@
 		<item name="android:textSize">15dp</item>
 	</style>
 
+
+	<!-- Jacksms -->
+	<string name="no_configured_services_available">It seems that you have no configured services
+		saved.
+		Add them now and they will be automatically saved on your online profile.</string>
 	
 
 </resources>

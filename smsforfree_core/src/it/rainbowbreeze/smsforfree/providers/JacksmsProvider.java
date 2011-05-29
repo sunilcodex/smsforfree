@@ -69,6 +69,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.widget.SlidingDrawer;
 
 import com.jacksms.android.data.DataService;
 import com.jacksms.android.gui.Rubrica;
@@ -251,7 +252,35 @@ extends SmsMultiProvider
 		}
 
 		return res;    	
+		}
+	
+	public ResultOperation<String> getAdvertise(){
+		mLogFacility.v(LOG_HASH, "Get advertise url");
+		String username = mappPreferenceDao.getUsername();
+		String password = mappPreferenceDao.getPassword();
+		String url = mDictionary.getUrlForAdvertise(username, password);
+		HttpClient client = createDefaultClient(15000);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		ResultOperation<String> reply= performPost(client, url, params);
+		if(reply.hasErrors())
+			return reply;
+		if(!TextUtils.isEmpty(reply.getResult())){
+			// url\thttp://ad.jacksms.it/get/p_koeu718ur4v4xtzh_552kx7s?d=apple
+			String[] split = reply.getResult().trim().split(JacksmsDictionary.TAB_SEPARATOR);
+			if(split.length>=2){
+				if(split[1].startsWith("http://")){
+					reply.setResult(split[1]);
+					return reply;
+				}
+					
 			}
+		}
+		//TODO log
+		reply.setReturnCode(ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY);
+		return reply;
+		
+	}
+	
 
 	@Override
 	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
@@ -956,9 +985,13 @@ extends SmsMultiProvider
 	private static final int TIMEOUT = 60000;
 
 	private HttpClient createDefaultClient(){
+		return createDefaultClient(TIMEOUT);
+	}
+	
+	private HttpClient createDefaultClient(int timeout){
 		HttpParams params = new BasicHttpParams();
-		HttpConnectionParams.setSoTimeout(params, TIMEOUT);
-		HttpConnectionParams.setConnectionTimeout(params, TIMEOUT);
+		HttpConnectionParams.setSoTimeout(params, timeout);
+		HttpConnectionParams.setConnectionTimeout(params, timeout);
 		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(params);
 		return defaultHttpClient;
 	}
