@@ -76,7 +76,8 @@ public class JacksmsDictionary
 	private static final String ACTION_ADDRESSBOOK_NO_BK = "carrierAbook";
 	private static final String ACTION_SET_NOTIFY_TYPE = "setNotifyType";
 	private static final String ACTION_REGISTER = "startRegister"; 
-
+	private static final String ACTION_GET_ADVERTISE = "getAd";
+	
 	//TODO: get version from global variable or settings
 	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
 	public static final String TAB_SEPARATOR = "\t";
@@ -150,6 +151,10 @@ public class JacksmsDictionary
 
 	public String getUrlForAddressBook(String username, String password){
 		return getUrlForCommand(username, password, ACTION_GET_ADDRESSBOOK, FORMAT_CSV);
+	}
+	
+	public String getUrlForAdvertise(String username, String password){
+		return getUrlForCommand(username, password, ACTION_GET_ADVERTISE, FORMAT_CSV);
 	}
 
 	public String getUrlForSendAddressBook(String username, String password){
