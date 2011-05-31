@@ -633,12 +633,17 @@ public abstract class SmsProvider
     protected ResultOperation<String> validateSendSmsParameters(
             String username,
             String password,
+            String token,
             String destination,
             String messageBody) {
 
         //null or empty credential check
         if (!checkCredentialsValidity(username, password))
             return getExceptionForInvalidCredentials();
+        
+        //TODO migliorare il messaggio
+        if(TextUtils.isEmpty(token))
+        	 return getExceptionForInvalidCredentials();
 
         //null or empty destination
         if (TextUtils.isEmpty(destination)) {
@@ -648,36 +653,6 @@ public abstract class SmsProvider
         
         return new ResultOperation<String>();
     }
-    
-    
-    /**
-     * Before sending an sms, performs basic checks
-     * against parameters validity. Performs checks also
-     * on sender validity
-     * 
-     * @param username
-     * @param password
-     * @param sender
-     * @param destination
-     * @param messageBody
-     * 
-     * @return a {@link ResultOperation} with error inside if some parameters
-     *         is not correct, elsewhere an empty {@link ResultOperation}
-     */
-    protected ResultOperation<String> validateSendSmsParameters(
-            String username, 
-            String password,
-            String sender,
-            String destination,
-            String messageBody) {
-        ResultOperation<String> res = validateSendSmsParameters(
-                username, password, destination, messageBody);
-        if (res.hasErrors()) return res;
-        
-        if (TextUtils.isEmpty(sender)) 
-            res.setReturnCode(ResultOperation.RETURNCODE_ERROR_INVALID_SENDER);
-        
-        return res;
-    }
+
 
 }
