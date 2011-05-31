@@ -196,4 +196,6 @@
     <string name="dlgcaptcha_txtCodeHint">Insert captcha code</string>
 
 
+	<string name="Jms_download_ok_no_new_message">No new message found</string>
+
 </resources>

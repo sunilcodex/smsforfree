@@ -28,6 +28,8 @@ import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.helper.Base64Helper;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +37,10 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.jacksms.android.data.Contact;
 
 import android.text.TextUtils;
 import android.widget.SlidingDrawer;
@@ -57,26 +63,32 @@ public class JacksmsDictionary
 	private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
-	public static final String URL_STREAM_BASE = "http://stream.jacksms.it/";
-	public static final String URL_STREAM_TEST = "http://stream.jacksms.it:9911/";//per i test sul server
-	public static final String URL_Q_BASE = "http://q.jacksms.it";
+	public static final String URL_HOST_AVAILABLE = "http://stream.freesmee.com/";
+	private static final String URL_STREAM_BASE = "https://stream.freesmee.com/";
+	private static final String URL_Q_BASE = "https://api.freesmee.com/";
 	// simple reply
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
 	// complete reply
 	private static final String ACTION_GET_ALL_VERSIONED_TEMPLATES = "getVersionedProviders";
-	private static final String ACTION_SEND_MESSAGE = "send?http&";
-	private static final String ACTION_SEND_CAPTCHA = "continue?http&";
+	
+	private static final String ACTION_STREAM_SEND_MESSAGE = "send";
+	private static final String ACTION_STREAM_SEND_CAPTCHA = "continue";
+	private static final String ACTION_STREAM_GET_QUEUE = "getQueue";
+	private static final String ACTION_STREAM_QUEUE = "queue";
+	private static final String ACTION_STREAM_STREAM = "stream";
+	
 	private static final String ACTION_GET_USER_SERVICES = "getServicesFull";
 	private static final String ACTION_GET_USER_LOGINSTRING = "getLoginString";
 	private static final String ACTION_GET_EDITSERVICE = "editService";
 	private static final String ACTION_GET_ADDSERVICE = "addService";
 	private static final String ACTION_GET_DELSERVICE = "delService";
 	private static final String ACTION_GET_ADDRESSBOOK = "getAddressBook";
-	private static final String ACTION_ADDRESSBOOK_BK = "importAbook";
+	private static final String ACTION_IMPORT_ADDRESSBOOK = "importAbook";
 	private static final String ACTION_ADDRESSBOOK_NO_BK = "carrierAbook";
 	private static final String ACTION_SET_NOTIFY_TYPE = "setNotifyType";
-	private static final String ACTION_REGISTER = "startRegister"; 
+	private static final String ACTION_START_REGISTER = "startRegister"; 
 	private static final String ACTION_GET_ADVERTISE = "getAd";
+	private static final String ACTION_VERIFY_REGISTER = "verifyRegister";
 	
 	//TODO: get version from global variable or settings
 	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
@@ -119,58 +131,80 @@ public class JacksmsDictionary
 
 
 	//---------- Public methods
-	public String getUrlForSendingMessage(String loginString)
-	{ return getUrlForCommand(loginString , ACTION_SEND_MESSAGE); }
+	public String getStreamUrlForSendingMessage(String token)
+	{ return getUrlForCommand(URL_STREAM_BASE, token , ACTION_STREAM_SEND_MESSAGE, null); }
 
-	public String getUrlForSendingCaptcha(String loginString)
-	{ return getUrlForCommand(loginString, ACTION_SEND_CAPTCHA); }
-
-	public String getUrlForDownloadTemplates(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_ALL_TEMPLATES, FORMAT_CSV); }
+	public String getStreamUrlForQueue(String token)
+	{ return getUrlForCommand(URL_STREAM_BASE, token , ACTION_STREAM_QUEUE, null);}
 	
-	public String getUrlForDownloadVersionedTemplates(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_ALL_VERSIONED_TEMPLATES, FORMAT_CSV); }
-
-	public String getUrlForDownloadUserServices(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_USER_SERVICES, FORMAT_CSV); }
-
-	public String getUrlForLoginString(String username, String password)
-	{ return getUrlForCommand(username, password, ACTION_GET_USER_LOGINSTRING, FORMAT_CSV); }
-
-	public String getUrlForSaveService(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_GET_EDITSERVICE, FORMAT_CSV);
-	}
-
-	public String getUrlForAddService(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_GET_ADDSERVICE, FORMAT_CSV);
-	}
-
-	public String getUrlForDeleteService(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_GET_DELSERVICE, FORMAT_CSV);
-	}
-
-	public String getUrlForAddressBook(String username, String password){
-		return getUrlForCommand(username, password, ACTION_GET_ADDRESSBOOK, FORMAT_CSV);
-	}
+	public String getStreamUrlForGetQueue(String token)
+	{ return getUrlForCommand(URL_STREAM_BASE, token , ACTION_STREAM_GET_QUEUE, null);}
 	
-	public String getUrlForAdvertise(String username, String password){
-		return getUrlForCommand(username, password, ACTION_GET_ADVERTISE, FORMAT_CSV);
+	public String getStreamUrlForSendingCaptcha(String token)
+	{ return getUrlForCommand(URL_STREAM_BASE, token, ACTION_STREAM_SEND_CAPTCHA, null); }
+	
+	//freesmee 
+	public String getUrlForDownloadVersionedTemplates(String token)
+	{ return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ALL_VERSIONED_TEMPLATES, FORMAT_CSV); }
+
+	//freesmee
+	public String getUrlForDownloadUserServices(String token)
+	{ return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_USER_SERVICES, FORMAT_CSV); }
+
+	//freesmee
+	public String getUrlForLoginString()
+	{ return getUrlForCommand(URL_Q_BASE, null, ACTION_GET_USER_LOGINSTRING, FORMAT_CSV); }
+
+	//freesmee
+	public String getUrlForEditService(String token) {
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_EDITSERVICE, FORMAT_CSV);
 	}
 
-	public String getUrlForSendAddressBook(String username, String password){
-		return getUrlForCommand(username, password, ACTION_ADDRESSBOOK_BK, FORMAT_CSV);
+	//freesmee
+	public String getUrlForAddService(String token) {
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ADDSERVICE, FORMAT_CSV);
 	}
-	
-	public String getUrlForNoBkAddressBook(String username, String password){
-		return getUrlForCommand(username, password, ACTION_ADDRESSBOOK_NO_BK, FORMAT_CSV);
+
+	//freesmee
+	public String getUrlForDeleteService(String token) {
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_DELSERVICE, FORMAT_CSV);
+	}
+
+	//freesmee
+	public String getUrlForAddressBook(String token){
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ADDRESSBOOK, FORMAT_CSV);
 	}
 	
-	public String getUrlForRegister(String number, String password){
-		return getUrlForCommand(number, password, ACTION_REGISTER, FORMAT_CSV);
+	//freesmee
+	public String getUrlForAdvertise(String token){
+		//TODO mancano alcuni parametri
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ADVERTISE, FORMAT_CSV);
+	}
+
+	//freesmee
+	public String getUrlForImportAddressBook(String token){
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_IMPORT_ADDRESSBOOK, FORMAT_CSV);
 	}
 	
-	public String getUrlForSetNotifyType(String username, String password) {
-		return getUrlForCommand(username, password, ACTION_SET_NOTIFY_TYPE, FORMAT_CSV);
+	//freesmee
+	public String getUrlForNoBkAddressBook(String token){
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_ADDRESSBOOK_NO_BK, FORMAT_CSV);
+	}
+	
+	//freesmee
+	public String getUrlForStartRegister(){
+		return getUrlForCommand(URL_Q_BASE, null, ACTION_START_REGISTER, FORMAT_CSV);
+	}
+	
+	//freesmee
+	public String getUrlForVerifyRegister(){
+		return getUrlForCommand(URL_Q_BASE, null, ACTION_VERIFY_REGISTER, FORMAT_CSV);
+	}
+	
+	//freesmee
+	//TODO non testato
+	public String getUrlForSetNotifyType(String token) {
+		return getUrlForCommand(URL_Q_BASE, token, ACTION_SET_NOTIFY_TYPE, FORMAT_CSV);
 	}
 	
 
@@ -185,23 +219,12 @@ public class JacksmsDictionary
 		nVp.add(new BasicNameValuePair("data_4",editedService.getParameterValue(3)));
 		return nVp;
 	}
-	/**
-	 * @param contacts
-	 * @return
-	 */
-	public List<NameValuePair> getParamsForAddressBook(String contacts){
-		//dalla stringa prelevo i tokens numero=nome
-		String [] tokens = contacts.split("&");
-		int size = tokens.length;
-		mLogFacility.v("Ci sono tokens n="+size);
-		List<NameValuePair> nVp = new ArrayList<NameValuePair>(size);
-		for(int i=0;i<size;i++){
-			//da ogni coppia numero=nome separo le due parti per formare il parametro POST
-			try{
-				String [] data = tokens[i].split("=");
-				nVp.add(new BasicNameValuePair(data[0], data[1]));
-			}
-			catch (Exception e) {e.printStackTrace();mLogFacility.e(e);}
+	
+	
+	public List<NameValuePair> getParamsForAddressBook(List<Contact> contacts){
+		List<NameValuePair> nVp = new ArrayList<NameValuePair>(contacts.size());
+		for(Contact contact:contacts){
+			nVp.add(new BasicNameValuePair(contact.getNumber(), contact.getName()));
 		}
 		return nVp;
 	}
@@ -216,28 +239,36 @@ public class JacksmsDictionary
 	 * @param message
 	 * @return
 	 */
-	public HashMap<String, String> getParamsForSendingMessage(
+	public List<NameValuePair> getParamsForSendingMessage(
 			SmsService service,
 			String destination,
 			String message)
 			{
-		String key;
-		String value;
-		HashMap<String, String> headers = new HashMap<String, String>();
-
-		//la key j-x e' necessaria perche' vodafone filtra i messaggi con key x
-		key = "J-X";
-		value = String.valueOf(service.getTemplateId()) + TAB_SEPARATOR + 
-		destination + TAB_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(0)) + TAB_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(1)) + TAB_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(2)) + TAB_SEPARATOR +
-		replaceServiceParameter(service.getParameterValue(3)) + TAB_SEPARATOR +
-		adjustMessageBody(message);
-		headers.put(key, value);
-
-		return headers;
-			}
+		
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			// service_id, srv_data1, srv_data2,srv_data3,srv_data4,recipient,message
+			params.add(new BasicNameValuePair("service_id", service.getTemplateId()));
+			params.add(new BasicNameValuePair("srv_data1", service.getParameterValue(0)));
+			if(!TextUtils.isEmpty(service.getParameterValue(1)))
+				params.add(new BasicNameValuePair("srv_data2", service.getParameterValue(1)));
+			if(!TextUtils.isEmpty(service.getParameterValue(2)))
+				params.add(new BasicNameValuePair("srv_data3", service.getParameterValue(2)));
+			if(!TextUtils.isEmpty(service.getParameterValue(3)))
+			params.add(new BasicNameValuePair("srv_data4", service.getParameterValue(3)));
+			params.add(new BasicNameValuePair("recipient", destination));
+			params.add(new BasicNameValuePair("message", message));
+	
+			return params;
+		}
+	
+	public List<NameValuePair> getParamsForSendingJms(String destination,String message){
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("account_id", "1"));
+			params.add(new BasicNameValuePair("recipient", destination));
+			params.add(new BasicNameValuePair("message", message));
+	
+			return params;
+		}
 
 	/**
 	 * Builds headers used in the captcha api
@@ -245,18 +276,14 @@ public class JacksmsDictionary
 	 * @param captchaCode
 	 * @return
 	 */
-	public HashMap<String, String> getHeaderForSendingCaptcha(String sessionId, String captchaCode)
+	public List<NameValuePair> getParamsForSendingCaptcha(String sessionId, String captchaCode)
 	{
-		String key;
-		String value;
-		HashMap<String, String> headers = new HashMap<String, String>();
-
-		//la key j-x e' necessaria perche' vodafone filtra i messaggi con key x
-		key = "J-X";
-		value = String.valueOf(sessionId) + TAB_SEPARATOR + 
-		captchaCode + TAB_SEPARATOR;
-		headers.put(key, value);
-		return headers;
+		
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		// service_id, srv_data1, srv_data2,srv_data3,srv_data4,recipient,message
+		params.add(new BasicNameValuePair("session_id", sessionId));
+		params.add(new BasicNameValuePair("value", captchaCode));
+		return params;
 	}
 
 	/**
@@ -271,54 +298,6 @@ public class JacksmsDictionary
 		return body;
 	}
 
-
-	/**
-	 * Extracts the message text from provider's reply
-	 * @param reply
-	 * @return
-	 */
-	public String getTextPartFromReply(String reply)
-	{
-		//TODO marco
-		//removed, if null must fail!
-
-		//if (TextUtils.isEmpty(reply)) return "";
-
-		//TODO marco 
-		// in ogni caso devo ritornare
-		// la seconda posizione
-		String[] split = reply.split(TAB_SEPARATOR);
-		return split[1];
-
-		//		//if strings contains error codes from JackSMS
-		//		for (String errorPrefix : PREFIX_RESULT_ERROR_ARRAY) {
-		//			if (reply.startsWith(errorPrefix)) {
-		//				{
-		//					
-		//					
-		//					// TODO marco original
-		//					//return reply.substring(errorPrefix.length()).trim();
-		//				
-		//				}
-		//			}
-		//		}
-		//		
-		//		
-		//		//TODO marco (in questo caso o e' un messaggio destinato all'utente, oppure e' il captcha)
-		//		
-		//		
-		//		//other reply from JackSMS 
-		//		String[] lines = reply.split(TAB_SEPARATOR);
-		//		
-		//		//TODO marco se non e' cosi allora il server ha mandato una risposta sbagliata!
-		//		// dovrebbe essere stato gestito gi� prima!
-		//		if (lines.length > 2)
-		//			//message is in the second item
-		//			return lines[1];
-		//		else
-		//			return "";
-	}
-
 	/**
 	 * Extracts captcha image content from provider's reply
 	 * @param reply
@@ -327,35 +306,24 @@ public class JacksmsDictionary
 	public byte[] getCaptchaImageContentFromReply(String reply)
 	{
 		//captcha content is the text part of the reply
-		String content = getTextPartFromReply(reply);
+		String captchaBase64 = null;
+		try {
+			JSONObject json = new JSONObject(reply);
+			captchaBase64 = json.getString("message");
+		} catch (JSONException e) {
+			//TODO log
+		}
 
 		//is encoded in base64, so decode id
 		byte[] decodedCaptcha;
 		try {
 			//decodedCaptcha = new String(Base64.decode(content), "UTF-8");
-			decodedCaptcha = Base64Helper.decode(content);
+			decodedCaptcha = Base64Helper.decode(captchaBase64);
 		} catch (IOException e) {
 			decodedCaptcha = null;
 		}
 		return decodedCaptcha;
 	}
-
-	/**
-	 * Extract sessionId from captcha reply
-	 * @param reply
-	 * @return
-	 */
-	public String getCaptchaSessionIdFromReply(String reply)
-	{
-		//find captcha sessionId, the first part of the message
-		int separatorPos = reply.indexOf(TAB_SEPARATOR);
-		if (separatorPos < 0)
-			return "";
-
-		String sessionId = reply.substring(0, separatorPos).trim();
-		return sessionId;
-	}
-
 
 	public List<SmsService> extractVersionedTemplates(LogFacility logFacility, String providerReply){
 //		type //0
@@ -556,6 +524,20 @@ public class JacksmsDictionary
 		return false;
 	}
 
+	
+	/**
+	 * Extracts the message text from provider's reply
+	 * @param reply
+	 * @return
+	 */
+	public String getTextPartFromReply(String reply)
+	{
+		
+		String[] split = reply.split(TAB_SEPARATOR);
+		if(split.length>0)
+		return split[1];
+		else return "";
+	}
 	public boolean isInvalidCredetials(String webserviceReply)
 	{
 		if (TextUtils.isEmpty(webserviceReply)) return false;
@@ -578,52 +560,28 @@ public class JacksmsDictionary
 		return (webserviceReply.startsWith("<!DOCTYPE HTML PUBLIC"));
 	}
 
-
-
 	//---------- Private methods
-	private String getUrlForCommand(String loginString, String command)
+	//freesme
+	private String getUrlForCommand(String baseUrl, String token, String command, String format)
 	{
-		String loginS = loginString;
 
 		StringBuilder sb = new StringBuilder();
-		//per le richieste di test
-		//sb.append(URL_STREAM_TEST)
-		//per le richieste normali
-		sb.append(URL_STREAM_BASE)
-		.append(loginS)
-		.append("/")
-		.append(command)
-		.append(PARAM_CLIENTVERSION_VALUE);
-		return sb.toString();
-	}
-
-	//Per ottenere loginString devo usare per forza username e password
-	private String getUrlForCommand(String username, String password,
-			String command, String out_format) {
-
-		String codedUser;
-		String codedPwd;
-
-		if (USER_TEST.equals(username)){
-			codedUser = USER_TEST;
-			codedPwd = USER_TEST;
-		}else{
-			codedUser = replaceNotAllowedChars(Base64Helper.encodeBytes(username.getBytes()));
-			codedPwd = replaceNotAllowedChars(Base64Helper.encodeBytes(password.getBytes()));
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append(URL_Q_BASE)
-		.append("/")	
-		.append(codedUser)
-		.append("/")
-		.append(codedPwd)
-		.append("/")
-		.append(command)
+		sb.append(baseUrl);
+		sb.append(command)
 		.append("?")
-		.append(out_format)
-		.append(",")
 		.append(PARAM_CLIENTVERSION_VALUE);
-		return sb.toString();
+		if(token!=null){
+			sb.append("&token=")
+		     .append(token);
+		}
+		if(format!=null){
+			sb.append("&o=")
+			.append(format);
+		}
+
+		String	url = sb.toString();
+
+		return url;
 	}
 
 	private String replaceNotAllowedChars(String sourceString)
@@ -902,4 +860,7 @@ public class JacksmsDictionary
 		public static final int LOWCOST =2;
 		public static final int OTHER=3;
 	}
+	
+	
+
 }
