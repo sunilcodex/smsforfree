@@ -20,6 +20,7 @@
 package it.rainbowbreeze.smsforfree.providers;
 
 import it.jamiroproductions.smswest.StorageMessage;
+import it.jamiroproductions.smswest.StorageService;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
@@ -288,6 +289,8 @@ extends SmsMultiProvider
 					res.setResult(mBaseContext.getString(R.string.Jms_download_ok_no_new_message));
 				}else{
 					res.setResult(mBaseContext.getResources().getQuantityString(R.plurals.Jms_download_ok, messages.size(), messages.size()));
+					Intent intent = StorageService.getIntentSaveMessages(mBaseContext, messages, true, null);
+					mBaseContext.startService(intent);
 				}
 				
 				break;
