@@ -212,7 +212,7 @@ extends RainbowBaseDataEntryActivity
 
 			if (blank_values) {
 				//display an error message
-				mActivityHelper.showInfo(getApplicationContext(), R.string.jacksms_msg_blankfielderror);
+				mActivityHelper.showInfo(getApplicationContext(), R.string.freesmee_msg_blankfielderror);
 				return;
 			}
 

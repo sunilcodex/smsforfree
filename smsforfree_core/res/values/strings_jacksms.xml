@@ -19,23 +19,22 @@
  -->
 
 <resources>
-    <string name="jacksms_username_desc">Username</string>
-    <string name="jacksms_password_desc">Password</string>
-    <string name="jacksms_description">Con JackSMS puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
-    <string name="jacksms_commandLoadTemplateServices">Download JackSMS templates</string>
-    <string name="jacksms_commandLoadUserSubservices">Load your JackSMS saved services</string>
-    <string name="jacksms_msg_invalidCredentials">Invalid JackSMS credentials :(</string>
-    <string name="jacksms_msg_serverErrorKnow">JackSMS internal server error.\n %s</string>
-    <string name="jacksms_msg_serverErrorUnknow">Unknown JackSMS server error. Send log to developer (in the Preferences) if the problem persists.</string>
-    <string name="jacksms_msg_messageSent">Message sent.\n %s</string>
-    <string name="jacksms_msg_captchaOk">Message sent.</string>
-    <string name="jacksms_msg_noCaptchaSessionId">Error: cannot find captcha session id... Maybe a JackSMS server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
-    <string name="jacksms_msg_noTemplatesParsed">Strange, no templates... Maybe a JackSMS server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
-    <string name="jacksms_msg_noCaptcha">Strange, no captcha... Maybe a JackSMS server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
-    <string name="jacksms_msg_templatesListUpdated">JackSMS Templates list updated.</string>
-    <string name="jacksms_msg_noTemplatesToUse">No templates to use. First download templates list and then relaunch the command.</string>
-    <string name="jacksms_msg_userServicesListUpdated">User services stored in the JackSMS site added to the list.</string>
-    <string name="jacksms_msg_noUserServices">No user services stored in the JackSMS found.</string>
-    <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
-    <string name="jacksms_msg_blankfielderror">Please do not leave blank fields, fill them with your account details.</string>
+    <string name="freesmee_username_desc">Username</string>
+    <string name="freesmee_password_desc">Password</string>
+    <string name="freesmee_description">Con Freesmee puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
+    <string name="freesmee_commandLoadTemplateServices">Download Freesmee templates</string>
+    <string name="freesmee_commandLoadUserSubservices">Load your Freesmee saved services</string>
+    <string name="freesmee_msg_invalidCredentials">Invalid Freesmee credentials :(</string>
+    <string name="freesmee_msg_serverErrorKnow">Freesmee internal server error.\n %s</string>
+    <string name="freesmee_msg_serverErrorUnknow">Unknown Freesmee server error. Send log to developer (in the Preferences) if the problem persists.</string>
+    <string name="freesmee_msg_messageSent">Message sent.\n %s</string>
+    <string name="freesmee_msg_captchaOk">Message sent.</string>
+    <string name="freesmee_msg_noCaptchaSessionId">Error: cannot find captcha session id... Maybe a Freesmee server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
+    <string name="freesmee_msg_noTemplatesParsed">Strange, no templates... Maybe a Freesmee server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
+    <string name="freesmee_msg_noCaptcha">Strange, no captcha... Maybe a Freesmee server error?\n\nSend log to developer (in the Preferences) if the problem persists.</string>
+    <string name="freesmee_msg_templatesListUpdated">Freesmee Templates list updated.</string>
+    <string name="freesmee_msg_noTemplatesToUse">No templates to use. First download templates list and then relaunch the command.</string>
+    <string name="freesmee_msg_userServicesListUpdated">User services stored in the Freesmee site added to the list.</string>
+    <string name="freesmee_msg_noUserServices">No user services stored in the Freesmee found.</string>
+    <string name="freesmee_msg_blankfielderror">Please do not leave blank fields, fill them with your account details.</string>
 </resources>
