@@ -19,23 +19,22 @@
  -->
 
 <resources>
-    <string name="jacksms_username_desc">Username</string>
-    <string name="jacksms_password_desc">Password</string>
-    <string name="jacksms_description">Con JackSMS puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
-    <string name="jacksms_commandLoadTemplateServices">Aggiorna servizi</string>
-    <string name="jacksms_commandLoadUserSubservices">Scarica i servizi gia\' configurati sul sito</string>
-    <string name="jacksms_msg_invalidCredentials">Credenziali JackSMS non valide :(</string>
-    <string name="jacksms_msg_serverErrorKnow">Error del server JackSMS.\n %s</string>
-    <string name="jacksms_msg_serverErrorUnknow">Error sconosciuto del server JackSMS. Invia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
-    <string name="jacksms_msg_messageSent">Messaggio spedito.\n %s</string>
-    <string name="jacksms_msg_captchaOk">Messaggio spedito.</string>
-    <string name="jacksms_msg_noCaptchaSessionId">Errore: non riesco a trovare il captcha session id... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
-    <string name="jacksms_msg_noTemplatesParsed">Strano, non ci sono template disponibili... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
-    <string name="jacksms_msg_noCaptcha">Strano, no c\'e\' il captcha... Forse c\'e\' stato un problema temporaneo del server JackSMS?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
-    <string name="jacksms_msg_templatesListUpdated">Lista dei template JackSMS aggiornata.</string>
-    <string name="jacksms_msg_noTemplatesToUse">Non ci sono template. Scarica prima i template e poi rilancia il comando.</string>
-    <string name="jacksms_msg_userServicesListUpdated">Servizi SMS aggiornati e aggiunti alla lista.</string>
-    <string name="jacksms_msg_noUserServices">Non ci sono servizi disponibili.</string>
-    <string name="jacksms_registerLink">http://www.jacksms.it/registrazione.html</string>
-    <string name="jacksms_msg_blankfielderror">Per favore non lasciare campi vuoti, inserisci i dati del tuo account.</string>
+    <string name="freesmee_username_desc">Username</string>
+    <string name="freesmee_password_desc">Password</string>
+    <string name="freesmee_description">Con Freesmee puoi inviare SMS gratis tramite i vari servizi internet che lo permettono, inviare SMS low cost acquistando pacchetti di messaggi dai vari fornitori</string>
+    <string name="freesmee_commandLoadTemplateServices">Aggiorna servizi</string>
+    <string name="freesmee_commandLoadUserSubservices">Scarica i servizi gia\' configurati sul sito</string>
+    <string name="freesmee_msg_invalidCredentials">Credenziali Freesmee non valide :(</string>
+    <string name="freesmee_msg_serverErrorKnow">Error del server Freesmee.\n %s</string>
+    <string name="freesmee_msg_serverErrorUnknow">Error sconosciuto del server Freesmee. Invia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="freesmee_msg_messageSent">Messaggio spedito.\n %s</string>
+    <string name="freesmee_msg_captchaOk">Messaggio spedito.</string>
+    <string name="freesmee_msg_noCaptchaSessionId">Errore: non riesco a trovare il captcha session id... Forse c\'e\' stato un problema temporaneo del server Freesmee?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="freesmee_msg_noTemplatesParsed">Strano, non ci sono template disponibili... Forse c\'e\' stato un problema temporaneo del server Freesmee?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="freesmee_msg_noCaptcha">Strano, no c\'e\' il captcha... Forse c\'e\' stato un problema temporaneo del server Freesmee?\n\nInvia i log allo sviluppatore (nelle Preferenze) se il problema persiste.</string>
+    <string name="freesmee_msg_templatesListUpdated">Lista dei template Freesmee aggiornata.</string>
+    <string name="freesmee_msg_noTemplatesToUse">Non ci sono template. Scarica prima i template e poi rilancia il comando.</string>
+    <string name="freesmee_msg_userServicesListUpdated">Servizi SMS aggiornati e aggiunti alla lista.</string>
+    <string name="freesmee_msg_noUserServices">Non ci sono servizi disponibili.</string>
+    <string name="freesmee_msg_blankfielderror">Per favore non lasciare campi vuoti, inserisci i dati del tuo account.</string>
 </resources>

@@ -176,25 +176,25 @@ extends SmsMultiProvider
 		mBaseContext = context.getApplicationContext();
 
 		//provider parameters
-		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.jacksms_username_desc));
-		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.jacksms_password_desc));
+		setParameterDesc(PARAM_INDEX_USERNAME, context.getString(R.string.freesmee_username_desc));
+		setParameterDesc(PARAM_INDEX_PASSWORD, context.getString(R.string.freesmee_password_desc));
 		setParameterFormat(PARAM_INDEX_PASSWORD, SmsServiceParameter.FORMAT_PASSWORD);
-		setDescription(context.getString(R.string.jacksms_description));
+		setDescription(context.getString(R.string.freesmee_description));
 
 		//save messages
 		mMessages = new String[12];
-		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.jacksms_msg_invalidCredentials);
-		mMessages[MSG_INDEX_SERVER_ERROR_KNOW] = context.getString(R.string.jacksms_msg_serverErrorKnow);
-		mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW] = context.getString(R.string.jacksms_msg_serverErrorUnknow);
-		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.jacksms_msg_messageSent);
-		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.jacksms_msg_noCaptchaSessionId);
-		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.jacksms_msg_noTemplatesParsed);
-		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.jacksms_msg_noCaptcha);
-		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.jacksms_msg_templatesListUpdated);
-		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.jacksms_msg_captchaOk);
-		mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE] = context.getString(R.string.jacksms_msg_noTemplatesToUse);
-		mMessages[MSG_INDEX_USERSERVICES_UPDATED] = context.getString(R.string.jacksms_msg_userServicesListUpdated);
-		mMessages[MSG_INDEX_NO_USERSERVICES_TO_USE] = context.getString(R.string.jacksms_msg_noUserServices);
+		mMessages[MSG_INDEX_INVALID_CREDENTIALS] = context.getString(R.string.freesmee_msg_invalidCredentials);
+		mMessages[MSG_INDEX_SERVER_ERROR_KNOW] = context.getString(R.string.freesmee_msg_serverErrorKnow);
+		mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW] = context.getString(R.string.freesmee_msg_serverErrorUnknow);
+		mMessages[MSG_INDEX_MESSAGE_SENT] = context.getString(R.string.freesmee_msg_messageSent);
+		mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID] = context.getString(R.string.freesmee_msg_noCaptchaSessionId);
+		mMessages[MSG_INDEX_NO_TEMPLATES_PARSED] = context.getString(R.string.freesmee_msg_noTemplatesParsed);
+		mMessages[MSG_INDEX_NO_CAPTCHA_PARSED] = context.getString(R.string.freesmee_msg_noCaptcha);
+		mMessages[MSG_INDEX_TEMPLATES_UPDATED] = context.getString(R.string.freesmee_msg_templatesListUpdated);
+		mMessages[MSG_INDEX_CAPTCHA_OK] = context.getString(R.string.freesmee_msg_captchaOk);
+		mMessages[MSG_INDEX_NO_TEMPLATES_TO_USE] = context.getString(R.string.freesmee_msg_noTemplatesToUse);
+		mMessages[MSG_INDEX_USERSERVICES_UPDATED] = context.getString(R.string.freesmee_msg_userServicesListUpdated);
+		mMessages[MSG_INDEX_NO_USERSERVICES_TO_USE] = context.getString(R.string.freesmee_msg_noUserServices);
 
 		return super.initProvider(context);
 	}
@@ -549,7 +549,7 @@ extends SmsMultiProvider
 
 	@Override
 	protected String getProviderRegistrationUrl(Context context) {
-		return context.getString(R.string.jacksms_registerLink);
+		throw new UnsupportedOperationException();
 	}
 
 
@@ -562,10 +562,10 @@ extends SmsMultiProvider
 		SmsServiceCommand command;
 		mSubservicesListActivityCommands = new ArrayList<SmsServiceCommand>();
 		command = new SmsServiceCommand(
-				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.jacksms_commandLoadTemplateServices), 1000, R.drawable.ic_menu_refresh);
+				COMMAND_LOADTEMPLATESERVICES, context.getString(R.string.freesmee_commandLoadTemplateServices), 1000, R.drawable.ic_menu_refresh);
 		commands.add(command);
 		command = new SmsServiceCommand(
-				COMMAND_LOADUSERSERVICES, context.getString(R.string.jacksms_commandLoadUserSubservices), 1001, R.drawable.ic_menu_cloud);
+				COMMAND_LOADUSERSERVICES, context.getString(R.string.freesmee_commandLoadUserSubservices), 1001, R.drawable.ic_menu_cloud);
 		commands.add(command);
 
 		return commands;
@@ -1410,5 +1410,15 @@ extends SmsMultiProvider
 	  
 	        return client;
 	    } 
+	}
+	
+	
+	/**
+	 * Create an exception for empty username or password
+	 * @return
+	 */
+	protected ResultOperation<String> getExceptionForInvalidCredentials() {
+	    mLogFacility.v(LOG_HASH, "Invalid user credential :(");
+		return new ResultOperation<String>(new Exception(mMessages[MSG_INDEX_INVALID_CREDENTIALS]),ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL);
 	}
 }
