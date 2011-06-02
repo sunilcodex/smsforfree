@@ -63,8 +63,9 @@ public class JacksmsDictionary
 	private static final String FORMAT_XML = "xml";
 	//private static final String FORMAT_JSON = "jsn";
 
-	public static final String URL_HOST_AVAILABLE = "http://stream.freesmee.com/";
-	private static final String URL_STREAM_BASE = "https://stream.freesmee.com/";
+	public static final String STREAM_HOSTNAME = "stream.freesmee.com";
+	public static final String URL_HOST_AVAILABLE = "http://"+STREAM_HOSTNAME+"/";
+	private static final String URL_STREAM_BASE = "https://"+STREAM_HOSTNAME+"/";
 	private static final String URL_Q_BASE = "https://api.freesmee.com/";
 	// simple reply
 	private static final String ACTION_GET_ALL_TEMPLATES = "getProviders";
@@ -91,7 +92,7 @@ public class JacksmsDictionary
 	private static final String ACTION_VERIFY_REGISTER = "verifyRegister";
 	
 	//TODO: get version from global variable or settings
-	private static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
+	public static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
 	public static final String TAB_SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
