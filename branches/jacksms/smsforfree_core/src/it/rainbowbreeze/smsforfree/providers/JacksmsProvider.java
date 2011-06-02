@@ -228,7 +228,6 @@ extends SmsMultiProvider
 		String url = mDictionary.getStreamUrlForGetQueue(loginS);
 		HttpClient client = createDefaultClient();
 		ResultOperation<String> res = performPost(client, url, null);
-		long currentTime = System.currentTimeMillis();
 		//checks for errors
 		if(res.hasErrors())
 			return res;
@@ -253,46 +252,7 @@ extends SmsMultiProvider
 				setSmsProviderException(res, errorMessage);
 				break;
 			case 1:
-				
-				
-				
-				ArrayList<StorageMessage> messages = new ArrayList<StorageMessage>(queue.length());
-				if(queue!=null){
-					for(int i = 0 ; i < queue.length(); i++){
-						StorageMessage storageMessage = null;
-						String sender = "";
-						try{
-							
-							JSONObject msg = queue.getJSONObject(i);
-							msg.getInt("msg_id");
-							msg.getString("msg_time");
-							long diff= msg.getLong("timediff");
-							String message = msg.getString("message");
-							sender = msg.getString("sender");
-							
-							storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff);
-							messages.add(storageMessage);
-						}catch (Exception e) {
-							setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
-							mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
-							mLogFacility.e(LOG_HASH, reply);
-						}
-						
-						if(storageMessage!=null){
-							Intent intent = DataService.updatePhoneNumberIntent(mBaseContext, sender, null, "1", SendService.Ids.JMS);
-							if(intent!=null)
-								mBaseContext.startService(intent);
-						}
-					}
-				}
-				if(messages.isEmpty()){
-					res.setResult(mBaseContext.getString(R.string.Jms_download_ok_no_new_message));
-				}else{
-					res.setResult(mBaseContext.getResources().getQuantityString(R.plurals.Jms_download_ok, messages.size(), messages.size()));
-					Intent intent = StorageService.getIntentSaveMessages(mBaseContext, messages, true, null);
-					mBaseContext.startService(intent);
-				}
-				
+				res = processQueue(queue, res);				
 				break;
 			default:
 				setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
@@ -309,6 +269,52 @@ extends SmsMultiProvider
 		return res;
 		
 		
+	}
+	
+	
+	
+	public ResultOperation<String> processQueue(JSONArray queue, ResultOperation<String> res){
+		if(res==null)
+			res = new ResultOperation<String>();
+		long currentTime = System.currentTimeMillis();
+		ArrayList<StorageMessage> messages = null;
+		if(queue!=null){
+			messages = new ArrayList<StorageMessage>(queue.length());
+			for(int i = 0 ; i < queue.length(); i++){
+				StorageMessage storageMessage = null;
+				String sender = "";
+				try{
+					
+					JSONObject msg = queue.getJSONObject(i);
+					msg.getInt("msg_id");
+					msg.getString("msg_time");
+					long diff= msg.getLong("timediff");
+					String message = msg.getString("message");
+					sender = msg.getString("sender");
+					
+					storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff);
+					messages.add(storageMessage);
+				}catch (Exception e) {
+					setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
+					mLogFacility.e(LOG_HASH, "Error parsing message Queue");
+					mLogFacility.e(LOG_HASH, queue.toString());
+				}
+				
+				if(storageMessage!=null){
+					Intent intent = DataService.updatePhoneNumberIntent(mBaseContext, sender, null, "1", SendService.Ids.JMS);
+					if(intent!=null)
+						mBaseContext.startService(intent);
+				}
+			}
+		}
+		if(messages==null || messages.isEmpty()){
+			res.setResult(mBaseContext.getString(R.string.Jms_download_ok_no_new_message));
+		}else{
+			res.setResult(mBaseContext.getResources().getQuantityString(R.plurals.Jms_download_ok, messages.size(), messages.size()));
+			Intent intent = StorageService.getIntentSaveMessages(mBaseContext, messages, true, null);
+			mBaseContext.startService(intent);
+		}
+		return res;
 	}
 	/** Contenuto dell'array tokens dell'esito 
 	 * [0] = esito {1|0}
@@ -1210,7 +1216,7 @@ extends SmsMultiProvider
 		nvp.add(new BasicNameValuePair(NotifyType.P.NOTIFY_TYPE, notifyType));
 		nvp.add(new BasicNameValuePair(NotifyType.P.REGISTRATION_ID, registration_id));
 		ResultOperation<String> res = performPost(httpclient, url, nvp);
-
+		
 		if(res.hasErrors())
 			return res;
 
