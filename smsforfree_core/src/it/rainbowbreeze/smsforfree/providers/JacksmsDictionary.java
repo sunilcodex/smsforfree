@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import com.jacksms.android.data.Contact;
 
+import android.location.Location;
 import android.text.TextUtils;
 import android.widget.SlidingDrawer;
 
@@ -177,9 +178,14 @@ public class JacksmsDictionary
 	}
 	
 	//freesmee
-	public String getUrlForAdvertise(String token){
+	public String getUrlForAdvertise(String token, Location location, String message){
 		//TODO mancano alcuni parametri
-		return getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ADVERTISE, FORMAT_CSV);
+		String url = getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ADVERTISE, FORMAT_CSV);
+		StringBuilder sb = new StringBuilder(url);
+		sb.append("&lat=").append(Double.toString(location.getLatitude()))
+		.append("&long=").append(Double.toString(location.getLongitude()))
+		.append("&text=").append(message);
+		return sb.toString();
 	}
 
 	//freesmee

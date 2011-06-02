@@ -85,6 +85,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.SlidingDrawer;
@@ -421,16 +422,15 @@ extends SmsMultiProvider
 		return res;  
 	}
 	
-	public ResultOperation<String> getAdvertise(){
+	public ResultOperation<String> getAdvertise(Location location, String message){
 		mLogFacility.v(LOG_HASH, "Get advertise url");
 		String token = mAppPreferencesDao.getLoginString();
 		
 		//TODO check credentials
 		
-		String url = mDictionary.getUrlForAdvertise(token);
+		String url = mDictionary.getUrlForAdvertise(token,location, message);
 		HttpClient client = createDefaultClient(15000);
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		ResultOperation<String> reply= performPost(client, url, params);
+		ResultOperation<String> reply= performPost(client, url, null);
 		if(reply.hasErrors())
 			return reply;
 		if(!TextUtils.isEmpty(reply.getResult())){
