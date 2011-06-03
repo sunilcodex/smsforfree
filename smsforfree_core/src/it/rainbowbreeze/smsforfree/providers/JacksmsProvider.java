@@ -218,13 +218,13 @@ extends SmsMultiProvider
 		return res;
 	}
 
-	
-	
+
+
 	public ResultOperation<String> downloadQueueWithoutAck(){
 		String loginS = mappPreferenceDao.getLoginString();
 		if(TextUtils.isEmpty(loginS))
 			return getExceptionForInvalidCredentials();
-	
+
 		//sends the sms
 		String url = mDictionary.getStreamUrlForGetQueue(loginS);
 		HttpClient client = createDefaultClient();
@@ -232,7 +232,7 @@ extends SmsMultiProvider
 		//checks for errors
 		if(res.hasErrors())
 			return res;
-		
+
 		String reply = res.getResult();
 		try {
 			JSONObject json = new JSONObject(reply);
@@ -266,14 +266,14 @@ extends SmsMultiProvider
 			mLogFacility.e(LOG_HASH, "Error sending message in Jacksms Provider");
 			mLogFacility.e(LOG_HASH, reply);
 		}
-		
+
 		return res;
-		
-		
+
+
 	}
-	
-	
-	
+
+
+
 	public ResultOperation<String> processQueue(JSONArray queue, ResultOperation<String> res){
 		if(res==null)
 			res = new ResultOperation<String>();
@@ -285,14 +285,14 @@ extends SmsMultiProvider
 				StorageMessage storageMessage = null;
 				String sender = "";
 				try{
-					
+
 					JSONObject msg = queue.getJSONObject(i);
 					msg.getInt("msg_id");
 					msg.getString("msg_time");
 					long diff= msg.getLong("timediff");
 					String message = msg.getString("message");
 					sender = msg.getString("sender");
-					
+
 					storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff);
 					messages.add(storageMessage);
 				}catch (Exception e) {
@@ -300,7 +300,7 @@ extends SmsMultiProvider
 					mLogFacility.e(LOG_HASH, "Error parsing message Queue");
 					mLogFacility.e(LOG_HASH, queue.toString());
 				}
-				
+
 				if(storageMessage!=null){
 					Intent intent = DataService.updatePhoneNumberIntent(mBaseContext, sender, null, "1", SendService.Ids.JMS);
 					if(intent!=null)
@@ -341,13 +341,13 @@ extends SmsMultiProvider
 		mLogFacility.i(LOG_HASH, "No error in res.");
 		//sends the sms
 		String url = mDictionary.getStreamUrlForSendingMessage(loginS);
-		
+
 		List<NameValuePair> params;
 		if(serviceId.equals(SendService.Ids.JMS)){
 			params = mDictionary.getParamsForSendingJms(destination, messageBody);
 		}
 		else{SmsService service = getSubservice(serviceId);
-			params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
+		params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
 		}
 		HttpClient client = createDefaultClient();
 		res = performPost(client, url, params);
@@ -359,16 +359,16 @@ extends SmsMultiProvider
 		//a captcha code is needed
 
 		return parseSendAndCaptchaReply(res, destination , serviceId);
-  	
-		}
-	
-	
+
+			}
+
+
 	private ResultOperation<String> parseSendAndCaptchaReply(ResultOperation<String> res, String destination, String serviceId){
 		String reply = res.getResult();
 		if(reply==null)
 			reply=""; //lasciamo che il problema sia individuato dopo
 		try {
-			
+
 			//"status":1
 			//"result":1,
 			//"message":"Messaggio inviato",
@@ -377,9 +377,9 @@ extends SmsMultiProvider
 			//"carrier":"1",
 			//"isfs":1,
 			//"upgrade":0}
-			
+
 			JSONObject json = new JSONObject(reply);
-			
+
 			int status = json.getInt("status"); //0 = errore -> message
 			int result = json.optInt("result"); //0,1, N>1
 			String message = json.optString("message");
@@ -388,9 +388,9 @@ extends SmsMultiProvider
 			int carrier = json.optInt("carrier");
 			int isfs = json.optInt("isfs");
 			int upgrade = json.optInt("upgrade"); // c'è una nuova versione del client? non gestito
-		
+
 			int choose; // status indica un errore dovuta alla richiseta
-			            // result invece dovuta al servizio di invio
+			// result invece dovuta al servizio di invio
 			if(status==0)
 				choose=status;
 			else
@@ -421,13 +421,13 @@ extends SmsMultiProvider
 		}
 		return res;  
 	}
-	
+
 	public ResultOperation<String> getAdvertise(Location location, String message){
 		mLogFacility.v(LOG_HASH, "Get advertise url");
 		String token = mAppPreferencesDao.getLoginString();
-		
+
 		//TODO check credentials
-		
+
 		String url = mDictionary.getUrlForAdvertise(token,location, message);
 		HttpClient client = createDefaultClient(15000);
 		ResultOperation<String> reply= performPost(client, url, null);
@@ -441,15 +441,15 @@ extends SmsMultiProvider
 					reply.setResult(split[1]);
 					return reply;
 				}
-					
+
 			}
 		}
 		//TODO log
 		reply.setReturnCode(ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
 		return reply;
-		
+
 	}
-	
+
 
 	@Override
 	public ResultOperation<Object> getCaptchaContentFromProviderReply(String providerReply)
@@ -487,7 +487,7 @@ extends SmsMultiProvider
 			//
 		}
 		String sessionId = json.optString("result");
-		
+
 		if (TextUtils.isEmpty(sessionId)) {
 			mLogFacility.e(LOG_HASH, "Captcha session id is empty");
 			return setSmsProviderException(new ResultOperation<String>(), mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
@@ -500,10 +500,10 @@ extends SmsMultiProvider
 		List<NameValuePair> params = mDictionary.getParamsForSendingCaptcha(sessionId, captchaCode);
 		HttpClient client = createDefaultClient();
 		ResultOperation<String> res = performPost(client, url, params);
-		
+
 		if(res.hasErrors())
 			return res;
-		
+
 		String destination = null;
 		String serviceId = null;
 		ReplyRequest rr = mReplyRequestBuffer.remove(sessionId);
@@ -592,11 +592,11 @@ extends SmsMultiProvider
 		//credential check
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
-		
+
 		//TODO provvisorio
 		if(TextUtils.isEmpty(token))
 			return getExceptionForInvalidCredentials();
-		
+
 		String url = mDictionary.getUrlForDownloadVersionedTemplates(token);
 		HttpClient client = createDefaultClient();
 		ResultOperation<String> res= performPost(client, url, null);
@@ -666,7 +666,7 @@ extends SmsMultiProvider
 			return getExceptionForInvalidCredentials();
 		if(TextUtils.isEmpty(token))
 			return getExceptionForInvalidCredentials();
-		
+
 		//checks for templates
 		if (!hasTemplatesConfigured()) {
 			mLogFacility.i(LOG_HASH, "JackSMS templates are not present");
@@ -679,7 +679,7 @@ extends SmsMultiProvider
 
 		if(res.hasErrors())
 			return res;
-		
+
 		if(TextUtils.isEmpty(res.getResult())){
 			res.setResult(mMessages[MSG_INDEX_NO_USERSERVICES_TO_USE]);
 			return res;
@@ -833,7 +833,7 @@ extends SmsMultiProvider
 	public ResultOperation<String> saveRemoteservice(SmsService editedService){
 		ResultOperation<String> res ;
 		String token = mAppPreferencesDao.getLoginString();
-		
+
 		//TODO check credentials
 
 		String url = mDictionary.getUrlForEditService(token);
@@ -860,9 +860,9 @@ extends SmsMultiProvider
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String token = mAppPreferencesDao.getLoginString();
-		
+
 		//TODO check credentials
-		
+
 		String url = mDictionary.getUrlForAddService(token);
 
 		HttpClient httpclient = createDefaultClient();
@@ -884,7 +884,7 @@ extends SmsMultiProvider
 	public ResultOperation<String> removeRemoteService(SmsService delService) {
 		ResultOperation<String> res;
 		String token = mAppPreferencesDao.getLoginString();
-		
+
 		//TODO check credentials
 
 		final String url = mDictionary.getUrlForDeleteService(token);
@@ -893,7 +893,7 @@ extends SmsMultiProvider
 		nameValuePairs.add(new BasicNameValuePair("ids", delService.getId()));
 		res = performPost(httpclient, url, nameValuePairs);
 		Thread t = new Thread(new Runnable(){
-			
+
 			//FIXME
 			// MA CHE ROBA E' QUESTA??
 			// PERCHE' FARLO ALTRE 3 VOLTE IN ASINCRONO SENZA MAI 
@@ -922,11 +922,11 @@ extends SmsMultiProvider
 	 * 
 	 * @author Saverio Guardato
 	 */
-	
+
 	//freesmee ok
 	public ResultOperation<String> getAddressBookWithBk(Context context, List<Contact> contacts) {
 		//TODO se la lista contatti è vuota ritorna subito
-		
+
 		ResultOperation<String> res = null;
 
 		String token = mAppPreferencesDao.getLoginString();
@@ -936,9 +936,7 @@ extends SmsMultiProvider
 		//compongo la richiesta POST passando la stringa dei contatti concatenati
 		List<NameValuePair> nameValuePairs = mDictionary.getParamsForAddressBook(contacts);
 		res = performPost(httpclient, url1, nameValuePairs);
-		
-		// imported\t4\n
-		//res.getResult(); //TODO removeme
+
 		//TODO c'è ambiguità sul tipo di risporsta in uscita
 		if (parseReplyForErrors(res))
 			logRequest(url1, (HashMap<String,String>)null, null);
@@ -947,19 +945,17 @@ extends SmsMultiProvider
 			String url2 = mDictionary.getUrlForAddressBook(token);
 			mLogFacility.v(LOG_HASH, "[getAddressBookWithBk]Invio comando a:\n"+url2);
 			res = performPost(httpclient, url2, null);
-			
-//			6363	wqeeew 	+39.349.3123213	1	1
-//			6161	blabla   	+39.320.3123123	0	4
+
 			if (parseReplyForErrors(res)){
 				logRequest(url2, (HashMap<String,String>)null, null);
 				return res;
 			}
-			
+
 			if(!TextUtils.isEmpty(res.getResult())){
 				String[] rows = res.getResult().split("\n");
 				for(String row:rows){
 					String[] split = row.trim().split(JacksmsDictionary.TAB_SEPARATOR);
-					
+
 					String operator = null;
 					String isJack = null;
 					if(split.length>=3){
@@ -975,44 +971,45 @@ extends SmsMultiProvider
 							context.startService(updatePhoneNumberIntent);
 					}
 				}
+				res.setResult("OK");
 			}
 		}
 		//la lista con i parametri è ora disponibile nel formato scaricato 
 		return res;
 	}
-	
-//	String [] righe = contatti.split("\n");
-//	String errors = "";
-//	for(int i=0;i<righe.length;i++){
-//		//id // name //phoneNumber //isJack //operator
-//		String [] tokens = righe[i].split("\t");
-//		int dim = tokens.length;
-//		if(dim == 5){
-//			mDb.addRow(tokens[1], tokens[2], tokens[4], "", Integer.parseInt(tokens[3]));
-//			Intent updatePhoneNumberIntent = DataService.updatePhoneNumberIntent(context, tokens[2], tokens[4], tokens[3], null);
-//			if(updatePhoneNumberIntent!=null)
-//				context.startService(updatePhoneNumberIntent);
-//		}
-//		//se lo split mi mangia l'operatore nullo, lo setto a zero
-//		if(dim == 4){
-//			errors += righe[i]+";\n";
-//			mDb.addRow(tokens[1], tokens[2], "0", "", Integer.parseInt(tokens[3]));
-//			Intent updatePhoneNumberIntent = DataService.updatePhoneNumberIntent(context, tokens[2], "0", tokens[3], null);
-//			if(updatePhoneNumberIntent!=null)
-//				context.startService(updatePhoneNumberIntent);
-//		}
-//	}
-//	//TODO: ask for report log?
-//	if(!TextUtils.isEmpty(errors))
-//		Log.e("JackSms", "I seguenti numeri hanno riportato errori:\n"+errors);
-//	if (null != callerHandler) {
-//		Message message = callerHandler.obtainMessage(FirstStartActivity.AD_BOOK_HANDLER_MESSAGE);
-//		callerHandler.sendMessage(message);
-//	}
-	
-	
-	
-	
+
+	//	String [] righe = contatti.split("\n");
+	//	String errors = "";
+	//	for(int i=0;i<righe.length;i++){
+	//		//id // name //phoneNumber //isJack //operator
+	//		String [] tokens = righe[i].split("\t");
+	//		int dim = tokens.length;
+	//		if(dim == 5){
+	//			mDb.addRow(tokens[1], tokens[2], tokens[4], "", Integer.parseInt(tokens[3]));
+	//			Intent updatePhoneNumberIntent = DataService.updatePhoneNumberIntent(context, tokens[2], tokens[4], tokens[3], null);
+	//			if(updatePhoneNumberIntent!=null)
+	//				context.startService(updatePhoneNumberIntent);
+	//		}
+	//		//se lo split mi mangia l'operatore nullo, lo setto a zero
+	//		if(dim == 4){
+	//			errors += righe[i]+";\n";
+	//			mDb.addRow(tokens[1], tokens[2], "0", "", Integer.parseInt(tokens[3]));
+	//			Intent updatePhoneNumberIntent = DataService.updatePhoneNumberIntent(context, tokens[2], "0", tokens[3], null);
+	//			if(updatePhoneNumberIntent!=null)
+	//				context.startService(updatePhoneNumberIntent);
+	//		}
+	//	}
+	//	//TODO: ask for report log?
+	//	if(!TextUtils.isEmpty(errors))
+	//		Log.e("JackSms", "I seguenti numeri hanno riportato errori:\n"+errors);
+	//	if (null != callerHandler) {
+	//		Message message = callerHandler.obtainMessage(FirstStartActivity.AD_BOOK_HANDLER_MESSAGE);
+	//		callerHandler.sendMessage(message);
+	//	}
+
+
+
+
 
 	/**
 	 * fondamentalmente fa la stessa operazione del metodo precedente, ma
@@ -1021,7 +1018,7 @@ extends SmsMultiProvider
 	 * @return
 	 */
 	public ResultOperation<String> getAddressBookNoBk(Context context, List<Contact> contacts) {
-		
+
 		//TODO se la lista contatti è vuota ritorna subito
 		ResultOperation<String> res = null;
 		String token = mappPreferenceDao.getLoginString();
@@ -1031,30 +1028,28 @@ extends SmsMultiProvider
 		final HttpClient httpclient = createDefaultClient();
 		List<NameValuePair> nvp = mDictionary.getParamsForAddressBook(contacts);
 		res = performPost(httpclient, url, nvp);
-		
+
 		if(!TextUtils.isEmpty(res.getResult())){
-//			0		+39.339.1233232	0	1
-//			0		+39.339.2321323	0	2
 			String[] rows = res.getResult().split("\n");
 			for(String row:rows){
 				String[] split = row.trim().split(JacksmsDictionary.TAB_SEPARATOR);
-				
+
 				String operator = null;
 				String isJack = null;
 				if(split.length>=4){
-					String number = split[1];
-					isJack = split[2];
-					operator = split[3];
+					String number = split[2];
+					isJack = split[3];
+					operator = split[4];
 					Intent updatePhoneNumberIntent = DataService.updatePhoneNumberIntent(context, number, operator, isJack, null);
 					if(updatePhoneNumberIntent!=null)
 						context.startService(updatePhoneNumberIntent);
 				}
 			}
+			res.setResult("OK");
 		}
-		
 		return res;
 	}
-	
+
 
 	/**
 	 * metodo per la registrazione di un nuovo account
@@ -1070,7 +1065,7 @@ extends SmsMultiProvider
 	 * @author Marco Bettiol
 	 * @author Saverio Guardato
 	 */
-	
+
 	//TESTED OK
 	public ResultOperation<String> registerAccount(String number, String password, String email) {
 		ResultOperation<String> res = null;
@@ -1092,7 +1087,7 @@ extends SmsMultiProvider
 	 * @author marcobettiol
 	 * @author Saverio Guardato
 	 */
-	
+
 	//TESTED OK
 	public ResultOperation<String> confirmAccount(String userId, String code) {
 		ResultOperation<String> res = null;
@@ -1117,7 +1112,7 @@ extends SmsMultiProvider
 		setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
 		return res;
 	}
-	
+
 	/**
 	 *
 	 * metodo che prepara il messagio per l'utente,
@@ -1207,7 +1202,7 @@ extends SmsMultiProvider
 
 	public ResultOperation<String> setNotifyType(String notifyType, String registration_id) {
 		String token = mAppPreferencesDao.getLoginString();
-		
+
 		//TODO check credentials
 
 		String url = mDictionary.getUrlForSetNotifyType(token);
@@ -1216,7 +1211,7 @@ extends SmsMultiProvider
 		nvp.add(new BasicNameValuePair(NotifyType.P.NOTIFY_TYPE, notifyType));
 		nvp.add(new BasicNameValuePair(NotifyType.P.REGISTRATION_ID, registration_id));
 		ResultOperation<String> res = performPost(httpclient, url, nvp);
-		
+
 		if(res.hasErrors())
 			return res;
 
@@ -1263,7 +1258,7 @@ extends SmsMultiProvider
 	private HttpClient createDefaultClient(){
 		return createDefaultClient(TIMEOUT);
 	}
-	
+
 	private HttpClient createDefaultClient(int timeout){
 
 		HttpParams params = new BasicHttpParams();
@@ -1271,7 +1266,7 @@ extends SmsMultiProvider
 		HttpConnectionParams.setTcpNoDelay(params, true);
 		HttpConnectionParams.setSoTimeout(params, timeout);
 		HttpConnectionParams.setConnectionTimeout(params, timeout);
-        
+
 		KeyStore trustStore = null;
 		try {
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -1279,7 +1274,7 @@ extends SmsMultiProvider
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        try {
+		try {
 			trustStore.load(null, null);
 		} catch (NoSuchAlgorithmException e1) {
 			// TODO Auto-generated catch block
@@ -1292,7 +1287,7 @@ extends SmsMultiProvider
 			e1.printStackTrace();
 		}
 
-        SSLSocketFactory sf = null;
+		SSLSocketFactory sf = null;
 		try {
 			sf = new MySSLSocketFactory(trustStore);
 		} catch (KeyManagementException e) {
@@ -1308,19 +1303,19 @@ extends SmsMultiProvider
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
-        
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
 
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        registry.register(new Scheme("https", sf, 443));
+		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+		HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
 
-        ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
+		SchemeRegistry registry = new SchemeRegistry();
+		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+		registry.register(new Scheme("https", sf, 443));
 
-        return new DefaultHttpClient(ccm, params);
+		ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
+
+		return new DefaultHttpClient(ccm, params);
 	}
 
 
@@ -1359,72 +1354,72 @@ extends SmsMultiProvider
 			mLogFacility.e(LOG_HASH, sb.toString());
 		}
 	}
-	
-	
+
+
 	public class MySSLSocketFactory extends SSLSocketFactory {
-	    SSLContext sslContext = SSLContext.getInstance("TLS");
+		SSLContext sslContext = SSLContext.getInstance("TLS");
 
-	    public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-	        super(truststore);
+		public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+			super(truststore);
 
-	        TrustManager tm = new X509TrustManager() {
-	            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-	            }
+			TrustManager tm = new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+				}
 
-	            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-	            }
+				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+				}
 
-	            public X509Certificate[] getAcceptedIssuers() {
-	                return null;
-	            }
-	        };
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+			};
 
-	        sslContext.init(null, new TrustManager[] { tm }, null);
-	    }
+			sslContext.init(null, new TrustManager[] { tm }, null);
+		}
 
-	    @Override
-	    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
-	        return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
-	    }
+		@Override
+		public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+			return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
+		}
 
-	    @Override
-	    public Socket createSocket() throws IOException {
-	        return sslContext.getSocketFactory().createSocket();
-	    }
+		@Override
+		public Socket createSocket() throws IOException {
+			return sslContext.getSocketFactory().createSocket();
+		}
 	}
 
-	
+
 	//http://foo.jasonhudgins.com/2009/08/http-connection-reuse-in-android.html
 
 	public static class HttpClientFactory {
 
-	    private static DefaultHttpClient client;
+		private static DefaultHttpClient client;
 
-	    public synchronized static DefaultHttpClient getThreadSafeClient() {
-	  
-	        if (client != null)
-	            return client;
-	         
-	        client = new DefaultHttpClient();
-	        
-	        ClientConnectionManager mgr = client.getConnectionManager();
-	        
-	        HttpParams params = client.getParams();
-	        client = new DefaultHttpClient(
-	        new ThreadSafeClientConnManager(params,
-	            mgr.getSchemeRegistry()), params);
-	  
-	        return client;
-	    } 
+		public synchronized static DefaultHttpClient getThreadSafeClient() {
+
+			if (client != null)
+				return client;
+
+			client = new DefaultHttpClient();
+
+			ClientConnectionManager mgr = client.getConnectionManager();
+
+			HttpParams params = client.getParams();
+			client = new DefaultHttpClient(
+					new ThreadSafeClientConnManager(params,
+							mgr.getSchemeRegistry()), params);
+
+			return client;
+		} 
 	}
-	
-	
+
+
 	/**
 	 * Create an exception for empty username or password
 	 * @return
 	 */
 	protected ResultOperation<String> getExceptionForInvalidCredentials() {
-	    mLogFacility.v(LOG_HASH, "Invalid user credential :(");
+		mLogFacility.v(LOG_HASH, "Invalid user credential :(");
 		return new ResultOperation<String>(new Exception(mMessages[MSG_INDEX_INVALID_CREDENTIALS]),ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL);
 	}
 }

@@ -49,6 +49,9 @@ import android.text.TextUtils;
 public class LogicManager extends RainbowLogicManager {
 	//---------- Private fields
 	private static final String LOG_HASH = "LogicManager";
+	public static final String LOGIN_STRING_ERROR = "GENERIC_ERROR";
+	public static final String LOGIN_STRING_CREDENTIALS_ERROR = "CREDENTIALS_ERROR";
+
 
 	protected final AppPreferencesDao mAppPreferencesDao;
 	protected final LogFacility mLogFacility;
@@ -114,11 +117,32 @@ public class LogicManager extends RainbowLogicManager {
 	 * Get the loginstring value
 	 * needed for web operations
 	 */
-	public String getLoginString(Context context, String username, String password) {
+	public ResultOperation<String> getLoginString(Context context, String username, String password) {
 		JacksmsProvider provider = (JacksmsProvider)AppEnv.i(context).getProviderList().get(0);
 		ResultOperation<String> res = provider.getLoginString(username, password);
-		//get and return the login string 	
-		return res.getResult();
+		if(res.hasErrors()){
+			res.setResult(LOGIN_STRING_ERROR);
+			mLogFacility.e(LOG_HASH, res.getException());
+			return res;
+		}
+		String ls = res.getResult();
+		if(!TextUtils.isEmpty(ls)){
+			//check error in reply
+			if(!TextUtils.equals("login", ls.split("\t")[0])){
+				res.setResult(LOGIN_STRING_CREDENTIALS_ERROR);
+				return res;
+			}
+			//get the loginString from result
+			else{
+				res.setResult(ls.split("\t")[1].trim());
+				return res;
+			}
+		}
+		//if it's empty return generic error
+		else{
+			res.setResult(LOGIN_STRING_ERROR);
+			return res;
+		}
 	}
 
 
