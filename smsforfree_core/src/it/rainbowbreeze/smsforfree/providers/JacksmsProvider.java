@@ -88,12 +88,11 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.SlidingDrawer;
 
 import com.jacksms.android.data.Contact;
 import com.jacksms.android.data.DataService;
 import com.jacksms.android.data.SendService;
-import com.jacksms.android.data.JmsParser.JmsItem;
+import com.jacksms.android.logic.JmsLogic;
 
 /**
  * 
@@ -204,9 +203,9 @@ extends SmsMultiProvider
 	 * get LoginString for http operations
 	 */
 	public ResultOperation<String> getLoginString(String username, String password){
-		if(TextUtils.isEmpty(username))username = getParameterValue(PARAM_INDEX_USERNAME);
-		if(TextUtils.isEmpty(password))password = getParameterValue(PARAM_INDEX_PASSWORD);
-
+		if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password))
+			return getExceptionForInvalidCredentials();
+		
 		String url = mDictionary.getUrlForLoginString();
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("user", username));
@@ -280,7 +279,10 @@ extends SmsMultiProvider
 		long currentTime = System.currentTimeMillis();
 		ArrayList<StorageMessage> messages = null;
 		if(queue!=null){
+			long mostRecent=0;
+			
 			messages = new ArrayList<StorageMessage>(queue.length());
+			JmsLogic jl = JmsLogic.i(mBaseContext);
 			for(int i = 0 ; i < queue.length(); i++){
 				StorageMessage storageMessage = null;
 				String sender = "";
@@ -288,13 +290,14 @@ extends SmsMultiProvider
 
 					JSONObject msg = queue.getJSONObject(i);
 					msg.getInt("msg_id");
-					msg.getString("msg_time");
+					String date = msg.getString("msg_time");
 					long diff= msg.getLong("timediff");
 					String message = msg.getString("message");
 					sender = msg.getString("sender");
 
 					storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff);
 					messages.add(storageMessage);
+					mostRecent = Math.max(mostRecent, jl.parseFreesmeeDate(date));
 				}catch (Exception e) {
 					setSmsProviderException(res, mMessages[MSG_INDEX_SERVER_ERROR_UNKNOW]);
 					mLogFacility.e(LOG_HASH, "Error parsing message Queue");
@@ -307,6 +310,7 @@ extends SmsMultiProvider
 						mBaseContext.startService(intent);
 				}
 			}
+			jl.updateMostRecentJmsTimestamp(mostRecent);
 		}
 		if(messages==null || messages.isEmpty()){
 			res.setResult(mBaseContext.getString(R.string.Jms_download_ok_no_new_message));
@@ -390,7 +394,7 @@ extends SmsMultiProvider
 			int upgrade = json.optInt("upgrade"); // c'è una nuova versione del client? non gestito
 
 			int choose; // status indica un errore dovuta alla richiseta
-			// result invece dovuta al servizio di invio
+			// result invece un errore dovuto al servizio di invio
 			if(status==0)
 				choose=status;
 			else
@@ -407,6 +411,8 @@ extends SmsMultiProvider
 				//ok
 				updatePhoneNumberData(destination, serviceId, carrier, isfs);
 				res.setResult(prepareOkMessageForUser(message,sent));
+				if(queue!=0)
+					downloadQueueWithoutAck();
 				break;
 			default:
 				//captcha
