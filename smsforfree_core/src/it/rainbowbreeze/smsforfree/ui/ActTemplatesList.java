@@ -33,13 +33,20 @@ import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.AbstractCursor;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AlphabetIndexer;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 /**
@@ -80,20 +87,10 @@ public class ActTemplatesList
 		sendServiceList.setTemplateMode(true);
 		mTemplates = sendServiceList.getSimpleList();
 
-		setListAdapter(new ArrayAdapter<SendService>(this, R.layout.user_service_item, mTemplates){
-
-			@Override
-			public View getView(int position, View convertView,
-					ViewGroup parent) {
-				if(convertView==null)
-					convertView = ActTemplatesList.this.getLayoutInflater().inflate(R.layout.user_service_item, null);
-				ImageView iconView = (ImageView)convertView.findViewById(R.id.service_icon);
-				TextView nameView = (TextView)convertView.findViewById(R.id.service_name);
-				iconView.setImageDrawable(mTemplates.get(position).getIcon());
-				nameView.setText(mTemplates.get(position).getName());
-				
-				return convertView;
-			}});
+		//setListAdapter(new TemplateAdapter(this, R.layout.user_service_item, mTemplates));
+	
+		setListAdapter(new TemplateAdapter(this, new TemplateCursor(mTemplates)));
+		getListView().setFastScrollEnabled(true);
 	}
 	
 	@Override
@@ -127,4 +124,120 @@ public class ActTemplatesList
 		}
 	}
 
+	
+	private class TemplateAdapter extends  CursorAdapter implements SectionIndexer{
+
+		public TemplateAdapter(Context context, TemplateCursor cursor) {
+			super(context, cursor, false);
+			mAlphabetIndexer = new AlphabetIndexer(cursor,1, "#ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		}
+
+
+
+		private AlphabetIndexer mAlphabetIndexer;
+
+		@Override
+		public int getPositionForSection(int i) {
+			return mAlphabetIndexer.getPositionForSection(i);
+		}
+
+		@Override
+		public int getSectionForPosition(int i) {
+			return mAlphabetIndexer.getSectionForPosition(i);
+		}
+
+		@Override
+		public Object[] getSections() {
+			return mAlphabetIndexer.getSections();
+		}
+
+
+
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup viewgroup) {
+			return  ActTemplatesList.this.getLayoutInflater().inflate(R.layout.user_service_item, null);
+		}
+
+
+
+		@Override
+		public void bindView(View convertView, Context context, Cursor cursor) {
+			int position = cursor.getPosition();
+			ImageView iconView = (ImageView)convertView.findViewById(R.id.service_icon);
+			TextView nameView = (TextView)convertView.findViewById(R.id.service_name);
+			iconView.setImageDrawable(mTemplates.get(position).getIcon());
+			nameView.setText(mTemplates.get(position).getName());
+			
+		}
+		
+	}
+	
+	
+	private static class TemplateCursor extends AbstractCursor{
+
+		List<SendService> mTemplates;
+		
+		private int position= 0;
+		public TemplateCursor(List<SendService> templates) {
+			mTemplates = templates;
+		}
+		
+		
+		@Override
+		public boolean onMove(int oldPosition, int newPosition) {
+			position=newPosition;
+			return super.onMove(oldPosition, newPosition);
+			
+		}
+
+
+		@Override
+		public String[] getColumnNames() {
+			return new String[]{BaseColumns._ID,"name"};
+		}
+
+		@Override
+		public int getCount() {
+			return mTemplates.size();
+		}
+
+		@Override
+		public double getDouble(int i) {
+			return 0;
+		}
+
+		@Override
+		public float getFloat(int i) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getInt(int i) {
+			return 0;
+		}
+
+		@Override
+		public long getLong(int i) {
+			return 0;
+		}
+
+		@Override
+		public short getShort(int i) {
+			return 0;
+		}
+
+		@Override
+		public String getString(int i) {
+			return mTemplates.get(position).getName();
+		}
+
+		@Override
+		public boolean isNull(int i) {
+			return false;
+		}
+		
+	}
+	
+	
 }

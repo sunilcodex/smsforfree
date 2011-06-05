@@ -36,7 +36,11 @@ import it.rainbowbreeze.smsforfree.helper.Base64Helper;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary.NotifyType;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -56,6 +60,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -1237,11 +1242,14 @@ extends SmsMultiProvider
 		try {
 			HttpPost httpPost = new HttpPost(url);
 			if(nvp!=null)
-				httpPost.setEntity(new UrlEncodedFormEntity(nvp));
+				httpPost.setEntity(new UrlEncodedFormEntity(nvp, HTTP.UTF_8));
 			HttpResponse response = client.execute(httpPost);
 			HttpEntity entity = response.getEntity();
-			if(entity!=null)
-				reply = EntityUtils.toString(entity);
+			if(entity!=null) {
+				//reply = EntityUtils.toString(entity); accenti errati
+				reply = new String (EntityUtils.toByteArray(entity));
+			}
+				
 		} catch (IllegalArgumentException e) {
 			return new ResultOperation<String>(e, ResultOperation.RETURNCODE_ERROR_APPLICATION_ARCHITECTURE);
 		} catch (ClientProtocolException e) {
@@ -1428,4 +1436,5 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Invalid user credential :(");
 		return new ResultOperation<String>(new Exception(mMessages[MSG_INDEX_INVALID_CREDENTIALS]),ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL);
 	}
+
 }
