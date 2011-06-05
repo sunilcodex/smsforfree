@@ -406,7 +406,7 @@ extends ListActivity
 	 */
 	private class ServicesAdapter extends BaseAdapter {
 
-		private Context context;
+		private ActSubservicesList mContext;
 		private SendServiceList servList;
 
 		/*
@@ -414,7 +414,7 @@ extends ListActivity
 		 */
 		public ServicesAdapter(ActSubservicesList actSbL,
 				List<SmsService> svList) {
-			context = actSbL;
+			mContext = actSbL;
 			servList = new SendServiceList(actSbL, svList, false, false);
 		}
 
@@ -436,45 +436,14 @@ extends ListActivity
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if(convertView==null){
-				convertView = new ServicesAdapterView(context);
+				convertView = mContext.getLayoutInflater().inflate(R.layout.actsubservice_item, null);
 			}
-			TextView name = (TextView)convertView.findViewById(1);
-			ImageView image = (ImageView) convertView.findViewById(2);
+			TextView name = (TextView)convertView.findViewById(R.id.service_name);
+			ImageView image = (ImageView) convertView.findViewById(R.id.services_list_service_icon);
 			SendService sendService = servList.getSimpleList().get(position);
 			name.setText(sendService.getName());
 			image.setImageDrawable(sendService.getIcon());
 			return convertView;
-		}
-	}
-
-	/**
-	 * Altra classe interna per la lista dei servizi
-	 * questa si occupa del linearLayout 
-	 * @author Saverio Guardato
-	 */
-	private class ServicesAdapterView extends RelativeLayout{
-
-		public ServicesAdapterView(Context context) {
-			super(context);
-						
-			RelativeLayout.LayoutParams nameParams = new RelativeLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			nameParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-			
-			TextView name = new TextView(context);
-			name.setTextSize(20f);
-			name.setId(1);
-			name.setPadding(10, 10, 10, 10);
-			addView(name, nameParams);
-
-			RelativeLayout.LayoutParams logoParams = new RelativeLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			logoParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			
-			ImageView icon = new ImageView(context);
-			icon.setId(2);
-			addView(icon, logoParams);
-
 		}
 	}
 

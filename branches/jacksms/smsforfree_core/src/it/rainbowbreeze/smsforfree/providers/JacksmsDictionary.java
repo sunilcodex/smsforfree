@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIUtils;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -182,9 +184,13 @@ public class JacksmsDictionary
 		//TODO mancano alcuni parametri
 		String url = getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ADVERTISE, FORMAT_CSV);
 		StringBuilder sb = new StringBuilder(url);
-		sb.append("&lat=").append(Double.toString(location.getLatitude()))
-		.append("&long=").append(Double.toString(location.getLongitude()))
-		.append("&text=").append(message);
+		try {
+			sb.append("&lat=").append(Double.toString(location.getLatitude()))
+			.append("&long=").append(Double.toString(location.getLongitude()))
+			.append("&text=").append(URLEncoder.encode(message,"UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			//TODO log
+		}
 		return sb.toString();
 	}
 

@@ -55,7 +55,7 @@ public class AppEnv
     public static AppEnv i(Context context) {
         synchronized (mSyncObject) {
             if (null == mInstance)
-                mInstance = new AppEnv(context);
+                mInstance = new AppEnv(context.getApplicationContext());
         }
         return mInstance;
     }
@@ -72,7 +72,7 @@ public class AppEnv
 	public final static String APP_INTERNAL_NAME = "JackSms";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "0518";
+	public final static String APP_INTERNAL_VERSION = "0605";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "sa.guarda@gmail.com;jamiro.it@gmail.com";
