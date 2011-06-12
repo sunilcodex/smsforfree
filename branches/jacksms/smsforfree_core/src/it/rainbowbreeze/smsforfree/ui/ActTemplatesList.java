@@ -85,6 +85,7 @@ public class ActTemplatesList
 		if (null == mProvider) return;
 		SendServiceList sendServiceList = new SendServiceList(this, mProvider.getAllTemplates(), false, false);
 		sendServiceList.setTemplateMode(true);
+		sendServiceList.sortByName();
 		mTemplates = sendServiceList.getSimpleList();
 
 		//setListAdapter(new TemplateAdapter(this, R.layout.user_service_item, mTemplates));

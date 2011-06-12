@@ -158,11 +158,11 @@ extends SmsMultiProvider
 
 	@Override
 	public String getId()
-	{ return "JackSMS"; }
+	{ return "Freesmee"; }
 
 	@Override
 	public String getName()
-	{ return "JackSMS"; }
+	{ return "Freesmee"; }
 
 	@Override
 	public int getParametersNumber()
@@ -300,7 +300,7 @@ extends SmsMultiProvider
 					String message = msg.getString("message");
 					sender = msg.getString("sender");
 
-					storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff);
+					storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff*1000);
 					messages.add(storageMessage);
 					mostRecent = Math.max(mostRecent, jl.parseFreesmeeDate(date));
 				}catch (Exception e) {
