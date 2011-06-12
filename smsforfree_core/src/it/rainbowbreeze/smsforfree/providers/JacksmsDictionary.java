@@ -67,6 +67,8 @@ public class JacksmsDictionary
 	//private static final String FORMAT_JSON = "jsn";
 
 	public static final String STREAM_HOSTNAME = "stream.freesmee.com";
+	public static final int STEAM_PORT= 80;
+	
 	public static final String URL_HOST_AVAILABLE = "http://"+STREAM_HOSTNAME+"/";
 	private static final String URL_STREAM_BASE = "https://"+STREAM_HOSTNAME+"/";
 	private static final String URL_Q_BASE = "https://api.freesmee.com/";
