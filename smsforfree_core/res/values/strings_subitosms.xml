@@ -22,7 +22,7 @@
     <string name="subitosms_username_desc">Username</string>
     <string name="subitosms_password_desc">Password</string>
     <string name="subitosms_sender_desc">Sender</string>
-    <string name="subitosms_description">Send SMS to Italy and other 178 countries at less than 7 eurocent. If you aren\'t registered to SubitoSMS, &lt;a href=\'http://www.subitosms.it\'&gt;click here&lt;/a&gt;.</string>
+    <string name="subitosms_description">Send SMS to Italy and other 178 countries. If you aren\'t registered to SubitoSMS, &lt;a href=\'http://www.subito.mobi/registra\'&gt;click here&lt;/a&gt;.</string>
     <string name="subitosms_commandCheckCredentials">Check credentials</string>
     <string name="subitosms_commandCheckCredits">Check credit</string>
     <string name="subitosms_msg_invalidCredentials">Invalid SubitoSMS credentials :(</string>

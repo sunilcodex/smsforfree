@@ -101,7 +101,7 @@ public class SubitosmsProvider
 	
 	@Override
 	public int getMaxMessageLenght()
-	{ return 160; }
+	{ return 612; }
     
 	
 	
