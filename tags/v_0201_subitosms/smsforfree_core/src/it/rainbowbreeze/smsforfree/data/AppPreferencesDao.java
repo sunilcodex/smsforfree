@@ -67,7 +67,7 @@ public class AppPreferencesDao
 	//---------- Public Methods
 
     public boolean getAutoClearMessage()
-    { return mSettings.getBoolean(PROP_AUTO_CLEAR_MESSAGE, false); }
+    { return mSettings.getBoolean(PROP_AUTO_CLEAR_MESSAGE, true); }
     public void setAutoClearMessage(boolean newValue)
     { mEditor.putBoolean(PROP_AUTO_CLEAR_MESSAGE, newValue); }
     

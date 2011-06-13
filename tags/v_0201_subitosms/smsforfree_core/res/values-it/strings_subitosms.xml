@@ -22,7 +22,7 @@
     <string name="subitosms_username_desc">Username</string>
     <string name="subitosms_password_desc">Password</string>
     <string name="subitosms_sender_desc">Numero mittente</string>
-    <string name="subitosms_description">Invia SMS in Italia e altri 178 paesi a medo di 7 eurocent. Se non sei ancora registrato a SubitoSMS, &lt;a href=\'http://www.subitosms.it\'&gt;clicca qui&lt;/a&gt;.</string>
+    <string name="subitosms_description">Invia SMS in Italia e altri 178 paesi. Se non sei ancora registrato a SubitoSMS, &lt;a href=\'http://www.subito.mobi/registra\'&gt;clicca qui&lt;/a&gt;.</string>
     <string name="subitosms_commandCheckCredentials">Verifica credenziali</string>
     <string name="subitosms_commandCheckCredits">Credito disponibile</string>
     <string name="subitosms_msg_invalidCredentials">Credenziali SubitoSMS non valide :(</string>
