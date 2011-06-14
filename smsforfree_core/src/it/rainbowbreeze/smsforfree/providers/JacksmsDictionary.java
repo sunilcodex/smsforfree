@@ -97,7 +97,7 @@ public class JacksmsDictionary
 	private static final String ACTION_VERIFY_REGISTER = "verifyRegister";
 	
 	//TODO: get version from global variable or settings
-	public static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION;
+	public static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION+"_"+AppEnv.APP_INTERNAL_VERSION;
 	public static final String TAB_SEPARATOR = "\t";
 
 	private static final String USER_TEST = "guest";
