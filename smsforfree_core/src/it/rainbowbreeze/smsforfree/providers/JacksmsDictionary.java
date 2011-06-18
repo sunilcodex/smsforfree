@@ -32,21 +32,17 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIUtils;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jacksms.android.data.Contact;
-
 import android.location.Location;
 import android.text.TextUtils;
-import android.widget.SlidingDrawer;
+
+import com.freesmee.android.data.Contact;
 
 /**
  * 

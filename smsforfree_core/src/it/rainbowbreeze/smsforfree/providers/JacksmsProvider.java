@@ -36,11 +36,7 @@ import it.rainbowbreeze.smsforfree.helper.Base64Helper;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary.NotifyType;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -60,7 +56,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -94,10 +89,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.jacksms.android.data.Contact;
-import com.jacksms.android.data.DataService;
-import com.jacksms.android.data.SendService;
-import com.jacksms.android.logic.JmsLogic;
+import com.freesmee.android.data.Contact;
+import com.freesmee.android.data.DataService;
+import com.freesmee.android.data.SendService;
+import com.freesmee.android.logic.JmsLogic;
 
 /**
  * 
