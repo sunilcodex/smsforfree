@@ -31,20 +31,13 @@ import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.ExecuteProviderCommandThread;
 import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
 
-import java.io.IOException;
 import java.util.List;
-
-import com.jacksms.android.data.SendService;
-import com.jacksms.android.data.SendServiceList;
 
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -57,9 +50,11 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.freesmee.android.data.SendService;
+import com.freesmee.android.data.SendServiceList;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -194,7 +189,7 @@ extends ListActivity
 			}
 			else{
 				mActivityHelper.createInformativeDialog(this, "",
-						getText(com.jacksms.android.R.string.connection_error).toString(), "Ok").show();
+						getText(com.freesmee.android.R.string.connection_error).toString(), "Ok").show();
 			}
 			break;			
 		}

@@ -19,19 +19,14 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.jacksms.android.data.SendService;
-import com.jacksms.android.data.SendServiceList;
-import com.jacksms.android.gui.ComposeMessageActivity;
-
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.SmsService;
 import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
+
+import java.util.List;
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -42,12 +37,14 @@ import android.provider.BaseColumns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AlphabetIndexer;
-import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+
+import com.freesmee.android.data.SendService;
+import com.freesmee.android.data.SendServiceList;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
