@@ -310,6 +310,7 @@ extends SmsMultiProvider
 						mBaseContext.startService(intent);
 				}
 			}
+			
 			jl.updateMostRecentJmsTimestamp(mostRecent);
 		}
 		if(messages==null || messages.isEmpty()){

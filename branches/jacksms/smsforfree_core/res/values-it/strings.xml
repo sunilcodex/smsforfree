@@ -168,9 +168,9 @@
 
     <!-- ActAbout -->
     <string name="actabout_title">%s - Informazioni su...</string>
-    <string name="actabout_lblAuthor">by Marco, Saverio, Alfredo</string>
+    <string name="actabout_lblAuthor">Sviluppato da\n\nMarco Bettiol,\nSaverio Guardato,\nAlfredo Morresi</string>
     <string name="actabout_lblWebsite">Rainbowbreeze.it</string>
-    <string name="actabout_lblDescription">Questa è una versione Alpha di quella che sarà la nuova versione di JackSms. Per consultare gli ultimi aggiornamenti e lo stato di avanzamento basta leggere il changelog dal menù qui in basso. Per info, segnalazioni o proposte contattare gli sviluppatori.</string>
+    <string name="actabout_lblDescription">Ogni utilizzo o copia per finalità commerciali di questa applicazione o di parte di essa è severamente proibito. Per info, segnalazioni o proposte contattare gli sviluppatori.</string>
     <string name="actabout_lblDescription2">Suggerimenti, traduzioni, grafica, nuovi provider? %s\n\nRingraziamenti: Ilaria Mauric (logo), Robert Harder e Felix Bechstein (library)</string>
     <string name="actabout_lblSentSms">SMS spediti oggi: %s</string>
     <string name="actabout_mnuChangeslog">Changeslog</string>
