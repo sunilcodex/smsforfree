@@ -267,7 +267,7 @@ public class JacksmsDictionary
 			if(!TextUtils.isEmpty(service.getParameterValue(3)))
 			params.add(new BasicNameValuePair("srv_data4", service.getParameterValue(3)));
 			params.add(new BasicNameValuePair("recipient", destination));
-			params.add(new BasicNameValuePair("message", message));
+			params.add(new BasicNameValuePair("message", adjustMessageBody(message)));
 	
 			return params;
 		}
@@ -276,7 +276,7 @@ public class JacksmsDictionary
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("account_id", "1"));
 			params.add(new BasicNameValuePair("recipient", destination));
-			params.add(new BasicNameValuePair("message", message));
+			params.add(new BasicNameValuePair("message", adjustMessageBody(message)));
 	
 			return params;
 		}
@@ -302,7 +302,7 @@ public class JacksmsDictionary
 	 * @param body
 	 * @return
 	 */
-	public String adjustMessageBody(String body) {
+	protected String adjustMessageBody(String body) {
 		body = body.replace("\n", " ");
 		body = body.replace("\t", " ");
 		body = body.replace("\r", " ");
