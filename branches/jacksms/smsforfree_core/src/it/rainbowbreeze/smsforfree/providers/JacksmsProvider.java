@@ -444,7 +444,7 @@ extends SmsMultiProvider
 			// url\thttp://ad.jacksms.it/get/p_koeu718ur4v4xtzh_552kx7s?d=apple
 			String[] split = reply.getResult().trim().split(JacksmsDictionary.TAB_SEPARATOR);
 			if(split.length>=2){
-				if(split[1].startsWith("http://")){
+				if(split[0].toLowerCase().equals("url")){
 					reply.setResult(split[1]);
 					return reply;
 				}
@@ -932,8 +932,9 @@ extends SmsMultiProvider
 
 	//freesmee ok
 	public ResultOperation<String> getAddressBookWithBk(Context context, List<Contact> contacts) {
-		//TODO se la lista contatti è vuota ritorna subito
-
+		if(contacts==null || contacts.isEmpty())
+			return new ResultOperation<String>();
+		
 		ResultOperation<String> res = null;
 
 		String token = mAppPreferencesDao.getLoginString();
@@ -978,7 +979,6 @@ extends SmsMultiProvider
 							context.startService(updatePhoneNumberIntent);
 					}
 				}
-				res.setResult("OK");
 			}
 		}
 		//la lista con i parametri è ora disponibile nel formato scaricato 
@@ -1026,7 +1026,9 @@ extends SmsMultiProvider
 	 */
 	public ResultOperation<String> getAddressBookNoBk(Context context, List<Contact> contacts) {
 
-		//TODO se la lista contatti è vuota ritorna subito
+		if(contacts==null || contacts.isEmpty())
+			return new ResultOperation<String>();
+		
 		ResultOperation<String> res = null;
 		String token = mappPreferenceDao.getLoginString();
 		String url = mDictionary.getUrlForNoBkAddressBook(token);
@@ -1052,7 +1054,6 @@ extends SmsMultiProvider
 						context.startService(updatePhoneNumberIntent);
 				}
 			}
-			res.setResult("OK");
 		}
 		return res;
 	}
