@@ -66,13 +66,13 @@ public class AppEnv
 	public final static String APP_PREFERENCES_KEY = "JackSmsPrefs";
 
 	/** Application version displayed to the user (about activity etc) */
-	public final static String APP_DISPLAY_VERSION = "3.0";
+	public final static String APP_DISPLAY_VERSION = "1.0";
 
 	/** Application name used during the ping of update site */
 	public final static String APP_INTERNAL_NAME = "JackSms";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "a0703";
+	public final static String APP_INTERNAL_VERSION = "a0705";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "dev+android@freesmee.com";

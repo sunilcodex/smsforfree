@@ -219,7 +219,11 @@ extends SmsMultiProvider
 
 
 
-	public ResultOperation<String> downloadQueueWithoutAck(){
+	public synchronized ResultOperation<String> downloadQueueWithoutAck(){
+		
+		// questo metodo può essere chiamato da thread diversi per cui è sincronizzato
+		// altrimenti potrebbe succedere di ricevere i messaggi duplicati
+		
 		String loginS = mappPreferenceDao.getLoginString();
 		if(TextUtils.isEmpty(loginS))
 			return getExceptionForInvalidCredentials();
@@ -295,7 +299,10 @@ extends SmsMultiProvider
 					String message = msg.getString("message");
 					sender = msg.getString("sender");
 
-					storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff*1000);
+					storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, System.currentTimeMillis());
+					
+					//FIXME
+					//storageMessage = StorageMessage.prepareNewReceivedMessage(message, sender, currentTime-diff*1000);
 					messages.add(storageMessage);
 					mostRecent = Math.max(mostRecent, jl.parseFreesmeeDate(date));
 				}catch (Exception e) {
@@ -413,7 +420,7 @@ extends SmsMultiProvider
 				updatePhoneNumberData(destination, serviceId, carrier, isfs);
 				res.setResult(prepareOkMessageForUser(message,sent));
 				if(queue!=0)
-					downloadQueueWithoutAck();
+					JmsLogic.i(mBaseContext).receiveJms(true);
 				break;
 			default:
 				//captcha
