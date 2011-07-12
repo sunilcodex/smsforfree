@@ -58,7 +58,6 @@ public class AppPreferencesDao
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
     protected static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
     protected static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
-    protected static final String PROP_DEFAULT_SMS = "defaultSmsSent";
     
     protected static final String TEMPLATES_SEPARATOR = "//";
 	
@@ -207,11 +206,6 @@ public class AppPreferencesDao
     {return mSettings.getBoolean(PROP_ADBOOK_DONE, false); }
 	public void setAdBookDone(boolean newValue) 
 	{mEditor.putBoolean(PROP_ADBOOK_DONE, newValue);}
-	
-	public boolean isFirstDefaultSms() 
-	{ return mSettings.getBoolean(PROP_DEFAULT_SMS, true);}
-	public void setFirstDefaultSms(boolean newValue)
-	{mEditor.putBoolean(PROP_DEFAULT_SMS, newValue);}
 
 	
     

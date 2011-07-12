@@ -70,6 +70,7 @@
         <activity
             android:name="it.rainbowbreeze.smsforfree.ui.ActSettingsSmsService"
             android:label="@string/common_appNameForDisplay"
+            android:windowSoftInputMode="stateHidden"
         />
         
         <activity

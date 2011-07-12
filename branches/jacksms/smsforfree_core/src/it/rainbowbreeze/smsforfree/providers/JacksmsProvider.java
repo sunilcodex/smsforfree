@@ -93,6 +93,7 @@ import com.freesmee.android.data.Contact;
 import com.freesmee.android.data.DataService;
 import com.freesmee.android.data.SendService;
 import com.freesmee.android.logic.JmsLogic;
+import com.freesmee.android.logic.JmsNotificationLogic;
 
 /**
  * 
@@ -1285,43 +1286,25 @@ extends SmsMultiProvider
 		HttpConnectionParams.setSoTimeout(params, timeout);
 		HttpConnectionParams.setConnectionTimeout(params, timeout);
 
-		KeyStore trustStore = null;
-		try {
-			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		} catch (KeyStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			trustStore.load(null, null);
-		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (CertificateException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+	
 
-		SSLSocketFactory sf = null;
-		try {
-			sf = new MySSLSocketFactory(trustStore);
-		} catch (KeyManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnrecoverableKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+//		SSLSocketFactory sf = null;
+//		try {
+//			sf = new MySSLSocketFactory(trustStore);
+//		} catch (KeyManagementException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (NoSuchAlgorithmException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (KeyStoreException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (UnrecoverableKeyException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
 
 		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
@@ -1329,7 +1312,7 @@ extends SmsMultiProvider
 
 		SchemeRegistry registry = new SchemeRegistry();
 		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-		registry.register(new Scheme("https", sf, 443));
+		registry.register(new Scheme("https", MySSLSocketFactory.getInstance(), 443));
 
 		ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
 
@@ -1374,7 +1357,55 @@ extends SmsMultiProvider
 	}
 
 
-	public class MySSLSocketFactory extends SSLSocketFactory {
+	public static class MySSLSocketFactory extends SSLSocketFactory {
+
+		private static MySSLSocketFactory mySSLSocketFactory;
+		
+		public static SSLSocketFactory getInstance(){
+			synchronized (MySSLSocketFactory.class) {
+				if(mySSLSocketFactory==null){
+					KeyStore trustStore = null;
+						try {
+							trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+						} catch (KeyStoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						try {
+							trustStore.load(null, null);
+						} catch (NoSuchAlgorithmException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (CertificateException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						};
+						
+						try {
+							mySSLSocketFactory = new MySSLSocketFactory(trustStore);
+						} catch (KeyManagementException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchAlgorithmException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (KeyStoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (UnrecoverableKeyException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						mySSLSocketFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+						
+				}
+				return mySSLSocketFactory;
+			}
+		}
+		
 		SSLContext sslContext = SSLContext.getInstance("TLS");
 
 		public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {

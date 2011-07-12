@@ -64,6 +64,7 @@ public class JacksmsDictionary
 
 	public static final String STREAM_HOSTNAME = "stream.freesmee.com";
 	public static final int STEAM_PORT= 80;
+	public static final int STEAM_SECURE_PORT= 443;
 	
 	public static final String URL_HOST_AVAILABLE = "http://"+STREAM_HOSTNAME+"/";
 	private static final String URL_STREAM_BASE = "https://"+STREAM_HOSTNAME+"/";
