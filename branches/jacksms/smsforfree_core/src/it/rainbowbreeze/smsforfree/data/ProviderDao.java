@@ -71,7 +71,9 @@ public class ProviderDao
 	protected final static String XMLNODE_PARAMETERFORMAT = "Format";
 	protected final static String XMLNODE_SUPPORTED_OPERATORS = "Operators";
 	protected final static String XMLNODE_TYPE = "Type";
-	protected final static String XMLNODE_VERSION="Version";
+	protected final static String XMLNODE_VERSION = "Version";
+	protected final static String XMLNODE_SINGLE_LENGTH = "SingleLength";
+	protected final static String XMLNODE_DIVISOR = "Divisor";
 	protected final static String XMLATTRIBUTE_PARAMETERSNUMBER = "ParametersNumber";
 	
 	protected final static int PROVIDERDATA_PARAMETERS = 1;
@@ -348,6 +350,16 @@ public class ProviderDao
 		serializer.text(parseString(service.getVersion()));
 		serializer.endTag("", XMLNODE_VERSION);
 		
+		//freesmee
+		serializer.startTag("", XMLNODE_SINGLE_LENGTH);
+		serializer.text(Integer.toString(service.getSingleLength()));
+		serializer.endTag("", XMLNODE_SINGLE_LENGTH);
+		
+		//freesmee
+		serializer.startTag("", XMLNODE_DIVISOR);
+		serializer.text(Integer.toString(service.getDivisorLength()));
+		serializer.endTag("", XMLNODE_DIVISOR);
+		
 		serializer.startTag("", XMLNODE_DESCRIPTION);
 		serializer.text(parseString(service.getDescription()));
 		serializer.endTag("", XMLNODE_DESCRIPTION);
@@ -560,6 +572,10 @@ public class ProviderDao
 					service.setServiceType(Integer.parseInt(parser.nextText())); //jack
 				}else if(name.equalsIgnoreCase(XMLNODE_VERSION)){
 					service.setVersion(parser.nextText()); //jack
+				}else if(name.equalsIgnoreCase(XMLNODE_SINGLE_LENGTH)){
+					service.setSingleLength(Integer.parseInt(parser.nextText()));
+				}else if(name.equalsIgnoreCase(XMLNODE_DIVISOR)){
+					service.setDivisorLength(Integer.parseInt(parser.nextText()));
 				}
 				break;
 				
