@@ -83,6 +83,11 @@ public abstract class SmsService
 	/** Max length of sms message */
 	public abstract int getMaxMessageLenght();
 	
+
+	public abstract int getSingleLength();
+
+	public abstract int getDivisorLength();
+	
 	/** Referring template */
 	protected String mTemplateId;
 	public String getTemplateId()

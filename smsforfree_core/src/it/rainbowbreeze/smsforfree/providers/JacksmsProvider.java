@@ -363,6 +363,7 @@ extends SmsMultiProvider
 		params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
 		}
 		HttpClient client = createDefaultClient();
+	
 		res = performPost(client, url, params);
 		//checks for errors
 		if(res.hasErrors())
@@ -1140,7 +1141,7 @@ extends SmsMultiProvider
 	 * @author marcobettiol 
 	 */
 	private String prepareOkMessageForUser(String detailMessage, int sent){
-		if(detailMessage==null)
+		if(detailMessage==null || TextUtils.equals(detailMessage, "null"))
 			detailMessage="";
 		String messageInLowerCase=detailMessage.toLowerCase();
 		//TODO marco, dovrebbe essere internazionalizzato

@@ -263,4 +263,23 @@ public abstract class SmsMultiProvider
 		}
 	}
 	
+	
+	@Override
+	public int getSingleLength() {
+		if (null == mSelectedService){
+			return 0;
+		} else {
+			return mSelectedService.getSingleLength();
+		}
+	}
+
+	@Override
+	public int getDivisorLength() {
+		if (null == mSelectedService){
+			return 0;
+		} else {
+			return mSelectedService.getDivisorLength();
+		}
+	}
+	
 }

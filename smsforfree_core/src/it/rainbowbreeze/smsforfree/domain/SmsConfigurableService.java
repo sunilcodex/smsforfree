@@ -101,6 +101,18 @@ public class SmsConfigurableService
 	public void setMaxMessageLenght(int value)
 	{ mMaxMessageLenght = value; }
 
+	protected int mSingleLength;
+	@Override
+	public int getSingleLength() {return 0;}
+	
+	public void setSingleLength(int value){ mSingleLength = value;}
+
+	protected int mDivisorLength;
+	@Override
+	public int getDivisorLength() {return mDivisorLength;}
+	
+	public void setDivisorLength(int value){ mDivisorLength = value;}
+
 	
 	
 	
