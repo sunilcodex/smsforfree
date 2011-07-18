@@ -133,6 +133,9 @@ extends SmsMultiProvider
 
 	private Context mBaseContext;
 
+	
+	private static final int MYJOY_TIMEOUT = 180000; //very long, slow site. 
+	private static final String MYJOY_TEMPLATE_ID = Integer.toString(86);
 
 	//---------- Constructors
 	public JacksmsProvider(
@@ -356,13 +359,20 @@ extends SmsMultiProvider
 		String url = mDictionary.getStreamUrlForSendingMessage(loginS);
 
 		List<NameValuePair> params;
+		HttpClient client = null;
 		if(serviceId.equals(SendService.Ids.JMS)){
 			params = mDictionary.getParamsForSendingJms(destination, messageBody);
+			createDefaultClient();
 		}
 		else{SmsService service = getSubservice(serviceId);
-		params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
+			params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
+			if(TextUtils.equals(service.getTemplateId(),MYJOY_TEMPLATE_ID)){
+				client = createDefaultClient(MYJOY_TIMEOUT);
+			}
 		}
-		HttpClient client = createDefaultClient();
+		
+		if(client==null)
+			client = createDefaultClient();
 	
 		res = performPost(client, url, params);
 		//checks for errors
