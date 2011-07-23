@@ -72,7 +72,7 @@ public class AppEnv
 	public final static String APP_INTERNAL_NAME = "JackSms";
     
 	/** Application version for internal use (update, crash report etc) */
-	public final static String APP_INTERNAL_VERSION = "a0718";
+	public final static String APP_INTERNAL_VERSION = "a0723";
 
 	/** address where send log */
 	public final static String EMAIL_FOR_LOG = "dev+android@freesmee.com";
@@ -98,9 +98,6 @@ public class AppEnv
 	/** platform - dependent newline char */
 	public final static String LINE_SEPARATOR = System.getProperty("line.separator");	
 	
-	/** loginString value for http request on stream server */
-	public static String LOGIN_STRING = null;
-	
 	
 	/** List of providers */
 	protected final List<SmsProvider> mProviderList = new ArrayList<SmsProvider>();
@@ -121,12 +118,6 @@ public class AppEnv
 	
 		
 	//---------- Public methods
-
-	public String getLoginString()
-	{return LOGIN_STRING;}
-	
-	public void setLoginString(String value)
-	{LOGIN_STRING = value;}
 	
     public LogFacility getLogFacility()
     { return checkNotNull(RainbowServiceLocator.get(LogFacility.class), "LogFacility"); }

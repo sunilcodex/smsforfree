@@ -225,7 +225,7 @@ extends ListActivity
 			mTempService = service;
 			mProvider.getAllSubservices().remove(service);
 			Dialog d = mActivityHelper.createYesNoDialog(this,
-					"JackSms",
+					"Freesmee",
 					"Vuoi che il servizio venga cancellato anche dall'account sul sito?",
 					deleteYesListener, null);
 			d.show();
