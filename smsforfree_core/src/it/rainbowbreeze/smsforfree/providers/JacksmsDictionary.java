@@ -111,6 +111,9 @@ public class JacksmsDictionary
 	};
 
 
+	
+
+	
 
 	public static JacksmsDictionary getInstance(LogFacility logFacility){
 		synchronized (JacksmsDictionary.class) {
@@ -334,6 +337,7 @@ public class JacksmsDictionary
 		} catch (IOException e) {
 			decodedCaptcha = null;
 		}
+		new String(decodedCaptcha).toString();
 		return decodedCaptcha;
 	}
 
@@ -874,5 +878,75 @@ public class JacksmsDictionary
 	}
 	
 	
+	
+	//
+	// UDP Stuff
+	//
+	
+	public static final String UDP_HOST="udp.freesmee.com";
+	public static final int UDP_PORT=5555;
+	
+	public String getUDPParamsForSendingMessageByTemplate(String token,
+			SmsService service,
+			String destination,
+			String message)
+			{
+		
+			StringBuilder sb = new StringBuilder();
+			
+			//"0token versione service_id srv_data1 srv_data2 srv_data3 srv_data4 recipient message"
+			
+			sb.append("0").append(token).append(TAB_SEPARATOR)
+			.append(PARAM_CLIENTVERSION_VALUE).append(TAB_SEPARATOR)
+			.append(service.getTemplateId()).append(TAB_SEPARATOR)
+			.append(service.getParameterValue(0)).append(TAB_SEPARATOR)
+			.append(service.getParameterValue(1)).append(TAB_SEPARATOR)
+			.append(service.getParameterValue(2)).append(TAB_SEPARATOR)
+			.append(service.getParameterValue(3)).append(TAB_SEPARATOR)
+			.append(destination).append(TAB_SEPARATOR)
+			.append(message);
+			return sb.toString();
+		}
+	
+	    public String getUDPParamsForSendingJms(String token,
+			String destination,
+			String message)
+			{
+		
+			StringBuilder sb = new StringBuilder();
+			
+			//"1token versione account_id recipient message"
+			
+			sb.append("1").append(token).append(TAB_SEPARATOR)
+			.append(PARAM_CLIENTVERSION_VALUE).append(TAB_SEPARATOR)
+			.append("1").append(TAB_SEPARATOR)
+			.append(destination).append(TAB_SEPARATOR)
+			.append(message);
+			return sb.toString();
+		}
+	    
+	    public String getUDPParamsForGetQueue(String token, String cnf){
+	    	//Rtoken versione ultimo_timestamp
+	    	
+	    	StringBuilder sb = new StringBuilder();
+			
+			sb.append("R").append(token).append(TAB_SEPARATOR)
+			.append(PARAM_CLIENTVERSION_VALUE).append(TAB_SEPARATOR)
+			.append(cnf!=null ? cnf:"");
+			return sb.toString();
+	    }
+	  
+		public String getUDPParamsForSendingCaptcha(String token, String sessionId, String captchaCode)
+		{
+			
+			StringBuilder sb = new StringBuilder();
+			
+			//"2token versione session_id value"
+			sb.append("2").append(token).append(TAB_SEPARATOR)
+			.append(PARAM_CLIENTVERSION_VALUE).append(TAB_SEPARATOR)
+			.append(sessionId).append(TAB_SEPARATOR)
+			.append(captchaCode);
+			return sb.toString();
+		}
 
 }

@@ -42,7 +42,6 @@ public class AppPreferencesDao
     protected static final String PROP_ASK_CONFIRMATION_FOR_SENDING = "AskConfirmationForSending";
     
     protected static final String PROP_LOGIN_STRING = "loginString";
-    protected static final String PROP_JMS_RECEIVE_MODE = "jmsMode";
     
     protected static final String USERNAME_CREDENTIAL = "Username";
     protected static final String PASSWORD_CREDENTIAL = "Password";
@@ -58,6 +57,9 @@ public class AppPreferencesDao
     protected static final String PROP_LASTUSED_SUBSERVICEID = "lastusedSubservice";
     protected static final String PROP_LASTUSED_DESTINATION = "lastusedDestination";
     protected static final String PROP_LASTUSED_MESSAGE = "lastusedMessage";
+    
+    /* salvataggio ultimo timestamp protocollo udp per conferma ricezione messaggi*/
+    protected static final String PROP_UDP_CNF_TIMESTAMP ="udpCnfTimestamp";
     
     protected static final String TEMPLATES_SEPARATOR = "//";
 	
@@ -88,11 +90,6 @@ public class AppPreferencesDao
 	{return mSettings.getString(PROP_DATABASE_SIZE, "");}
 	public void setDatabaseSize(String newValue)
 	{mEditor.putString(PROP_DATABASE_SIZE, newValue);}
-	
-	public String getJmsReceiveMode()
-	{return mSettings.getString(PROP_JMS_RECEIVE_MODE, "");}
-	public void setJmsReceiveMode(String valMode)
-	{mEditor.putString(PROP_JMS_RECEIVE_MODE, valMode);}
 	
 	public String getLoginString()
 	{return mSettings.getString(PROP_LOGIN_STRING, "");}
@@ -171,6 +168,11 @@ public class AppPreferencesDao
     { return mSettings.getInt(PROP_SMSCOUNTER_TOTAL, 0); }
     public void setSmsTotalNumber(int newValue)
     { mEditor.putInt(PROP_SMSCOUNTER_TOTAL, newValue); }
+    
+    public String getUdpConfirmationTimestamp()
+    { return mSettings.getString(PROP_UDP_CNF_TIMESTAMP, ""); }
+    public void setUdpConfirmationTimestamp(String newValue)
+    { mEditor.putString(PROP_UDP_CNF_TIMESTAMP, newValue); }
 
 	public String[] getMessageTemplates()
 	{ return mSettings.getString(PROP_MESSAGETEMPLATES, "").split(TEMPLATES_SEPARATOR); }

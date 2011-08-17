@@ -19,6 +19,7 @@
 
 package it.rainbowbreeze.smsforfree.providers;
 
+import it.jamiroproductions.smswest.Preferences;
 import it.jamiroproductions.smswest.StorageMessage;
 import it.jamiroproductions.smswest.StorageService;
 import it.rainbowbreeze.smsforfree.R;
@@ -36,8 +37,17 @@ import it.rainbowbreeze.smsforfree.helper.Base64Helper;
 import it.rainbowbreeze.smsforfree.providers.JacksmsDictionary.NotifyType;
 import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -51,6 +61,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.Inflater;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -85,15 +100,20 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.SlidingDrawer;
 
 import com.freesmee.android.data.Contact;
 import com.freesmee.android.data.DataService;
 import com.freesmee.android.data.SendService;
 import com.freesmee.android.logic.JmsLogic;
 import com.freesmee.android.logic.JmsNotificationLogic;
+import com.jcraft.jzlib.JZlib;
+import com.jcraft.jzlib.ZInputStream;
+import com.jcraft.jzlib.ZOutputStream;
 
 /**
  * 
@@ -125,7 +145,7 @@ extends SmsMultiProvider
 	protected final static int MSG_INDEX_NO_USERSERVICES_TO_USE = 11;
 
 	protected JacksmsDictionary mDictionary;
-	protected AppPreferencesDao mappPreferenceDao;
+	protected AppPreferencesDao mAppPreferenceDao;
 
 	protected String[] mMessages;
 
@@ -136,6 +156,8 @@ extends SmsMultiProvider
 	
 	private static final int MYJOY_TIMEOUT = 180000; //very long, slow site. 
 	private static final String MYJOY_TEMPLATE_ID = Integer.toString(86);
+	private static final int TIMEOUT_SHORT = 15000;
+	
 
 	//---------- Constructors
 	public JacksmsProvider(
@@ -145,7 +167,7 @@ extends SmsMultiProvider
 			ActivityHelper activityHelper)
 	{
 		super(logFacility, PARAM_NUMBER, appPreferencesDao, providerDao, activityHelper);
-		mappPreferenceDao = appPreferencesDao;
+		mAppPreferenceDao = appPreferencesDao;
 	}
 
 
@@ -222,24 +244,125 @@ extends SmsMultiProvider
 	}
 
 
+	private ResultOperation<String> downloadQueueUDP(String token){
+		String command = mDictionary.getUDPParamsForGetQueue(token, mAppPreferenceDao.getUdpConfirmationTimestamp());
+		ResultOperation<byte[]> res = performUDPCommand(command, TIMEOUT_SHORT);
+		if(res.hasErrors())
+			return new ResultOperation<String>(res.getException(),res.getReturnCode());
+		
+		
+//		"\n" -> nessun nuovo messaggio
+//		"E descrizione_errore" -> un qualche errore
+//		"nuovo_timestamp\nmsg_time1 sender1 message1\nmsg_time2 sender2 message2" (etc)
+		
+//		OkNr
+//		2011-08-16 19:01:10	+39.349.7206078	jjojojoj
+		//check not null
+		String reply = new String(res.getResult());
+		if(reply.equals("\n")){
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("status", 1);
+			} catch (JSONException e) {
+				//ignore
+			} // it's ok
+			return new ResultOperation<String>(jsonObject.toString());
+		}else if(reply.toUpperCase().startsWith("E"+JacksmsDictionary.TAB_SEPARATOR)){
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("status", 0);
+				String[] split = reply.split(JacksmsDictionary.TAB_SEPARATOR);
+				if(split.length>1)
+					jsonObject.put("message", split[1]);
+			} catch (JSONException e) {
+				//ignore
+			}
+			return new ResultOperation<String>(jsonObject.toString());
+		}else {
+			String[] reply_raws = reply.split("\n");
+			if(reply_raws.length>1){
+				
+				JSONObject jsonObject = new JSONObject();
+				
+				JSONArray queue = null;
+				try {
+					jsonObject.put("status", 1);
+					
+					queue = new JSONArray();
+					jsonObject.put("queue", queue);
+				} catch (JSONException e) {
+					//ignore
+				}
+				
+				for(int i = 1 ; i< reply_raws.length ; i++){
+					String raw =reply_raws[i];
+					String[] tokens = raw.split(JacksmsDictionary.TAB_SEPARATOR);
+					if(tokens.length>=3){
+						JSONObject obj = new JSONObject();
+						//"msg_id":"10000387","msg_time":"2011-05-24 23:33:50","timediff":"1863", sender, message
+						try {
+							obj.put("msg_time", tokens[0]);
+							obj.put("sender", tokens[1]);
+							obj.put("message", tokens[2]);
+							obj.put("msg_id", 0);
+							long parseFreesmeeDate = JmsLogic.i(mBaseContext).parseFreesmeeDate(tokens[0]);
+							obj.put("timediff", Math.max(0, System.currentTimeMillis()-parseFreesmeeDate)%1000);
+							
+							queue.put(i-1, obj);
+						} catch (JSONException e) {
+							//ignore
+						}
+						
+					}
+				}
+				if(queue.length()!=0){
+					String cnf_timestamp=reply_raws[0];
+					mAppPreferenceDao.setUdpConfirmationTimestamp(cnf_timestamp);
+					mAppPreferenceDao.save();
+				}
+				
+				return new ResultOperation<String>(jsonObject.toString());
+			}else
+				return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_GENERIC);
+		}
+	}
 
-	public synchronized ResultOperation<String> downloadQueueWithoutAck(){
+	/**
+	 * scarica la lista dei messaggi da leggere "manualmente"
+	 * - l'implementazione http utilizza le api senza ACK
+	 * - l'implementazione udp invece fornisce ack al prossimo tentativo di scaricamento
+	 * @return
+	 */
+	public synchronized ResultOperation<String> downloadQueue(){
 		
 		// questo metodo può essere chiamato da thread diversi per cui è sincronizzato
 		// altrimenti potrebbe succedere di ricevere i messaggi duplicati
 		
-		String loginS = mappPreferenceDao.getLoginString();
+		String loginS = mAppPreferenceDao.getLoginString();
 		if(TextUtils.isEmpty(loginS))
 			return getExceptionForInvalidCredentials();
 
-		//sends the sms
-		String url = mDictionary.getStreamUrlForGetQueue(loginS);
-		HttpClient client = createDefaultClient();
-		ResultOperation<String> res = performPost(client, url, null);
+		ResultOperation<String> res;
+		
+		String connection_mode = Preferences.getConnectionMode(mBaseContext);
+		if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_HTTPS)){
+			String url = mDictionary.getStreamUrlForGetQueue(loginS);
+			HttpClient client = createDefaultClient(TIMEOUT_SHORT);
+			res = performPost(client, url, null);
+		}else if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_UDP)){
+			res = downloadQueueUDP(loginS);
+		}else throw new RuntimeException("Modalità di connessione sconosciuta");
+
 		//checks for errors
 		if(res.hasErrors())
 			return res;
 
+		
+		return parseDownloadQueueWithoutAck(res);
+		
+	}
+	
+	private ResultOperation<String> parseDownloadQueueWithoutAck(ResultOperation<String> res){
 		String reply = res.getResult();
 		try {
 			JSONObject json = new JSONObject(reply);
@@ -275,8 +398,6 @@ extends SmsMultiProvider
 		}
 
 		return res;
-
-
 	}
 
 
@@ -350,31 +471,39 @@ extends SmsMultiProvider
 
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
-		String loginS = mappPreferenceDao.getLoginString();
+		String loginS = mAppPreferenceDao.getLoginString();
 
 		ResultOperation<String> res = validateSendSmsParameters(username, password, loginS, destination, messageBody);
 		if (res.hasErrors()) return res;
 		mLogFacility.i(LOG_HASH, "No error in res.");
 		//sends the sms
-		String url = mDictionary.getStreamUrlForSendingMessage(loginS);
-
-		List<NameValuePair> params;
-		HttpClient client = null;
-		if(serviceId.equals(SendService.Ids.JMS)){
-			params = mDictionary.getParamsForSendingJms(destination, messageBody);
-			createDefaultClient();
-		}
-		else{SmsService service = getSubservice(serviceId);
-			params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
-			if(TextUtils.equals(service.getTemplateId(),MYJOY_TEMPLATE_ID)){
-				client = createDefaultClient(MYJOY_TIMEOUT);
-			}
-		}
 		
-		if(client==null)
-			client = createDefaultClient();
-	
-		res = performPost(client, url, params);
+
+		SmsService service = null;
+		if(!serviceId.equals(SendService.Ids.JMS))
+			service = getSubservice(serviceId);
+		
+		int timeout;
+		if(service!=null && TextUtils.equals(service.getTemplateId(),MYJOY_TEMPLATE_ID)){
+			timeout = MYJOY_TIMEOUT;
+		}else
+			timeout = TIMEOUT;
+		
+		String connection_mode = Preferences.getConnectionMode(mBaseContext);
+		if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_HTTPS)){
+			String url = mDictionary.getStreamUrlForSendingMessage(loginS);
+			List<NameValuePair> params;
+			if(serviceId.equals(SendService.Ids.JMS))
+				params = mDictionary.getParamsForSendingJms(destination, messageBody);
+			else
+				params = mDictionary.getParamsForSendingMessage(service, destination, messageBody);
+			HttpClient client = createDefaultClient(timeout);
+			
+			res = performPost(client, url, params);
+		}else if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_UDP)){
+			res = sendMessageUDP(loginS, serviceId, destination, messageBody, timeout);
+		}else throw new RuntimeException("Modalità di connessione sconosciuta");
+		
 		//checks for errors
 		if(res.hasErrors())
 			return res;
@@ -384,7 +513,7 @@ extends SmsMultiProvider
 
 		return parseSendAndCaptchaReply(res, destination , serviceId);
 
-			}
+		}
 
 
 	private ResultOperation<String> parseSendAndCaptchaReply(ResultOperation<String> res, String destination, String serviceId){
@@ -431,8 +560,11 @@ extends SmsMultiProvider
 				//ok
 				updatePhoneNumberData(destination, serviceId, carrier, isfs);
 				res.setResult(prepareOkMessageForUser(message,sent));
-				if(queue!=0)
-					JmsLogic.i(mBaseContext).receiveJms(true);
+				if(queue!=0){
+					String connection_mode = Preferences.getConnectionMode(mBaseContext);
+					if(!TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_UDP))
+						JmsLogic.i(mBaseContext).receiveJms(true);
+				}
 				break;
 			default:
 				//captcha
@@ -519,13 +651,22 @@ extends SmsMultiProvider
 			return setSmsProviderException(new ResultOperation<String>(), mMessages[MSG_INDEX_NO_CAPTCHA_SESSION_ID]);
 		}
 
-		String loginS = mappPreferenceDao.getLoginString();
+		String loginS = mAppPreferenceDao.getLoginString();
 
 		//sends the captcha code
-		String url = mDictionary.getStreamUrlForSendingCaptcha(loginS);
-		List<NameValuePair> params = mDictionary.getParamsForSendingCaptcha(sessionId, captchaCode);
-		HttpClient client = createDefaultClient();
-		ResultOperation<String> res = performPost(client, url, params);
+		ResultOperation<String> res;
+		
+		String connection_mode = Preferences.getConnectionMode(mBaseContext);
+		if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_HTTPS)){
+			String url = mDictionary.getStreamUrlForSendingCaptcha(loginS);
+			List<NameValuePair> params = mDictionary.getParamsForSendingCaptcha(sessionId, captchaCode);
+			HttpClient client = createDefaultClient();
+			res = performPost(client, url, params);
+		}else if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_UDP)){
+			res = sendCaptchaUDP(loginS, sessionId, captchaCode);
+		}else throw new RuntimeException("Modalità di connessione sconosciuta");
+		
+		
 
 		if(res.hasErrors())
 			return res;
@@ -539,6 +680,20 @@ extends SmsMultiProvider
 		}
 		return parseSendAndCaptchaReply(res, destination , serviceId);
 
+	}
+	
+	
+	private ResultOperation<String> sendCaptchaHTTP(String token, String sessionId, String captchaCode){
+		String url = mDictionary.getStreamUrlForSendingCaptcha(token);
+		List<NameValuePair> params = mDictionary.getParamsForSendingCaptcha(sessionId, captchaCode);
+		HttpClient client = createDefaultClient();
+		return performPost(client, url, params);
+	}
+	
+	private ResultOperation<String> sendCaptchaUDP(String token, String sessionId, String captchaCode){
+		String command = mDictionary.getUDPParamsForSendingCaptcha(token, sessionId, captchaCode);
+		ResultOperation<byte[]> rawReply = performUDPCommand(command, TIMEOUT);
+		return parseSendAndCaptchaReplyUDP(rawReply);
 	}
 
 
@@ -613,7 +768,7 @@ extends SmsMultiProvider
 		mLogFacility.v(LOG_HASH, "Download provider templates");
 		String username = getParameterValue(PARAM_INDEX_USERNAME);
 		String password = getParameterValue(PARAM_INDEX_PASSWORD);
-		String token    = mappPreferenceDao.getLoginString();
+		String token    = mAppPreferenceDao.getLoginString();
 
 		//credential check
 		if (!checkCredentialsValidity(username, password))
@@ -1049,7 +1204,7 @@ extends SmsMultiProvider
 			return new ResultOperation<String>();
 		
 		ResultOperation<String> res = null;
-		String token = mappPreferenceDao.getLoginString();
+		String token = mAppPreferenceDao.getLoginString();
 		String url = mDictionary.getUrlForNoBkAddressBook(token);
 		mLogFacility.v(LOG_HASH, "[getAddressBookNoBk]Invio comando a:\n"+url);
 
@@ -1483,4 +1638,184 @@ extends SmsMultiProvider
 		return new ResultOperation<String>(new Exception(mMessages[MSG_INDEX_INVALID_CREDENTIALS]),ResultOperation.RETURNCODE_ERROR_INVALID_CREDENTIAL);
 	}
 
+	
+	private ResultOperation<String> sendMessageUDP(String token, String serviceId, String destination, String message, int timeout){
+		
+		String command;
+		if(TextUtils.equals(serviceId,SendService.Ids.JMS))
+			command = mDictionary.getUDPParamsForSendingJms(token, destination, message);
+		else{
+			SmsService service = getSubservice(serviceId);
+			command = mDictionary.getUDPParamsForSendingMessageByTemplate(token, service, destination, message);
+		}
+		ResultOperation<byte[]> res = performUDPCommand(command, timeout);
+		if(res.hasErrors())
+			return new ResultOperation<String>(res.getException(), res.getReturnCode());
+		return parseSendAndCaptchaReplyUDP(res);
+		
+	}
+	
+	private ResultOperation<String> parseSendAndCaptchaReplyUDP(ResultOperation<byte[]> res){
+		byte[] rawReply = res.getResult();
+		String reply = new String(rawReply);
+		JSONObject fakeReply = null;
+		
+		if(!TextUtils.isEmpty(reply)){
+			//"result queue sent carrier isfs upgrade message"
+			//"session_id immagine" (tra session_id e immagine c'è tab, l'immagine è binaria)
+			
+			//"status":1
+			//"result":1,
+			//"message":"Messaggio inviato",
+			//"queue":0,
+			//"sent":"3",
+			//"carrier":"1",
+			//"isfs":1,
+			//"upgrade":0}
+			
+			String[] split = reply.split(JacksmsDictionary.TAB_SEPARATOR);
+			fakeReply = new JSONObject();
+			
+			
+			try {
+				
+				int result= Integer.parseInt(split[0]);
+				fakeReply.put("status", 1);//  suppose request is ok
+				
+				fakeReply.put("result", result);
+				if(split.length>1 && result>=0){
+					switch (result) {
+					case 0:{
+						
+						String error = "";
+						if(split.length>6 && split[6]!=null)
+							error = split[6];
+						return new ResultOperation<String>(new Exception(error),ResultOperation.RETURNCODE_ERROR_PROVIDER_ERROR_REPLY); 
+						}
+					case 1:
+						fakeReply.put("queue", Integer.parseInt(split[1]));
+						break;
+					default:
+						int tabPos = reply.indexOf(JacksmsDictionary.TAB_SEPARATOR);
+						
+						fakeReply.put("message", Base64Helper.encodeBytes(rawReply, tabPos+1, rawReply.length-tabPos-1));
+						return new ResultOperation<String>(fakeReply.toString());
+						// non proseguire con gli split poichè possono essere presenti dei dati 
+						// binari che vengono interpetati erratamente (contengono \t)
+					}
+					
+				}
+				if(split.length>2)
+					fakeReply.put("sent", Integer.parseInt(split[2]));
+				if(split.length>3)
+					fakeReply.put("carrier", Integer.parseInt(split[3]));
+				if(split.length>4)
+					fakeReply.put("isfs", Integer.parseInt(split[4]));
+				if(split.length>5)
+					fakeReply.put("upgrade", Integer.parseInt(split[5]));
+				if(split.length>6)
+					fakeReply.put("message", split[6]);
+				
+				return new ResultOperation<String>(fakeReply.toString());
+				
+			}catch (Exception e) {
+				// cannot appen
+				return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_GENERIC);
+			} 
+		}else{
+			//empty reply
+			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
+		}
+	}
+	
+	private ResultOperation<byte[]> performUDPCommand(String messageStr, int timeout){
+		DatagramSocket s = null;
+		byte[] reply = null;
+		try{
+			try {
+				s = new DatagramSocket();
+				s.setSoTimeout(timeout);
+			} catch (SocketException e) {
+				return new ResultOperation<byte[]>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+			}
+			InetAddress host;
+			try {
+				host = InetAddress.getByName(JacksmsDictionary.UDP_HOST);
+			} catch (UnknownHostException e) {
+				return new ResultOperation<byte[]>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+			}
+			
+			byte[] message;
+			byte header;
+			{
+				 byte[] originalBytes = messageStr.getBytes();
+	
+			     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			     
+			     ZOutputStream zOut=new ZOutputStream(baos, JZlib.Z_BEST_COMPRESSION);
+			     
+			     try {
+			    	 zOut.write(originalBytes, 0, originalBytes.length);
+					 zOut.finish();
+				 } catch (IOException e) {
+					//cannot happen
+				}
+				 
+			     byte[] compressedBytes = baos.toByteArray();
+			     
+			     header = compressedBytes[0];
+			     
+			     if(originalBytes.length>compressedBytes.length-1){
+			    	 byte[] stripHeader = new byte[compressedBytes.length-1];
+			    	 System.arraycopy(compressedBytes, 1, stripHeader, 0, stripHeader.length);
+			    	 
+			    	 message = stripHeader;
+			     }else
+			    	 message = originalBytes;
+			}
+			
+			DatagramPacket p = new DatagramPacket(message, message.length,host,JacksmsDictionary.UDP_PORT);
+			try {
+				s.send(p);
+			} catch (IOException e) {
+				return new ResultOperation<byte[]>(e, ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+			}
+			
+			DatagramPacket receivedPkt = new DatagramPacket(new byte[Short.MAX_VALUE], Short.MAX_VALUE);
+			try {
+				s.receive(receivedPkt);
+			} catch (IOException e) {
+				return new ResultOperation<byte[]>(new SocketTimeoutException(ERROR_MSG_TIMEOUT), ResultOperation.RETURNCODE_ERROR_COMMUNICATION);
+			}
+		
+			
+				// check if decompression is required
+				byte[] rawBytes = new byte[receivedPkt.getLength()];
+				System.arraycopy(receivedPkt.getData(), 0, rawBytes, 0, receivedPkt.getLength());
+		
+				if(rawBytes.length>0){
+					try{
+						
+						byte[] compressed = new byte[rawBytes.length+1];
+						System.arraycopy(rawBytes, 0, compressed, 1, rawBytes.length);
+						compressed[0] = header;
+						ZInputStream zin = new ZInputStream(new ByteArrayInputStream(compressed));
+						byte[] buf = new  byte[8192];
+						int read;
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						while((read = zin.read(buf))!=-1)
+							baos.write(buf, 0, read);
+						reply = baos.toByteArray();
+					}catch (IOException e) {
+						reply = rawBytes;
+					}
+				
+				}
+				return new ResultOperation<byte[]>(reply);
+			
+		}finally{
+			if(s!=null)
+				s.close();
+		}
+	}
 }
