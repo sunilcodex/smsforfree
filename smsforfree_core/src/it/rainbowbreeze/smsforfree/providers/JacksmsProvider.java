@@ -154,8 +154,9 @@ extends SmsMultiProvider
 	private Context mBaseContext;
 
 	
-	private static final int MYJOY_TIMEOUT = 180000; //very long, slow site. 
+	private static final int LONG_TIMEOUT = 180000; //very long, slow site. 
 	private static final String MYJOY_TEMPLATE_ID = Integer.toString(86);
+	private static final String GRATISMS_EU = Integer.toString(127);
 	private static final int TIMEOUT_SHORT = 15000;
 	
 
@@ -484,8 +485,9 @@ extends SmsMultiProvider
 			service = getSubservice(serviceId);
 		
 		int timeout;
-		if(service!=null && TextUtils.equals(service.getTemplateId(),MYJOY_TEMPLATE_ID)){
-			timeout = MYJOY_TIMEOUT;
+		if(service!=null && (TextUtils.equals(service.getTemplateId(),MYJOY_TEMPLATE_ID)
+			|| TextUtils.equals(service.getTemplateId(),GRATISMS_EU))){
+			timeout = LONG_TIMEOUT;
 		}else
 			timeout = TIMEOUT;
 		
@@ -642,7 +644,7 @@ extends SmsMultiProvider
 		try {
 			json = new JSONObject(providerReply);
 		} catch (JSONException e) {
-			//
+			// is is json or error would have been detected earlier
 		}
 		String sessionId = json.optString("result");
 
@@ -658,10 +660,7 @@ extends SmsMultiProvider
 		
 		String connection_mode = Preferences.getConnectionMode(mBaseContext);
 		if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_HTTPS)){
-			String url = mDictionary.getStreamUrlForSendingCaptcha(loginS);
-			List<NameValuePair> params = mDictionary.getParamsForSendingCaptcha(sessionId, captchaCode);
-			HttpClient client = createDefaultClient();
-			res = performPost(client, url, params);
+			res = sendCaptchaHTTP(loginS, sessionId, captchaCode);
 		}else if(TextUtils.equals(connection_mode, Preferences.FREESMEE_CONNECTION_MODE_UDP)){
 			res = sendCaptchaUDP(loginS, sessionId, captchaCode);
 		}else throw new RuntimeException("Modalità di connessione sconosciuta");
@@ -693,6 +692,8 @@ extends SmsMultiProvider
 	private ResultOperation<String> sendCaptchaUDP(String token, String sessionId, String captchaCode){
 		String command = mDictionary.getUDPParamsForSendingCaptcha(token, sessionId, captchaCode);
 		ResultOperation<byte[]> rawReply = performUDPCommand(command, TIMEOUT);
+		if(rawReply.hasErrors())
+			return new ResultOperation<String>(rawReply.getException(), rawReply.getReturnCode());
 		return parseSendAndCaptchaReplyUDP(rawReply);
 	}
 
@@ -774,7 +775,6 @@ extends SmsMultiProvider
 		if (!checkCredentialsValidity(username, password))
 			return getExceptionForInvalidCredentials();
 
-		//TODO provvisorio
 		if(TextUtils.isEmpty(token))
 			return getExceptionForInvalidCredentials();
 
@@ -911,7 +911,6 @@ extends SmsMultiProvider
 
 		if (resultToAnalyze.hasErrors()) return true;
 
-		//TODO marco
 		if(resultToAnalyze.getResult()==null)
 			throw new RuntimeException("Errore in sviluppo, assunzione sbagliata");
 
@@ -925,8 +924,6 @@ extends SmsMultiProvider
 			errorMessage = mMessages[MSG_INDEX_INVALID_CREDENTIALS];
 			//generic JackSMS internal error
 		} else if (mDictionary.isErrorReply(reply)) {
-
-			//TODO marco,
 			errorMessage = mDictionary.getTextPartFromReply(reply);
 
 			//TODO marco originale
@@ -1015,7 +1012,8 @@ extends SmsMultiProvider
 		ResultOperation<String> res ;
 		String token = mAppPreferencesDao.getLoginString();
 
-		//TODO check credentials
+		if(TextUtils.isEmpty(token))
+			return getExceptionForInvalidCredentials();
 
 		String url = mDictionary.getUrlForEditService(token);
 
@@ -1037,12 +1035,11 @@ extends SmsMultiProvider
 	@Override
 	public ResultOperation<String> addRemoteservice(SmsService editedService) {
 		ResultOperation<String> res;
-		String username = getParameterValue(PARAM_INDEX_USERNAME);
-		String password = getParameterValue(PARAM_INDEX_PASSWORD);
 
 		String token = mAppPreferencesDao.getLoginString();
 
-		//TODO check credentials
+		if(TextUtils.isEmpty(token))
+			return getExceptionForInvalidCredentials();
 
 		String url = mDictionary.getUrlForAddService(token);
 
@@ -1066,7 +1063,8 @@ extends SmsMultiProvider
 		ResultOperation<String> res;
 		String token = mAppPreferencesDao.getLoginString();
 
-		//TODO check credentials
+		if(TextUtils.isEmpty(token))
+			return getExceptionForInvalidCredentials();
 
 		final String url = mDictionary.getUrlForDeleteService(token);
 		final HttpClient httpclient = createDefaultClient();
@@ -1075,16 +1073,14 @@ extends SmsMultiProvider
 		res = performPost(httpclient, url, nameValuePairs);
 		Thread t = new Thread(new Runnable(){
 
-			//FIXME
-			// MA CHE ROBA E' QUESTA??
-			// PERCHE' FARLO ALTRE 3 VOLTE IN ASINCRONO SENZA MAI 
-			// LEGGERE LA RISPOSTA????
+			// se riesce a cancellare il servizio dal servere bene,
+			// altrimenti amen
 			@Override
 			public void run() {
 				try {
 					for(int i=0;i<3;i++){
 						performPost(httpclient, url, nameValuePairs);
-						Thread.sleep(500);
+						Thread.sleep(1000);
 					}
 				} catch (Exception e) {mLogFacility.e(e);}
 			}				
@@ -1119,7 +1115,6 @@ extends SmsMultiProvider
 		List<NameValuePair> nameValuePairs = mDictionary.getParamsForAddressBook(contacts);
 		res = performPost(httpclient, url1, nameValuePairs);
 
-		//TODO c'è ambiguità sul tipo di risporsta in uscita
 		if (parseReplyForErrors(res))
 			logRequest(url1, (HashMap<String,String>)null, null);
 		else{
@@ -1158,39 +1153,6 @@ extends SmsMultiProvider
 		//la lista con i parametri è ora disponibile nel formato scaricato 
 		return res;
 	}
-
-	//	String [] righe = contatti.split("\n");
-	//	String errors = "";
-	//	for(int i=0;i<righe.length;i++){
-	//		//id // name //phoneNumber //isJack //operator
-	//		String [] tokens = righe[i].split("\t");
-	//		int dim = tokens.length;
-	//		if(dim == 5){
-	//			mDb.addRow(tokens[1], tokens[2], tokens[4], "", Integer.parseInt(tokens[3]));
-	//			Intent updatePhoneNumberIntent = DataService.updatePhoneNumberIntent(context, tokens[2], tokens[4], tokens[3], null);
-	//			if(updatePhoneNumberIntent!=null)
-	//				context.startService(updatePhoneNumberIntent);
-	//		}
-	//		//se lo split mi mangia l'operatore nullo, lo setto a zero
-	//		if(dim == 4){
-	//			errors += righe[i]+";\n";
-	//			mDb.addRow(tokens[1], tokens[2], "0", "", Integer.parseInt(tokens[3]));
-	//			Intent updatePhoneNumberIntent = DataService.updatePhoneNumberIntent(context, tokens[2], "0", tokens[3], null);
-	//			if(updatePhoneNumberIntent!=null)
-	//				context.startService(updatePhoneNumberIntent);
-	//		}
-	//	}
-	//	//TODO: ask for report log?
-	//	if(!TextUtils.isEmpty(errors))
-	//		Log.e("JackSms", "I seguenti numeri hanno riportato errori:\n"+errors);
-	//	if (null != callerHandler) {
-	//		Message message = callerHandler.obtainMessage(FirstStartActivity.AD_BOOK_HANDLER_MESSAGE);
-	//		callerHandler.sendMessage(message);
-	//	}
-
-
-
-
 
 	/**
 	 * fondamentalmente fa la stessa operazione del metodo precedente, ma
@@ -1385,7 +1347,9 @@ extends SmsMultiProvider
 	public ResultOperation<String> setNotifyType(String notifyType, String registration_id) {
 		String token = mAppPreferencesDao.getLoginString();
 
-		//TODO check credentials
+		if(TextUtils.isEmpty(token)){
+			return getExceptionForInvalidCredentials();
+		}
 
 		String url = mDictionary.getUrlForSetNotifyType(token);
 		final HttpClient httpclient = createDefaultClient();
