@@ -85,6 +85,7 @@
     <string name="actsendsms_msg_error_retrieving_inbox_sms">An error occurred reading latest SMS received.\nSend log to developer (in the Preferences) if the problem persists.</string>
     <string name="actsendsms_msg_empty_inbox_sms">No SMS found in your received messages.</string>
     <string name="actsendsms_msg_errorSendingMessageTitle">Error in sending</string>
+    <string name="actsendsms_msg_errorServiceDoesNotExist">Service does exists no more</string>
     <string name="actsendsms_phoneType_home">Home</string>
     <string name="actsendsms_phoneType_mobile">Mob</string>
     <string name="actsendsms_phoneType_work">Work</string>

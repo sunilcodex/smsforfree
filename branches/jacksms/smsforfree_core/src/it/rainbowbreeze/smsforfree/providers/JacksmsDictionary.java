@@ -93,7 +93,6 @@ public class JacksmsDictionary
 	private static final String ACTION_GET_ADVERTISE = "getAd";
 	private static final String ACTION_VERIFY_REGISTER = "verifyRegister";
 	
-	//TODO: get version from global variable or settings
 	public static final String PARAM_CLIENTVERSION_VALUE = "android="+AppEnv.APP_DISPLAY_VERSION+"_"+AppEnv.APP_INTERNAL_VERSION;
 	public static final String TAB_SEPARATOR = "\t";
 
@@ -183,7 +182,6 @@ public class JacksmsDictionary
 	
 	//freesmee
 	public String getUrlForAdvertise(String token, Location location, String message){
-		//TODO mancano alcuni parametri
 		String url = getUrlForCommand(URL_Q_BASE, token, ACTION_GET_ADVERTISE, FORMAT_CSV);
 		StringBuilder sb = new StringBuilder(url);
 		try {
@@ -191,7 +189,7 @@ public class JacksmsDictionary
 			.append("&long=").append(Double.toString(location.getLongitude()))
 			.append("&text=").append(URLEncoder.encode(message,"UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			//TODO log
+			mLogFacility.v(LOG_HASH,"UTF-8 encoding not supported?");
 		}
 		return sb.toString();
 	}
@@ -217,7 +215,6 @@ public class JacksmsDictionary
 	}
 	
 	//freesmee
-	//TODO non testato
 	public String getUrlForSetNotifyType(String token) {
 		return getUrlForCommand(URL_Q_BASE, token, ACTION_SET_NOTIFY_TYPE, FORMAT_CSV);
 	}
@@ -320,23 +317,28 @@ public class JacksmsDictionary
 	 */
 	public byte[] getCaptchaImageContentFromReply(String reply)
 	{
+		
 		//captcha content is the text part of the reply
 		String captchaBase64 = null;
 		try {
 			JSONObject json = new JSONObject(reply);
 			captchaBase64 = json.getString("message");
 		} catch (JSONException e) {
-			//TODO log
+			mLogFacility.v(LOG_HASH, "Server does not contain a valid captcha: "+reply);
+			return null;
 		}
-
+		
 		//is encoded in base64, so decode id
 		byte[] decodedCaptcha;
 		try {
 			//decodedCaptcha = new String(Base64.decode(content), "UTF-8");
 			decodedCaptcha = Base64Helper.decode(captchaBase64);
 		} catch (IOException e) {
-			decodedCaptcha = null;
+			mLogFacility.v(LOG_HASH, "Messagge is not a valid BASE64 captcha: "+reply);
+			return null;
 		}
+		
+		
 		new String(decodedCaptcha).toString();
 		return decodedCaptcha;
 	}
@@ -524,7 +526,6 @@ public class JacksmsDictionary
 	 */
 	public boolean isErrorReply(String webserviceReply)
 	{
-		//TODO marco
 		// cambiato a false, una risposta vuota non ha errori espliciti,
 		// qui si stanno cercando errori comunicati dal server!!!
 
@@ -556,10 +557,9 @@ public class JacksmsDictionary
 	}
 	public boolean isInvalidCredetials(String webserviceReply)
 	{
+		//TODO not updated to Freesmee...
+		
 		if (TextUtils.isEmpty(webserviceReply)) return false;
-
-		//TODO marco, siamo sicuri che in questo caso non ci sia il tab???
-
 		return ("error	Dati di accesso JackSMS non validi").equals(webserviceReply);
 	}
 
@@ -740,7 +740,7 @@ public class JacksmsDictionary
 				}
 			}
 
-			//6 TODO
+			//6 not used at the moment
 			mNewVersion = null;
 		}
 
