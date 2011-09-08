@@ -604,8 +604,10 @@ extends SmsMultiProvider
 
 			}
 		}
-		//TODO log
-		reply.setReturnCode(ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
+		else{
+			reply.setReturnCode(ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
+			mLogFacility.i(LOG_HASH,"[no advertise link returned]");
+		}
 		return reply;
 
 	}
