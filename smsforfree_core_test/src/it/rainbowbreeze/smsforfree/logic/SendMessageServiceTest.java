@@ -90,11 +90,11 @@ public class SendMessageServiceTest extends ServiceTestCase<SendMessageService> 
 	public void testOnReceive() {
 		//creates the intent for sending message
 		TextMessage textMessageSource = TextMessage.Factory.create(
-				123,
+				123l,
 				"+393314729472",
 				"Test message from Alfredo's phone! It's all ok?", 
 				MockSingleServiceProvider.ID,
-				null,
+				0l,
 				TextMessage.PROCESSING_NONE);
 
 		//inserts message into queue

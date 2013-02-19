@@ -93,13 +93,15 @@ public class ActSendSms
     protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
     protected static final String BUNDLEKEY_DIALOGERRORMESSAGE = "DialogErrorMessage";
 
-    protected static final int OPTIONMENU_SETTINGS = 2;
-    protected static final int OPTIONMENU_SIGNATURE = 3;
-    protected static final int OPTIONMENU_ABOUT = 4;
-    protected static final int OPTIONMENU_RESETDATA = 5;
-    protected static final int OPTIONMENU_COMPRESS = 6;
-    protected static final int OPTIONMENU_TEMPLATES = 7;
-
+    private static final int OPTIONMENU_SETTINGS = 2;
+    private static final int OPTIONMENU_SIGNATURE = 3;
+    private static final int OPTIONMENU_ABOUT = 4;
+    private static final int OPTIONMENU_RESETDATA = 5;
+    private static final int OPTIONMENU_COMPRESS = 6;
+    private static final int OPTIONMENU_TEMPLATES = 7;
+    
+	private final static int WHAT_SENDCAPTCHA = 1003;
+	private final static int WHAT_SENDMESSAGE = 1002;
 
     
     protected Spinner mSpiProviders;
@@ -565,13 +567,13 @@ public class ActSendSms
         {
             mLogFacility.i(LOG_HASH, "Returned to ActSendSms from external thread");
             //check if the message is for this handler
-            if (msg.what != SendMessageThread.WHAT_SENDMESSAGE && 
-                    msg.what != SendCaptchaThread.WHAT_SENDCAPTCHA)
+            if (msg.what != WHAT_SENDMESSAGE && 
+                    msg.what != WHAT_SENDCAPTCHA)
                 return;
             
             RainbowResultOperation<String> res;
             switch (msg.what) {
-            case SendMessageThread.WHAT_SENDMESSAGE:
+            case WHAT_SENDMESSAGE:
                 removeDialog(DIALOG_SENDING_MESSAGE);
                  //may happens that the thread is null (rotation and a call to handler in the same moment?)
                 if (null == mSendMessageThread) break;
@@ -581,7 +583,7 @@ public class ActSendSms
                 sendMessageComplete(res);
                 break;
 
-            case SendCaptchaThread.WHAT_SENDCAPTCHA:
+            case WHAT_SENDCAPTCHA:
                 //dismiss captcha progress dialog
                 removeDialog(DIALOG_SENDING_CAPTCHA);
                 if (null == mSendCaptchaThread) break;
@@ -962,7 +964,7 @@ public class ActSendSms
 
         //preparing the background task for sending message
         mSendMessageThread = new SendMessageThread(
-                this, mActivityHandler,
+                this, mActivityHandler, WHAT_SENDMESSAGE,
                 mSelectedProvider, mSelectedServiceId,
                 destination, message);
         mSendMessageThread.start();
@@ -988,7 +990,7 @@ public class ActSendSms
         
         //preparing the background task for sending captcha code
         mSendCaptchaThread = new SendCaptchaThread(
-                this, mActivityHandler,
+                this, mActivityHandler, WHAT_SENDCAPTCHA,
                 mSelectedProvider,
                 providerReply,
                 captchaCode);

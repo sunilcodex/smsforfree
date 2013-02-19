@@ -2,7 +2,6 @@ package it.rainbowbreeze.smsforfree.logic;
 
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
 import it.rainbowbreeze.libs.helper.RainbowArrayHelper;
-import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;

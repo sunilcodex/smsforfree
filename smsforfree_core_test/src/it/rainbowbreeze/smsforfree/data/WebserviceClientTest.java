@@ -20,6 +20,7 @@
 package it.rainbowbreeze.smsforfree.data;
 
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
+import it.rainbowbreeze.libs.net.IRainbowRestfulClient.ServerResponse;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.providers.AimonDictionary;
 import it.rainbowbreeze.smsforfree.util.Def;
@@ -77,7 +78,7 @@ public class WebserviceClientTest extends AndroidTestCase {
 		String url;
 		HashMap<String, String> params;
 		AimonDictionary dictionary = new AimonDictionary();
-		String resultMessage;
+		ServerResponse resultMessage;
 		
 		mClient.startConversation();
 		
@@ -85,12 +86,12 @@ public class WebserviceClientTest extends AndroidTestCase {
         //wrong password
         params = dictionary.getParametersForFreeSmsLogin(Def.AIMON_USERNAME, "XXXXX");
         resultMessage =  mClient.requestPost(url, null, params);
-        assertTrue(dictionary.isFreeSmsLoginInvalidCredentials(resultMessage));
+        assertTrue(dictionary.isFreeSmsLoginInvalidCredentials(resultMessage.getResponseMessage()));
         
         //good credential
         params = dictionary.getParametersForFreeSmsLogin(Def.AIMON_USERNAME, Def.AIMON_PASSWORD);
         resultMessage =  mClient.requestPost(url, null, params);
-        assertTrue(dictionary.isFreeSmsLoginOk(resultMessage, Def.AIMON_USERNAME));
+        assertTrue(dictionary.isFreeSmsLoginOk(resultMessage.getResponseMessage(), Def.AIMON_USERNAME));
 
         //go next step, send SMS with an invalid sender
         //if the invalid sender message is returned, the conversation works!
@@ -98,7 +99,7 @@ public class WebserviceClientTest extends AndroidTestCase {
 		url = AimonDictionary.URL_SEND_SMS_FREE_2;
 		params = dictionary.getParametersForFreeSmsSend("0", "XXXXX", Def.TEST_DESTINATION, msg);
         resultMessage =  mClient.requestPost(url, null, params);
-        assertTrue(dictionary.isFreeSmsInvalidSender(resultMessage));
+        assertTrue(dictionary.isFreeSmsInvalidSender(resultMessage.getResponseMessage()));
 		
 		//logout
 		url = AimonDictionary.URL_SEND_SMS_FREE_3;

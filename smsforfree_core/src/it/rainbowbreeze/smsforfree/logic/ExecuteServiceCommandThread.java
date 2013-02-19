@@ -21,6 +21,7 @@ package it.rainbowbreeze.smsforfree.logic;
 
 import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Context;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
  *
  */
 public class ExecuteServiceCommandThread
-	extends RainbowBaseBackgroundThread<String>
+	extends RainbowBaseBackgroundThread<ResultOperation<String>, String>
 {
 	//---------- Private fields
     private static final String LOG_HASH = "ExecuteServiceCommandThread";
@@ -51,11 +52,12 @@ public class ExecuteServiceCommandThread
 			LogFacility logFacility,
 			Context context,
 			Handler handler,
+            int handlerMessageWhat,
 			SmsService service,
 			int commandToExecute,
 			Bundle extraData)
 	{
-		super(context, handler);
+		super(context, handler, handlerMessageWhat);
 		mService = service;
 		mCommandToExecute = commandToExecute;
 		mExtraData = extraData;
@@ -66,19 +68,14 @@ public class ExecuteServiceCommandThread
 	
 
 	//---------- Public fields
-	public final static int WHAT_EXECUTESERVICECOMMAND = 1000;
-
 
 
 
 	//---------- Public methods
 	@Override
-	public void run() {
+	public ResultOperation<String> executeTask() {
 		mLogFacility.v(LOG_HASH, "Execute command " + mCommandToExecute + " for service " + mService.getId());
-		//execute the command
-		mResultOperation = mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
-		//and call the caller activity handler when the execution is terminated
-		callHandlerAndRetry(WHAT_EXECUTESERVICECOMMAND);
+		return mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
 	}
 
 
