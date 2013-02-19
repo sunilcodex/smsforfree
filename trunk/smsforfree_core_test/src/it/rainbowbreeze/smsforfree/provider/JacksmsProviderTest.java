@@ -24,7 +24,6 @@ import java.util.List;
 
 import android.os.Bundle;
 import it.rainbowbreeze.libs.common.RainbowServiceLocator;
-import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.domain.SmsConfigurableService;

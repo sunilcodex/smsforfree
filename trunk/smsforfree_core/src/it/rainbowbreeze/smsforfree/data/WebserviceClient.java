@@ -20,10 +20,10 @@
 package it.rainbowbreeze.smsforfree.data;
 
 import it.rainbowbreeze.libs.common.RainbowLogFacility;
-import it.rainbowbreeze.libs.data.RainbowWebserviceClient;
+import it.rainbowbreeze.libs.net.RainbowRestfulClient;
 
 public class WebserviceClient
-    extends RainbowWebserviceClient
+    extends RainbowRestfulClient
 {
     //---------- Private fields
 

@@ -20,7 +20,7 @@
 package it.rainbowbreeze.smsforfree.data;
 
 import it.rainbowbreeze.libs.data.RainbowAppPreferencesDao;
-import it.rainbowbreeze.libs.helper.RainbowStringHelper;
+import it.rainbowbreeze.libs.helper.RainbowArrayHelper;
 import it.rainbowbreeze.smsforfree.common.AppEnv;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -129,7 +129,7 @@ public class AppPreferencesDao
 	public String[] getMessageTemplates()
 	{ return mSettings.getString(PROP_MESSAGETEMPLATES, "").split(TEMPLATES_SEPARATOR); }
 	public void setMessageTemplates(String[] newValue)
-	{ mEditor.putString(PROP_MESSAGETEMPLATES, RainbowStringHelper.join(newValue, TEMPLATES_SEPARATOR)); }
+	{ mEditor.putString(PROP_MESSAGETEMPLATES, RainbowArrayHelper.join(newValue, TEMPLATES_SEPARATOR)); }
     
     public boolean getAskConfirmationForSending()
     { return mSettings.getBoolean(PROP_ASK_CONFIRMATION_FOR_SENDING, false); }

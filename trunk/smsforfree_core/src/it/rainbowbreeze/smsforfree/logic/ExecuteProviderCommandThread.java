@@ -20,6 +20,7 @@
 package it.rainbowbreeze.smsforfree.logic;
 
 import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsService;
 import android.content.Context;
 import android.os.Bundle;
@@ -32,17 +33,18 @@ import android.os.Handler;
  *
  */
 public class ExecuteProviderCommandThread
-	extends RainbowBaseBackgroundThread<String>
+	extends RainbowBaseBackgroundThread<ResultOperation<String>, String>
 {
 	//---------- Ctors
 	public ExecuteProviderCommandThread(
 			Context context,
 			Handler handler,
+            int handlerMessageWhat,
 			SmsService service,
 			int commandToExecute,
 			Bundle extraData)
 	{
-		super(context, handler);
+		super(context, handler, handlerMessageWhat);
 		mService = service;
 		mCommandToExecute = commandToExecute;
 		mExtraData = extraData;
@@ -60,18 +62,12 @@ public class ExecuteProviderCommandThread
 	
 
 	//---------- Public fields
-	public final static int WHAT_EXECUTEDPROVIDERCOMMAND = 1001;
-
-
 
 
 	//---------- Public methods
 	@Override
-	public void run() {
-		//execute the command
-		mResultOperation = mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
-		//and call the caller activity handler when the execution is terminated
-		callHandlerAndRetry(WHAT_EXECUTEDPROVIDERCOMMAND);
+	public ResultOperation<String> executeTask() {
+		return mService.executeCommand(mCommandToExecute, getContext(), mExtraData);
 	}
 
 	

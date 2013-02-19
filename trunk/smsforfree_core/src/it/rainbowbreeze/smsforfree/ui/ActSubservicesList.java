@@ -58,6 +58,8 @@ public class ActSubservicesList
 	private static final int CONTEXTMENU_ADDSERVICE = 1;
 	private static final int CONTEXTMENU_EDITSERVICE = 2;
 	private static final int CONTEXTMENU_DELETESERVICE = 3;
+
+	private final static int WHAT_EXECUTEDPROVIDERCOMMAND = 1001;
 	
 	private SmsProvider mProvider;
     ArrayAdapter<SmsService> mListAdapter;
@@ -271,7 +273,7 @@ public class ActSubservicesList
 		public void handleMessage(Message msg)
 		{
 			//check if the message is for this handler
-			if (msg.what != ExecuteProviderCommandThread.WHAT_EXECUTEDPROVIDERCOMMAND)
+			if (msg.what != WHAT_EXECUTEDPROVIDERCOMMAND)
 				return;
 			
 			//dismisses progress dialog
@@ -350,6 +352,7 @@ public class ActSubservicesList
 		mExecutedProviderCommandThread = new ExecuteProviderCommandThread(
 				this.getApplicationContext(),
 				mExecutedCommandHandler,
+				WHAT_EXECUTEDPROVIDERCOMMAND,
 				provider,
 				subserviceId,
 				extraData);

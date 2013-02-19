@@ -20,6 +20,7 @@
 package it.rainbowbreeze.smsforfree.logic;
 
 import it.rainbowbreeze.libs.logic.RainbowBaseBackgroundThread;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
 import it.rainbowbreeze.smsforfree.domain.SmsProvider;
 import android.content.Context;
 import android.os.Handler;
@@ -28,7 +29,7 @@ import android.os.Handler;
  * Send a message using provider's method
  */
 public class SendMessageThread
-	extends RainbowBaseBackgroundThread<String>
+	extends RainbowBaseBackgroundThread<ResultOperation<String>, String>
 {
     //---------- Private fields
     private SmsProvider mProvider;
@@ -43,12 +44,13 @@ public class SendMessageThread
 	public SendMessageThread(
 			Context context,
 			Handler handler,
+            int handlerMessageWhat,
 			SmsProvider provider,
 			String servideId,
 			String destination,
 			String message)
 	{
-		super(context, handler);
+		super(context, handler, handlerMessageWhat);
 		mProvider = provider;
 		mServiceId = servideId;
 		mDestination = destination;
@@ -59,19 +61,13 @@ public class SendMessageThread
 
 
 	//---------- Public fields
-	public final static int WHAT_SENDMESSAGE = 1002;
-	
 
 
 
 	//---------- Public methods
 	@Override
-	public void run() {
-		//execute the command
-		mResultOperation = mProvider.sendMessage(mServiceId, mDestination, mMessage);
-		
-		//and call the caller activity handler when the execution is terminated
-		callHandlerAndRetry(WHAT_SENDMESSAGE);
+	public ResultOperation<String> executeTask() {
+		return mProvider.sendMessage(mServiceId, mDestination, mMessage);
 	}
 	
 

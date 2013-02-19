@@ -20,6 +20,7 @@
 package it.rainbowbreeze.smsforfree.domain;
 
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
+import it.rainbowbreeze.libs.net.IRainbowRestfulClient.ServerResponse;
 import it.rainbowbreeze.smsforfree.R;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
@@ -440,7 +441,7 @@ public abstract class SmsProvider
 			HashMap<String, String> parameters,
 			WebserviceClient client)
 	{
-    	String reply = "";
+    	ServerResponse reply;
 		
 		try {
     		reply = client.requestPost(url, headers, parameters);
@@ -453,12 +454,12 @@ public abstract class SmsProvider
 		}
     	
     	//empty reply
-    	if (TextUtils.isEmpty(reply)) {
+    	if (null == reply) {
 			return new ResultOperation<String>(new Exception(), ResultOperation.RETURNCODE_ERROR_EMPTY_REPLY);
 		}
 
     	//return the reply
-    	return new ResultOperation<String>(reply);
+    	return new ResultOperation<String>(reply.getResponseMessage());
 	}    
     
     

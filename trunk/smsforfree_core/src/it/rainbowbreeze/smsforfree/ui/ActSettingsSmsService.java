@@ -57,6 +57,8 @@ public class ActSettingsSmsService
 	//---------- Private fields
     private static final String LOG_HASH = "ActSettingsSmsService";
 	private final static int MAXFIELDS = 10;
+	private final static int WHAT_EXECUTESERVICECOMMAND = 1000;
+
 
 	private SmsService mEditedService;
 	private SmsService mTemplateService;
@@ -188,6 +190,7 @@ public class ActSettingsSmsService
 				mLogFacility,
 				this.getApplicationContext(),
 				mExecutedCommandHandler,
+				WHAT_EXECUTESERVICECOMMAND,
 				mEditedService,
 				item.getItemId(),
 				bundle);
@@ -248,7 +251,7 @@ public class ActSettingsSmsService
 		public void handleMessage(Message msg)
 		{
 			//check if the message is for this handler
-			if (msg.what != ExecuteServiceCommandThread.WHAT_EXECUTESERVICECOMMAND)
+			if (msg.what != WHAT_EXECUTESERVICECOMMAND)
 				return;
 			
 			//dismisses progress dialog
