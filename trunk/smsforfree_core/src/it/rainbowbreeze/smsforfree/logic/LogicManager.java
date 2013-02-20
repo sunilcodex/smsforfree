@@ -19,6 +19,23 @@
 
 package it.rainbowbreeze.smsforfree.logic;
 
+import static it.rainbowbreeze.libs.common.RainbowContractHelper.checkNotNull;
+import it.rainbowbreeze.libs.common.RainbowResultOperation;
+import it.rainbowbreeze.libs.helper.RainbowStringHelper;
+import it.rainbowbreeze.libs.logic.RainbowLogicManager;
+import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
+import it.rainbowbreeze.smsforfree.common.LogFacility;
+import it.rainbowbreeze.smsforfree.common.ResultOperation;
+import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
+import it.rainbowbreeze.smsforfree.data.ProviderDao;
+import it.rainbowbreeze.smsforfree.domain.SmsProvider;
+import it.rainbowbreeze.smsforfree.domain.TextMessage;
+import it.rainbowbreeze.smsforfree.providers.AimonProvider;
+import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
+import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
+import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
+
 import java.net.URLDecoder;
 import java.util.Calendar;
 import java.util.Collections;
@@ -27,24 +44,6 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-
-import it.rainbowbreeze.libs.common.RainbowResultOperation;
-import it.rainbowbreeze.libs.helper.RainbowStringHelper;
-import it.rainbowbreeze.libs.logic.RainbowLogicManager;
-import it.rainbowbreeze.smsforfree.R;
-import it.rainbowbreeze.smsforfree.common.LogFacility;
-import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
-import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
-import it.rainbowbreeze.smsforfree.data.ProviderDao;
-import it.rainbowbreeze.smsforfree.domain.SmsProvider;
-import it.rainbowbreeze.smsforfree.domain.TextMessage;
-import it.rainbowbreeze.smsforfree.providers.AimonProvider;
-import it.rainbowbreeze.smsforfree.providers.JacksmsProvider;
-import it.rainbowbreeze.smsforfree.providers.SubitosmsProvider;
-import it.rainbowbreeze.smsforfree.providers.VoipstuntProvider;
-import it.rainbowbreeze.smsforfree.ui.ActivityHelper;
-import static it.rainbowbreeze.libs.common.RainbowContractHelper.*;
 
 /**
  * @author Alfredo "Rainbowbreeze" Morresi
@@ -255,7 +254,6 @@ public class LogicManager extends RainbowLogicManager {
 			if (TextUtils.isEmpty(restrictToProviders) || restrictToProviders.toUpperCase().contains(providerName)) {
 				
 				if ("AIMON".equals(providerName)) provider = new AimonProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
-				else if ("JACKSMS".equals(providerName)) provider = new JacksmsProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
 				else if ("SUBITOSMS".equals(providerName)) provider = new SubitosmsProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
 				else if ("VOIPSTUNT".equals(providerName)) provider = new VoipstuntProvider(mLogFacility, mAppPreferencesDao, mProviderDao, mActivityHelper);
 				

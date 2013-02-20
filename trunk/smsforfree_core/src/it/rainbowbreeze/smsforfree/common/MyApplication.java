@@ -27,7 +27,7 @@ import android.app.Application;
  */
 public class MyApplication extends Application {
     //---------- Private fields
-    private static final String LOG_HASH = "MyApplication";
+    private static final String LOG_HASH = MyApplication.class.getSimpleName();
 
     
     

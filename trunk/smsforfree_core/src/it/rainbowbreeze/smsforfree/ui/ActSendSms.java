@@ -170,13 +170,15 @@ public class ActSendSms
         mBtnClearDestination = (ImageButton) findViewById(R.id.actsendsms_btnClearDestination);
         mBtnClearMessage = (ImageButton) findViewById(R.id.actsendsms_btnClearMessage);
         mBtnGetLastSmsReceivedNumber = (ImageButton) findViewById(R.id.actsendsms_btnGetLastSmsReceivedNumber);
-        
+
+        /**
         //eventually remove ad view
         if (!mAppEnv.isAdEnables()) {
             AdView adView = (AdView) findViewById(R.id.actsendsms_adview);
             LinearLayout parent = (LinearLayout) adView.getParent();
             parent.removeView(adView);
         }
+        **/
 
         //set listeners
         mSpiProviders.setOnItemSelectedListener(mSpiProvidersSelectedListener);
