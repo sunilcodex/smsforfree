@@ -88,11 +88,13 @@ public class SendMessageServiceTest extends ServiceTestCase<SendMessageService> 
     
 	//---------- Tests methods
 	public void testOnReceive() {
+	    //TODO check if it's correct
 		//creates the intent for sending message
 		TextMessage textMessageSource = TextMessage.Factory.create(
 				123l,
 				"+393314729472",
 				"Test message from Alfredo's phone! It's all ok?", 
+				MockSingleServiceProvider.ID,
 				MockSingleServiceProvider.ID,
 				0l,
 				TextMessage.PROCESSING_NONE);
