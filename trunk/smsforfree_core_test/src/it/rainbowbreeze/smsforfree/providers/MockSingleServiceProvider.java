@@ -106,11 +106,12 @@ public class MockSingleServiceProvider extends SmsSingleProvider {
 		mLogFacility.v(LOG_HASH, "Send message [" + messageBody + "] to " + destination);
 		
 		mLastSendMessage = TextMessage.Factory.create(
-				100,
+				100l,
 				destination,
 				messageBody,
 				getId(),
 				serviceId,
+				0,
 				TextMessage.PROCESSING_SENT);
 		
 		ResultOperation<String> res = new ResultOperation<String>("Sent OK");
