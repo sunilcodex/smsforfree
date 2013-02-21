@@ -20,16 +20,12 @@
 
 package it.rainbowbreeze.smsforfree.ui;
 
-import java.util.List;
-
-import com.admob.android.ads.AdView;
-
 import it.rainbowbreeze.libs.common.RainbowResultOperation;
 import it.rainbowbreeze.libs.helper.RainbowStringHelper;
 import it.rainbowbreeze.smsforfree.R;
+import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.common.LogFacility;
 import it.rainbowbreeze.smsforfree.common.ResultOperation;
-import it.rainbowbreeze.smsforfree.common.AppEnv;
 import it.rainbowbreeze.smsforfree.data.AppPreferencesDao;
 import it.rainbowbreeze.smsforfree.data.ContactsDao;
 import it.rainbowbreeze.smsforfree.data.SmsDao;
@@ -40,6 +36,10 @@ import it.rainbowbreeze.smsforfree.helper.GlobalHelper;
 import it.rainbowbreeze.smsforfree.logic.LogicManager;
 import it.rainbowbreeze.smsforfree.logic.SendCaptchaThread;
 import it.rainbowbreeze.smsforfree.logic.SendMessageThread;
+
+import java.util.List;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -57,22 +57,22 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ActSendSms
     extends Activity
@@ -93,13 +93,6 @@ public class ActSendSms
     protected static final String BUNDLEKEY_CAPTCHASTORAGE = "CaptchaStorage";
     protected static final String BUNDLEKEY_DIALOGERRORMESSAGE = "DialogErrorMessage";
 
-    private static final int OPTIONMENU_SETTINGS = 2;
-    private static final int OPTIONMENU_SIGNATURE = 3;
-    private static final int OPTIONMENU_ABOUT = 4;
-    private static final int OPTIONMENU_RESETDATA = 5;
-    private static final int OPTIONMENU_COMPRESS = 6;
-    private static final int OPTIONMENU_TEMPLATES = 7;
-    
 	private final static int WHAT_SENDCAPTCHA = 1003;
 	private final static int WHAT_SENDMESSAGE = 1002;
 
@@ -212,6 +205,9 @@ public class ActSendSms
                 showDialog(DIALOG_STARTUP_INFOBOX);
             mSpiProviders.requestFocus();
         }
+        
+//        ActionBar actionBar = getActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(true);        
     }
     
 
@@ -340,53 +336,26 @@ public class ActSendSms
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!super.onCreateOptionsMenu(menu)) return false;
         
-        menu.add(0, OPTIONMENU_ABOUT, 4, R.string.actsendsms_mnuAbout)
-            .setIcon(android.R.drawable.ic_menu_info_details);
-        //menu ends here if the application is expired
-
-        menu.add(0, OPTIONMENU_SIGNATURE, 0, R.string.actsendsms_mnuSignature)
-            .setIcon(android.R.drawable.ic_menu_edit);
-        menu.add(0, OPTIONMENU_TEMPLATES, 0, R.string.actsendsms_mnuTemplates)
-            .setIcon(R.drawable.ic_menu_friendslist);
-        menu.add(0, OPTIONMENU_COMPRESS, 1, R.string.actsendsms_mnuCompress)
-            .setIcon(R.drawable.ic_menu_cut);
-        //menu.add(0, OPTIONMENU_RESETDATA, 2, R.string.actsendsms_mnuResetData)
-        //    .setIcon(android.R.drawable.ic_menu_delete);
-        menu.add(0, OPTIONMENU_SETTINGS, 3, R.string.actsendsms_mnuSettings)
-        .setIcon(android.R.drawable.ic_menu_preferences);
-        
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actsendsms, menu);
         return true;        
     }
     
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case OPTIONMENU_SETTINGS:
+        int itemId = item.getItemId();
+        if (itemId == R.id.actsendsms_mnuSettings) {
             mActivityHelper.openSettingsMain(this);
-            break;
-            
-        case OPTIONMENU_ABOUT:
+        } else if (itemId == R.id.actsendsms_mnuAbout) {
             mActivityHelper.openAbout(this);
-            break;
-
-        case OPTIONMENU_SIGNATURE:
+        } else if (itemId == R.id.actsendsms_mnuSignature) {
             addSignature();
-            break;
-
-        case OPTIONMENU_COMPRESS:
+        } else if (itemId == R.id.actsendsms_mnuCompress) {
             String message = mTxtBody.getText().toString();
             mActivityHelper.openCompactMessage(this, message);
-            break;
-
-        case OPTIONMENU_RESETDATA:
-            cleanDataFields(true);
-            break;
-            
-        case OPTIONMENU_TEMPLATES:
+        } else if (itemId == R.id.actsendsms_mnuTemplates) {
             showDialog(DIALOG_TEMPLATES);
-            break;
-            
         }
         return super.onOptionsItemSelected(item);
     }

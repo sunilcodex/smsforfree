@@ -1,0 +1,41 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/actsendsms_mnuSignature"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/actsendsms_mnuSignature"
+        android:icon="@android:drawable/ic_menu_edit"
+    />
+    <item
+        android:id="@+id/actsendsms_mnuTemplates"
+        android:showAsAction="ifRoom"
+        android:title="@string/actsendsms_mnuTemplates"
+        android:icon="@drawable/ic_menu_friendslist"
+    />
+    <item
+        android:id="@+id/actsendsms_mnuCompress"
+        android:showAsAction="ifRoom"
+        android:title="@string/actsendsms_mnuCompress"
+        android:icon="@android:drawable/ic_menu_info_details"
+    />
+    <item
+        android:id="@+id/actsendsms_mnuSend"
+        android:showAsAction="always|withText"
+        android:title="@string/actsendsms_mnuSend"
+        android:icon="@android:drawable/ic_menu_send"
+    />
+    <item
+        android:id="@+id/actsendsms_mnuAbout"
+        android:showAsAction="never|collapseActionView"
+        android:title="@string/actsendsms_mnuAbout"
+        android:icon="@android:drawable/ic_menu_info_details"
+    />
+    <item
+        android:id="@+id/actsendsms_mnuSettings"
+        android:showAsAction="never|collapseActionView"
+        android:title="@string/actsendsms_mnuSettings"
+        android:icon="@android:drawable/ic_menu_preferences"
+    />
+    
+</menu>

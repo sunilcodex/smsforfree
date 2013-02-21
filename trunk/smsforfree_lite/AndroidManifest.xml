@@ -62,6 +62,7 @@
         <activity
             android:name="it.rainbowbreeze.smsforfree.ui.ActSendSms"
             android:label="@string/common_appName"
+            android:uiOptions="splitActionBarWhenNarrow"
         />
         
         <activity

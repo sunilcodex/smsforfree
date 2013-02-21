@@ -63,6 +63,7 @@
     <string name="actsendsms_mnuSettings">Settings</string>
     <string name="actsendsms_mnuResetData">Empty fields</string>
     <string name="actsendsms_mnuAbout">About</string>
+    <string name="actsendsms_mnuSend">Send</string>
     <string name="actsendsms_mnuTemplates">Append template</string>
     <string name="actsendsms_msg_noPhoneNumber">No phone numbers for selected contact...</string>
     <string name="actsendsms_msg_noProviderSelected">Choose a provider...</string>
